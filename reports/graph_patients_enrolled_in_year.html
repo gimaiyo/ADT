@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en" >
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Graph Patients Enrolled in Year</title>
+		
+		<link rel="stylesheet" href="../CSS/amcharts/style.css" type="text/css">
+		<link href="../CSS/style.css" type="text/css" rel="stylesheet"/>
+		<link rel="SHORTCUT ICON" href="../Images/favicon.ico">
+		<link href="../CSS/offline_css.css" type="text/css" rel="stylesheet"/>
+		<link href="../CSS/jquery-ui.css" type="text/css" rel="stylesheet"/>
+		<link href="../Scripts/bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet" media="screen"/>
+		<script type="text/javascript" src="../Scripts/jquery.js"></script>
+		<script type="text/javascript" src="../Scripts/jquery-ui.js"></script>
+		<script type="text/javascript" src="../Scripts/offline_database.js"></script>
+		<script src="../Scripts/amcharts/amcharts.js" type="text/javascript"></script>
+		<script type="text/javascript" src="../Scripts/offlineData.js"></script>
+		<script>
+			$(document).ready(function(){
+				$.get('reports_include.html', function(data) {
+				  $('.result').html(data);
+				});
+			});
+		</script>
+		<script type="text/javascript">
+			function trimNumber(s) {
+				while(s.substr(0, 1) == '0' && s.length > 1) {
+					s = s.substr(1, 9999);
+				}
+				return s;
+			}
+			$(document).ready(function() {
+				initDatabase();
+				var $_GET = getQueryParams(document.location.hash);
+				var year = $_GET['year'];
+				$("#display_year").val(year);
+				//Get the environmental variables to display the hospital name
+				selectEnvironmentVariables(function(transaction, results) {
+					// Handle the results
+					var row = results.rows.item(0);
+					$("#facility_name").text(row['facility_name']);
+                    var facility=row['facility'];
+					var chart;
+
+					var all_data = new Array();
+					var single_data = new Array();
+					counter = 0;
+					//Retrieve all patient info
+					var data_sql = "SELECT strftime('%m',p.date_enrolled) AS MONTH,rst.name AS Enrollment,COUNT( *) AS TOTAL FROM patient p LEFT JOIN regimen_service_type rst ON rst.id = p.service WHERE strftime('%Y',p.date_enrolled)='" + year + "'AND rst.active=1 AND p.facility_code='"+facility+"' AND(p.supported_by=1 OR p.supported_by=2) GROUP BY strftime('%m',p.date_enrolled),rst.name";
+					//console.log(data_sql);
+					SQLExecuteAbstraction(data_sql, function(transaction, results) {
+
+						if(results.rows.length == 0) {
+							$("#chartdiv").append($("<b><h3 style=' margin-top:50px; padding:5px; border:1px solid #000; height:20px; background:#999;' align='center'>No Data available for this period</h3></b>"));
+						}
+						//console.log(results.rows.length);
+						var new_array = [];
+						for(var i = 0; i < results.rows.length; i++) {
+							var parent_row = results.rows.item(i);
+							new_array[parent_row.Enrollment] = parent_row.Enrollment;
+						}
+						var monthNames = ["No Month", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+						var chartDta = new Array();
+						var chartDta_all = new Array();
+
+						for( k = 1; k <= 12; k++) {
+							//console.log(results.rows.length);
+							//console.log(counter);
+							art_total=0;
+							oi_total=0;
+							pep_total=0;
+							pmtct_total=0;
+							for( j = 1; j <= 4; j++) {
+
+								if(results.rows.length > counter) {
+
+									var current = results.rows.item(counter);
+									var enroll = current['Enrollment'];
+									var the_vals = "";
+
+									if(j == 1) {
+										if(enroll == "ART") {
+											total_enrollment = current['TOTAL'];
+											counter++;
+										} else {
+											total_enrollment = 0;
+										}
+										art_total = total_enrollment;
+									}
+
+									if(j == 2) {
+										if(enroll == "OI Only") {
+											total_enrollment = current['TOTAL'];
+											counter++;
+										} else {
+											total_enrollment = 0;
+										}
+										oi_total = total_enrollment;
+									}
+
+									if(j == 3) {
+										if(enroll == "PEP") {
+											total_enrollment = current['TOTAL'];
+											counter++;
+										} else {
+											total_enrollment = 0;
+										}
+										pep_total = total_enrollment;
+									}
+
+									if(j == 4) {
+										if(enroll == "PMTCT") {
+											total_enrollment = current['TOTAL'];
+											counter++;
+										} else {
+											total_enrollment = 0;
+										}
+										pmtct_total = total_enrollment;
+									}
+								} else {
+									
+									break;
+								}
+
+							}
+							chartDta[k] = ( {
+								"ART" : art_total,
+								"OI" : oi_total,
+								"PEP" : pep_total,
+								"PMTCT" : pmtct_total,
+								"MONTH" : monthNames[k]
+							});
+
+							console.log(chartDta[k]);
+							chartDta_all = chartDta_all.concat(chartDta[k]);
+
+						}
+
+						// SERIAL CHART
+						chart = new AmCharts.AmSerialChart();
+						chart.pathToImages = "../Scripts/amcharts/images/";
+						chart.dataProvider = chartDta_all;
+						chart.categoryField = "MONTH";
+						chart.zoomOutButton = {
+							backgroundColor : '#000000',
+							backgroundAlpha : 0.15
+						};
+
+						// AXES
+						// category
+						categoryAxis = chart.categoryAxis;
+						categoryAxis.parseDates = false;
+						// as our data is date-based, we set parseDates to true
+						categoryAxis.minPeriod = "mm";
+						// our data is daily, so we set minPeriod to DD
+						categoryAxis.dashLength = 2;
+						categoryAxis.gridAlpha = 0.15;
+						categoryAxis.axisColor = "#DADADA";
+
+						// first value axis (on the left)
+						valueAxis1 = new AmCharts.ValueAxis();
+						valueAxis1.axisColor = "#FF6600";
+						valueAxis1.axisThickness = 2;
+						valueAxis1.gridAlpha = 0;
+						chart.addValueAxis(valueAxis1);
+
+						// second value axis (on the right)
+						valueAxis2 = new AmCharts.ValueAxis();
+						valueAxis2.position = "right";
+						// this line makes the axis to appear on the right
+						valueAxis2.axisColor = "#FCD202";
+						valueAxis2.gridAlpha = 0;
+						valueAxis2.axisThickness = 2;
+						chart.addValueAxis(valueAxis2);
+
+						// third value axis (on the left, detached)
+						valueAxis3 = new AmCharts.ValueAxis();
+						valueAxis3.offset = 50;
+						// this line makes the axis to appear detached from plot area
+						valueAxis3.gridAlpha = 0;
+						valueAxis3.axisColor = "#B0DE09";
+						valueAxis3.axisThickness = 2;
+						chart.addValueAxis(valueAxis3);
+
+						// fourth value axis (on the left, detached)
+						valueAxis4 = new AmCharts.ValueAxis();
+						valueAxis4.offset = 30;
+						valueAxis4.position = "right";
+						// this line makes the axis to appear detached from plot area
+						valueAxis4.gridAlpha = 0;
+						valueAxis4.axisColor = "#0066FF";
+						valueAxis4.axisThickness = 2;
+						chart.addValueAxis(valueAxis4);
+
+						// GRAPHS
+						// first graph
+						graph1 = new AmCharts.AmGraph();
+						graph1.valueAxis = valueAxis1;
+						// we have to indicate which value axis should be used
+						graph1.title = "ART";
+						graph1.valueField = "ART";
+						graph1.bullet = "round";
+						graph1.hideBulletsCount = 30;
+						chart.addGraph(graph1);
+
+						// second graph
+						graph2 = new AmCharts.AmGraph();
+						graph2.valueAxis = valueAxis2;
+						// we have to indicate which value axis should be used
+						graph2.title = "OI";
+						graph2.valueField = "OI";
+						graph2.bullet = "round";
+						graph2.hideBulletsCount = 30;
+						chart.addGraph(graph2);
+
+						// third graph
+						graph3 = new AmCharts.AmGraph();
+						graph3.valueAxis = valueAxis3;
+						// we have to indicate which value axis should be used
+						graph3.valueField = "PEP";
+						graph3.title = "PEP";
+						graph3.bullet = "triangleUp";
+						graph3.hideBulletsCount = 30;
+						chart.addGraph(graph3);
+
+						// fourth graph
+						graph4 = new AmCharts.AmGraph();
+						graph4.valueAxis = valueAxis4;
+						// we have to indicate which value axis should be used
+						graph4.valueField = "PMTCT";
+						graph4.title = "PMTCT";
+						graph4.bullet = "triangleUp";
+						graph4.hideBulletsCount = 30;
+						chart.addGraph(graph4);
+
+						// CURSOR
+						chartCursor = new AmCharts.ChartCursor();
+						chartCursor.cursorPosition = "mouse";
+						chart.addChartCursor(chartCursor);
+
+						// SCROLLBAR
+						chartScrollbar = new AmCharts.ChartScrollbar();
+						chart.addChartScrollbar(chartScrollbar);
+
+						// LEGEND
+						legend = new AmCharts.AmLegend();
+						legend.marginLeft = 110;
+						chart.addLegend(legend);
+
+						// WRITE
+						chart.write("chartdiv");
+					});
+				});
+				
+				$("#display_year").click(function(){
+					$("#selected_report").attr("value", $(this).attr("id"));
+					$("#year").dialog("open");
+				});
+			
+				
+			});
+
+		</script>
+		<style>
+			#chartdiv{
+				width:950px;
+				height:450px;
+				margin:0 auto;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Menus -->
+		<div class="navbar ">
+		  <div class="navbar-inner">
+		    <div class="container">
+		 
+		      <!-- Everything you want hidden at 940px or less, place within here -->
+		      <div class="nav-collapse collapse" id="acdmenu">
+		      	<a class="brand" href="../reports.html"/><img src="../Images/home-icon.png"> | </a>
+		        <ul class="nav">
+				  <li class="dropdown">
+				    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="standard_report">
+				     Standard Reports
+				    <b class="caret"></b>
+				    </a>
+				    <ul class="dropdown-menu" id="standard_report_sub">
+				      <li><a href="#" id="patients_enrolled_in_period" class="report donor_date_range_report active_report">Number of Patients Enrolled in Period</a></li>
+				      <li><a href="#" id="patients_enrolled_in_art" class="report donor_date_range_report active_report">Number of Patients Started on ART in the Period</a></li>
+				      <li><a href="#" id="graph_patients_enrolled_in_year" class="report active_report annual_report">Graph of Number of Patients Enrolled Per Month in a Given Year</a></li>
+				      <li><a href="#" id="cumulative_patients" class="report active_report single_date_report">Cumulative Number of Patients to Date</a></li>
+				      <li><a href="#" id="patients_on_ART_active" class="report active_report single_date_report">Number of Active Patients Receiving ART (by Regimen)</a></li>
+				    </ul>
+				  </li>
+				  <li class="dropdown divider-vertical" id="visiting_patient">
+				    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+				     Visiting Patients
+				    <b class="caret"></b>
+				    </a>
+				     <ul class="dropdown-menu" id="visiting_patient_sub">
+				      <li><a href="#" id="patients_scheduled_to_visit" class="report active_report date_range_report">List of Patients Scheduled to Visit</a></li>
+				      <li><a href="#" id="patients_started_on_date" class="report active_report date_range_report">List of Patients Started (on a Particular Date)</a></li>
+				      <li><a href="#" id="patients_visitied_for_refill" class="report active_report date_range_report">List of Patients Visited for Refill</a></li>
+				      <li><a href="#" id="patients_missing_appointments" class="report active_report date_range_report">Patients Missing Appointments</a></li>
+				      <li><a href="#" id="patients_adherence" class="report active_report date_range_report">Patients Adherence Report</a></li>
+				    </ul>
+				  </li>
+				  <li class="dropdown divider-vertical">
+				    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="early_warning">
+				     Early Warning Indicators
+				    <b class="caret"></b>
+				    </a>
+				    <ul class="dropdown-menu " id="early_warning_sub">
+				      <li><a href="#" id="patients_who_changed_regimen" class="report active_report date_range_report">Active Patients who Have Changed Regimens</a></li>
+				      <li><a href="#" id="patients_starting" class="report active_report date_range_report">List of Patients Starting (By Regimen)</a></li>
+				      <li><a href="#" id="early_warning_indicators" class="report active_report date_range_report">HIV Early Warning Indicators</a></li>
+				      <li><a href="#" id="service_statistics" class="report active_report single_date_report">Service Statistics (By Regimen)</a></li>
+				     
+				    </ul>
+				  </li>
+				  <li class="dropdown divider-vertical">
+				    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="drug_inventory">
+				     Drug Inventory
+				    <b class="caret"></b>
+				    </a>
+				    <ul class="dropdown-menu" id="drug_inventory_sub">
+				      <li><a href="#" id="drug_consumption" class="report active_report annual_report">Drug Consumption Report</a></li>
+				      <li><a href="#" id="drug_stock_on_hand" class="report active_report no_filter">Drug Stock on Hand Report</a></li>
+				      <li><a href="#" id="commodity_summary" class="report active_report date_range_report">Facility Summary Commodity Report</a></li>
+				      <li><a href="#" id="expiring_drugs" class="report active_report no_filter">Short Dated Stocks &lt;6 Months to Expiry</a></li>
+				      <li><a href="#" id="expired_drugs" class="report active_report no_filter">List of Expired Drugs</a></li>
+				    </ul>
+				  </li>
+				</ul>
+		        <a onClick="window.print()" class="brand" title="Print this page"/> | <img src="../Images/printing_icon.png"> </a>
+		      </div>
+		 
+		    </div>
+		  </div>
+		</div>
+		<!-- Menus end -->
+		
+		<h2 id="facility_name" style="text-align: center"></h2>
+		<h4 style="text-align: center">Listing of Patients Enrolled for the year <input type="text" style="width:50px;vertical-align:middle" id="display_year">
+		<br>
+		All Donors</h4>
+		<div id="chartdiv"></div>
+		
+		<!-- Pop up Window -->
+		<div class="result"></div>
+		<!-- Pop up Window end-->
+		
+	</body>
+</html>
