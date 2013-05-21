@@ -274,7 +274,7 @@ class Facilitydashboard_Management extends MY_Controller {
 			}
 			$start_date = $sdate;
 			$end_date = $edate;
-		} else {date
+		} else {
 			$start_date = $startdate;
 			$end_date = $enddate;
 		}
