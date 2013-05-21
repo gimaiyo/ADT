@@ -541,3 +541,34 @@ tr th{
 .brand{
 	cursor:pointer;
 }
+
+/*
+ * Facility Dashboard
+ * 
+ */
+
+.left-content,.right-content, .center-content{
+	border:1px solid #333;
+}
+.main-content{
+	width:100%;
+	height:100%;
+}
+
+.left-content{
+	width:20%;
+	float:left;
+}
+
+.center-content{
+	width:55%;
+	margin:auto;
+	height:90%;
+}
+.right-content{
+	width:20%;
+	float:right;
+}
+#main_wrapper{
+	height:600px;
+}
