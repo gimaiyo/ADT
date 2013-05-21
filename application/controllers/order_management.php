@@ -364,9 +364,14 @@ class Order_Management extends MY_Controller {
 				$order_comment -> User = $user_id;
 				$order_comment -> Comment = $comments;
 				$order_comment -> save();
+<<<<<<< HEAD
 				
 			}
 			
+=======
+			}
+	
+>>>>>>> c959eeb2fed050f5ee1654716903038493730d25
 			//Now save the cdrr items
 			$commodity_counter = 0;
 			

@@ -45,6 +45,7 @@ class User_Management extends MY_Controller {
 		$this -> table -> set_heading('id', 'Name', 'Username', 'Email Address', 'Phone Number', 'Access Level', 'Registered By', 'Options');
 
 		foreach ($users as $user) {
+<<<<<<< HEAD
 			//Is user is a system admin, allow him to edit only system  admin and nascop users
 			if($access_level=="system_administrator"){
 				if($user['Access'] == "System Administrator" or $user['Access'] == "NASCOP Pharmacist"){
@@ -60,6 +61,10 @@ class User_Management extends MY_Controller {
 				$links .= " | ";
 			}
 			
+=======
+			$links = anchor('user_management/edit/' . $user['id'], 'Edit', array('class' => 'edit_user', 'id' => $user['id']));
+			$links .= " | ";
+>>>>>>> c959eeb2fed050f5ee1654716903038493730d25
 			if ($user['Active'] == 1) {
 				$links .= anchor('user_management/disable/' . $user['id'], 'Disable', array('class' => 'disable_user'));
 			} else {
@@ -315,7 +320,11 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 	private function _submit_validate() {
 		// validation rules
 		$this -> form_validation -> set_rules('username', 'Username', 'trim|required|min_length[6]|max_length[30]');
+<<<<<<< HEAD
 		$this -> form_validation -> set_rules('password', 'Password', 'trim|required|min_length[6]|max_length[30]');
+=======
+		$this -> form_validation -> set_rules('password', 'Password', 'trim|required|min_length[6]|max_length[12]');
+>>>>>>> c959eeb2fed050f5ee1654716903038493730d25
 
 		return $this -> form_validation -> run();
 	}

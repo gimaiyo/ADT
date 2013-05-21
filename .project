@@ -5,6 +5,7 @@
 	<projects>
 	</projects>
 	<buildSpec>
+<<<<<<< HEAD
 		<buildCommand>
 			<name>com.aptana.ide.core.unifiedBuilder</name>
 			<arguments>
@@ -13,5 +14,9 @@
 	</buildSpec>
 	<natures>
 		<nature>com.aptana.ruby.core.rubynature</nature>
+=======
+	</buildSpec>
+	<natures>
+>>>>>>> c959eeb2fed050f5ee1654716903038493730d25
 	</natures>
 </projectDescription>
