@@ -166,8 +166,6 @@ if ($user_is_pharmacist) {
 	    	
 		      
 </script>
-<<<<<<< HEAD
-=======
 
 <script src="<?php echo base_url().'Scripts/FusionCharts/FusionCharts.js';?>"></script>
 <script type="text/javascript">
@@ -182,11 +180,10 @@ if ($user_is_pharmacist) {
     <style type="text/css">
     	#chart_area{
     		float:left;
-    		width:50%; 
-    		height:400px;
+    		width:60%; 
+    		height:50%;
     	}
     </style>
->>>>>>> c959eeb2fed050f5ee1654716903038493730d25
 <style type="text/css">
 	#environment_variables {
 		width: 600px;
@@ -379,28 +376,33 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 	</div>
 	<input type="submit" class="submit-button" id="save_variables" value="Save" style="width:100px; margin: 10px auto;"/>
 </div>
-<<<<<<< HEAD
-<div id="main_container">
-=======
 
 <div class="main-content">
 	
 	<div class="left-content">
-		
+		<h3>Quick Links</h3>
+		<ul>
+			<li><a>User Manual</a></li>
+			<li><a>Add Patients</a></li>
+			<li><a>Add Inventory</a></li>
+			<li><a>Main Site Report</a></li>
+			
+		</ul>
 	</div>
 	<div class="center-content">
+		<h3>Summary Data</h3>
 		<div id="chart_area">
 	
 </div>
+
 	</div>
 	<div class="right-content">
-		
+		<h3>Notifications</h3>
 	</div>
 </div>
 
 
 <!--div id="main_container">
->>>>>>> c959eeb2fed050f5ee1654716903038493730d25
 	<div id="main_sidebar">
 		<div id="maincontent_header">
 			<strong class="label">Quick Links</strong>
@@ -413,11 +415,7 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 		</div>
 	</div>	
 	</div>
-<<<<<<< HEAD
-	<div id="main_contentbar">
-=======
 	<!--div id="main_contentbar">
->>>>>>> c959eeb2fed050f5ee1654716903038493730d25
 		<div id="maincontent_header">
 			<strong class="label">Facility Dashboard</strong>
 		</div>
@@ -454,11 +452,7 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 		
 		
 		
-<<<<<<< HEAD
-	</div>
-=======
 	</div-->
->>>>>>> c959eeb2fed050f5ee1654716903038493730d25
 	<div id="manual_dialog" title="User Manual">
 			<div id="manualcontent">
 			<ul>

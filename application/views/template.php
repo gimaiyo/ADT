@@ -173,13 +173,10 @@ if (!$user_is_pharmacist) {?>
 	<?php }?>
 
 				<div id="system_title">
-<<<<<<< HEAD
-					<span style="display: block; font-weight: bold; font-size: 14px; margin:2px;">Ministry of Health</span>
-					<span style="display: block; font-size: 12px;">ARV Drugs Supply Chain Management Tool</span>
-=======
+
 					<span style="display: block; font-weight: bold; font-size: 24px; margin:2px;">Ministry of Health</span>
 					<span style="display: block; font-size: 20px;">ARV Drugs Supply Chain Management Tool</span>
->>>>>>> c959eeb2fed050f5ee1654716903038493730d25
+
 					<?php
 					if ($user_is_pharmacist) {?>
 						<style>
