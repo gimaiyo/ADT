@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" >
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Cumulative Patients in Last Three Months</title>
+		<!--<link href="../CSS/style.css" type="text/css" rel="stylesheet"/>-->
+		<link rel="SHORTCUT ICON" href="../Images/favicon.ico">
+		<link href="../CSS/offline_css.css" type="text/css" rel="stylesheet"/>
+		<script type="text/javascript" src="../Scripts/jquery.js"></script>
+		<script type="text/javascript" src="../Scripts/date.js"></script>
+		<script type="text/javascript" src="../Scripts/offline_database.js"></script>
+		
+		<script type="text/javascript">
+			$(document).ready(function() {
+				initDatabase();
+				//var $_GET = getQueryParams(document.location.search);
+				
+				
+				
+				
+				//Setting the today's date
+			    var myDate=new Date();
+			    var dat = ("0" + myDate.getDate()).slice(-2);
+				var year = myDate.getFullYear();
+				var mon = ('0' + (myDate.getMonth()+1)).slice(-2);
+				var end_date = year + "-" + mon + "-" + dat;
+				
+				
+				//Setting the last three months date range
+				var prevDate=new Date(2012,0,15);
+			    var pastdat = ("0" + prevDate.getDate()).slice(-2);
+				var pastyear = prevDate.getFullYear();
+				var pastmon = ('0' + (prevDate.getMonth()-2)).slice(-2);
+				//var start_date = pastyear + "-" + pastmon + "-" + pastdat;
+				var first_date = Date.today().add({ months: -3 });
+				start_date=first_date.toString("yyyy-M-dd");
+				$("#start_date").text(start_date);
+				$("#end_date").text(end_date);
+				//Get the environmental variables to display the hospital name
+				selectEnvironmentVariables(function(transaction, results) {
+					// Handle the results
+					var row = results.rows.item(0);
+					$("#facility_name").text(row['facility_name']);
+				});
+				var sql = "select count(*) as total from patient where date(start_regimen_date) between date('" + start_date + "') and date('" + end_date + "')";
+				SQLExecuteAbstraction(sql, function(transaction, results) {
+					// Handle the results
+					var parent_row = results.rows.item(0);
+					var total_patients = parent_row['total'];
+					var total_adult_male_art = 0;
+					var total_adult_male_pep = 0;
+					var total_adult_male_oi = 0;
+					var total_adult_female_art = 0;
+					var total_adult_female_pep = 0;
+					var total_adult_female_pmtct = 0;
+					var total_adult_female_oi = 0;
+					var total_child_male_art = 0;
+					var total_child_male_pep = 0;
+					var total_child_male_pmtct = 0;
+					var total_child_male_oi = 0;
+					var total_child_female_art = 0;
+					var total_child_female_pep = 0;
+					var total_child_female_pmtct = 0;
+					var total_child_female_oi = 0;
+					
+					
+
+					var regimen_totals = new Array();
+					//Now get all the patient statuses
+					getRegimenTotals(start_date, end_date, function(transaction, results0) {
+						for(var x = 0; x < results0.rows.length; x++) {
+							var parent_row = results0.rows.item(x);
+
+							var returned_counter = 0;
+							regimen_totals[parent_row['regimen_desc']] = parent_row['total'];
+							//for each patient status, get it's statistics
+							//start with the adult male
+							getRegimenStatisticNumbers(start_date, end_date, "adult", "1", parent_row['start_regimen'], parent_row['regimen_desc'], function(transaction, results) {
+								var regimen_details = results.rows.item(0);
+								var passed_regimen = regimen_details['passed_regimen'];
+								var passed_regimen_name = regimen_details['passed_regimen_name'];
+								var row_string = "<tr><td>" + passed_regimen_name + "</td><td>" + regimen_totals[passed_regimen_name] + "</td><td>" + (Math.ceil(100 * ((regimen_totals[passed_regimen_name] / total_patients) * 100)) / 100) + "</td>";
+								counter = 0;
+								for(var i = 1; i <= 2; i++) {
+									counter++;
+									try {
+										var adult_male_row = results.rows.item(i);
+										if(adult_male_row['name'] != null) {
+											total_adult_male_art += adult_male_row['total'];
+											row_string += "<td>" + adult_male_row['total'] + "</td><td>" + (Math.ceil(100 * ((adult_male_row['total'] / regimen_totals[passed_regimen_name]) * 100)) / 100) + "</td>";
+										} else {
+											row_string += "<td>-</td>";
+										}
+									} catch(e) {
+										if(counter <= 1) {
+											row_string += "<td>-</td><td>-</td>";
+										}
+									}
+								}
+								getRegimenStatisticNumbers(start_date, end_date, "adult", "2", passed_regimen, passed_regimen_name, function(transaction2, results2) {
+									counter = 0;
+									for(var i = 1; i <= 2; i++) {
+										counter++;
+										try {
+											var adult_female_row = results2.rows.item(i);
+											if(adult_female_row['name'] != null) {
+												total_adult_female_art += adult_female_row['total'];
+												row_string += "<td>" + adult_female_row['total'] + "</td><td>" + (Math.ceil(100 * ((adult_female_row['total'] / regimen_totals[passed_regimen_name]) * 100)) / 100) + "</td>";
+											} else {
+												row_string += "<td>-</td>";
+											}
+										} catch(e) {
+											if(counter <= 1) {
+												row_string += "<td>-</td><td>-</td>";
+											}
+										}
+
+									}
+									getRegimenStatisticNumbers(start_date, end_date, "child", "1", passed_regimen, passed_regimen_name, function(transaction3, results3) {
+										counter = 0;
+										for(var i = 1; i <= 2; i++) {
+											counter++;
+											try {
+												var child_male_row = results3.rows.item(i);
+												if(child_male_row['name'] != null) {
+													total_child_male_art += child_male_row['total'];
+													row_string += "<td>" + child_male_row['total'] + "</td><td>" + (Math.ceil(100 * ((child_male_row['total'] / regimen_totals[passed_regimen_name]) * 100)) / 100) + "</td>";
+
+												} else {
+													row_string += "<td>-</td>";
+												}
+											} catch(e) {
+												if(counter <= 1) {
+													row_string += "<td>-</td><td>-</td>";
+												}
+											}
+
+										}
+										getRegimenStatisticNumbers(start_date, end_date, "child", "2", passed_regimen, passed_regimen_name, function(transaction4, results4) {
+											returned_counter++;
+											counter = 0;
+											for(var i = 1; i <= 2; i++) {
+												counter++;
+												try {
+													var child_female_row = results4.rows.item(i);
+													if(child_female_row['name'] != null) {
+														total_child_female_art += child_female_row['total'];
+														row_string += "<td>" + child_female_row['total'] + "</td><td>" + (Math.ceil(100 * ((child_female_row['total'] / regimen_totals[passed_regimen_name]) * 100)) / 100) + "</td>";
+													} else {
+														row_string += "<td>-</td>";
+													}
+
+												} catch(e) {
+													if(counter <= 1) {
+														row_string += "<td>-</td><td>-</td>";
+													}
+												}
+
+											}
+											row_string += "</tr>";
+											if(returned_counter == results0.rows.length) {
+												row_string += "<tr><td><b>Totals:</b></td><td><b>" + total_patients + "</b></td><td><b>100</b></td><td><b>" + total_adult_male_art + "</b></td><td><b>" + (Math.ceil(100 * ((total_adult_male_art / total_patients) * 100)) / 100) + "</b></td><td><b>" + total_adult_female_art + "</b></td><td><b>" + (Math.ceil(100 * ((total_adult_female_art / total_patients) * 100)) / 100) + "</b></td><td><b>" + total_child_male_art + "</b></td><td><b>" + (Math.ceil(100 * ((total_child_male_art / total_patients) * 100)) / 100) + "</b></td><td><b>" + total_child_female_art + "</b></td><td><b>" + (Math.ceil(100 * ((total_child_female_art / total_patients) * 100)) / 100) + "</b></td></tr>";
+											}
+											$("#patient_listing").append($(row_string));
+										});
+									});
+								});
+							});
+						}
+					});
+				});
+			});
+			function getQueryParams(qs) {
+				qs = qs.split("+").join(" ");
+				var params = {}, tokens, re = /[?&]?([^=]+)=([^&]*)/g;
+				while( tokens = re.exec(qs)) {
+					params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+				}
+				return params;
+			}
+
+			function getAge(dateString) {
+				var today = new Date();
+				var birthDate = new Date(dateString);
+				var age = today.getFullYear() - birthDate.getFullYear();
+				var m = today.getMonth() - birthDate.getMonth();
+				if(m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+					age--;
+				}
+				if(isNaN(age)) {
+					return "N/A";
+				}
+				return age;
+			}
+		</script>
+	</head>
+	<body>
+		<style>
+			#patient_listing {
+				margin: 0 auto;
+				border-top: 1px solid #B9B9B9;
+				font-size: 11px;
+				letter-spacing: 0.5px;
+				width: 1000px;
+				border:1px solid #000;
+			}
+			#patient_listing td th {
+				padding: 10px;
+			}
+		</style>
+		<h3 id="facility_name" style="text-align: center"></h3>
+		<h4 style="text-align: center">Patients Started on ART in the period from <span id="start_date"></span> to <span id="end_date"></span></h4>
+		<table   id="patient_listing">
+			<tr>
+				<th rowspan="3">Regimen</th>
+				<th colspan="2">Total</th>
+				<th colspan="4"> Adult</th>
+				<th colspan="4"> Children </th>
+			</tr>
+			<tr>
+				<th rowspan="2">No.</th>
+				<th rowspan="2">%</th>
+				<th colspan="2">Male</th>
+				<th colspan="2">Female</th>
+				<th colspan="2">Male</th>
+				<th colspan="2">Female</th>
+			</tr>
+			<tr>
+				<th>No.</th>
+				<th>%</th>
+				<th>No.</th>
+				<th>%</th><th>No.</th>
+				<th>%</th><th>No.</th>
+				<th>%</th>
+			</tr>
+		</table>
+	</body>
+</html>

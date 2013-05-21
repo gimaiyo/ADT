@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" >
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Scheduled Patients</title>
+		<link href="../CSS/style.css" type="text/css" rel="stylesheet"/>
+		<link rel="SHORTCUT ICON" href="../Images/favicon.ico">
+		<link href="../CSS/offline_css.css" type="text/css" rel="stylesheet"/>
+		<link href="TableFilter/filtergrid.css" type="text/css" rel="stylesheet"/>
+		<script type="text/javascript" src="../Scripts/jquery.js"></script>
+		<script type="text/javascript" src="../Scripts/offline_database.js"></script>
+		<script type="text/javascript" src="../Scripts/offlineData.js"></script>
+		<script type="text/javascript" src="TableFilter/tablefilter_all.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				initDatabase();
+				var $_GET = getQueryParams(document.location.hash);
+				var date = $_GET['date'];
+				$("#date_of_appointment").text(date);
+				//Get the environmental variables to display the hospital name
+				selectEnvironmentVariables(function(transaction, results) {
+					// Handle the results
+					var row = results.rows.item(0);
+					$("#facility_name").text(row['facility_name']);
+					var facility = row['facility'];
+					var total_visted = 0;
+					var total_not_visted = 0;
+
+					getExpectedPatients(date, function(transaction, results) {
+						// Handle the results
+						$("#total_count").append(results.rows.length);
+						for(var i = 0; i < results.rows.length; i++) {
+							var parent_row = results.rows.item(i);
+							var patient_id = parent_row['patient'];
+							var gender = Array("", "M", "F");
+							localStorage.setItem(patient_id, JSON.stringify(parent_row));
+							//Get the last regimen information for this patient
+							advancedGetLastPatientRegimen(patient_id, function(transaction, results) {
+								var row = results.rows.item(0);
+								patient_number = row['passed_patient'];
+								var retrievedObject = localStorage.getItem(patient_number);
+								var parent_row = JSON.parse(retrievedObject);
+
+								if(parent_row['phone']) {
+									var phone = parent_row['phone'];
+									if(phone.substr(0, 1) != 0) {
+										parent_row['phone'] = "0" + parent_row['phone'];
+									}
+
+								} else {
+									parent_row['phone'] = "N/A";
+								}
+
+								var visited_sql = " select * from patient_visit pv left join patient p on p.patient_number_ccc=pv.patient_id where pv.patient_id='" + parent_row['patient'] + "' and pv.dispensing_date='" + date + "' and pv.facility='" + facility + "' and pv.facility=p.facility_code";
+								SQLExecuteAbstraction(visited_sql, function(transaction, results) {
+									var visit_status = '';
+									if(results.rows.length == 0) {
+										visit_status = "<td style='color:red;'>No</td>";
+										total_not_visted++;
+									} else {
+										visit_status = "<td style='color:green;'>Yes</td>";
+										total_visted++;
+									}
+									$("#total_visited_count").empty();
+									$("#total_not_visited_count").empty();
+									$("#total_visited_count").append(total_visted);
+									$("#total_not_visited_count").append(total_not_visted);
+
+									//If the regimen is returned,
+									if(row['regimen_desc']) {
+										var row_string = "<tr><td>" + parent_row['patient'] + "</td><td width='200' style='text-align:justify;'>" + parent_row['first_name'] + " " + parent_row['other_name'] + " " + parent_row['last_name'] + "</td><td>" + parent_row['phone'] + "</td><td>" + gender[parent_row['gender']] + "</td><td>" + getAge(parent_row['dob']) + "</td><td align='center'>" + row['regimen_desc'] + "</td>" + visit_status + "</tr>";
+										$("#patient_listing").append($(row_string));
+										localStorage.removeItem(parent_row['patient']);
+									} else {
+										var row_string = "<tr><td>" + parent_row['patient'] + "</td><td width='200' style=''>" + parent_row['first_name'] + " " + parent_row['other_name'] + " " + parent_row['last_name'] + "</td><td>" + parent_row['phone'] + "</td><td>" + gender[parent_row['gender']] + "</td><td>" + getAge(parent_row['dob']) + "</td><td align='center'>None</td>" + visit_status + "</tr>";
+										$("#patient_listing").append($(row_string));
+										localStorage.removeItem(parent_row['patient']);
+									}
+
+								});
+								//End of visited sql
+							});
+							//End of advanced Last regimen
+						}//End of expected loop results
+					});
+					//End of Get expected
+				});
+				//End of Environment Variables
+			});
+			function getAge(dateString) {
+				var today = new Date();
+				var birthDate = new Date(dateString);
+				var age = today.getFullYear() - birthDate.getFullYear();
+				var m = today.getMonth() - birthDate.getMonth();
+				if(m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+					age--;
+				}
+				if(isNaN(age)) {
+					return "N/A";
+				}
+				return age;
+			}
+		</script>
+	</head>
+	<body>
+		<style>
+			#patient_listing {
+				margin: 0 auto;
+				border-top: 1px solid #B9B9B9;
+				font-size: 14px;
+				letter-spacing: 1px;
+				border: 1px solid #DDD;
+			}
+			#patient_listing td th {
+				padding: 10px;
+			}
+			#patient_listing td {
+				padding: 0.25em;
+				text-align: justify;
+			}
+			/* Sortable tables */
+			table.sortable thead {
+				background-color: #eee;
+				color: #666666;
+				font-weight: bold;
+				cursor: default;
+			}
+			.highlighted {
+				background: yellow;
+			}
+		</style>
+		<h3 id="facility_name" style="text-align: center"></h3>
+		<h4 style="text-align: center">Listing of Patients Expected to Visit On <span id="date_of_appointment"></span></h4>
+		<h5 class="report_title" style="text-align:center;font-size:14px;">Total Count: <span id="total_count"></span></h5>
+		<table align='center'  width='20%' style="font-size:16px;">
+			<tr>
+				<td colspan="4"><h5 class="report_title" style="text-align: center; color:green;">Total Visited Count: <span id="total_visited_count">0</span></h5></td>
+				<td colspan="3"><h5 class="report_title" style="text-align: center; color:red;">Total Not Visited Count: <span id="total_not_visited_count">0</span></h5></td>
+			</tr>
+		</table>
+		<table id="table1" width="98%">
+			<thead>
+			<tr>
+				<th> Patient Number </th>
+				<th> Patient Name </th>
+				<th> Phone Number </th>
+				<th> Sex </th>
+				<th> Age </th>
+				<th> Last Regimen </th>
+				<th> Visit Status</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr><td>1111</td><td>Kevin Morez</td><td>0722567890</td><td>M</td><td>20</td><td>SDS+ERT+SDF</td><TD>NO</TD></tr>
+				<tr><td>2222</td><td>Maddie White</td><td>0734336575</td><td>F</td><td>30</td><td>TDS+ERT+SDF</td><TD>YES</TD></tr>
+				<tr><td>3333</td><td>Willis Beast</td><td>0756587891</td><td>F</td><td>10</td><td>FGS+ERT+SDF</td><TD>NO</TD></tr>
+				<tr><td>4444</td><td>Clint Wood</td><td>0776989078</td><td>M</td><td>50</td><td>AWS+ERT+SDF</td><TD>YES</TD></tr>
+			</tbody>
+		</table>
+
+	</body>
+		<script language="javascript" type="text/javascript">
+			var props = {
+				sort : true,
+				remember_grid_values : true,
+				filters_row_index : 1,
+				remember_grid_values : true,
+				alternate_rows : true,
+				rows_counter : true,
+				rows_counter_text : "Displayed rows: ",
+				btn_reset : true,
+				btn_reset_text : "Clear",
+				loader : true,
+				status_bar : true,
+				mark_active_columns : true,
+				col_0 : "select",
+				col_1 : "select",
+				col_2 : "select",
+				col_3 : "select",
+				display_all_text : "< Show all >",
+
+				col_width : ["100px", "150px", "100px", "50px", "50px", "100px", "40px"],
+
+				//Column resize feature
+				extensions : {
+					name : ['ColumnsResizer'],
+					src : ['TableFilter/TFExt_ColsResizer/TFExt_ColsResizer.js'],
+					description : ['Columns Resizing'],
+					initialize : [
+					function(o) {
+						o.SetColsResizer();
+					}]
+
+				},
+				col_resizer_all_cells : true
+			}
+			var tf = setFilterGrid("table1",props);
+			
+		</script>
+</html>
