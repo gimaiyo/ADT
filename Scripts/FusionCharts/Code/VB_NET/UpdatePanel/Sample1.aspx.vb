@@ -79,16 +79,9 @@ Partial Class UpdatePanel_Sample1
 
         'outPut will store the HTML of the chart rendered as string 
         Dim outPut As String = ""
-        If IsPostBack = True Then
-
-            'when an ajax call is made we use RenderChartHTML method
-            outPut = FusionCharts.RenderChartHTML("../FusionCharts/Column2D.swf", "", strXML.ToString(), "chart1", "445", "350", False, False)
-
-        Else
-
-            'When the page is loaded for the first time, we call RenderChart() method to avoid IE's 'Click here to Acrtivate...' message
-            outPut = FusionCharts.RenderChart("../FusionCharts/Column2D.swf", "", strXML.ToString(), "chart1", "445", "350", False, False)
-        End If
+        'when an ajax call is made or
+        'When the page is loaded for the first time, we call RenderChart() method
+         outPut = FusionCharts.RenderChart("../FusionCharts/Column2D.swf", "", strXML.ToString(), "chart1", "440", "350", False, True)
 
         'Clear panel which will contain the chart
         Panel1.Controls.Clear()

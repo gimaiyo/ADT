@@ -6,6 +6,6 @@
         'Included FusionCharts.js to embed FusionCharts easily in web pages
         'The following code will generate a chart from code behind file Default.aspx.cs
     %>
-    <%=GetMonthlyalesChartHtml()%> 
+    <asp:Literal ID="Literal1" runat="server"></asp:Literal> 
 
 </asp:Content>

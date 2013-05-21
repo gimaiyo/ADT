@@ -68,7 +68,7 @@ Partial Class UpdatePanel_Sample2
             strXML.Append("</chart>")
 
             ' create pie chart and store it to output string
-            Dim outPut As String = FusionCharts.RenderChart("../FusionCharts/Pie3D.swf", "", strXML.ToString(), "chart1", "450", "350", False, False)
+            Dim outPut As String = FusionCharts.RenderChart("../FusionCharts/Pie3D.swf", "", strXML.ToString(), "chart1", "400", "350", False, False)
 
             ' write the output string
             Response.Write(outPut)
@@ -107,7 +107,7 @@ Partial Class UpdatePanel_Sample2
         strXML.Append("</chart>")
 
         ' create Column2D chart and srore it to output string
-        Dim outPut As String = FusionCharts.RenderChartHTML("../FusionCharts/Column2D.swf", "", strXML.ToString(), "chart2", "450", "350", False)
+        Dim outPut As String = FusionCharts.RenderChart("../FusionCharts/Column2D.swf", "", strXML.ToString(), "chart2", "440", "350", False, True)
 
         ' clear the Panel
         Panel1.Controls.Clear()
@@ -125,7 +125,7 @@ Partial Class UpdatePanel_Sample2
         Dim strXML As String = "<chart></chart>"
 
         ' create Column2D chart and srore it to output string
-        Dim outPut As String = FusionCharts.RenderChart("../FusionCharts/Column2D.swf?ChartNoDataText=Please click on a pie slice to view detailed data.", "", strXML, "chart3", "450", "350", False, False)
+        Dim outPut As String = FusionCharts.RenderChart("../FusionCharts/Column2D.swf?ChartNoDataText=Please click on a pie slice to view detailed data.", "", strXML, "chart3", "440", "350", False, False)
 
         ' clear the Panel
         Panel1.Controls.Clear()

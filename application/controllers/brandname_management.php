@@ -8,10 +8,11 @@ class brandname_management extends MY_Controller {
 		$this -> listing();
 	}
 
-	public function listing() {
-		$data = array();
+	public function listing($data="") {
+		
 		$data['settings_view'] = "brandname_listing_v";
 		$data['drug_codes'] = Drugcode::getBrands();
+		
 		$this -> base_params($data);
 	}
 
@@ -24,6 +25,21 @@ class brandname_management extends MY_Controller {
 		$data['drugcodes'] = $drugsandcodes;
 		
 		$this -> base_params($data);
+	}
+
+	public function delete($id){
+		$brand=Brand::getBrandName($id);
+		$rowdelete=Drugcode::deleteBrand($id);
+		//If query succeeds
+		if($rowdelete>0){
+			$this -> session -> set_userdata('message_counter', '1');
+			$this -> session -> set_userdata('message',$brand['Brand']. ' was deleted !');
+		}
+		else{
+			$this -> session -> set_userdata('message_counter', '2');
+			$this -> session -> set_userdata('message', 'An error occured while deleting the brand. Try again !');
+		}
+		redirect("brandname_management");
 	}
 
 	public function save() {
@@ -41,6 +57,8 @@ class brandname_management extends MY_Controller {
 			$brand -> Brand = $brandname;
 
 			$brand -> save();
+			$this -> session -> set_userdata('message_counter', '1');
+			$this -> session -> set_userdata('message', $this -> input -> post('brandname') . ' was Added');
 			redirect("brandname_management/listing");
 		}
 	}
@@ -56,12 +74,12 @@ class brandname_management extends MY_Controller {
 		$data['styles'] = array("jquery-ui.css");
 		$data['scripts'] = array("jquery-ui.js");
 		$data['quick_link'] = "brand";
-		$data['title'] = "System Settings";
+		$data['title'] = "Brand Management";
 		$data['content_view'] = "settings_v";
-		$data['banner_text'] = "System Settings";
+		$data['banner_text'] = "Brand Management";
 		$data['link'] = "settings_management";
 		
-		$this -> load -> view('template', $data);
+		$this -> load -> view('template_admin', $data);
 	}
 
 }

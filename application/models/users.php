@@ -12,6 +12,7 @@ class Users extends Doctrine_Record {
 		$this -> hasColumn('Phone_Number', 'varchar', 50);
 		$this -> hasColumn('Email_Address', 'varchar', 50);
 		$this -> hasColumn('Active', 'varchar', 2);
+		$this -> hasColumn('Signature', 'varchar', 50);
 	}
 
 	public function setUp() {
@@ -29,7 +30,7 @@ class Users extends Doctrine_Record {
 
 	public function login($username, $password) {
 
-		$query = Doctrine_Query::create() -> select("*") -> from("Users") -> where("Username = '" . $username . "'");
+		$query = Doctrine_Query::create() -> select("*") -> from("Users") -> where("Username = '" . $username . "' or Email_Address='" . $username . "' or Phone_Number='" . $username . "'");
 
 		$user = $query -> fetchOne();
 		if ($user) {
@@ -40,7 +41,10 @@ class Users extends Doctrine_Record {
 			if ($user -> Password == $user2 -> Password) {
 				return $user;
 			} else {
-				return false;
+				$test["attempt"]="attempt";
+				$test["user"]=$user;
+				return $test;
+				
 			}
 		} else {
 			return false;
@@ -64,9 +68,26 @@ class Users extends Doctrine_Record {
 
 	//get all users
 	public function getAll() {
-		$query = Doctrine_Query::create() -> select("u.Name,u.Username, a.Level_Name as Access, u.Email_Address, u.Phone_Number, b.Name as Creator") -> from("Users u")->leftJoin('u.Access a, u.Creator b'); 
+		$query = Doctrine_Query::create() -> select("u.Name,u.Username, a.Level_Name as Access, u.Email_Address, u.Phone_Number, b.Name as Creator,u.Active as Active") -> from("Users u") -> leftJoin('u.Access a, u.Creator b');
 		$users = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
 		return $users;
 	}
 
+	public static function getUser($id) {
+		$query = Doctrine_Query::create() -> select("*") -> from("Users") -> where("id = '$id'");
+		$user = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $user;
+	}
+	
+	public static function getUserDetail($id) {
+		$query = Doctrine_Query::create() -> select("*") -> from("Users") -> where("id = '$id'");
+		$user = $query -> execute();
+		return $user;
+	}
+	
+	public static function getUserID($username) {
+		$query = Doctrine_Query::create() -> select("*") -> from("Users") ->where("Username = '" . $username . "' or Email_Address='" . $username . "' or Phone_Number='" . $username . "'");
+		$user = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $user[0]['id'];
+	}
 }

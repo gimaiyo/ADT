@@ -9,7 +9,7 @@ class Opportunistic_Infection extends Doctrine_Record {
 	public function setUp() {
 		$this -> setTableName('opportunistic_infection');
 	}
-
+    
 	public function getAll() {
 		$query = Doctrine_Query::create() -> select("*") -> from("Opportunistic_Infection") -> where("Active", "1");
 		$infections = $query -> execute();
@@ -26,6 +26,22 @@ class Opportunistic_Infection extends Doctrine_Record {
 		$query = Doctrine_Query::create() -> select("Name") -> from("Opportunistic_Infection") -> offset($offset) -> limit($items);
 		$ois = $query -> execute();
 		return $ois;
+	}
+	public static function getIndication($id) {
+		$query = Doctrine_Query::create() -> select("*") -> from("opportunistic_infection") -> where("id = '$id'");
+		$ois = $query -> execute();
+		return $ois[0];
+	}
+	public function getThemAll($access_level="") {
+		if($access_level="" || $access_level=="system_administrator"){
+			$query = Doctrine_Query::create() -> select("*") -> from("Opportunistic_Infection");
+		}
+		else{
+			$query = Doctrine_Query::create() -> select("*") -> from("Opportunistic_Infection") -> where("Active='1'");
+		}
+		
+		$infections = $query -> execute();
+		return $infections;
 	}
 
 }

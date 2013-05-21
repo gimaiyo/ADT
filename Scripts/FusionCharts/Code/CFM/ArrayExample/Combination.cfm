@@ -1,14 +1,10 @@
-<HTML>
-<HEAD>
-	<TITLE>
+<html>
+<head>
+	<title>
 	FusionCharts - Array Example using Combination Column 3D Line Chart
-	</TITLE>
-	<!---
-	You need to include the following JS file, if you intend to embed the chart using JavaScript.
-	Embedding using JavaScripts avoids the "Click to Activate..." issue in Internet Explorer
-	When you make your own charts, make sure that the path to this JS file is correct. Else, you would get JavaScript errors.
-	--->	
-	<SCRIPT LANGUAGE="Javascript" SRC="../../FusionCharts/FusionCharts.js"></SCRIPT>
+	</title>
+		
+	<script LANGUAGE="Javascript" SRC="../../FusionCharts/FusionCharts.js"></script>
 	<style type="text/css">
 	<!--
 	body {
@@ -17,15 +13,15 @@
 	}
 	-->
 	</style>
-</HEAD>
+</head>
 	<!---
 	We've included ../Includes/FusionCharts.cfm, which contains functions
 	to help us easily embed the charts.
 	--->
 <cfinclude template="../Includes/FusionCharts.cfm">
-<BODY>
+<body>
 
-<CENTER>
+<center>
 <h2>FusionCharts Examples</h2>
 <h4>Plotting Combination chart from data contained in Array.</h4>
 	<!---
@@ -92,8 +88,8 @@
 	
 	<!--- Create the chart - MS Column 3D Line Combination Chart with data contained in strXML --->
 	<cfoutput>#renderChart("../../FusionCharts/MSColumn3DLineDY.swf", "", strXML, "productSales", 600, 300, false, false)#</cfoutput>
-<BR><BR>
+<br><br>
 <a href='../NoChart.html' target="_blank">Unable to see the chart above?</a>
-</CENTER>
-</BODY>
-</HTML>
+</center>
+</body>
+</html>

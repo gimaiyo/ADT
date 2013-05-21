@@ -5,7 +5,9 @@ Imports System.Text
 Partial Class DBExample_Detailed
     Inherits System.Web.UI.Page
 
-    Public Function GetFactoryDetailedChartHtml() As String
+
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
         'This page is invoked from Default.asp. When the user clicks on a pie
         'slice in Default.aspx, the factory Id is passed to this page. We need
         'to get that factory id, get information from database and then show
@@ -35,6 +37,8 @@ Partial Class DBExample_Detailed
         'Close <chart> element
         xmlData.Append("</chart>")
         'Create the chart - Column 2D Chart with data from xmlData
-        Return FusionCharts.RenderChart("../FusionCharts/Column2D.swf", "", xmlData.ToString(), "FactoryDetailed", "600", "300", False, False)
-    End Function
+        Literal2.Text = FusionCharts.RenderChart("../FusionCharts/Column2D.swf", "", xmlData.ToString(), "FactoryDetailed", "600", "300", False, True)
+
+
+    End Sub
 End Class

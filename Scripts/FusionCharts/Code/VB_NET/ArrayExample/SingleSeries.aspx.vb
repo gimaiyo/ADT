@@ -28,7 +28,7 @@ Partial Class ArrayExample_SingleSeries
         xmlData.Append("<chart caption='Sales by Product' numberPrefix='$' formatNumberScale='0'>")
 
         'Convert data to XML and append
-        Dim i As Integer 
+        Dim i As Integer
         For i = arrData.GetLowerBound(0) To arrData.GetUpperBound(0)
             xmlData.Append("<set label='" & arrData(i, 0) & "' value='" & arrData(i, 1) & "' />")
         Next
@@ -37,6 +37,12 @@ Partial Class ArrayExample_SingleSeries
         xmlData.Append("</chart>")
 
         'Create the chart - Column 3D Chart with data contained in xmlData
-        Return FusionCharts.RenderChart("../FusionCharts/Column3D.swf", "", xmlData.ToString(), "productSales", "600", "300", False, False)
+        Return FusionCharts.RenderChart("../FusionCharts/Column3D.swf", "", xmlData.ToString(), "productSales", "600", "300", False, True)
     End Function
+
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        Literal1.Text = GetProductSalesChartHtml()
+
+    End Sub
 End Class

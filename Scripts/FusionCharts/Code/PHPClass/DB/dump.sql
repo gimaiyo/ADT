@@ -36,7 +36,7 @@ DROP TABLE IF EXISTS `Factory_Output`;
 
 CREATE TABLE `Factory_Output` (
   `FactoryID` INTEGER DEFAULT 0, 
-  `DatePro` DATETIME DEFAULT 'Now()', 
+  `DatePro` DATETIME NULL, 
   `Quantity` DOUBLE NULL, 
   INDEX (`FactoryID`)
 ) TYPE=MyISAM;

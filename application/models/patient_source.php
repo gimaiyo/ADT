@@ -27,6 +27,16 @@ class Patient_Source extends Doctrine_Record {
 		$sources = $query -> execute();
 		return $sources;
 	}
+	public function getThemAll() {
+		$query = Doctrine_Query::create() -> select("*") -> from("Patient_Source");
+		$sources = $query -> execute();
+		return $sources;
+	}
+	public static function getSource($id) {
+		$query = Doctrine_Query::create() -> select("*") -> from("Patient_Source") -> where("id = '$id'");
+		$ois = $query -> execute();
+		return $ois[0];
+	}
 
 }
 ?>

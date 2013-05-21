@@ -1,7 +1,7 @@
 Pre-requisites : 
 --------------
 Ruby 1.8.6-26 or above
-Rails 2.2.2 or above
+Rails 2.2.2 or above ( has been tested with 2.3.8)
 MySQL 4.0 or above
 gem install mysql
 WEBrick or any other HTTP server

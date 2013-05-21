@@ -12,7 +12,7 @@ class Fusioncharts::FormBasedController < ApplicationController
   #chart action. 
   #So, basically the view for this action is just a form. 
   def default
-    headers["content-type"]="text/html";
+    response.content_type = Mime::HTML
   end
 
   #Data is obtained from the submitted form (present in the request)
@@ -21,7 +21,7 @@ class Fusioncharts::FormBasedController < ApplicationController
 	#relevant data only.
   #The view for this action uses the "common" layout.
   def chart
-    headers["content-type"]="text/html";
+    response.content_type = Mime::HTML
     # Get the values from the request using params[...]
     @str_soups = params[:Soups]
     @str_salads = params[:Salads]
@@ -30,7 +30,6 @@ class Fusioncharts::FormBasedController < ApplicationController
     @str_desserts = params[:Desserts]
     
     #The common layout is used only by this function in controller.
-    render (:layout => "layouts/common")
+    render(:layout => "layouts/common")
   end
-    
 end

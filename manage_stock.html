@@ -3,6 +3,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>Stock Management</title>
+		<link rel="SHORTCUT ICON" href="Images/favicon.ico">
 		<link href="CSS/style.css" type="text/css" rel="stylesheet"/>
 		<link href="CSS/offline_css.css" type="text/css" rel="stylesheet"/>
 		<link href="CSS/jquery-ui.css" type="text/css" rel="stylesheet"/>
@@ -16,7 +17,7 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 				initDatabase();
-				var $_GET = getQueryParams(document.location.search);
+				var $_GET = getQueryParams(document.location.hash);
 				drug = $_GET['drug']; 
 			});
 

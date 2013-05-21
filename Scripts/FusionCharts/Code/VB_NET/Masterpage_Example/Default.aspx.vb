@@ -14,4 +14,9 @@ Partial Class _Default
         'Create the chart - Column 3D Chart with data from Data/Data.xml
         Return FusionCharts.RenderChart("../FusionCharts/Column3D.swf", "Data/Data.xml", "", "myFirst", "600", "300", False, True)
     End Function
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        Literal1.Text = GetMonthlyalesChartHtml()
+
+    End Sub
 End Class

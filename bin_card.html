@@ -3,21 +3,49 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>Bin Card</title>
+		<link rel="SHORTCUT ICON" href="Images/favicon.ico">
 		<link href="CSS/style.css" type="text/css" rel="stylesheet"/>
 		<link href="CSS/offline_css.css" type="text/css" rel="stylesheet"/>
 		<link href="CSS/jquery-ui.css" type="text/css" rel="stylesheet"/>
 		<link href="CSS/validator.css" type="text/css" rel="stylesheet"/>
+		<!-- Bootstrap -->
+		<link href="Scripts/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="Scripts/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+		
 		<script type="text/javascript" src="Scripts/offlineData.js"></script>
 		<script type="text/javascript" src="Scripts/jquery.js"></script>
 		<script type="text/javascript" src="Scripts/jquery-ui.js"></script>
 		<script type="text/javascript" src="Scripts/offline_database.js"></script>
 		<script type="text/javascript" src="Scripts/validator.js"></script>
 		<script type="text/javascript" src="Scripts/validationEngine-en.js"></script>
+		<script type="text/javascript" src="Scripts/sorttable.js"></script>
+		<script src="Scripts/bootstrap/js/bootstrap.min.js"></script>
+		
 		<script type="text/javascript">
 			$(document).ready(function() {
 				initDatabase();
-				var $_GET = getQueryParams(document.location.search);
+
+				var d = new Date();
+				var n = d.getFullYear();
+				$("#year").text(n);
+				var $_GET = getQueryParams(document.location.hash);
 				var drug = $_GET['drug'];
+				var stock_type = $_GET['stock_type'];
+				if(stock_type==1){
+					$(".s_type").text("Main Store");
+				}
+				else if(stock_type==2){
+					$(".s_type").text("Pharmacy");
+				}
+				var monthly_consumption = 0;
+
+				//Get the environmental variables to display the hospital name
+				selectEnvironmentVariables(function(transaction, results) {
+					// Handle the results
+					var row = results.rows.item(0);
+					$("#facility_name").text(row['facility_name']);
+
+				});
 				//Get the drug details first
 				getDrugsDetails(drug, function(transaction, results) {
 					// Handle the results
@@ -26,19 +54,381 @@
 					$("#drug_unit").text(row['drug_unit']);
 					var pack_size = row['pack_size'];
 					var drug_unit = row['drug_unit'];
-				});
-				//Get details about the drug batches
-				getDrugTransactions(drug, function(transaction, results) {
-					// Handle the results
-					for(var i = 0; i < results.rows.length; i++) {
-						var row = results.rows.item(i);
-						var row_string = "<tr><td>" + row['order_number'] + "</td><td>" + row['transaction_date'] + "</td><td>" + row['trans_type'] + "</td><td>" + row['batch_number'] + "</td><td>" + row['expiry_date'] + "</td><td>" + row['pack_size'] + "</td><td>" + row['packs'] + "</td><td>" + row['quantity'] + "</td><td>" + row['unit_cost'] + "</td><td>" + row['amount'] + "</td></tr>";
-						$("#transactions").append($(row_string));
+					var drug_name = row['drug'];
+
+					//Get details about the drug batches
+					getDrugPharmacyTransactions(drug,stock_type, function(transaction, results) {
+						
+						// Handle the results
+						for(var i = 0; i < results.rows.length; i++) {
+							var x=0;
+							var row = results.rows.item(i);
+							var quantity_in = 0;
+							var quantity_out = 0;
+							if(row['quantity']) {
+								if(row['quantity']!='null'){
+									quantity_in = parseInt(row['quantity']);
+								}
+							}
+							
+							if(row['quantity_out']) {
+								if(row['quantity_out']!='null'){
+									quantity_out = parseInt(row['quantity_out']);
+								}
+								
+							}
+							
+							var quantity_total = quantity_in + quantity_out;
+							var formatted_quantity_total = numberWithCommas(quantity_total);
+							var _source=row['source'];
+							var _destination=row['destination'];
+							var _transaction_type=row['trans_type'];
+							var _trans_type=row['transaction_type'];
+							//If transaction is a pharmacy transaction
+							if(_source==_destination){
+								
+								//Dispensed to patients
+								if(_trans_type==5){
+									
+								}
+								//Physical count
+								else if(_trans_type==11){
+									
+								}
+								//Issued to
+								else if(quantity_in==0){
+									_transaction_type=_transaction_type+" Patients";
+								}
+								//Received From
+								else{
+									_transaction_type=_transaction_type+" Main Store";
+								}
+							}
+							
+							//Main store transaction
+							else if(_source!=_destination){
+								//Dispensed to patients
+								if(_trans_type==5){
+									
+								}
+								//Physical count
+								else if(_trans_type==11){
+									
+								}
+								//Issued to
+								else if(quantity_in==0){
+									//From Main Store to pharmacy
+									if(_destination==""){
+										_transaction_type=_transaction_type+" Pharmacy";
+									}
+									//In case destination is not facility
+									else if(_destination<10000){
+										x=1;
+										getDrugDestination(_destination,_transaction_type,quantity_total,function(transaction, results) {
+											var rower = results.rows.item(0);
+											_transaction_type=rower['t_display']+" "+rower['transaction_destination'];
+											formatted_quantity_total=numberWithCommas(rower['formatted_quantity_total']);
+											var row_string = "<tr><td>" + row['order_number'] + "</td><td>" + row['transaction_date'] + "</td><td>" + _transaction_type + "</td><td>" + row['batch_number'] + "</td><td>" + row['expiry_date'] + "</td><td>" + row['pack_size'] + "</td><td>" + row['packs'] + "</td><td>" + formatted_quantity_total + "</td><td>" + row['unit_cost'] + "</td><td>" + row['amount'] + "</td></tr>";
+											$("#transactions tbody").append($(row_string));
+											
+										});
+									}
+									//If destination is a facility, ...
+									else if(_destination>=10000){
+										x=1;
+										getFacilityName(_destination,_transaction_type,quantity_total,function(transaction, results) {
+											var rower = results.rows.item(0);
+											_transaction_type=rower['t_display']+" "+rower['facility_name'];
+											formatted_quantity_total=numberWithCommas(rower['formatted_quantity_total']);
+											var row_string = "<tr><td>" + row['order_number'] + "</td><td>" + row['transaction_date'] + "</td><td>" + _transaction_type + "</td><td>" + row['batch_number'] + "</td><td>" + row['expiry_date'] + "</td><td>" + row['pack_size'] + "</td><td>" + row['packs'] + "</td><td>" + formatted_quantity_total + "</td><td>" + row['unit_cost'] + "</td><td>" + row['amount'] + "</td></tr>";
+											$("#transactions tbody").append($(row_string));
+											
+										});
+									}
+									
+								}
+								//Received From
+								else{
+									
+									if(_source=="" && _destination!=""){
+										//_transaction_type=_transaction_type+" Pharmacy";
+										x=1;
+										var f_parent=row['facility'];
+										getFacilityName(f_parent,_transaction_type,quantity_total,function(transaction, results) {
+											var rower = results.rows.item(0);
+											_transaction_type=rower['t_display']+" "+rower['facility_name'];
+											formatted_quantity_total=numberWithCommas(rower['formatted_quantity_total']);
+											var row_string = "<tr><td>" + row['order_number'] + "</td><td>" + row['transaction_date'] + "</td><td>" + _transaction_type + "</td><td>" + row['batch_number'] + "</td><td>" + row['expiry_date'] + "</td><td>" + row['pack_size'] + "</td><td>" + row['packs'] + "</td><td>" + formatted_quantity_total + "</td><td>" + row['unit_cost'] + "</td><td>" + row['amount'] + "</td></tr>";
+											$("#transactions tbody").append($(row_string));
+											
+										});
+										
+									}
+									//In case source is not facility, i.e. Kenya Pharma
+									else if(_source<10000){
+										
+										x=1;
+										getDrugSource(_source,_transaction_type,quantity_total,function(transaction, results) {
+											var rower = results.rows.item(0);
+											_transaction_type=rower['t_display']+" "+rower['transaction_source'];
+											formatted_quantity_total=numberWithCommas(rower['formatted_quantity_total']);
+											var row_string = "<tr><td>" + row['order_number'] + "</td><td>" + row['transaction_date'] + "</td><td>" + _transaction_type + "</td><td>" + row['batch_number'] + "</td><td>" + row['expiry_date'] + "</td><td>" + row['pack_size'] + "</td><td>" + row['packs'] + "</td><td>" + formatted_quantity_total + "</td><td>" + row['unit_cost'] + "</td><td>" + row['amount'] + "</td></tr>";
+											$("#transactions tbody").append($(row_string));
+										});
+									}
+									
+									//If receive from is a facility,...
+									else if(_source>=10000){
+										x=1;
+										getFacilityName(_source,_transaction_type,quantity_total,function(transaction, results) {
+											var rower = results.rows.item(0);
+											_transaction_type=rower['t_display']+" "+rower['facility_name'];
+											formatted_quantity_total=numberWithCommas(rower['formatted_quantity_total']);
+											var row_string = "<tr><td>" + row['order_number'] + "</td><td>" + row['transaction_date'] + "</td><td>" + _transaction_type + "</td><td>" + row['batch_number'] + "</td><td>" + row['expiry_date'] + "</td><td>" + row['pack_size'] + "</td><td>" + row['packs'] + "</td><td>" + formatted_quantity_total + "</td><td>" + row['unit_cost'] + "</td><td>" + row['amount'] + "</td></tr>";
+											$("#transactions tbody").append($(row_string));
+											
+										});
+									}
+								}
+							}
+							if(x==0){
+								var row_string = "<tr><td>" + row['order_number'] + "</td><td>" + row['transaction_date'] + "</td><td>" + _transaction_type + "</td><td>" + row['batch_number'] + "</td><td>" + row['expiry_date'] + "</td><td>" + row['pack_size'] + "</td><td>" + row['packs'] + "</td><td>" + formatted_quantity_total + "</td><td>" + row['unit_cost'] + "</td><td>" + row['amount'] + "</td></tr>";
+								$("#transactions tbody").append($(row_string));
+							}
+							
+						}
+						selectEnvironmentVariables(function(transaction, results) {
+							// Handle the results
+							var row = results.rows.item(0);
+							var facility = row['facility'];
+							getDrugStockLevels(drug, facility,stock_type);
+						});
+					});
+					
+					function getDrug_Source(id){
+						
 					}
+					
+					function getDrugStockLevels(drug, facility,stock_type) {
+						var stock_level_choose="";
+						var stock_status = 0;
+						var batch_status_row_string = "";
+						if(stock_type==1){
+							stock_level_choose=" and (source='" + facility + "'  or destination='" + facility + "') and source!=destination ";
+						}
+						//Transaction from pharmacy
+						else if(stock_type==2){
+							stock_level_choose=" and source='" + facility + "'  and source=destination ";
+						}
+						//Query to get all batches that have not expired
+						var all_batches = "SELECT DISTINCT d.batch_number AS batch FROM drug_stock_movement d WHERE d.drug =  '" + drug + "' AND expiry_date > date() AND facility='" + facility + "' "+stock_level_choose+" GROUP BY d.batch_number ORDER BY d.expiry_date ASC";
+						SQLExecuteAbstraction(all_batches, function(transaction, results) {
+
+							for(var k = 0; k < results.rows.length; k++) {
+								var batch_row = results.rows.item(k);
+								batch_no = batch_row['batch'];
+								//Query to check if batch has had a physical count
+								var initial_stock_sql = "SELECT SUM( d.quantity ) AS Initial_stock, d.transaction_date AS transaction_date, '" + batch_no + "' AS batch FROM drug_stock_movement d WHERE d.drug =  '" + drug + "' AND transaction_type =  '11' AND facility='" + facility + "' "+stock_level_choose+" AND d.batch_number =  '" + batch_no + "' ";
+
+								SQLExecuteAbstraction(initial_stock_sql, function(transaction, results) {
+
+									for(var m = 0; m < results.rows.length; m++) {
+										var physical_row = results.rows.item(m);
+										initial_stock = physical_row['Initial_stock'];
+
+										//Check if initial stock is present meaning physical count done
+										if(initial_stock != null) {
+											batch_stock_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out )) AS stock_levels, ds.batch_number,ds.expiry_date FROM drug_stock_movement ds WHERE ds.transaction_date BETWEEN  '" + physical_row['transaction_date'] + "' AND date() AND ds.drug ='" + drug + "'  AND ds.batch_number ='" + physical_row['batch'] + "' AND facility='" + facility + "' "+stock_level_choose+" AND ds.expiry_date !=''";
+											//console.log(batch_stock_sql)
+											SQLExecuteAbstraction(batch_stock_sql, function(transaction, results) {
+												for(var j = 0; j < results.rows.length; j++) {
+													var second_row = results.rows.item(j);
+													//console.log(second_row)
+													if(second_row['stock_levels'] > 0) {
+														var formatted_batch_balance = numberWithCommas(second_row['stock_levels']);
+														batch_status_row_string = "<tr><td align='center'>" + drug_name + "</td><<td align='center'>" + pack_size + "</td><<td align='center'>" + second_row['batch_number'] + "</td><td align='center'>" + formatted_batch_balance + "</td><td align='center'>" + second_row['expiry_date'] + "</td></tr>";
+														stock_status += second_row['stock_levels'];
+														$("#batch_information").append($(batch_status_row_string));
+														$("#stock_status").empty();
+														var formatted_stock_status = numberWithCommas(stock_status);
+														var stock_status_row_string = "<tr><td >" + formatted_stock_status + "</td></tr>";
+														$("#stock_status").append($(stock_status_row_string));
+
+													}
+												}
+											});
+										} 
+										
+										else {
+											batch_stock_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out ) ) AS stock_levels, ds.batch_number,ds.expiry_date FROM drug_stock_movement ds WHERE ds.drug =  '" + drug + "' AND ds.expiry_date > date() AND ds.batch_number='" + physical_row['batch'] + "' AND facility='" + facility + "' "+stock_level_choose+" AND ds.expiry_date !='' ";
+											//console.log(batch_stock_sql)
+											SQLExecuteAbstraction(batch_stock_sql, function(transaction, results) {
+												for(var j = 0; j < results.rows.length; j++) {
+													var second_row = results.rows.item(j);
+													if(second_row['stock_levels'] > 0) {
+														var formatted_batch_balance = numberWithCommas(second_row['stock_levels']);
+														batch_status_row_string = "<tr><td align='center' >" + drug_name + "</td><<td align='center'>" + pack_size + "</td><<td align='center'>" + second_row['batch_number'] + "</td><td align='center'>" + formatted_batch_balance + "</td><td align='center'>" + second_row['expiry_date'] + "</td></tr>";
+														stock_status += second_row['stock_levels'];
+														$("#batch_information").append($(batch_status_row_string));
+														$("#stock_status").empty();
+														var formatted_stock_status = numberWithCommas(stock_status);
+														var stock_status_row_string = "<tr><td style='border-top:none'>" + formatted_stock_status + "</td></tr>";
+														$("#stock_status").append($(stock_status_row_string));
+													}
+
+												}
+											});
+										}
+
+									}
+
+								});
+							}
+
+						});
+					}
+
+				});
+				function numberWithCommas(x) {
+					return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+				}
+
+				//Get Details about Drug Stock_in
+				getDrugMonthlyConsumption(drug,stock_type, function(transaction, results) {
+					// Handle the results
+					if(results.rows.length == 0) {
+						var three_monthly_consumption = 0;
+
+					} else {
+						for(var i = 0; i < results.rows.length; i++) {
+							var row = results.rows.item(i);
+							//For last three months
+							var three_monthly_consumption = row["TOTAL"];
+
+						}
+					}
+					//Calculating Monthly Consumption hence Max-Min Inventory
+
+					monthly_consumption = (three_monthly_consumption) / 3;
+					var month_avg = monthly_consumption.toFixed(2);
+					var formatted_month_avg = numberWithCommas(month_avg);
+
+					var avg_row_string = "<tr><td style='border-top:none'>" + formatted_month_avg + "</td></tr>";
+					$("#avg_consumption").append($(avg_row_string));
+
+					//Therefore Maximum Consumption
+					var maximum_consumption = monthly_consumption * 3;
+					var formatted_maximum_consumption = numberWithCommas(maximum_consumption);
+					var max_row_string = "<tr><td style='border-top:none'>" + formatted_maximum_consumption + "</td></tr>";
+					$("#maximum_consumption").append($(max_row_string));
+
+					//Therefore Minimum Consumption
+					var minimum_consumption = monthly_consumption * 1.5;
+					var formatted_minimum_consumption = numberWithCommas(minimum_consumption);
+					var min_row_string = "<tr><td style='border-top:none'>" + formatted_minimum_consumption + "</td></tr>";
+					$("#minimum_consumption").append($(min_row_string));
+					//$("#minimum_consumption").attr('style', "background:#00B831;font-weight:bold;color:#000;");
+					//$("#maximum_consumption").attr('style', "background:#00B831;font-weight:bold;color:#000;");
+					//$("#drug_name").attr('style', "background:#00B831;font-weight:bold;color:#000;");
+					//$("#drug_unit").attr('style', "background:#00B831;font-weight:bold;color:#000;");
+					//$("#avg_consumption").attr('style', "background:#00B831;font-weight:bold;color:#000;");
+					//$("#stock_status").attr('style', "background:#FEFBF8;font-weight:bold;color:red;");
+
 				});
 			});
 
 		</script>
+		<style type="text/css">
+			
+			#batch_information td {
+				color: blue;
+			}
+			table.sortable thead {
+				background-color: #eee;
+				color: #666666;
+				font-weight: bold;
+				cursor: default;
+			}
+			.short_title {
+				height: 35px;
+				background: #036;
+				color: #FFF;
+				font-weight: bold;
+				width: 100%;
+			}
+			.banner_text {
+				color: #FFF;
+				font-weight: bold;
+				font-family: Book Antiqua;
+			}
+			#facility_name {
+				color: green;
+				margin-top: 5px;
+				font-weight: bold;
+			}
+			legend{
+				font-size:20px;
+			}
+			#bin_card_details{
+				padding:5px;
+				background-color:#D6DFEC;
+			}
+			.table td {
+				padding: 2px;
+			}
+			.span5 table{
+				background-color:#FFF;
+				
+			}
+			.span7 table{
+				
+			}
+			.title{
+				font-size:20px;
+				font-weight:bold;
+				color:rgb(255, 116, 50);
+			}
+			.table{
+				margin-bottom:0px;
+			}
+			.table-bordered{
+				border-color:#000;
+			}
+			.table-bordered th, .table-bordered th, .table-bordered td{
+				border-color:#000;
+			}
+			.table-bordered th, .table-bordered td{
+				border-color: #000;
+			}
+			#transactions{
+				clear:both;
+				margin:0 auto;
+				margin-top:20px;
+				margin-bottom:15px;
+			}
+			a{
+				color:#FFF;
+			}
+			.btn a:hover{
+				text-decoration:none;
+				color:rgb(29, 238, 45);
+			}
+			.actions_panel{
+				margin:0px;
+			}
+			#inventory_sub_menu{
+				margin-bottom:10px;
+			}
+			legend {
+				font-size: 20px;
+			}
+			.btn-primary.btn_active{
+				background-color: #04c;
+			}
+			#quick_menu{
+				margin-bottom:10px;	
+			}
+		</style>
 	</head>
 	<body>
 		<div id="wrapper">
@@ -51,63 +441,126 @@
 					</p>
 				</div>
 				<div id="system_title">
-					<span style="display: block; font-weight: bold; font-size: 14px; margin:2px;">Ministry of Medical Services/Public Health and Sanitation</span>
+					<span style="display: block; font-weight: bold; font-size: 14px; margin:2px;">Ministry of Health</span>
 					<span style="display: block; font-size: 12px;">ARV Drugs Supply Chain Management Tool</span>
+					<span style="display: block; font-size: 14px;" id="facility_name" ></span>
 				</div>
 				<div id="top_menu">
 					<a href="home_controller" class="top_menu_link  first_link">Home </a>
-					<a href="patient_management.html" class="top_menu_link">Patients</a>
-					<a href="inventory.html" class="top_menu_link top_menu_active">Inventory</a>
-					<a href="reports.html" class="top_menu_link">Reports</a>
-					<a ref="#" class="top_menu_link" id="my_profile_link">Test Name</a>
-				</div>
-			</div>
-			<div id="inner_wrapper">
-				<div id="main_wrapper" >
-					<div style="width:950px; padding:5px; overflow: hidden; margin: 0 auto;">
-						<table class="data-table" style="width:400px; float: left">
-							<caption>
-								Commodity Information
-							</caption>
-							<tr>
-								<td><b>Commodity: </b></td><td id="drug_name"></td>
-							</tr>
-							<tr>
-								<td><b>Unit: </b></td><td id="drug_unit"></td>
-							</tr>
-						</table>
-						<table class="data-table" style="width:500px; float: right">
-							<caption>
-								Batch Information
-							</caption>
-						</table>
-					</div>
-					<table class="data-table" id="transactions" style="width:90%; margin:0 auto;">
-						<caption>
-							Transaction Information
-						</caption>
-						<tr>
-							<th>Ref./Order Number</th>
-							<th>Transaction Date</th>
-							<th>Transaction Type</th>
-							<th>Batch Number</th>
-							<th>Expiry Date</th>
-							<th>Pack Size</th>
-							<th>No. of Packs</th>
-							<th>Quantity</th>
-							<th>Unit Cost</th>
-							<th>Total Price</th>
-						</tr>
-					</table>
-				</div>
-				<!--End Wrapper div-->
-			</div>
-			<div id="bottom_ribbon">
-				<div id="footer">
-					<div id="footer_text">
-						Government of Kenya &copy; 2011. All Rights Reserved
+					<a href="patient_management.html" class="top_menu_link">Patients<span class="alert red_alert">off</span></a>
+					<a href="inventory.html" class="top_menu_link top_menu_active">Inventory<span class="alert red_alert">off</span></a>
+					<a href="reports.html" class="top_menu_link">Reports<span class="alert red_alert">off</span></a>
+					<a href="settings_management" class="top_menu_link">Settings<span class="alert green_alert">on</span></a>
+					<a href="order_management" class="top_menu_link">Order<span class="alert green_alert">on</span></a>
+					<div id="my_profile_link_container" style="display: inline">
+						<a href="#" class="top_menu_link" id="my_profile_link"></a>
 					</div>
 				</div>
 			</div>
+		</div>
+		<div id="inner_wrapper">
+			<div id="quick_menu" class="btn-group">
+				<a href="#" id="receive_issue_medicine" class="btn btn-success dropdown-toggle btn-quickmenu" data-toggle="dropdown" ><img  src="Images/medicine-icon.png">Receive/Issue Medicine <span class="caret"></span></a> 
+				<ul class="dropdown-menu" id="transaction_type">
+					<li><a href="add_stock.html">Main Store Transaction</a></li>
+				    <li><a href="add_stock_pharmacy.html">Pharmacy Transaction</a></li>
+				</ul>
+			</div>
+			<div id="main_wrapper" >
+				<script>
+				$(document).ready(function(){
+					$("#receive_issue_medicine").click(function(){
+						$("#transaction_type").toggle("slow");
+					});
+				})
+				</script>
+				<div class="btn-group" id="inventory_sub_menu">
+					<button  class="btn btn-primary btn-quickmenu"  ><a  href="inventory.html" ><img  src="Images/store-icon.png">Store Inventory</a></button>
+					<button class="btn btn-primary btn-quickmenu"><a href="inventory_pharmacy.html"> <img  src="Images/store-icon.png"> Pharmacy Inventory</a></button>
+				</div>
+				<div class="short_title" >
+					<h3 class="banner_text">Bin Card - <span style="color:rgb(20, 255, 0);" class="s_type"></span></h3>
+				</div>
+				<hr/>
+				<div id="bin_card_details">
+					<div class="container-fluid">
+  						<div class="row-fluid">
+  							<div class="span5" style="width:35%">
+  								<div><span class="title">Drug Information</span></div>
+  								<table class="table">
+  									
+  									<tbody>
+  										<tr><td>Commodity</td><th id="drug_name"></tr>
+  										<tr>
+  											<td>Unit</td><th id="drug_unit">
+  										</tr>
+  										<tr>
+  											<td>Total Stock</td><th id="stock_status" style="color:#00B831;font-weight:bold;">
+  										</tr>
+  										<tr>
+											<td>Max Stock Level</td><th id="maximum_consumption"></td>
+										</tr>
+										<tr>
+											<td>Min Stock Level</td><th id="minimum_consumption"></td>
+										</tr>
+										<tr >
+											<td>Avg Stock Level</td><th id="avg_consumption"></td>
+										</tr>
+  									</tbody>
+  								</table>
+  							</div>
+  							
+  							<div class="span7" style="overflow: scroll; height:240px;width:62%">
+  								<div><span class="title">Batch Information</span></div>
+  								<table class="table table-bordered sortable" id="batch_information">
+  									<thead>
+  										<tr>
+											<th width="380">Drug Name</th><th>Packsize</th><th>Batch No</th><th>Qty</th><th>Expiry Date</th>
+										</tr>
+  									</thead>
+  									<tbody>
+  										
+  									</tbody>
+  								</table>
+  							</div>
+  						</div>
+  					</div>
+					
+					<div id="transactions" style="width:100%;overflow: scroll; height:230px">
+						<div><span class="title">Transactions Information</span></div>
+						<table class="table table-bordered table-hover sortable">
+							<thead>
+								<tr>
+									<th>Ref./Order No</th>
+									<th>Transaction Date</th>
+									<th>Transaction Type</th>
+									<th>Batch No</th>
+									<th>Expiry Date</th>
+									<th>Pack Size</th>
+									<th>No. of Packs</th>
+									<th>Quantity</th>
+									<th>Unit Cost</th>
+									<th>Total Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								
+							</tbody>
+						</table>
+					</div>
+					
+					<hr/>
+					
+				</div>
+			</div>
+			<!--End Wrapper div-->
+		</div>
+		<div id="bottom_ribbon" style="top:20px; width:90%;">
+			<div id="footer">
+				<div id="footer_text">
+					Government of Kenya &copy;<span id="year" ></span>. All Rights Reserved
+				</div>
+			</div>
+		</div>
 	</body>
 </html>

@@ -60,4 +60,9 @@ Partial Class ArrayExample_Stacked
         Return FusionCharts.RenderChart("../FusionCharts/StackedColumn3D.swf", "", xmlData.ToString(), "productSales", "500", "300", False, False)
     End Function
 
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        Literal1.Text = GetProductSalesChartHtml()
+
+    End Sub
 End Class

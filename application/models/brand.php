@@ -12,10 +12,15 @@ class Brand extends Doctrine_Record {
 		'foreign' => 'id'));
 	}
 	
-		public function getAll() {
+	public function getAll() {
 		$query = Doctrine_Query::create() -> select("*") -> from("brand")->orderBy("Drug_Id desc");
 		$brands = $query -> execute();
 		return $brands;
 	}
 
+	public function getBrandName($id){
+		$query = Doctrine_Query::create() -> select("*") -> from("brand")->where("id ='$id'");
+		$brands = $query -> execute();
+		return $brands[0];
+	}
 }

@@ -16,7 +16,7 @@ class Fusioncharts::ArrayExampleController < ApplicationController
   #These values in the array will be used by the builder to build an appropriate xml, 
   #which is then rendered by the corresponding view. 
   def single_series
-     headers["content-type"]="text/html"
+     response.content_type = Mime::HTML
      @arr_data = []
      @arr_data << ['Product A','567500']
      @arr_data << ['Product B','815300']
@@ -34,7 +34,7 @@ class Fusioncharts::ArrayExampleController < ApplicationController
   #These values in the array will be used by the builder to build an appropriate xml, 
   #which is then rendered by the corresponding view. 
   def multi_series
-      headers["content-type"]="text/html"
+      response.content_type = Mime::HTML
       @arr_data = []
       @arr_data << ['Product A','567500','547300']
       @arr_data << ['Product B','815300','584500']
@@ -50,7 +50,7 @@ class Fusioncharts::ArrayExampleController < ApplicationController
    #These values in the array will be used by the builder to build an appropriate xml, 
    #which is then rendered by the corresponding view.    
    def combination
-      headers["content-type"]="text/html";
+      response.content_type = Mime::HTML
       @arr_data = []
       @arr_data << ['Quarter 1','576000','576']
       @arr_data << ['Quarter 2','448000','448']
@@ -63,7 +63,7 @@ class Fusioncharts::ArrayExampleController < ApplicationController
 	 #and the next one for sales information
 	 #of Product A and the last one for sales information of Product B. 
    def stacked
-      headers["content-type"]="text/html";
+      response.content_type = Mime::HTML
       @arr_data = []
       @arr_data << ['Quarter 1','567500','547300']
       @arr_data << ['Quarter 2','815300','594500']

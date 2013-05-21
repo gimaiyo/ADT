@@ -13,7 +13,7 @@
     $link = connectToDB();
 
     //Default.php has passed us a property animate. We request that.
-    $animateChart = $_GET['animate'];
+    $animateChart = @$_GET['animate'];
 
     //Set default value of 1
     if ($animateChart=="")

@@ -1,4 +1,4 @@
-<graph caption='Monthly Unit Sales' xAxisName='Month' yAxisName='Units' showValues='0' decimals='0' formatNumberScale='0' labelDisplay='Rotate'>
+<chart caption='Monthly Unit Sales' xAxisName='Month' yAxisName='Units' showValues='0' decimals='0' formatNumberScale='0' labelDisplay='Rotate'>
 <set label='Jan' value='462' />
 <set label='Feb' value='857' />
 <set label='Mar' value='671' />
@@ -11,4 +11,4 @@
 <set label='Oct' value='494' />
 <set label='Nov' value='761' />
 <set label='Dec' value='960' />
-</graph>
+</chart>

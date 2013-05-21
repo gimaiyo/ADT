@@ -28,9 +28,6 @@
 	responds with an XML document, which we accept and update chart at client side.
 --->
 	<SCRIPT LANGUAGE="Javascript" SRC="../../FusionCharts/FusionCharts.js">
-		//You need to include the above JS file, if you intend to embed the chart using JavaScript.
-		//Embedding using JavaScripts avoids the "Click to Activate..." issue in Internet Explorer
-		//When you make your own charts, make sure that the path to this JS file is correct. Else, you would get JavaScript errors.
 	</SCRIPT>
 	
 	<SCRIPT LANGUAGE="JavaScript">
@@ -60,7 +57,7 @@
 			//Get reference to chart object using Dom ID "FactoryDetailed"
 			var chartObj = getChartFromId("FactoryDetailed");			
 			//Send request for XML
-			chartObj.setDataURL(strURL);
+			chartObj.setXMLUrl(strURL);
 		}
 		/**
 		 * getTimeForURL method returns the current time 

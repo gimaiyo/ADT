@@ -1,28 +1,40 @@
-<%@ Page Language="VB" AutoEventWireup="false" CodeFile="Default.aspx.vb" Inherits="DB_JS_dataURL_Default" %>
+<%@ Page Language="VB" AutoEventWireup="true" CodeFile="Default.aspx.vb" Inherits="DB_JS_dataURL_Default" %>
 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>FusionCharts - Database + JavaScript Example </title>
+    <link href="../assets/ui/css/style.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="../assets/ui/js/jquery.min.js"></script>
+
+    <script type="text/javascript" src="../assets/ui/js/lib.js"></script>
+
     <style type="text/css">
-        <!--
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 12px;
+        h2.headline
+        {
+            font: normal 110%/137.5% "Trebuchet MS" , Arial, Helvetica, sans-serif;
+            padding: 0;
+            margin: 25px 0 25px 0;
+            color: #7d7c8b;
+            text-align: center;
         }
-            .text{
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 12px;
+        p.small
+        {
+            font: normal 68.75%/150% Verdana, Geneva, sans-serif;
+            color: #919191;
+            padding: 0;
+            margin: 0 auto;
+            width: 664px;
+            text-align: center;
         }
-    -->
     </style>
 
-    <script language="Javascript" src="../FusionCharts/FusionCharts.js">
-		//You need to include the above JS file, if you intend to embed the chart using JavaScript.
-		//Embedding using JavaScripts avoids the "Click to Activate..." issue in Internet Explorer
-		//When you make your own charts, make sure that the path to this JS file is correct. Else, you would get JavaScript errors.
+    <script type="text/javascript" src="../FusionCharts/FusionCharts.js">
     </script>
 
-    <script language="JavaScript">
+    <script type="text/javascript">
 		
 		/** 
 		 * updateChart method is invoked when the user clicks on a pie slice.
@@ -43,20 +55,15 @@
 			//This basically adds a ever-changing parameter which bluffs
 			//the browser and forces it to re-load the XML data every time.
 						
+			//Get reference to chart object using DOMId "FactoryDetailed" and request for XML
+			//FusionCharts("FactoryDetailed").setDataURL(strURL);
 			//URLEncode it - NECESSARY.
-			strURL = escape(strURL);
-			
-			var chartObj = new FusionCharts('../FusionCharts/Column2D.swf', 'FactoryDetailed', '600', '250', '0', '0');
-			
-			
-			//Get reference to chart object using Dom ID "FactoryDetailed"
-			var chartObj = getChartFromId("FactoryDetailed");
-			
-			//Send request for XML
-			
-			chartObj.setDataURL(strURL);
-			
-			
+            strURL = escape(strURL);
+
+         //Get reference to chart object using Dom ID "FactoryDetailed"
+         var chartObj = getChartFromId("FactoryDetailed");
+         //Send request for XML
+         chartObj.setXMLUrl(strURL);
 		}
 		/**
 		 * getTimeForURL method returns the current time 
@@ -75,21 +82,44 @@
 <body>
     <center>
         <form id='form1' name='form1' method='post' runat="server">
-            <h2>
-                FusionCharts Database + JavaScript (dataURL method) Example</h2>
-            <h4>
-                Inter-connected charts - Click on any pie slice to see detailed chart below.</h4>
-            <p>
-                The charts in this page have been dynamically generated using data contained in
-                a database.</p>
-            <%=GetFactorySummaryChartHtml()%>
-            <br>
-            <%=GetFactoryDetailedChartHtml()%>
-            <br>
-            <br>
-            <h5>
-            <a href='../default.aspx'>« Back to list of examples</a></h5>
-            <a href='../NoChart.html' target="_blank">Unable to see the chart above?</a>
+        <div id="wrapper">
+            <div id="header">
+                <div class="logo">
+                    <a class="imagelink"  href="http://www.fusioncharts.com/" target="_blank">
+                        <img src="../assets/ui/images/fusionchartsv3.2-logo.png" width="131" height="75"
+                            alt="FusionCharts XT logo" /></a></div>
+                <h1 class="brand-name">FusionCharts XT</h1>
+                <h1 class="logo-text">
+                    FusionCharts Database + JavaScript (dataURL method) Example</h1>
+            </div>
+            <div class="content-area">
+                <div id="content-area-inner-main">
+                    <h2 class="headline">
+                        Inter-connected charts - Click on any pie slice to see detailed chart below</h2>
+                    <div class="gen-chart-render">
+                        <asp:Literal ID="Literal1" runat="server"></asp:Literal>
+                        <br>
+                        <asp:Literal ID="Literal2" runat="server"></asp:Literal>
+                    </div>
+                    <div class="clear">
+                    </div>
+                    <p>&nbsp;
+                        </p>
+                    <p class="small">
+                        The charts in this page have been dynamically generated using data contained in
+                        a database.</p>
+                    <div class="underline-dull">
+                    </div>
+                </div>
+            </div>
+            <div id="footer">
+                <ul>
+                    <li><a href="../Default.aspx"><span>&laquo; Back to list of examples</span></a></li>
+                    <li cl ass="pipe">|</li>
+                    <li><a href="../NoChart.html"><span>Unable to see the chart above?</span></a></li>
+                </ul>
+            </div>
+        </div>
         </form>
     </center>
 </body>

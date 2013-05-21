@@ -98,4 +98,9 @@ Partial Class DB_JS_Default
     End Function
 
 
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        Literal1.Text = GetFactorySummayChartHtml()
+        Literal2.Text = GetFactoryDetailedChartHtml()
+    End Sub
 End Class

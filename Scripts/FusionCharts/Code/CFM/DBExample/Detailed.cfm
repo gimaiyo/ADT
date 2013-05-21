@@ -3,11 +3,7 @@
 	<TITLE>
 	FusionCharts - Database and Drill-Down Example
 	</TITLE>
-	<!---
-	You need to include the following JS file, if you intend to embed the chart using JavaScript.
-	Embedding using JavaScripts avoids the "Click to Activate..." issue in Internet Explorer
-	When you make your own charts, make sure that the path to this JS file is correct. Else, you would get JavaScript errors.
-	--->	
+		
 	<SCRIPT LANGUAGE="Javascript" SRC="../../FusionCharts/FusionCharts.js"></SCRIPT>
 	<style type="text/css">
 	<!--

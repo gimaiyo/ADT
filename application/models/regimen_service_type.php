@@ -15,6 +15,11 @@ class Regimen_Service_Type extends Doctrine_Record {
 		$regimens = $query -> execute();
 		return $regimens;
 	}
+	public function getHydratedAll() {
+		$query = Doctrine_Query::create() -> select("*") -> from("Regimen_Service_Type") -> where("Active", "1");
+		$regimens = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $regimens;
+	}
 
 	public function getTotalNumber() {
 		$query = Doctrine_Query::create() -> select("count(*) as Total_Types") -> from("Regimen_Service_Type");

@@ -5,7 +5,9 @@ Imports System.Text
 Partial Class DBExample_Default
     Inherits System.Web.UI.Page
 
-    Public Function GetFactorySummaryChartHtml() As String
+
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
         'In this example, we show how to connect FusionCharts to a database.
         'For the sake of ease, we've used an Access database which is present in
         '../App_Data/FactoryDB.mdb. It just contains two tables, which are linked to each
@@ -44,6 +46,8 @@ Partial Class DBExample_Default
         xmlData.Append("</chart>")
 
         'Create the chart - Pie 3D Chart with data from xmlData
-        Return FusionCharts.RenderChart("../FusionCharts/Pie3D.swf", "", xmlData.ToString(), "FactorySum", "600", "300", False, False)
-    End Function
+        Literal1.Text = FusionCharts.RenderChart("../FusionCharts/Pie3D.swf", "", xmlData.ToString(), "FactorySum", "600", "300", False, True)
+
+
+    End Sub
 End Class

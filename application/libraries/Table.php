@@ -331,7 +331,7 @@ class CI_Table {
 				// We use modulus to alternate the row colors
 				$name = (fmod($i++, 2)) ? '' : 'alt_';
 				//Hijack the code here and add an id variable to each table row
-				$row_id = $row['id']['data'];
+				@$row_id = $row['id']['data'];
 				$pimped_row = $this->_add_row_id($name,$row_id);  
 				$out .= $pimped_row;	
 				

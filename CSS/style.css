@@ -3,20 +3,33 @@ body {
 	color: #3F3F38;
 	margin: 0;
 	padding: 0;
-	font: 13px     / 1.231 arial, helvetica, clean, sans-serif;
+	font: 13px     /1.231 arial, helvetica, clean, sans-serif;
 	line-height: 1;
 	font-size: 80%;
 	vertical-align: baseline;
 }
+.msginfo { border: 1px solid #99c4ea; background: #d1e4f3 url(../Images/notifications.png) no-repeat 0 -156px; }
+.notification a.close { 
+position: absolute; width: 14px; height: 14px; top: 5px; right: 5px; background-image: url(../Images/close.png); background-repeat: no-repeat; }
+.notification a.close:hover { cursor: pointer; }
+.msginfo a.close { background-position: -42px 0; }
+.notification { 
+	height: 51px; overflow: hidden; position: relative; margin-bottom: 20px; -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px; 
+	-moz-box-shadow: 1px 1px 2px #ddd;
+}
+.notification p { margin: 14px 10px 0 75px;color: #333; }
 #bottom_ribbon {
 	height: 50px;
-	width: 90%;
+	width: auto;
 	position: relative;
 	bottom: 0;
 	margin: 0 auto;
 	margin-top: 150px;
 	border-top: 2px solid #036;
 	min-width: 980px;
+}
+.pagination.flip a{
+	text-decoration:none;
 }
 #footer_text {
 	font-weight: 300;
@@ -47,7 +60,7 @@ body {
 	text-align: center;
 }
 #inner_wrapper {
-	width: 97%;
+	width: auto;
 	margin: 0 auto;
 	padding: 5px;
 	overflow: visible;
@@ -63,12 +76,12 @@ body {
 .sub_menu_link {
 	height: 30px !important;
 	line-height: 30px !important;
-	font-size: 12px !important;
-	letter-spacing: 1px !important;
+	font-size: 10px !important;
+	letter-spacing: 0.5px !important;
 }
 #main_content {
-	border: 2px solid #F5F5F5;
-	overflow: hidden;
+	/*border: 2px solid #F5F5F5;
+	/*overflow: hidden;*/
 }
 #top-panel {
 	overflow: hidden;
@@ -87,7 +100,8 @@ body {
 	background: url("../Images/coat_of_arms-resized.png") no-repeat;
 }
 #main_wrapper {
-	overflow: hidden;
+	/*overflow: hidden;*/
+	border:none;
 }
 #top_menu {
 	min-width: 200px;
@@ -109,11 +123,11 @@ body {
 .top_menu_link {
 	float: left;
 	width: 115px;
-	height: 50px;
-	line-height: 50px;
+	height: 40px;
+	line-height: 40px;
 	color: white;
 	text-decoration: none;
-	font-size: 14px;
+	font-size: 12px;
 	font-family: helvetica, arial;
 	font-weight: bold;
 	display: block;
@@ -145,10 +159,12 @@ body {
 .top_menu_active {
 	color: #036;
 	background: #FFFFFF;
+	
 }
 .top_menu_link:hover {
 	background: white;
 	color: black;
+	text-decoration:none;
 }
 .short_title {
 	width: 90%;
@@ -160,10 +176,10 @@ body {
 	margin: 0 0 10px 10px;
 	font-size: 28px;
 	color: #3F3F38;
-	width: 200px;
+	width: 500px;
 	height: 30px;
 	display: block;
-	overflow: hidden;
+	/*overflow: hidden;*/
 	text-shadow: none;
 	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
 }
@@ -226,7 +242,7 @@ input[type =
 	background-image: linear-gradient(top,#46EB59,#36D148);
 }
 .action_button {
-	 
+
 	width: 150px;
 	height: 15px;
 	line-height: 15px;
@@ -374,6 +390,10 @@ table.data-table tr.alternate_row td {
 	user-select: none;
 	color: #036;
 }
+body {
+	zoom: 85%;
+	font-size: 90%;
+}
 .remember-label {
 	font-weight: normal;
 	color: #666;
@@ -385,7 +405,7 @@ table.data-table tr.alternate_row td {
 }
 #system_title {
 	position: absolute;
-	top: 50px;
+	top: 30px;
 	left: 110px;
 	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
 	letter-spacing: 1px;
@@ -414,4 +434,110 @@ legend {
 fieldset {
 	margin-top: 20px;
 	border: 1px solid #DDD;!important;
+}
+/*NOTIFICATION MESSAGES*/
+.message {
+	display: block;
+	padding: 10px 20px;
+	margin-bottom: 15px;
+}
+.message p {
+	width: auto;
+	margin-bottom: 0;
+	margin-left: 60px;
+}
+.message h2 {
+	margin-left: 60px;
+	margin-bottom: 5px;
+}
+.warning {
+	border: 1px solid #f1aa2d;
+}
+.message p {
+	color: #555;
+}
+.message h2 {
+	color: #333;
+}
+.error {
+	border: 1px solid #c44509;
+}
+.success {
+	border: 1px solid #739f1d;
+}
+.information {
+	border: 1px solid #688fdc;
+}
+.message:hover {
+	cursor: pointer;
+}
+.alert {
+
+	width: 19px;
+	height: 19px;
+	font-size: 10px;
+	font-weight: 600;
+	color: #FFF;
+	text-align: center;
+	line-height: 19px;
+	display: block;
+	border-radius: 100px;
+	position: absolute;
+	top: 6px;
+	right: 1px;
+	z-index: 100;
+}
+.red_alert {
+	background: red;
+}
+.green_alert {
+	background: green;
+}
+#start_date, #end_date,#date_of_appointment,#display_year{
+	color: rgb(45, 173, 13);
+	font-size:14px;
+	border:none;
+	font-weight: 800;
+	width:100px;
+	padding-bottom:0px;
+	height:25px;
+	text-align: center;
+}
+#start_date:hover, #end_date:hover,#date_of_appointment:hover,#display_year:hover{
+ cursor:pointer;	
+}
+hr{
+	margin:0 auto;
+}
+.navbar{
+	width:900px;
+	position:static;
+	top:5px;
+	margin:0 auto;
+}
+
+@media print {
+	#inf_patient_listing,#inf_drug_listing,#inf_drug_summary{
+		display: none;
+	}
+	.fltrow,.navbar{
+		display:none;
+	}
+   
+}
+#patient_listing,#drug_listing,#drug_summary {
+	margin: 0 auto;
+	font-size: 13px;
+	letter-spacing: 0.8px;
+	border:1px solid #000;
+}
+#patient_listing td, #patient_listing th{
+	padding: 0.25em;
+	border:1px solid #000;
+}
+tr th{
+	cursor:pointer;
+}
+.brand{
+	cursor:pointer;
 }

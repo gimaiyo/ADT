@@ -4,4 +4,9 @@
 class Fusioncharts::FactoryMaster < ActiveRecord::Base
   has_many :factory_output_quantities,
                 :order => 'date_pro asc'
+  #Calculates the total output quantity by summing the quantity from factory_output_quantities             
+  def total_quantity
+    self.factory_output_quantities.sum(:quantity)
+  end
+
 end

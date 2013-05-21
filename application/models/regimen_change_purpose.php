@@ -27,6 +27,23 @@ class Regimen_Change_Purpose extends Doctrine_Record {
 		$purpose = $query -> execute();
 		return $purpose;
 	}
+	
+	public function getThemAll($access_level="") {
+		if($access_level="" || $access_level=="system_administrator"){
+			$query = Doctrine_Query::create() -> select("*") -> from("Regimen_Change_Purpose");
+		}
+		else{
+			$query = Doctrine_Query::create() -> select("*") -> from("Regimen_Change_Purpose") -> where("Active", "1");
+		}
+		$purposes = $query -> execute();
+		return $purposes;
+	}
+	
+	public static function getSource($id) {
+		$query = Doctrine_Query::create() -> select("*") -> from("Regimen_Change_Purpose") -> where("id = '$id'");
+		$ois = $query -> execute();
+		return $ois[0];
+	}
 
 }
 ?>

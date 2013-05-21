@@ -63,7 +63,13 @@ Partial Class ArrayExample_MultiSeries
         xmlData.Append("</chart>")
 
         'Create the chart - MS Column 3D Chart with data contained in xmlData
-        Return FusionCharts.RenderChart("../FusionCharts/MSColumn3D.swf", "", xmlData.ToString(), "productSales", "600", "300", False, False)
+        Return FusionCharts.RenderChart("../FusionCharts/MSColumn3D.swf", "", xmlData.ToString(), "productSales", "600", "300", False, True)
 
     End Function
+
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        Literal1.Text = GetProductSalesChartHtml()
+
+    End Sub
 End Class

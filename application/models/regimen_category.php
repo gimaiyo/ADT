@@ -8,6 +8,7 @@ class Regimen_Category extends Doctrine_Record {
 
 	public function setUp() {
 		$this -> setTableName('regimen_category');
+		$this -> hasMany('Regimen as Regimens', array('local' => 'id', 'foreign' => 'Category'));
 	}
 
 	public function getAll() {

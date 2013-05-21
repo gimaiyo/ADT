@@ -29,7 +29,7 @@
     
   	// Fetch all factory records usins SQL Query
 	//Store chart data values in 'total' column/field and category names in 'FactoryName'
-	$strQuery = "select a.FactoryID, b.FactoryName, sum(a.Quantity) as total from Factory_output a, Factory_Master b where a.FactoryId=b.FactoryId group by a.FactoryId,b.FactoryName";
+	$strQuery = "select a.FactoryID, b.FactoryName, sum(a.Quantity) as total from Factory_Output a, Factory_Master b where a.FactoryId=b.FactoryId group by a.FactoryId,b.FactoryName";
 	$result = mysql_query($strQuery) or die(mysql_error());
     
 	//Pass the SQL Query result to the FusionCharts PHP Class function 

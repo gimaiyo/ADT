@@ -4,6 +4,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>Patient Records</title>
 		<link href="CSS/style.css" type="text/css" rel="stylesheet"/>
+		<link rel="SHORTCUT ICON" href="Images/favicon.ico">
 		<link href="CSS/offline_css.css" type="text/css" rel="stylesheet"/>
 		<link href="CSS/jquery-ui.css" type="text/css" rel="stylesheet"/>
 		<link href="CSS/validator.css" type="text/css" rel="stylesheet"/>
@@ -13,20 +14,42 @@
 		<script type="text/javascript" src="Scripts/offline_database.js"></script>
 		<script type="text/javascript" src="Scripts/validator.js"></script>
 		<script type="text/javascript" src="Scripts/validationEngine-en.js"></script>
+
+		
+		
 		<script type="text/javascript">
 			total_patients = 0;
 			$(document).ready(function() {
+				var $_GET = getQueryParams(document.location.hash);
+				message = $_GET['message'];
+				if(message != null) {
+					$("#message").text(message);
+					$("#message").css("display", "block");
+					var fade_out = function() {
+						$("#message").fadeOut().empty();
+					}
+					setTimeout(fade_out, 3000);
+				}
 				initDatabase();
+				//Get the environmental variables to display the hospital name
+				selectEnvironmentVariables(function(transaction, results) {
+					// Handle the results
+					var row = results.rows.item(0);
+					$("#facility_name").text(row['facility_name']);
+
+				});
+				
+				var d = new Date();
+				var n = d.getFullYear();
+				$("#year").text(n);
+				
 				getTotalPatients();
 				getPatients(0);
-				$(".details").click(function() {
-					alert();
-				});
-				$("#details_popup").dialog({
-					autoOpen : false
-				});
-				$("#history_popup").dialog({
-					autoOpen : false
+				$('#search_term').bind('keypress', function(e) {
+					var code = (e.keyCode ? e.keyCode : e.which);
+					if(code == 13) {//Enter keycode
+						$("#search").click();
+					}
 				});
 				$(".next").click(function() {
 					var offset = $("#next_offset_holder").attr("value");
@@ -35,6 +58,12 @@
 				$(".previous").click(function() {
 					var offset = $("#previous_offset_holder").attr("value");
 					getPatients(offset);
+				});
+				$("#search_term").keyup(function(e) {
+					var search_term = $("#search_term").attr("value");
+					var search_by = $("#search_by").attr("value");
+					getTotalSearchedPatients(search_term);
+					getPatients(0);
 				});
 				$("#search").click(function() {
 					var search_term = $("#search_term").attr("value");
@@ -46,20 +75,23 @@
 				//Add click listeners to the action links
 				$(".details").click(function() {
 					var patient_medical_record_number = $(this).closest("tr").attr("patient_number");
-					$("#details_popup").dialog('open');
+					var url = "patient_details.html#?patient_number=" + patient_medical_record_number;
+					window.location.href = url;
 				});
 				$(".edit").click(function() {
-					alert();
+					var patient_medical_record_number = $(this).closest("tr").attr("patient_number");
+					var url = "edit_patient.html#?patient_number=" + patient_medical_record_number;
+					window.location.href = url;
 				});
 				$(".dispense").click(function() {
 					var patient_medical_record_number = $(this).closest("tr").attr("patient_number");
-					var url = "dispense.html?patient_number=" + patient_medical_record_number;
+					var url = "dispense.html#?patient_number=" + patient_medical_record_number;
 					window.location.href = url;
 				});
 
 				$(".history").click(function() {
 					var patient_medical_record_number = $(this).closest("tr").attr("patient_number");
-					var url = "history.html?patient_number=" + patient_medical_record_number;
+					var url = "history.html#?patient_number=" + patient_medical_record_number;
 					window.location.href = url;
 				});
 				//First add the hover listener to the passed element (table row)
@@ -75,9 +107,14 @@
 			}
 
 			function getTotalPatients() {
-				countTableRecords("patient", function(transaction, results) {
+				selectEnvironmentVariables(function(transaction, results) {
+					// Handle the results
 					var row = results.rows.item(0);
-					total_patients = row['total'];
+					var facility = row['facility'];
+					countPatientTableRecords(facility, function(transaction, results) {
+						var row = results.rows.item(0);
+						total_patients = row['total'];
+					});
 				});
 			}
 
@@ -93,8 +130,10 @@
 				$("#patients_table").css("display", "none");
 				//Get the search term entered
 				var search_term = $("#search_term").attr("value");
+				var search_by=$("#search_by").attr("value");
+
 				//Set the nimber of patients to show on one page
-				var limit = 15;
+				var limit = 10;
 
 				var next_offset = parseInt(offset, 10) + parseInt(limit, 10);
 
@@ -106,31 +145,39 @@
 				}
 
 				var type = "";
-				selectPagedPatients(search_term, offset, limit, function(transaction, results) {
-					if(next_offset > total_patients) {
-						next_offset = total_patients;
-					}
-					$("#next_offset_holder").attr("value", next_offset);
-					$("#previous_offset_holder").attr("value", previous_offset);
-					$.each($(".records_counter"), function(key, value) {
-						var record_text = "<b>Records " + offset + " - " + next_offset + " of " + total_patients + "</b>";
-						$(this).html(record_text);
-					});
-					$("#patients_table").find("tr:gt(0)").remove();
+				selectEnvironmentVariables(function(transaction, results) {
 					// Handle the results
-					for(var i = 0; i < results.rows.length; i++) {
-						var row = results.rows.item(i);
-						if(i % 2 == 0) {
-							type = "normal_row";
-						} else {
-							type = "alternate_row";
+					var row = results.rows.item(0);
+					var facility = row['facility'];
+					selectPagedPatients(facility, search_term,search_by, offset, limit, function(transaction, results) {
+						if(next_offset > total_patients) {
+							next_offset = total_patients;
 						}
-						addTableRow(row, type);
-					}
-					//Call Function that rebinds all listeners to their respective elements
-					rebindListeners();
-					$("#patient_listing_progress").css("display", "none");
-					$("#patients_table").css("display", "table");
+						$("#next_offset_holder").attr("value", next_offset);
+						$("#previous_offset_holder").attr("value", previous_offset);
+						$.each($(".records_counter"), function(key, value) {
+							var record_text = "<b style='margin:0 auto;'>Records " + offset + " - " + next_offset + " of " + total_patients + "</b> ";
+							if(search_term.length > 0) {
+								record_text += "<p><span style='color:red;'>(Search Term '" + search_term + "')</span>";
+							}
+							$(this).html(record_text);
+						});
+						$("#patients_table").find("tr:gt(0)").remove();
+						// Handle the results
+						for(var i = 0; i < results.rows.length; i++) {
+							var row = results.rows.item(i);
+							if(i % 2 == 0) {
+								type = "normal_row";
+							} else {
+								type = "alternate_row";
+							}
+							addTableRow(row, type);
+						}
+						//Call Function that rebinds all listeners to their respective elements
+						rebindListeners();
+						$("#patient_listing_progress").css("display", "none");
+						$("#patients_table").css("display", "table");
+					});
 				});
 			}
 
@@ -179,8 +226,9 @@
 			.pagination {
 				margin: 0 auto;
 				overflow: hidden;
-				width: 70%;
+				width: 80%;
 			}
+			
 			.pagination a {
 				display: block;
 				float: left;
@@ -202,7 +250,7 @@
 				text-shadow: 0 -1px rgba(0, 0, 0, .2);
 			}
 			.pagination.flip a {
-				width: 338px;
+				width: 230px;
 				float: right;
 			}
 			.pagination.flip a:hover, #pagination.infinite a:hover {
@@ -225,18 +273,34 @@
 				-webkit-box-shadow: 0 0 0 1px rgba(255, 255, 255, .4) inset, 0 1px #fff;
 			}
 			.records_counter {
-				width: 200px;
+				width: 300px;
 				margin: 0 auto;
 			}
 			.search_box {
-				float: right;
-				width: 100%;
-				position: relative; 
-				z-index:-100 !important;
+				position: relative;
+				width:70%;
+				clear:both;
+				margin:10px 20% 10px 15%;
 			}
-			.search_box label {
+			.f_right {
 				float: right;
+				display: inline;
+				height:60px;
+				margin-bottom: 10px;
 			}
+
+			.search_box input, .search_box select{
+				height: 40px;
+			}
+			
+			.submit-button{
+				height: 26px;
+				width: 90px;
+				float: none;
+				margin-left: 5px;
+
+			}
+
 			#patient_listing_progress {
 				width: 100px;
 				height: 55px;
@@ -244,6 +308,29 @@
 				background: url("Images/spinner.gif") no-repeat;
 				display: none;
 			}
+			th{
+				height:30px;
+			}
+			#search_term{
+				height:35px; 
+			}
+			#search_by{
+				height:35px; 
+			}
+			.search{
+				height:35px;
+			}
+			
+			#add_patient{
+				width:200px;
+				float:left;
+			}
+			#facility_name {
+				color: green;
+				margin-top: 5px;
+				font-weight: bold;
+			}
+
 		</style>
 	</head>
 	<body>
@@ -257,34 +344,58 @@
 					</p>
 				</div>
 				<div id="system_title">
-					<span style="display: block; font-weight: bold; font-size: 14px; margin:2px;">Ministry of Medical Services/Public Health and Sanitation</span>
+					<span style="display: block; font-weight: bold; font-size: 14px; margin:2px;">Ministry of Health</span>
 					<span style="display: block; font-size: 12px;">ARV Drugs Supply Chain Management Tool</span>
+					<span style="display: block; font-size: 14px;" id="facility_name" ></span>
 				</div>
 				<div id="top_menu">
 					<a href="home_controller" class="top_menu_link  first_link">Home </a>
-					<a href="patient_management.html" class="top_menu_link top_menu_active">Patients</a>
-					<a href="inventory.html" class="top_menu_link">Inventory</a>
-					<a href="reports.html" class="top_menu_link">Reports</a>
-					<a ref="#" class="top_menu_link" id="my_profile_link">Test Name</a>
+					<a href="patient_management.html" class="top_menu_link top_menu_active">Patients<span class="alert red_alert">off</span></a>
+					<a href="inventory.html" class="top_menu_link">Inventory<span class="alert red_alert">off</span></a>
+					<a href="reports.html" class="top_menu_link">Reports<span class="alert red_alert">off</span></a>
+					<a href="settings_management" class="top_menu_link">Settings<span class="alert green_alert">on</span></a>
+					<a href="order_management" class="top_menu_link">Order<span class="alert green_alert">on</span></a>
+					<div id="my_profile_link_container" style="display: inline">
+						<a ref="#" class="top_menu_link" id="my_profile_link"></a>
+					</div>
 				</div>
 			</div>
 			<div id="inner_wrapper">
-				<div id="main_wrapper">
+				<div id="main_wrapper" style="border:0px;">
 					<input type="hidden" id="next_offset_holder" />
 					<input type="hidden" id="previous_offset_holder" />
-					<a class="action_button" href="add_patient.html" style="margin-top:10px;">Add New Patient</a>
-					<div class="search_box">
-						<input type="submit" class="submit-button" id="search" value="Search" style="width:200px;"/>
-						<label> <strong class="label">Search Term</strong>
-							<input type="text"name="search_term" id="search_term" style="width:300px;">
-						</label>
+					<div id="add_patient">
+					<a class="action_button" href="add_patient.html" style="height:20px;margin:0 auto;padding-top:5px;"><img src="Images/addpatient.png" width="20" height="15" align="left"/>Add New Patient</a>
+					<div id="message" style="margin-left:250px;margin-top:-30px; display:none"></div>
 					</div>
+					<div class="f_right">
+
+							<strong>Search by</strong>
+							<select id="search_by">
+								<option value="0">All</option>
+								<option value="patient_number_ccc">Patient CCC Number</option>
+								<option value="first_name">First Name</option>
+								<option value="last_name">Last Name</option>
+								<option value="other_name">Other Name</option>
+								<option value="dob">DOB</option>
+								<option value="phone">Phone</option>
+							</select>
+						
+
+							<input type="text" name="search_term" id="search_term" style="width:250px;" placeholder="Search Patient">
+							<input type="submit" class="submit-button search" id="search" value="Search">
+						
+					</div>
+					<div class="search_box">
+
+					
+						
 					<div class="pagination flip">
 						<a href="#" class="previous">« Previous Page</a><a class="next" href="#">Next Page »</a>
 						<div class="records_counter"></div>
 					</div>
 					<div id="patient_listing_progress"></div>
-					<table class="data-table" id="patients_table">
+					<table class="data-table" id="patients_table" style="width:80%;">
 						<tr>
 							<th>Patient CCC Number </th>
 							<th> First Name</th>
@@ -301,10 +412,7 @@
 				</div>
 				<div id="action_panel_parent" style="display:none">
 					<div class="actions_panel" style="visibility:hidden" >
-						<a class="link dispense">Dispense</a>
-						<a class="link history">History</a>
 						<a class="link details">Details</a>
-						<a class="link edit">Edit</a>
 					</div>
 				</div>
 				<div id="details_popup" title="Patient Details"></div>
@@ -312,10 +420,10 @@
 			</div>
 			<!--End Wrapper div-->
 		</div>
-		<div id="bottom_ribbon">
+		<div id="bottom_ribbon" style="margin-top:100px;width:90%;">
 			<div id="footer">
 				<div id="footer_text">
-					Government of Kenya &copy; 2011. All Rights Reserved
+					Government of Kenya &copy; <span id="year" ></span>. All Rights Reserved
 				</div>
 			</div>
 		</div>

@@ -39,4 +39,11 @@ Partial Class DB_JS_dataURL_Default
         'We initialize the chart with <chart></chart>
         Return FusionCharts.RenderChart("../FusionCharts/Column2D.swf?ChartNoDataText=Please select a factory from pie chart above to view detailed data.", "", "<chart></chart>", "FactoryDetailed", "600", "250", False, True)
     End Function
+
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        Literal1.Text = GetFactorySummaryChartHtml()
+        Literal2.Text = GetFactoryDetailedChartHtml()
+
+    End Sub
 End Class

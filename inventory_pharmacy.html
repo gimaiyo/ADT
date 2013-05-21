@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en" >
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>My Inventory</title>
+		<link rel="SHORTCUT ICON" href="Images/favicon.ico">
+		<link href="CSS/style.css" type="text/css" rel="stylesheet"/>
+		<link href="CSS/offline_css.css" type="text/css" rel="stylesheet"/>
+		<link href="CSS/jquery-ui.css" type="text/css" rel="stylesheet"/>
+		<link href="CSS/validator.css" type="text/css" rel="stylesheet"/>
+		<!-- Bootstrap -->
+		<link href="Scripts/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="Scripts/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+		
+		<script type="text/javascript" src="Scripts/offlineData.js"></script>
+		<script type="text/javascript" src="Scripts/jquery.js"></script>
+		<script type="text/javascript" src="Scripts/jquery-ui.js"></script>
+		<script type="text/javascript" src="Scripts/offline_database.js"></script>
+		<script type="text/javascript" src="Scripts/validator.js"></script>
+		<script type="text/javascript" src="Scripts/validationEngine-en.js"></script>
+		<script type="text/javascript" src="Scripts/sorttable.js"></script>
+		<script src="Scripts/bootstrap/js/bootstrap.min.js"></script>
+		
+		<script type="text/javascript">
+			total_drugs = 0;
+			var stock_type=2;
+			$(document).ready(function() {
+				var $_GET = getQueryParams(document.location.hash);
+				message = $_GET['message'];
+				if(message != null) {
+					$("#message").text(message);
+					$("#message").css("display", "block");
+				}
+				initDatabase();
+				//Get the environmental variables to display the hospital name
+				selectEnvironmentVariables(function(transaction, results) {
+					// Handle the results
+					var row = results.rows.item(0);
+					$("#facility_name").text(row['facility_name']);
+
+				});
+				
+				var d = new Date();
+				var n = d.getFullYear();
+				$("#year").text(n);
+				getTotalDrugs();
+				getDrugs(0);
+				$('#search_term').bind('keypress', function(e) {
+					var code = (e.keyCode ? e.keyCode : e.which);
+					if(code == 13) {//Enter keycode
+						//$("#search").click();
+					}
+				});
+				$(".details").click(function() {
+					
+				});
+				$("#details_popup").dialog({
+					autoOpen : false
+				});
+				$("#history_popup").dialog({
+					autoOpen : false
+				});
+				$(".next").click(function() {
+					if(total_drugs>10){
+						var offset = $("#next_offset_holder").attr("value");
+						getDrugs(offset);
+					}
+				});
+				$(".previous").click(function() {
+					var offset = $("#previous_offset_holder").attr("value");
+					getDrugs(offset);
+				});
+
+				$("#search").live('click',function(){
+					var search_term = $("#search_term").attr("value");
+					var search_by = $("#search_by").attr("value");
+					getTotalSearchedDrugs(search_term,search_by);
+					getDrugs(0);
+				});
+				$("#search_term").keyup(function(e) {
+					//var search_term = $("#search_term").attr("value");
+					//var search_by = $("#search_by").attr("value");
+					//getTotalSearchedDrugs(search_term,search_by);
+					//getDrugs(0);
+
+				   /* if (e.which >= 32 || e.which < 127) {
+				        var c = String.fromCharCode(e.which);
+				        callSearch($(this).val());
+				    }*/
+				});
+
+				/*$("#search").click(function() {
+					var search_term = $("#search_term").attr("value");
+					getTotalSearchedDrugs(search_term);
+					getDrugs(0);
+				});*/
+			});
+			function rebindListeners() {
+				//Add click listeners to the action links
+				$(".manage_stock").click(function() {
+					var drug = $(this).closest("tr").attr("drug_id");
+					var url = "manage_stock.html#?drug=" + drug;
+					window.location.href = url;
+				});
+				$(".bin_card").live('click',function() {
+					var drug = $(this).closest("tr").attr("drug_id");
+					var url = "bin_card.html#?drug=" + drug+"&stock_type=2";
+					window.location.href = url;
+				});
+				//First add the hover listener to the passed element (table row)
+				/*$(".table_row").hover(function() {
+					//When hovered on, make the background color of the row darker and show the action links
+					$(this).addClass("hovered");
+					$(this).find(".actions_panel").css("visibility", "visible");
+				}, function() {
+					//When hovered off, reset the background color and hide the action links
+					$(this).removeClass("hovered");
+					$(this).find(".actions_panel").css("visibility", "hidden");
+				});
+				*/
+			}
+
+			function getTotalDrugs() {
+				
+				countDrugCodeRecords(2,function(transaction, results) {
+					var row = results.rows.item(0);
+					total_drugs = row['total'];
+				});
+			}
+
+			function getTotalSearchedDrugs(search_term,search_by) {
+
+				countSearchedDrugRecords(search_term,search_by,2, function(transaction, results) {
+
+					var row = results.rows.item(0);
+					total_drugs = row['total'];
+
+				});
+			}
+			function testThis(){
+				//alert("NO");
+			}
+			function getDrugs(offset) {
+				window.addEventListener ("contextmenu", testThis, false);
+				$("#drug_listing_progress").css("display", "block");
+				$("#drugs_table").css("display", "none");
+				//Get the search term entered
+				var search_term = $("#search_term").attr("value");
+
+				var search_by=$("#search_by").attr("value");
+				//Set the nimber of patients to show on one page
+				var limit = 10;
+				var next_offset = parseInt(offset, 10) + parseInt(limit, 10);
+
+				var previous_offset = 0;
+				offset=parseInt(offset);
+				
+				if(offset == 0) {
+					previous_offset = 0;
+				} else if(offset > limit) {
+					previous_offset = parseInt(offset, 10) - parseInt(limit, 10);
+				}
+
+				var type = "";
+				//Stock type=1 for store
+			
+				
+				selectPagedDrugs(search_term,search_by, offset, limit,2, function(transaction, results) {
+					
+					
+					if(next_offset > total_drugs) {
+						next_offset = total_drugs;
+					}
+					$("#next_offset_holder").attr("value", next_offset);
+					$("#previous_offset_holder").attr("value", previous_offset);
+					if(total_drugs==0){
+						offset=0
+					}
+					else{
+						offset=offset+1;
+					}
+					$.each($(".records_counter"), function(key, value) {
+						var record_text = "<b>Showing " + offset + " to " + next_offset + " of " + total_drugs + "</b>";
+						$(this).html(record_text);
+					});
+					$("#drugs_table").find("tr:gt(0)").remove();
+					// Handle the results
+					
+					var l=results.rows.length;
+					
+					if(l==0){
+						$("#drug_listing_progress").css("display", "none");
+						$("#drugs_table").css("display", "table");
+						$('#drugs_table tbody').html("<tr ><td colspan='9' style='font-size:18px;padding:8px;text-align:center;'>No drugs available</td></tr>");
+					}
+					
+					for(var i = 0; i < results.rows.length; i++) {
+						
+						var row = results.rows.item(i);
+						if(i % 2 == 0) {
+							type = "normal_row";
+						} else {
+							type = "alternate_row";
+						}
+						getDrugInfo(i,l,row['facility'],row['id'], row['drug'], row['generic_name'], row['unit'], row['quantity'],row['pack_size'],row['supported_by'],row['dose'],type);
+						
+					}
+					//Call Function that rebinds all listeners to their respective elements
+					rebindListeners();
+					
+					
+				});
+			}
+			
+			function getDrugInfo(i,l,facility,id,drug,drug_name,drug_unit,drug_quantity,drug_packsize,supported_by,dose,type) {
+				
+				var stock_param="";
+				//Store
+				if(stock_type=='1'){
+					stock_param=" AND (source='"+facility+"' OR destination='"+facility+"') AND source!=destination ";
+				}
+				//Pharmacy
+				else if(stock_type=='2'){
+					stock_param=" AND (source=destination) AND(source='"+facility+"') ";
+				}
+				var stock_status = 0;
+				var counter = 0;
+				var batch_status_row_string = "";
+				//Query to get all batches that have not expired
+				var all_batches = "SELECT DISTINCT d.batch_number AS batch FROM drug_stock_movement d WHERE d.drug =  '" + id + "' AND d.expiry_date > date() AND facility='" + facility + "' "+stock_param+" GROUP BY d.batch_number";
+				SQLExecuteAbstraction(all_batches, function(transaction, results) {
+					for(var k = 0; k < results.rows.length; k++) {
+						var all_batches_count = results.rows.length;
+						var batch_row = results.rows.item(k);
+						batch_no = batch_row['batch'];
+						//Query to check if batch has had a physical count
+						var initial_stock_sql = "SELECT SUM( d.quantity ) AS Initial_stock, d.transaction_date AS transaction_date, '" + batch_no + "' AS batch,'" + k + "' AS counter FROM drug_stock_movement d WHERE d.drug =  '" + id + "' AND transaction_type =  '11' AND facility='" + facility + "' "+stock_param+" AND d.expiry_date > date() AND d.batch_number =  '" + batch_no + "'";
+						SQLExecuteAbstraction(initial_stock_sql, function(transaction, results) {
+							for(var m = 0; m < results.rows.length; m++) {
+								var physical_row = results.rows.item(m);
+								initial_stock = physical_row['Initial_stock'];
+								//Check if initial stock is present meaning physical count done
+								if(initial_stock != null) {
+									batch_stock_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out )) AS stock_levels, '" + physical_row['counter'] + "' AS counter, ds.batch_number FROM drug_stock_movement ds WHERE facility='" + facility + "' "+stock_param+" AND ds.drug ='" + id + "' AND ds.expiry_date > date()  AND ds.batch_number ='" + physical_row['batch'] + "'";
+									SQLExecuteAbstraction(batch_stock_sql, function(transaction, results) {
+										
+										for(var j = 0; j < results.rows.length; j++) {
+											var second_row = results.rows.item(j);
+											if(second_row['stock_levels'] > 0) {
+												stock_status += second_row['stock_levels'];
+											}
+											if(second_row['counter'] == (all_batches_count - 1)) {
+												appendDrugDetails(i,l,id,drug,drug_name,stock_status,drug_unit,drug_quantity,drug_packsize,supported_by,dose,type);
+											}
+										}
+										
+										
+									});
+								}
+								else {
+									batch_stock_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out ) ) AS stock_levels, '" + physical_row['counter'] + "' AS counter, ds.batch_number FROM drug_stock_movement ds WHERE ds.drug =  '" + id + "' AND ds.expiry_date > date() AND facility='" + facility + "' "+stock_param+" AND ds.batch_number='" + physical_row['batch'] + "'";
+									//console.log(batch_stock_sql)
+									SQLExecuteAbstraction(batch_stock_sql, function(transaction, results) {
+										for(var j = 0; j < results.rows.length; j++) {
+											var second_row = results.rows.item(j);
+											if(second_row['stock_levels'] > 0) {
+												stock_status += second_row['stock_levels'];
+											}
+											if(second_row['counter'] == (all_batches_count - 1)) {
+												appendDrugDetails(i,l,id,drug,drug_name,stock_status,drug_unit,drug_quantity,drug_packsize,supported_by,dose,type);
+											}
+
+										}
+										
+									});
+									
+								}
+							}
+						});
+					}
+				});
+				
+			}
+				
+			function appendDrugDetails(i,l,id,drug,drug_name,stock_status,drug_unit,drug_quantity,drug_packsize,supported_by,dose,type){
+				
+				//Create a new row element
+				var new_row = $(document.createElement('tr'));
+				new_row.addClass(type);
+				//Create a new attribute for the row and add the mrn as the value of this attribute!
+				new_row.attr("drug_id", id);
+				//add the class 'table_row' to the row that's just been created
+				new_row.addClass("table_row");
+				new_row.append("<td>"+drug+"</td><td>"+drug_name+"</td><td class='stock_qty'>"+ numberWithCommas(stock_status)+"</td><td>"+drug_unit+"</td><td>"+drug_quantity+"</td><td>"+drug_packsize+"</td><td>"+supported_by+"</td><td>"+dose+"</td><td></td>");
+				var first_td = new_row.find("td:first");
+				//This gets the last td element of that row which will be used to add the action links
+				var last_td=new_row.find("td:last");
+				last_td.text("");
+				last_td.css("text-align","center");
+				last_td.css("width","150px");
+				//Get the width of this td element in integer form (i.e. remove the .px part)
+				var width = first_td.css("width").replace("px", "");
+				//If the width is less than 400px, extend it to 400px so as to have a more uniform look
+				if(width < 300) {
+					first_td.css("width", "400px");
+				}
+				//Append the contents of the 'action_panel_parent' to this first td element
+				$($("#action_panel_parent").html()).appendTo(last_td);
+				//Append the created row to the table
+				new_row.appendTo('#drugs_table tbody');
+				if(l==1){
+					$("#drug_listing_progress").css("display", "none");
+					$("#drugs_table").css("display", "table");
+				}
+				else{
+					if(i==1){
+						$("#drug_listing_progress").css("display", "none");
+						$("#drugs_table").css("display", "table");	
+					}
+				}
+			}
+			
+			function numberWithCommas(x) {
+					return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+			}
+		</script>
+
+
+		<style type="text/css">
+			.pagination {
+				margin: 0 auto;
+				overflow: hidden;
+				margin-top:15px;
+				vertical-align:middle;
+			}
+			#inventory_sub_menu{
+				width: 90%;
+				margin:0 auto;
+			}
+			.pagination a {
+				display: block;
+				float: left;
+				background-color: #36D148;
+				font-size: 12px;
+				font-weight: bold;
+				text-align: center;
+				color: #fff;
+				height: 36px;
+				line-height: 36px;
+				width: 50%;
+				border: 1px solid rgba(0, 0, 0, .2);
+				box-shadow: 0 0 0 1px rgba(255, 255, 255, .4) inset, 0 1px #fff;
+				-moz-box-shadow: 0 0 0 1px rgba(255, 255, 255, .4) inset, 0 1px #fff;
+				-webkit-box-shadow: 0 0 0 1px rgba(255, 255, 255, .4) inset, 0 1px #fff;
+				text-shadow: 0 -1px rgba(0, 0, 0, .2);
+			}
+			.pagination.flip a {
+				width: 200px;
+				float: right;
+			}
+			.pagination.flip a:hover, #pagination.infinite a:hover {
+				opacity: .9;
+				box-shadow: 0 0 0 1px rgba(255, 255, 255, .4) inset, 0 1px #fff, 0 0 0 30px rgba(255, 255, 255, .21) inset;
+			}
+			.pagination.flip a:active, #pagination.infinite a:active {
+				box-shadow: 0 0 0 30px rgba(0, 0, 0, .21) inset, 0 1px 2px rgba(0, 0, 0, .2) inset, 0 1px #fff;
+				-moz-box-shadow: 0 0 0 30px rgba(0, 0, 0, .21) inset, 0 1px 2px rgba(0, 0, 0, .2) inset, 0 1px #fff;
+				-webkit-box-shadow: 0 0 0 30px rgba(0, 0, 0, .21) inset, 0 1px 2px rgba(0, 0, 0, .2) inset, 0 1px #fff;
+			}
+			.pagination.flip a.previous {
+				border-radius: 5px 0px 0px 5px;
+				-webkit-border-radius: 5px 0px 0px 5px;
+				-moz-border-radius: 5px 0px 0px 5px;
+			}
+			.pagination.flip a.next {
+				border-radius: 0px 5px 5px 0px;
+				-webkit-border-radius: 0px 5px 5px 0px;
+				-moz-border-radius: 0px 5px 5px 0px;
+			}
+			.pagination a.disabled, #pagination a.disabled:hover, #pagination a.disabled:active {
+				opacity: .2;
+				cursor: default;
+				box-shadow: 0 0 0 1px rgba(255, 255, 255, .4) inset, 0 1px #fff;
+				-moz-box-shadow: 0 0 0 1px rgba(255, 255, 255, .4) inset, 0 1px #fff;
+				-webkit-box-shadow: 0 0 0 1px rgba(255, 255, 255, .4) inset, 0 1px #fff;
+			}
+			.records_counter {
+				width: 200px;
+				margin: 0 auto;
+				float:left;
+			}
+			.search_box {
+				position: relative;
+				width:80%;
+				clear:both;
+				margin:10px 20% 10px 15%;
+			}
+			.f_right {
+				float: right;
+				display: inline;
+				height:60px;
+			}
+
+			.search_box input, .search_box select{
+				height: 26px;
+			}
+			
+			.submit-button{
+				height: 26px;
+				width: 90px;
+				float: none;
+				margin-left: 5px;
+
+			}
+
+			#drug_listing_progress {
+				width: 100px;
+				height: 55px;
+				margin: 0 auto;
+				background: url("Images/spinner.gif") no-repeat;
+				display: none;
+			}
+			#drugs{
+				width:88%;
+				margin:0 auto;
+			}
+
+			table#drugs_table{
+				border-collapse: collapse;
+				font-size: 14px;
+				border-radius:5px;
+			}
+			table#drugs_table td{
+				border-top: 1px solid #ddd;
+			}
+			
+
+			table#drugs_table tr thead{
+				font-size:14px;
+			}
+			table.sortable thead {
+				background-color: #eee;
+				font-weight: bold;
+				cursor: default;
+			}
+			#quick_menu{
+				
+			}
+			#add_patient{
+				width:200px;
+				float:left;
+			}
+			#facility_name {
+				color: green;
+				margin-top: 5px;
+				font-weight: bold;
+			}
+			th{
+				height:30px;
+			}
+			#search_term{
+				height:35px; 
+			}
+			#search_by{
+				height:35px; 
+				width:140px;
+				margin-bottom:0px;
+			}
+			.search{
+				height:35px;
+			}
+			.alternate_row{
+				background-color: rgb(234,255,232);
+			}
+			.table th, .table td{
+				line-height: 10px;
+				padding: 4px;
+			}
+			.table th{
+				text-align:center;
+				padding-bottom:7px;
+			}
+			
+			.table thead th,.table td  {
+				vertical-align: middle;
+			}
+			.table{
+				margin:0 auto;
+			}
+			a{
+				color:#FFF;
+			}
+			.btn a:hover{
+				text-decoration:none;
+				color:rgb(29, 238, 45);
+			}
+			.actions_panel{
+				margin:0px;
+			}
+			#inventory_sub_menu{
+				margin-bottom:10px;
+			}
+			legend {
+				font-size: 20px;
+			}
+			.btn-primary.btn_active{
+				background-color: #04c;
+			}
+			.stock_qty{
+				font-weight: bolder;
+				font-size: 16px;
+				color: rgb(243, 150, 31);
+			}
+		</style>
+	</head>
+	<body>
+		<div id="wrapper">
+			<div id="top-panel" style="margin:0px;">
+				<div class="logo"></div>
+				<div class="network">
+					Network Status: <span id="status" class="offline">Offline</span>
+					<p>
+						Out-of-Sync Records: <span id="local-count"></span>
+					</p>
+				</div>
+				<div id="system_title">
+					<span style="display: block; font-weight: bold; font-size: 14px; margin:2px;">Ministry of Health</span>
+					<span style="display: block; font-size: 12px;">ARV Drugs Supply Chain Management Tool</span>
+					<span style="display: block; font-size: 14px;" id="facility_name" ></span>
+				</div>
+				<div id="top_menu">
+					<a href="home_controller" class="top_menu_link  first_link">Home </a>
+					<a href="patient_management.html" class="top_menu_link">Patients<span class="alert red_alert">off</span></a>
+					<a href="inventory.html" class="top_menu_link top_menu_active">Inventory<span class="alert red_alert">off</span></a>
+					<a href="reports.html" class="top_menu_link">Reports<span class="alert red_alert">off</span></a>
+					<a href="settings_management" class="top_menu_link">Settings<span class="alert green_alert">on</span></a>
+					<a href="order_management" class="top_menu_link">Order<span class="alert green_alert">on</span></a>
+					<div id="my_profile_link_container" style="display: inline">
+						<a ref="#" class="top_menu_link" id="my_profile_link"></a>
+					</div>
+				</div>
+			</div>
+			<div id="inner_wrapper">
+				<div id="main_wrapper">
+					<script>
+					$(document).ready(function(){
+						$("#receive_issue_medicine").click(function(){
+							$("#transaction_type").toggle("slow");
+						});
+					})
+						
+					</script>
+					<div id="quick_menu" class="btn-group">
+						<a href="#" id="receive_issue_medicine" class="btn btn-success dropdown-toggle btn-quickmenu" data-toggle="dropdown" ><img  src="Images/medicine-icon.png">Receive/Issue Medicine <span class="caret"></span></a> 
+						<ul class="dropdown-menu" id="transaction_type">
+							<li><a href="add_stock.html">Main Store Transaction</a></li>
+						    <li><a href="add_stock_pharmacy.html">Pharmacy Transaction</a></li>
+						</ul>
+						
+						<!--<a class="action_button" href="add_stock.html" style="height:25px;margin:0 auto;padding-top:5px;"><img src="Images/addstock.jpg" width="30" height="25" align="left"/>Receive/Issue Medicine</a>-->
+					</div>
+					<input type="hidden" id="next_offset_holder" />
+					<input type="hidden" id="previous_offset_holder" />
+					<div id="message" style="margin-left:250px;margin-top:-30px; display:none"></div>
+					
+						<div class="f_right">
+
+							<strong>Search by</strong>
+							<select id="search_by">
+								drug, generic_name, pack_size, supported_by, dose
+								<option value="0">All</option>
+								<option value="drug">Drug</option>
+								<option value="generic_name">Generic Name</option>
+								<option value="pack_size">Package Size</option>
+								<option value="supported_by">Supported By</option>
+								<option value="dose">Dose</option>
+							</select>
+
+							<input type="text" name="search_term" id="search_term" class="input-medium search-query" style="width:250px;" placeholder="Search Drug">
+							<input type="submit" class="btn btn-primary" id="search" value="Search">
+							
+						</div>
+					<div class="search_box">
+					</div>
+					
+					<div id="drugs">
+						<legend>Pharmacy Inventory</legend>
+						<div class="btn-group" id="inventory_sub_menu">
+							<button class="btn btn-primary btn-quickmenu "  ><a href="inventory.html" ><img  src="Images/store-icon.png">Store Inventory</a></button>
+							<button class="btn btn-primary btn-quickmenu active"><a href=""> <img  src="Images/store-icon.png"> Pharmacy Inventory</a></button>
+							
+						</div>
+						<div id="drug_listing_progress"></div>
+						
+						<table class="table table-bordered table-striped table-hover sortable" id="drugs_table">
+							<thead >
+	
+								<tr style="font-size:14px;">
+									<th>Commodity</th>
+									<th>Generic Name</th>
+									<th>Qty/SOH</th>
+									<th>Unit</th>
+									<th>Qty</th>
+									<th>Pack Size</th>
+									<th>Supported By</th>
+									<th>Dose</th>
+									<th width="150px">Action</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+							
+						</table>
+						<div class="pagination flip">
+							 <a class="next" href="#">Next Page »</a>
+							 <a href="#" class="previous">« Previous Page</a>
+							 <div class="records_counter"></div>
+						</div>
+					</div>
+				
+				<div>
+					
+				</div>
+				
+				<div id="action_panel_parent" style="display:none">
+					<div class="actions_panel">
+						<button class="btn btn-info btn-small"><a class="bin_card">View Bin Card</a></button>
+					</div>
+				</div>
+				<div id="details_popup" title="Patient Details"></div>
+				<div id="history_popup" title="Patient History"></div>
+			</div>
+			<!--End Wrapper div-->
+		</div>
+		<div id="bottom_ribbon" style="width:90%;margin-top:150px;">
+			<div id="footer">
+				<div id="footer_text">
+					Government of Kenya &copy;<span id="year" ></span>. All Rights Reserved
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

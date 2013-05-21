@@ -1,35 +1,179 @@
 <script>
 	$(document).ready(function() {
-		$("#entry_form").dialog({
+
+		$('.edit_user').live('click',function(event){
+			event.preventDefault();
+			$("#generic_id").val(this.id);
+			$("#edit_generic_name").val(this.name);
+			$("#edit_form").dialog("open");
+		});
+	
+		$(".entry_form").dialog({
 			height : 200,
 			width : 300,
 			modal : true,
 			autoOpen : false
 		});
+		
 		$("#new_genericname").click(function(){ 
+			
 			$("#entry_form").dialog("open");
 		});
+		
+		//count to check which message to display
+        var count='<?php echo @$this -> session -> userdata['message_counter']?>';
+        var message='<?php echo @$this -> session -> userdata['message']?>';	
+	
+	if(count == 1) {
+	$(".passmessage").slideDown('slow', function() {
+
+	});
+	$(".passmessage").append(message);
+
+	var fade_out = function() {
+	$(".passmessage").fadeOut().empty();
+	}
+	setTimeout(fade_out, 5000);
+     <?php 
+     $this -> session -> set_userdata('message_counter', "0");
+     $this -> session -> set_userdata('message', " ");
+     ?>
+
+	}
+	if(count == 2) {
+	$(".errormessage").slideDown('slow', function() {
+
+	});
+	$(".errormessage").append(message);
+
+	var fade_out = function() {
+	$(".errormessage").fadeOut().empty();
+	}
+	setTimeout(fade_out, 5000);
+     <?php 
+     $this -> session -> set_userdata('message_counter', "0");
+     $this -> session -> set_userdata('message', " ");
+     ?>
+
+	}
+	
+	
 	});
 
 </script>
-<div id="view_content">
-	<a class="action_button" id="new_genericname">New Generic Name</a>
-		<?php echo validation_errors('<p class="error">', '</p>');
-		echo $this -> table -> generate($generic_names);
-		?>
-<div id="entry_form" title="New Generic Name">
-	<?php
-	$attributes = array('class' => 'input_form');
-	echo form_open('genericname_management/save', $attributes);
+<style type="text/css">
+	.actions_panel {
+		width: 200px;
+		margin-top: 5px;
+	}
+	.hovered td {
+		background-color: #E5E5E5 !important;
+	}
+	a{
+		text-decoration: none;
+	}
+	.enable_user{
+		color:green;
+		font-weight:bold;
+	}
+	.disable_user{
+		color:red;
+		font-weight:bold;
+	}
+	.edit_user{
+		color:blue;
+		font-weight:bold;
+	}
+	.passmessage {
 
-	?>
-	<label>
-<strong class="label">Generic Name</strong>
-<input type="text" name="drugname" id="drugname" class="input">
-</label>
- 
-</label>
-	<input type="submit" value="Save" class="submit-button"/>
-	</form>
-</div>
+		display: none;
+		background: #00CC33;
+		color: black;
+		text-align: center;
+		height: 20px;
+		padding:5px;
+		font: bold 1px;
+		border-radius: 8px;
+		width: 30%;
+		margin-left: 30%;
+		margin-right: 10%;
+		font-size: 16px;
+		font-weight: bold;
+	}
+	.errormessage {
+
+		display: none;
+		background: #FF0000;
+		color: black;
+		text-align: center;
+		height: 20px;
+		padding:5px;
+		font: bold 1px;
+		border-radius: 8px;
+		width: 30%;
+		margin-left: 30%;
+		margin-right: 10%;
+		font-size: 16px;
+		font-weight: bold;
+	}
+	#DataTables_Table_0_wrapper{
+		/*width: 80%;*/
+	}
+	#entry_form,#edit_form{
+		background-color:#CCFFFF;
+	}
+
+</style>
+<div id="view_content">
+
+	<div class="container-fluid">
+	  <div class="row-fluid row">
+
+	    <!-- Side bar menus -->
+	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
+	    <!-- SIde bar menus end -->
+
+	    <div class="span9 span-fixed-sidebar">
+	      <div class="hero-unit">
+	      	<div class="passmessage"></div>
+    		<div class="errormessage"></div>
+	      	<button class="btn btn-large btn-success" type="button" id="new_genericname">Add New Generic Name</button>
+	      	<?php 
+	      		echo validation_errors('<p class="error">', '</p>');
+				echo @$generic_names;
+	        ?>
+	      </div>
+
+	      
+	    </div><!--/span-->
+	  </div><!--/row-->
+	</div><!--/.fluid-container-->
+	
+		
+	<div id="entry_form" class="entry_form" title="New Generic Name">
+		<?php
+			$attributes = array('class' => 'input_form');
+			echo form_open('genericname_management/save', $attributes);
+		?>
+		<label>
+		<strong class="label">Generic Name</strong>
+		<input type="text" name="generic_name" id="generic_name" class="input-xlarge">
+		</label>
+		<input type="submit" value="Save" class="btn btn-primary"/>
+		<?php echo form_close();?>
+	</div>
+	
+	<div id="edit_form" class="entry_form" title="Edit Generic Name">
+		<?php
+			$attributes = array('class' => 'input_form');
+			echo form_open('genericname_management/update', $attributes);
+		?>
+		<label>
+		<strong class="label">Generic Name</strong>
+		<input type="hidden" name="generic_id" id="generic_id" class="input">
+		<input type="text" name="edit_generic_name" id="edit_generic_name" class="input-xlarge">
+		</label>
+		<input type="submit" value="Save" class="btn btn-primary"/>
+		<?php echo form_close();?>
+	</div>
 </div>

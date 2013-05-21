@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" >
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Starting Date For Patients</title>
+		<link href="../CSS/style.css" type="text/css" rel="stylesheet"/>
+		<link rel="SHORTCUT ICON" href="../Images/favicon.ico">
+		<link href="../Scripts/bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet" media="screen"/>
+		<link href="../CSS/offline_css.css" type="text/css" rel="stylesheet"/>
+		<link href="../CSS/jquery-ui.css" type="text/css" rel="stylesheet"/>
+		<link href="TableFilter/filtergrid.css" type="text/css" rel="stylesheet"/>
+		<script type="text/javascript" src="../Scripts/jquery.js"></script>
+		<script type="text/javascript" src="../Scripts/jquery-ui.js"></script>
+		<script type="text/javascript" src="../Scripts/offline_database.js"></script>
+		<script type="text/javascript" src="../Scripts/offlineData.js"></script>
+		<script type="text/javascript" src="TableFilter/tablefilter_all.js"></script>
+		<script>
+			$(document).ready(function(){
+				$.get('reports_include.html', function(data) {
+				  $('.result').html(data);
+				});
+			});
+		</script>
+		<style>
+			#patient_listing {
+				margin: 0 auto;
+				border-top: 1px solid #B9B9B9;
+				font-size: 13px;
+				letter-spacing: 0.8px;
+			}
+			#patient_listing td th {
+				padding: 10px;
+			}
+			#patient_listing td {
+				padding: 0.25em;
+				text-align: left;
+			}
+			select.flt {
+				font-size: 14px;
+			}
+			h5 {
+				margin: 10px;
+			}
+			.report_title {
+				color: rgb(34, 86, 253);
+				letter-spacing: 1px;
+			}
+			h2 {
+				margin: 0.5em;
+			}
+			h4 {
+				font-size: 18px;
+			}
+			.odd {
+				background-color: rgb(226, 232, 255);
+			}
+			@media screen {
+				div#footer {
+					display: none;
+				}
+			}
+			@media print {
+				#inf_patient_listing {
+					display: none;
+				}
+				.fltrow {
+					display: none;
+				}
+				div.#footer {
+					position: fixed;
+					height: 200px; /* put the image height here */
+					width: 90%;
+					bottom: 0;
+				}
+			}
+			#date_of_starting {
+				color: rgb(45, 173, 13);
+				font-size: 14px;
+				border: none;
+				font-weight: 800;
+				width: 110px;
+				padding-bottom: 0px;
+				height: 25px;
+			}
+			#date_of_starting:hover {
+				cursor: pointer;
+			}
+		</style>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				initDatabase();
+				var $_GET = getQueryParams(document.location.hash);
+				//var date = $_GET['date'];
+				//$("#date_of_starting").val($.datepicker.formatDate('dd-M-yy',new Date(date)));
+
+				var start_date = $_GET['start_date'];
+				var end_date = $_GET['end_date'];
+
+				$("#start_date").val($.datepicker.formatDate('dd-M-yy', new Date(start_date)));
+				$("#end_date").val($.datepicker.formatDate('dd-M-yy', new Date(end_date)));
+
+				//Get the environmental variables to display the hospital name
+				selectEnvironmentVariables(function(transaction, results) {
+					// Handle the results
+					var row = results.rows.item(0);
+					$("#facility_name").text(row['facility_name']);
+				});
+
+				$("#start_date").datepicker({
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : 'yy-mm-dd'
+				});
+
+				$("#start_date").change(function() {
+					if(x == 0) {
+						x = 1;
+					}
+					var _start_date = $("#start_date").attr("value");
+					var _end_date = $("#end_date").attr("value");
+					var report_url = "patients_scheduled_to_visit.html#?start_date=" + _start_date + "&end_date=" + _end_date;
+					if(y == 1) {
+						window.location = report_url;
+						location.reload();
+					}
+
+				});
+				$("#end_date").datepicker({
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : 'yy-mm-dd'
+				});
+				$("#end_date").change(function() {
+					if(y == 0) {
+						y = 1;
+					}
+					var _start_date = $("#start_date").attr("value");
+					var _end_date = $("#end_date").attr("value");
+					var report_url = "patients_scheduled_to_visit.html#?start_date=" + _start_date + "&end_date=" + _end_date;
+					if(x == 1) {
+						window.location = report_url;
+						location.reload();
+					}
+
+				});
+				getPatientsStartDate(start_date, end_date, function(transaction, results) {
+					// Handle the results
+					var gender = Array("", "M", "F");
+					var counter = 0;
+					for(var i = 0; i < results.rows.length; i++) {
+						var parent_row = results.rows.item(i);
+						var row_string = "<tr><td>" + parent_row['patient_number_ccc'] + "</td><td>" + parent_row['service_type'] + "</td><td>" + parent_row['supported_by'] + "</td><td>" + parent_row['first_name'] + " " + parent_row['other_name'] + " " + parent_row['last_name'] + "</td><td>" + gender[parent_row['gender']] + "</td><td>" + parent_row['start_regimen_date'] + "</td><td>" + parent_row['regimen_desc'] + "</td><td>" + parent_row['weight'] + "</td></tr>";
+						$("#patient_listing").append($(row_string));
+						counter++;
+					}
+					tableStartedFilter();
+					$("#total_count").text(counter);
+				});
+			});
+			function getAge(dateString) {
+				var today = new Date();
+				var birthDate = new Date(dateString);
+				var age = today.getFullYear() - birthDate.getFullYear();
+				var m = today.getMonth() - birthDate.getMonth();
+				if(m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+					age--;
+				}
+				if(isNaN(age)) {
+					return "N/A";
+				}
+				return age;
+			}
+
+			function tableStartedFilter() {
+
+				var props = {
+					sort : true,
+					//remember_grid_values : true,
+					remember_page_number : true,
+					//remember_page_length : true,
+					//filters_row_index : 1,
+					alternate_rows : true,
+					rows_counter : true,
+					rows_counter_text : "Displayed rows: ",
+					btn_reset : true,
+					btn_reset_text : "Clear",
+					loader : true,
+					//status_bar : true,
+					//btn_reset_text : "Clear",
+					fixed_headers : true,
+					//mark_active_columns : true,
+					col_0 : "select",
+					col_1 : "select",
+					col_2 : "select",
+					col_3 : "select",
+					col_4 : "select",
+					col_5 : "select",
+					col_6 : "select",
+					col_7 : "select",
+					col_8 : "select",
+					paging : true,
+					results_per_page : ['Results per page', [10, 25, 50, 100, 500, 1000]],
+
+					display_all_text : "< Show All >",
+
+					col_width : ["80px", "150px", "180px", "auto", "70px", "auto", "auto", "120px"],
+
+					//Column resize feature
+					extensions : {
+						name : ['ColumnsResizer'],
+						src : ['TableFilter/TFExt_ColsResizer/TFExt_ColsResizer.js'],
+						description : ['Columns Resizing'],
+						initialize : [
+						function(o) {
+							o.SetColsResizer();
+						}]
+
+					},
+					col_resizer_all_cells : true
+				}
+				var tf = setFilterGrid("patient_listing", props);
+			}
+		</script>
+	</head>
+	<body>
+		<!-- Menus -->
+		<div class="navbar ">
+			<div class="navbar-inner">
+				<div class="container">
+					<!-- Everything you want hidden at 940px or less, place within here -->
+					<div class="nav-collapse collapse" id="acdmenu">
+						<a class="brand" href="../reports.html"/><img src="../Images/home-icon.png"> | </a>
+						<ul class="nav">
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" id="standard_report"> Standard Reports <b class="caret"></b> </a>
+								<ul class="dropdown-menu" id="standard_report_sub">
+									<li>
+										<a href="#" id="patients_enrolled_in_period" class="report donor_date_range_report active_report">Number of Patients Enrolled in Period</a>
+									</li>
+									<li>
+										<a href="#" id="patients_enrolled_in_art" class="report donor_date_range_report active_report">Number of Patients Started on ART in the Period</a>
+									</li>
+									<li>
+										<a href="#" id="graph_patients_enrolled_in_year" class="report active_report annual_report">Graph of Number of Patients Enrolled Per Month in a Given Year</a>
+									</li>
+									<li>
+										<a href="#" id="cumulative_patients" class="report active_report single_date_report">Cumulative Number of Patients to Date</a>
+									</li>
+									<li>
+										<a href="#" id="patients_on_ART_active" class="report active_report no_filter">Number of Active Patients Receiving ART (by Regimen)</a>
+									</li>
+								</ul>
+							</li>
+							<li class="dropdown divider-vertical" id="visiting_patient">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown"> Visiting Patients <b class="caret"></b> </a>
+								<ul class="dropdown-menu" id="visiting_patient_sub">
+									<li>
+										<a href="#" id="patients_scheduled_to_visit" class="report active_report date_range_report">List of Patients Scheduled to Visit</a>
+									</li>
+									<li>
+										<a href="#" id="patients_started_on_date" class="report active_report date_range_report">List of Patients Started (on a Particular Date)</a>
+									</li>
+									<li>
+										<a href="#" id="patients_visitied_for_refill" class="report active_report date_range_report">List of Patients Visited for Refill</a>
+									</li>
+									<li>
+										<a href="#" id="patients_missing_appointments" class="report active_report date_range_report">Patients Missing Appointments</a>
+									</li>
+									<li>
+										<a href="#" id="patients_adherence" class="report active_report date_range_report">Patients Adherence Report</a>
+									</li>
+								</ul>
+							</li>
+							<li class="dropdown divider-vertical">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" id="early_warning"> Early Warning Indicators <b class="caret"></b> </a>
+								<ul class="dropdown-menu " id="early_warning_sub">
+									<li>
+										<a href="#" id="patients_who_changed_regimen" class="report active_report date_range_report">Active Patients who Have Changed Regimens</a>
+									</li>
+									<li>
+										<a href="#" id="patients_starting" class="report active_report date_range_report">List of Patients Starting (By Regimen)</a>
+									</li>
+									<li>
+										<a href="#" id="early_warning_indicators" class="report active_report date_range_report">HIV Early Warning Indicators</a>
+									</li>
+									<li>
+										<a href="#" id="service_statistics" class="report active_report single_date_report">Service Statistics (By Regimen)</a>
+									</li>
+								</ul>
+							</li>
+							<li class="dropdown divider-vertical">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" id="drug_inventory"> Drug Inventory <b class="caret"></b> </a>
+								<ul class="dropdown-menu" id="drug_inventory_sub">
+									<li>
+										<a href="#" id="drug_consumption" class="report active_report annual_report">Drug Consumption Report</a>
+									</li>
+									<li>
+										<a href="#" id="drug_stock_on_hand" class="report active_report no_filter">Drug Stock on Hand Report</a>
+									</li>
+									<li>
+										<a href="#" id="commodity_summary" class="report active_report date_range_report">Facility Summary Commodity Report</a>
+									</li>
+									<li>
+										<a href="#" id="expiring_drugs" class="report active_report no_filter">Short Dated Stocks &lt;6 Months to Expiry</a>
+									</li>
+									<li>
+										<a href="#" id="expired_drugs" class="report active_report no_filter">List of Expired Drugs</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+						<a onClick="window.print()" class="brand" title="Print this page"/> | <img src="../Images/printing_icon.png"> </a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Menus end -->
+		<h2 id="facility_name" style="text-align: center"></h2>
+		<h4 style="text-align: center">Listing of Patients Who Started Between
+		<input type="text" class="_date" id="start_date">
+		AND
+		<input type="text" class="_date" id="end_date">
+		</h4>
+		<hr size="1" style="width:80%">
+		<table align='center'  width='20%' style="font-size:16px; margin-bottom: 20px">
+			<tr>
+				<td colspan="2"><h5 class="report_title" style="text-align:center;font-size:14px;">Number of patients: <span id="total_count"></span></h5></td>
+			</tr>
+		</table>
+		<div id="appointment_list">
+			<table id="patient_listing" width="1200px">
+				<tr>
+					<th> Patient No </th>
+					<th> Type of Service </th>
+					<th> Client Support </th>
+					<th> Patient Name </th>
+					<th> Sex</th>
+					<th> Start Regimen Date </th>
+					<th> Regimen </th>
+					<th> Current Weight </th>
+				</tr>
+			</table>
+		</div>
+		<!-- Pop up Window -->
+		<div class="result"></div>
+		<!-- Pop up Window end-->
+	</body>
+</html>

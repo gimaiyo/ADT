@@ -4,7 +4,9 @@ Imports System.Text
 Partial Class dataXML
     Inherits System.Web.UI.Page
 
-    Public Function GetMonthlySalesChartHtml() As String
+
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
         'This page demonstrates the ease of generating charts using FusionCharts.
         'For this chart, we've used a string variable to contain our entire XML data.
         'Ideally, you would generate XML data documents at run-time, after interfacing with
@@ -27,6 +29,7 @@ Partial Class dataXML
         xmlData.Append("<set label='Dec' value='960' />")
         xmlData.Append("</chart>")
         'Create the chart - Column 3D Chart with data from xmlData variable using dataXML method
-        Return FusionCharts.RenderChart("../FusionCharts/Column3D.swf", "", xmlData.ToString(), "myNext", "600", "300", False, False)
-    End Function
+        Literal1.Text = FusionCharts.RenderChart("../FusionCharts/Column3D.swf", "", xmlData.ToString(), "myNext", "600", "300", False, True)
+
+    End Sub
 End Class

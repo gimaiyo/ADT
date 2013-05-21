@@ -54,7 +54,13 @@ Partial Class ArrayExample_Combination
         strXML.Append("</chart>")
 
         'Create the chart - MS Column 3D Line Combination Chart with data contained in strXML
-        Return FusionCharts.RenderChart("../FusionCharts/MSColumn3DLineDY.swf", "", strXML.ToString(), "productSales", "600", "300", False, False)
+        Return FusionCharts.RenderChart("../FusionCharts/MSColumn3DLineDY.swf", "", strXML.ToString(), "productSales", "600", "300", False, True)
 
     End Function
+
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        Literal1.Text = GetProductSalesChartHtml()
+
+    End Sub
 End Class

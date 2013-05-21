@@ -4,46 +4,797 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>Patients Enrolled in Period</title>
 		<link href="../CSS/style.css" type="text/css" rel="stylesheet"/>
+		<link rel="SHORTCUT ICON" href="../Images/favicon.ico">
+		<link href="../Scripts/bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet" media="screen"/>
 		<link href="../CSS/offline_css.css" type="text/css" rel="stylesheet"/>
+		<link href="../CSS/jquery-ui.css" type="text/css" rel="stylesheet"/>
+		<link href="TableFilter/filtergrid.css" type="text/css" rel="stylesheet"/>
 		<script type="text/javascript" src="../Scripts/jquery.js"></script>
+		<script type="text/javascript" src="../Scripts/jquery-ui.js"></script>
 		<script type="text/javascript" src="../Scripts/offline_database.js"></script>
+		<script type="text/javascript" src="../Scripts/offlineData.js"></script>
+		<script type="text/javascript" src="TableFilter/tablefilter_all.js"></script>
+		<script>
+			$(document).ready(function(){
+				$.get('reports_include.html', function(data) {
+				  $('.result').html(data);
+				});
+			});
+		</script>
 		<script type="text/javascript">
 			$(document).ready(function() {
+				
 				initDatabase();
-				var $_GET = getQueryParams(document.location.search);
-				var start_date = $_GET['start_date'];
-				var end_date = $_GET['end_date'];
-				$("#start_date").text(start_date);
-				$("#end_date").text(end_date);
 				//Get the environmental variables to display the hospital name
 				selectEnvironmentVariables(function(transaction, results) {
+					var $_GET = getQueryParams(document.location.hash);
+					var start_date = $_GET['start_date'];
+					var end_date = $_GET['end_date'];
+					var supported_by = $_GET['donor'];
+					$("#start_date").val($.datepicker.formatDate('dd-M-yy', new Date(start_date)));
+					$("#end_date").val($.datepicker.formatDate('dd-M-yy', new Date(end_date)));
+
 					// Handle the results
 					var row = results.rows.item(0);
 					$("#facility_name").text(row['facility_name']);
-				});
-				var gender = Array("", "M", "F");
-				getMissedAppointments(start_date, end_date, function(transaction, results) {
-					for(var i = 0; i < results.rows.length; i++) {
-						var parent_row = results.rows.item(i);
+					var facility = row['facility'];
+					var whole_total = 0;
 
-						var appointment = new Date(parent_row['appointment']);
-						var today = new Date();
-						var timeDiff = Math.abs(today.getTime() - appointment.getTime());
-						var diffDays = Math.floor(timeDiff / (1000 * 3600 * 24));
+					//Check supported by
 
-						var row_string = "<tr><td>" + parent_row['patient'] + "</td><td>" + parent_row['last_name'] + "</td><td>" + parent_row['first_name'] + "</td><td>" + gender[parent_row['gender']] + "</td><td>" + parent_row['physical'] + "</td><td>" + parent_row['appointment'] + "</td><td>" + diffDays + "</td></tr>";
-						$("#patient_listing").append($(row_string));
+					if(supported_by == 0) {
+						supported_query = "AND(p.supported_by=1 OR p.supported_by=2) AND facility_code='" + facility + "'";
+					}
+					if(supported_by == 1) {
+						supported_query = "AND p.supported_by=1 AND facility_code='" + facility + "'";
+					}
+					if(supported_by == 2) {
+						supported_query = "AND p.supported_by=2 AND facility_code='" + facility + "'";
 					}
 
+					//Get the summaries to per service type to display at the top. Start with adults
+					var sql_adult_summaries = "select count(*) as total, service, gender,r.name,source from patient p  left join regimen_service_type r on p.service = r.id  where (((strftime('%Y', 'now') - strftime('%Y', dob))) >=15 or coalesce((strftime('%Y', 'now') - strftime('%Y', dob)),'x') = 'x') and date(date_enrolled) between date('" + start_date + "') and date('" + end_date + "')" + supported_query + " and r.active=1 group by service, gender,source";
+					//console.log(sql_adult_summaries);
+					SQLExecuteAbstraction(sql_adult_summaries, function(transaction, results) {
+						var male_outpatient_total = 0;
+						var male_inpatient_total = 0;
+						var male_transitin_total = 0;
+						var male_casualty_total = 0;
+						var male_transit_total = 0;
+						var male_htc_total = 0;
+						var male_other_total = 0;
+
+						var female_outpatient_total = 0;
+						var female_inpatient_total = 0;
+						var female_transitin_total = 0;
+						var female_casualty_total = 0;
+						var female_transit_total = 0;
+						var female_htc_total = 0;
+						var female_other_total = 0;
+
+						var male_art_total = 0;
+						var male_pep_total = 0;
+						var male_oi_total = 0;
+
+						var female_art_total = 0;
+						var female_pep_total = 0;
+						var female_oi_total = 0;
+
+						for(var x = 0; x < results.rows.length; x++) {
+							var result_row = results.rows.item(x);
+							//start with males on outpatient
+							if(result_row['gender'] == 1 && result_row['name'] == "ART" && result_row['source'] == 1) {
+								$("#adult_male_art_outpatient").text(result_row['total']);
+								male_outpatient_total += result_row['total'];
+								male_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PEP" && result_row['source'] == 1) {
+								$("#adult_male_pep_outpatient").text(result_row['total']);
+								male_outpatient_total += result_row['total'];
+								male_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "OI Only" && result_row['source'] == 1) {
+								$("#adult_male_oi_outpatient").text(result_row['total']);
+								male_outpatient_total += result_row['total'];
+								male_oi_total += result_row['total'];
+							}
+							//start with males on inpatient
+							if(result_row['gender'] == 1 && result_row['name'] == "ART" && result_row['source'] == 2) {
+								$("#adult_male_art_inpatient").text(result_row['total']);
+								male_inpatient_total += result_row['total'];
+								male_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PEP" && result_row['source'] == 2) {
+								$("#adult_male_pep_inpatient").text(result_row['total']);
+								male_inpatient_total += result_row['total'];
+								male_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "OI Only" && result_row['source'] == 2) {
+								$("#adult_male_oi_inpatient").text(result_row['total']);
+								male_inpatient_total += result_row['total'];
+								male_oi_total += result_row['total'];
+
+							}
+
+							//start with males on transit in
+							if(result_row['gender'] == 1 && result_row['name'] == "ART" && result_row['source'] == 3) {
+								$("#adult_male_art_transferin").text(result_row['total']);
+								male_transitin_total += result_row['total'];
+								male_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PEP" && result_row['source'] == 3) {
+								$("#adult_male_pep_transferin").text(result_row['total']);
+								male_transitin_total += result_row['total'];
+								male_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "OI Only" && result_row['source'] == 3) {
+								$("#adult_male_oi_transferin").text(result_row['total']);
+								male_transitin_total += result_row['total'];
+								male_oi_total += result_row['total'];
+							}
+
+							//start with males on Casualty
+							if(result_row['gender'] == 1 && result_row['name'] == "ART" && result_row['source'] == 4) {
+								$("#adult_male_art_casualty").text(result_row['total']);
+								male_casualty_total += result_row['total'];
+								male_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PEP" && result_row['source'] == 4) {
+								$("#adult_male_pep_casualty").text(result_row['total']);
+								male_casualty_total += result_row['total'];
+								male_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "OI Only" && result_row['source'] == 4) {
+								$("#adult_male_oi_casualty").text(result_row['total']);
+								male_casualty_total += result_row['total'];
+								male_oi_total += result_row['total'];
+							}
+
+							//start with males on Transit
+							if(result_row['gender'] == 1 && result_row['name'] == "ART" && result_row['source'] == 5) {
+								$("#adult_male_art_transit").text(result_row['total']);
+								male_transit_total += result_row['total'];
+								male_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PEP" && result_row['source'] == 5) {
+								$("#adult_male_pep_transit").text(result_row['total']);
+								male_transit_total += result_row['total'];
+								male_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "OI Only" && result_row['source'] == 5) {
+								$("#adult_male_oi_transit").text(result_row['total']);
+								male_transit_total += result_row['total'];
+								male_oi_total += result_row['total'];
+							}
+
+							//start with males on HTC
+							if(result_row['gender'] == 1 && result_row['name'] == "ART" && result_row['source'] == 6) {
+								$("#adult_male_art_htc").text(result_row['total']);
+								male_htc_total += result_row['total'];
+								male_art_total += result_row['total'];
+							}
+
+							if(result_row['gender'] == 1 && result_row['name'] == "PEP" && result_row['source'] == 6) {
+								$("#adult_male_pep_htc").text(result_row['total']);
+								male_htc_total += result_row['total'];
+								male_pep_total += result_row['total'];
+							}
+
+							if(result_row['gender'] == 1 && result_row['name'] == "OI Only" && result_row['source'] == 6) {
+								$("#adult_male_oi_htc").text(result_row['total']);
+								male_htc_total += result_row['total'];
+								male_oi_total += result_row['total'];
+							}
+
+							//Other Source
+							if(result_row['gender'] == 1 && result_row['name'] == "ART" && result_row['source'] > 6) {
+								$("#adult_male_art_other").text(result_row['total']);
+								male_other_total += result_row['total'];
+								male_art_total += result_row['total'];
+							}
+
+							if(result_row['gender'] == 1 && result_row['name'] == "PEP" && result_row['source'] > 6) {
+								$("#adult_male_pep_other").text(result_row['total']);
+								male_other_total += result_row['total'];
+								male_pep_total += result_row['total'];
+							}
+
+							if(result_row['gender'] == 1 && result_row['name'] == "OI Only" && result_row['source'] > 6) {
+								$("#adult_male_oi_other").text(result_row['total']);
+								male_other_total += result_row['total'];
+								male_oi_total += result_row['total'];
+							}
+
+							//start with females on outpatient
+							if(result_row['gender'] == 2 && result_row['name'] == "ART" && result_row['source'] == 1) {
+								$("#adult_female_art_outpatient").text(result_row['total']);
+								female_outpatient_total += result_row['total'];
+								female_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PEP" && result_row['source'] == 1) {
+								$("#adult_female_pep_outpatient").text(result_row['total']);
+								female_outpatient_total += result_row['total'];
+								female_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "OI Only" && result_row['source'] == 1) {
+								$("#adult_female_oi_outpatient").text(result_row['total']);
+								female_outpatient_total += result_row['total'];
+								female_oi_total += result_row['total'];
+							}
+							//start with females on inpatient
+							if(result_row['gender'] == 2 && result_row['name'] == "ART" && result_row['source'] == 2) {
+								$("#adult_female_art_inpatient").text(result_row['total']);
+								female_inpatient_total += result_row['total'];
+								female_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PEP" && result_row['source'] == 2) {
+								$("#adult_female_pep_inpatient").text(result_row['total']);
+								female_inpatient_total += result_row['total'];
+								female_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "OI Only" && result_row['source'] == 2) {
+								$("#adult_female_oi_inpatient").text(result_row['total']);
+								female_inpatient_total += result_row['total'];
+								female_oi_total += result_row['total'];
+							}
+
+							//start with females on transit in
+							if(result_row['gender'] == 2 && result_row['name'] == "ART" && result_row['source'] == 3) {
+								$("#adult_female_art_transferin").text(result_row['total']);
+								female_transitin_total += result_row['total'];
+								female_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PEP" && result_row['source'] == 3) {
+								$("#adult_female_pep_transferin").text(result_row['total']);
+								female_transitin_total += result_row['total'];
+								female_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "OI Only" && result_row['source'] == 3) {
+								$("#adult_female_oi_transferin").text(result_row['total']);
+								female_transitin_total += result_row['total'];
+								female_oi_total += result_row['total'];
+							}
+
+							//start with females on Casualty
+							if(result_row['gender'] == 2 && result_row['name'] == "ART" && result_row['source'] == 4) {
+								$("#adult_female_art_casualty").text(result_row['total']);
+								female_casualty_total += result_row['total'];
+								female_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PEP" && result_row['source'] == 4) {
+								$("#adult_female_pep_casualty").text(result_row['total']);
+								female_casualty_total += result_row['total'];
+								female_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "OI Only" && result_row['source'] == 4) {
+								$("#adult_female_oi_casualty").text(result_row['total']);
+								female_casualty_total += result_row['total'];
+								female_oi_total += result_row['total'];
+							}
+
+							//start with females on Transit
+							if(result_row['gender'] == 2 && result_row['name'] == "ART" && result_row['source'] == 5) {
+								$("#adult_female_art_transit").text(result_row['total']);
+								female_transit_total += result_row['total'];
+								female_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PEP" && result_row['source'] == 5) {
+								$("#adult_female_pep_transit").text(result_row['total']);
+								female_transit_total += result_row['total'];
+								female_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "OI Only" && result_row['source'] == 5) {
+								$("#adult_female_oi_transit").text(result_row['total']);
+								female_transit_total += result_row['total'];
+								female_oi_total += result_row['total'];
+							}
+
+							//start with females on HTC
+							if(result_row['gender'] == 2 && result_row['name'] == "ART" && result_row['source'] == 6) {
+								$("#adult_female_art_htc").text(result_row['total']);
+								female_htc_total += result_row['total'];
+								female_art_total += result_row['total'];
+							}
+
+							if(result_row['gender'] == 2 && result_row['name'] == "PEP" && result_row['source'] == 6) {
+								$("#adult_female_pep_htc").text(result_row['total']);
+								female_htc_total += result_row['total'];
+								female_pep_total += result_row['total'];
+							}
+
+							if(result_row['gender'] == 2 && result_row['name'] == "OI Only" && result_row['source'] == 6) {
+								$("#adult_female_oi_htc").text(result_row['total']);
+								female_htc_total += result_row['total'];
+								female_oi_total += result_row['total'];
+							}
+
+							//Other source
+							if(result_row['gender'] == 2 && result_row['name'] == "ART" && result_row['source'] > 6) {
+								$("#adult_female_art_other").text(result_row['total']);
+								female_other_total += result_row['total'];
+								female_art_total += result_row['total'];
+							}
+
+							if(result_row['gender'] == 2 && result_row['name'] == "PEP" && result_row['source'] > 6) {
+								$("#adult_female_pep_other").text(result_row['total']);
+								female_other_total += result_row['total'];
+								female_pep_total += result_row['total'];
+							}
+
+							if(result_row['gender'] == 2 && result_row['name'] == "OI Only" && result_row['source'] > 6) {
+								$("#adult_female_oi_other").text(result_row['total']);
+								female_other_total += result_row['total'];
+								female_oi_total += result_row['total'];
+							}
+						}
+						$("#adult_male_outpatient_total").text(male_outpatient_total);
+						$("#adult_male_inpatient_total").text(male_inpatient_total);
+						$("#adult_male_transitin_total").text(male_transitin_total);
+						$("#adult_male_casualty_total").text(male_casualty_total);
+						$("#adult_male_transit_total").text(male_transit_total);
+						$("#adult_male_htc_total").text(male_htc_total);
+						$("#adult_male_other_total").text(male_other_total);
+
+						$("#adult_female_outpatient_total").text(female_outpatient_total);
+						$("#adult_female_inpatient_total").text(female_inpatient_total);
+						$("#adult_female_transitin_total").text(female_transitin_total);
+						$("#adult_female_casualty_total").text(female_casualty_total);
+						$("#adult_female_transit_total").text(female_transit_total);
+						$("#adult_female_htc_total").text(female_htc_total);
+						$("#adult_female_other_total").text(female_other_total);
+
+						$("#overall_adult_male_total").text(male_outpatient_total + male_inpatient_total + male_transitin_total + male_casualty_total + male_transit_total + male_htc_total + male_other_total);
+						$("#overall_adult_male_art_total").text(male_art_total);
+						$("#overall_adult_male_pep_total").text(male_pep_total);
+						$("#overall_adult_male_oi_total").text(male_oi_total);
+
+						$("#overall_adult_female_total").text(female_outpatient_total + female_inpatient_total + female_transitin_total + female_casualty_total + female_transit_total + female_htc_total + female_other_total);
+						$("#overall_adult_female_art_total").text(female_art_total);
+						$("#overall_adult_female_pep_total").text(female_pep_total);
+						$("#overall_adult_female_oi_total").text(female_oi_total);
+						whole_total=male_outpatient_total + male_inpatient_total + male_transitin_total + male_casualty_total + male_transit_total + male_htc_total + male_other_total+female_outpatient_total + female_inpatient_total + female_transitin_total + female_casualty_total + female_transit_total + female_htc_total + female_other_total;
+
+					});
+					
+				
+				$("#start_date").click(function(){
+					$("#edit_selected_report").attr("value","patients_enrolled_in_period");
+					$("#edit_donor_date_range_report").dialog("open");
+				});
+				$("#end_date").click(function(){
+					$("#edit_selected_report").attr("value","patients_enrolled_in_period");
+					$("#edit_donor_date_range_report").dialog("open");
+				});
+				
+				$("#edit_donor_date_range_from").datepicker({
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : 'yy-mm-dd'
+				});
+				$("#edit_donor_date_range_to").datepicker({
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : 'yy-mm-dd'
+				});
+				$("#edit_donor_generate_date_range_report").click(function() {
+					var report = $("#edit_selected_report").attr("value") + ".html#";
+					var from = $("#edit_donor_date_range_from").attr("value");
+					var to = $("#edit_donor_date_range_to").attr("value");
+					var donor = $("#donor").attr("value");
+					
+					var report_url = report + "?start_date=" + from + "&end_date=" + to + "&donor=" + donor;
+					
+					if(from!="" && to!=""){
+						window.location = report_url;
+						location.reload();
+					}
+					else{
+						alert("Please fill in the date before generating the report !");
+					}
+					
+				});
+				
+					
+					//Get the summaries to per service type to display at the top. Now for children
+					var sql_child_summaries = "select count(*) as total, service, gender,r.name,source from patient p  left join regimen_service_type r on p.service = r.id where (((strftime('%Y', 'now') - strftime('%Y', dob))) <15 or coalesce((strftime('%Y', 'now') - strftime('%Y', dob)),'x') = 'x') and date(date_enrolled) between date('" + start_date + "') and date('" + end_date + "')" + supported_query + " and r.active=1 group by service, gender,source";
+					SQLExecuteAbstraction(sql_child_summaries, function(transaction, results) {
+
+						var child_male_outpatient_total = 0;
+						var child_male_inpatient_total = 0;
+						var child_male_transitin_total = 0;
+						var child_male_casualty_total = 0;
+						var child_male_transit_total = 0;
+						var child_male_htc_total = 0;
+						var child_male_other_total = 0;
+
+						var child_female_outpatient_total = 0;
+						var child_female_inpatient_total = 0;
+						var child_female_transitin_total = 0;
+						var child_female_casualty_total = 0;
+						var child_female_transit_total = 0;
+						var child_female_htc_total = 0;
+						var child_female_other_total = 0;
+
+						var child_male_art_total = 0;
+						var child_male_pep_total = 0;
+						var child_male_pmtct_total = 0;
+						var child_male_oi_total = 0;
+
+						var child_female_art_total = 0;
+						var child_female_pep_total = 0;
+						var child_female_pmtct_total = 0;
+						var child_female_oi_total = 0;
+
+						for(var x = 0; x < results.rows.length; x++) {
+							var result_row = results.rows.item(x);
+
+							//start with child on outpatient
+							if(result_row['gender'] == 1 && result_row['name'] == "ART" && result_row['source'] == 1) {
+								$("#child_male_art_outpatient").text(result_row['total']);
+								child_male_outpatient_total += result_row['total'];
+								child_male_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PEP" && result_row['source'] == 1) {
+								$("#child_male_pep_outpatient").text(result_row['total']);
+								child_male_outpatient_total += result_row['total'];
+								child_male_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PMTCT" && result_row['source'] == 1) {
+								$("#child_male_pmtct_outpatient").text(result_row['total']);
+								child_male_outpatient_total += result_row['total'];
+								child_male_pmtct_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "OI Only" && result_row['source'] == 1) {
+								$("#child_male_oi_outpatient").text(result_row['total']);
+								child_male_outpatient_total += result_row['total'];
+								child_male_oi_total += result_row['total'];
+							}
+
+							//start with child on inpatient
+							if(result_row['gender'] == 1 && result_row['name'] == "ART" && result_row['source'] == 2) {
+								$("#child_male_art_inpatient").text(result_row['total']);
+								child_male_inpatient_total += result_row['total'];
+								child_male_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PEP" && result_row['source'] == 2) {
+								$("#child_male_pep_inpatient").text(result_row['total']);
+								child_male_inpatient_total += result_row['total'];
+								child_male_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PMTCT" && result_row['source'] == 2) {
+								$("#child_male_pmtct_inpatient").text(result_row['total']);
+								child_male_inpatient_total += result_row['total'];
+								child_male_pmtct_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "OI Only" && result_row['source'] == 2) {
+								$("#child_male_oi_inpatient").text(result_row['total']);
+								child_male_inpatient_total += result_row['total'];
+								child_male_oi_total += result_row['total'];
+							}
+
+							//start with child on transit in
+							if(result_row['gender'] == 1 && result_row['name'] == "ART" && result_row['source'] == 3) {
+								$("#child_male_art_transferin").text(result_row['total']);
+								child_male_transitin_total += result_row['total'];
+								child_male_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PEP" && result_row['source'] == 3) {
+								$("#child_male_pep_transferin").text(result_row['total']);
+								child_male_transitin_total += result_row['total'];
+								child_male_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PMTCT" && result_row['source'] == 3) {
+								$("#child_male_pmtct_transferin").text(result_row['total']);
+								child_male_transitin_total += result_row['total'];
+								child_male_pmtct_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "OI Only" && result_row['source'] == 3) {
+								$("#child_male_oi_transferin").text(result_row['total']);
+								child_male_transitin_total += result_row['total'];
+								child_male_oi_total += result_row['total'];
+
+							}
+
+							//start with child on Casualty
+							if(result_row['gender'] == 1 && result_row['name'] == "ART" && result_row['source'] == 4) {
+								$("#child_male_art_casualty").text(result_row['total']);
+								child_male_casualty_total += result_row['total'];
+								child_male_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PEP" && result_row['source'] == 4) {
+								$("#child_male_pep_casualty").text(result_row['total']);
+								child_male_casualty_total += result_row['total'];
+								child_male_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PMTCT" && result_row['source'] == 4) {
+								$("#child_male_pmtct_casualty").text(result_row['total']);
+								child_male_casualty_total += result_row['total'];
+								child_male_pmtct_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "OI Only" && result_row['source'] == 4) {
+								$("#child_male_oi_casualty").text(result_row['total']);
+								child_male_casualty_total += result_row['total'];
+								child_male_oi_total += result_row['total'];
+							}
+
+							//start with child on Transit
+							if(result_row['gender'] == 1 && result_row['name'] == "ART" && result_row['source'] == 5) {
+								$("#child_male_art_transit").text(result_row['total']);
+								child_male_transit_total += result_row['total'];
+								child_male_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PEP" && result_row['source'] == 5) {
+								$("#child_male_pep_transit").text(result_row['total']);
+								child_male_transit_total += result_row['total'];
+								child_male_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PMTCT" && result_row['source'] == 5) {
+								$("#child_male_pmtct_transit").text(result_row['total']);
+								child_male_transit_total += result_row['total'];
+								child_male_pmtct_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "OI Only" && result_row['source'] == 5) {
+								$("#child_male_oi_transit").text(result_row['total']);
+								child_male_transit_total += result_row['total'];
+								child_male_oi_total += result_row['total'];
+							}
+
+							//start with child on HTC
+							if(result_row['gender'] == 1 && result_row['name'] == "ART" && result_row['source'] == 6) {
+								$("#child_male_art_htc").text(result_row['total']);
+								child_male_htc_total += result_row['total'];
+								child_male_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PEP" && result_row['source'] == 6) {
+								$("#child_male_pep_htc").text(result_row['total']);
+								child_male_htc_total += result_row['total'];
+								child_male_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PMTCT" && result_row['source'] == 6) {
+								$("#child_male_pmtct_htc").text(result_row['total']);
+								child_male_htc_total += result_row['total'];
+								child_male_pmtct_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "OI Only" && result_row['source'] == 6) {
+								$("#child_male_oi_htc").text(result_row['total']);
+								child_male_htc_total += result_row['total'];
+								child_male_oi_total += result_row['total'];
+							}
+
+							//Other Source
+							if(result_row['gender'] == 1 && result_row['name'] == "ART" && result_row['source'] > 6) {
+								$("#child_male_art_other").text(result_row['total']);
+								child_male_other_total += result_row['total'];
+								child_male_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PEP" && result_row['source'] > 6) {
+								$("#child_male_pep_other").text(result_row['total']);
+								child_male_other_total += result_row['total'];
+								child_male_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "PMTCT" && result_row['source'] > 6) {
+								$("#child_male_pmtct_other").text(result_row['total']);
+								child_male_other_total += result_row['total'];
+								child_male_pmtct_total += result_row['total'];
+							}
+							if(result_row['gender'] == 1 && result_row['name'] == "OI Only" && result_row['source'] > 6) {
+								$("#child_male_oi_other").text(result_row['total']);
+								child_male_other_total += result_row['total'];
+								child_male_oi_total += result_row['total'];
+							}
+
+							//start with child on outpatient
+							if(result_row['gender'] == 2 && result_row['name'] == "ART" && result_row['source'] == 1) {
+								$("#child_female_art_outpatient").text(result_row['total']);
+								child_female_outpatient_total += result_row['total'];
+								child_female_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PEP" && result_row['source'] == 1) {
+								$("#child_female_pep_outpatient").text(result_row['total']);
+								child_female_outpatient_total += result_row['total'];
+								child_female_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PMTCT" && result_row['source'] == 1) {
+								$("#child_female_pmtct_outpatient").text(result_row['total']);
+								child_female_outpatient_total += result_row['total'];
+								child_female_pmtct_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "OI Only" && result_row['source'] == 1) {
+								$("#child_female_oi_outpatient").text(result_row['total']);
+								child_female_outpatient_total += result_row['total'];
+								child_female_oi_total += result_row['total'];
+							}
+							//start with child on inpatient
+							if(result_row['gender'] == 2 && result_row['name'] == "ART" && result_row['source'] == 2) {
+								$("#child_female_art_inpatient").text(result_row['total']);
+								child_female_inpatient_total += result_row['total'];
+								child_female_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PEP" && result_row['source'] == 2) {
+								$("#child_female_pep_inpatient").text(result_row['total']);
+								child_female_inpatient_total += result_row['total'];
+								child_female_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PMTCT" && result_row['source'] == 2) {
+								$("#child_female_pmtct_inpatient").text(result_row['total']);
+								child_female_inpatient_total += result_row['total'];
+								child_female_pmtct_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "OI Only" && result_row['source'] == 2) {
+								$("#child_female_oi_inpatient").text(result_row['total']);
+								child_female_inpatient_total += result_row['total'];
+								child_female_oi_total += result_row['total'];
+							}
+
+							//start with child on transit in
+							if(result_row['gender'] == 2 && result_row['name'] == "ART" && result_row['source'] == 3) {
+								$("#child_female_art_transferin").text(result_row['total']);
+								child_female_transitin_total += result_row['total'];
+								child_female_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PEP" && result_row['source'] == 3) {
+								$("#child_female_pep_transferin").text(result_row['total']);
+								child_female_transitin_total += result_row['total'];
+								child_female_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PMTCT" && result_row['source'] == 3) {
+								$("#child_female_pmtct_transferin").text(result_row['total']);
+								child_female_transitin_total += result_row['total'];
+								child_female_pmtct_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "OI Only" && result_row['source'] == 3) {
+								$("#child_female_oi_transferin").text(result_row['total']);
+								child_female_transitin_total += result_row['total'];
+								child_female_oi_total += result_row['total'];
+							}
+
+							//start with child on Casualty
+							if(result_row['gender'] == 2 && result_row['name'] == "ART" && result_row['source'] == 4) {
+								$("#child_female_art_casualty").text(result_row['total']);
+								child_female_casualty_total += result_row['total'];
+								child_female_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PEP" && result_row['source'] == 4) {
+								$("#child_female_pep_casualty").text(result_row['total']);
+								child_female_casualty_total += result_row['total'];
+								child_female_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PMTCT" && result_row['source'] == 4) {
+								$("#child_female_pmtct_casualty").text(result_row['total']);
+								child_female_casualty_total += result_row['total'];
+								child_female_pmtct_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "OI Only" && result_row['source'] == 4) {
+								$("#child_female_oi_casualty").text(result_row['total']);
+								child_female_casualty_total += result_row['total'];
+								child_female_oi_total += result_row['total'];
+							}
+
+							//start with child on Transit
+							if(result_row['gender'] == 2 && result_row['name'] == "ART" && result_row['source'] == 5) {
+								$("#child_female_art_transit").text(result_row['total']);
+								child_female_transit_total += result_row['total'];
+								child_female_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PEP" && result_row['source'] == 5) {
+								$("#child_female_pep_transit").text(result_row['total']);
+								child_female_transit_total += result_row['total'];
+								child_female_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PMTCT" && result_row['source'] == 5) {
+								$("#child_female_pmtct_transit").text(result_row['total']);
+								child_female_transit_total += result_row['total'];
+								child_female_pmtct_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "OI Only" && result_row['source'] == 5) {
+								$("#child_female_oi_transit").text(result_row['total']);
+								child_female_transit_total += result_row['total'];
+								child_female_oi_total += result_row['total'];
+							}
+
+							//start with child on HTC
+							if(result_row['gender'] == 2 && result_row['name'] == "ART" && result_row['source'] == 6) {
+								$("#child_female_art_htc").text(result_row['total']);
+								child_female_htc_total += result_row['total'];
+								child_female_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PEP" && result_row['source'] == 6) {
+								$("#child_female_pep_htc").text(result_row['total']);
+								child_female_htc_total += result_row['total'];
+								child_female_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PMTCT" && result_row['source'] == 6) {
+								$("#child_female_pmtct_htc").text(result_row['total']);
+								child_female_htc_total += result_row['total'];
+								child_female_pmtct_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "OI Only" && result_row['source'] == 6) {
+								$("#child_female_oi_htc").text(result_row['total']);
+								child_female_htc_total += result_row['total'];
+								child_female_oi_total += result_row['total'];
+							}
+							//Other Source
+							if(result_row['gender'] == 2 && result_row['name'] == "ART" && result_row['source'] > 6) {
+								$("#child_female_art_other").text(result_row['total']);
+								child_female_other_total += result_row['total'];
+								child_female_art_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PEP" && result_row['source'] > 6) {
+								$("#child_female_pep_other").text(result_row['total']);
+								child_female_other_total += result_row['total'];
+								child_female_pep_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "PMTCT" && result_row['source'] > 6) {
+								$("#child_female_pmtct_other").text(result_row['total']);
+								child_female_other_total += result_row['total'];
+								child_female_pmtct_total += result_row['total'];
+							}
+							if(result_row['gender'] == 2 && result_row['name'] == "OI Only" && result_row['source'] > 6) {
+								$("#child_female_oi_other").text(result_row['total']);
+								child_female_other_total += result_row['total'];
+								child_female_oi_total += result_row['total'];
+							}
+						}
+
+						$("#child_male_outpatient_total").text(child_male_outpatient_total);
+						$("#child_male_inpatient_total").text(child_male_inpatient_total);
+						$("#child_male_transitin_total").text(child_male_transitin_total);
+						$("#child_male_casualty_total").text(child_male_casualty_total);
+						$("#child_male_transit_total").text(child_male_transit_total);
+						$("#child_male_htc_total").text(child_male_htc_total);
+						$("#child_male_other_total").text(child_male_other_total);
+
+						$("#child_female_outpatient_total").text(child_female_outpatient_total);
+						$("#child_female_inpatient_total").text(child_female_inpatient_total);
+						$("#child_female_transitin_total").text(child_female_transitin_total);
+						$("#child_female_casualty_total").text(child_female_casualty_total);
+						$("#child_female_transit_total").text(child_female_transit_total);
+						$("#child_female_htc_total").text(child_female_htc_total);
+						$("#child_female_other_total").text(child_female_other_total);
+
+						$("#overall_child_male_total").text(child_male_outpatient_total + child_male_inpatient_total + child_male_transitin_total + child_male_casualty_total + child_male_transit_total + child_male_htc_total + child_male_other_total);
+						$("#overall_child_male_art_total").text(child_male_art_total);
+						$("#overall_child_male_pep_total").text(child_male_pep_total);
+						$("#overall_child_male_pmtct_total").text(child_male_pmtct_total);
+						$("#overall_child_male_oi_total").text(child_male_oi_total);
+
+						$("#overall_child_female_total").text(child_female_outpatient_total + child_female_inpatient_total + child_female_transitin_total + child_female_casualty_total + child_female_transit_total + child_female_htc_total + child_female_other_total);
+						$("#overall_child_female_art_total").text(child_female_art_total);
+						$("#overall_child_female_pep_total").text(child_female_pep_total);
+						$("#overall_child_female_pmtct_total").text(child_female_pmtct_total);
+						$("#overall_child_female_oi_total").text(child_female_oi_total);
+						
+						whole_total+=child_female_outpatient_total + child_female_inpatient_total + child_female_transitin_total + child_female_casualty_total + child_female_transit_total + child_female_htc_total + child_female_other_total+child_male_outpatient_total + child_male_inpatient_total + child_male_transitin_total + child_male_casualty_total + child_male_transit_total + child_male_htc_total + child_male_other_total;
+                        $("#whole_total").append(whole_total);
+
+					});
+					var sql = "SELECT ps.name AS Source, COUNT( p.source )  AS Total FROM patient p LEFT JOIN patient_source ps ON ps.id = p.source WHERE p.date_enrolled BETWEEN date('" + start_date + "')  AND date('" + end_date + "')" + supported_query + " and ps.active=1 GROUP BY p.source";
+					SQLExecuteAbstraction(sql, function(transaction, results) {
+						if(results.rows.length == 0) {
+							$("#patient_listing").append($("<b><h3 style=' margin-top:20px; padding:5px; border:1px solid #000; height:20px; background:#999;' align='center'>No Data available for this period</h3></b>"));
+
+						}
+						var sum_total = 0;
+						// Handle the results
+						for(var i = 0; i < results.rows.length; i++) {
+							var parent_row = results.rows.item(i);
+							console.log(parent_row)
+							if(parent_row['Source'] != null) {
+								sum_total += parent_row['Total'];
+								var total_display = numberWithCommas(parent_row['Total']);
+								var row_string = "<tr><td align='center'>" + parent_row['Source'] + "</td><td align='center'>" + total_display + "</td></tr>";
+								$("#patient_listing").append($(row_string));
+							}
+						}
+						var sum_total_display = numberWithCommas(sum_total);
+						var row_string = "<tr><td align='center'><b>Total Patients</b></td><td align='center'><b>" + sum_total_display + "</b></td></tr>";
+						//$("#patient_listing").append($(row_string));
+
+					});
 				});
 			});
-			function getQueryParams(qs) {
-				qs = qs.split("+").join(" ");
-				var params = {}, tokens, re = /[?&]?([^=]+)=([^&]*)/g;
-				while( tokens = re.exec(qs)) {
-					params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
-				}
-				return params;
+			function numberWithCommas(x) {
+				return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 			}
 
 			function getAge(dateString) {
@@ -60,133 +811,468 @@
 				return age;
 			}
 		</script>
-	</head>
-	<body>
-		<style>
+			<style>
+			
 			#patient_listing {
 				margin: 0 auto;
 				border-top: 1px solid #B9B9B9;
-				font-size: 12px;
-				letter-spacing: 1px;
+				font-size: 14px;
+				letter-spacing: 1.5px;
+				width: 800px;
+			}
+			#adult_enrollments {
+				border-bottom: 1px solid #000;
+			}
+			#child_enrollments {
+				margin-top:30px;
+				border: 1px solid #FFF;
 			}
 			#patient_listing td th {
 				padding: 10px;
 			}
-			#top_enrollments_panel {
-				border: 1px solid black;
-				width: 900px;
-				margin: 0 auto;
-				overflow: hidden;
+			table#top_enrollments_panel {
+				width: 1200px;
+				border-collapse:collapse;
 			}
-			.category_title {
-				font-weight: bold;
-				color: #003366;
-				text-align: center;
-				text-decoration: underline;
-				font-size: 16px;
-				letter-spacing: 2px;
+			.subcategory_title,.category_title{
+				margin-left: 0.2em;
+				text-align:center;
+				font-weight:bold;
+				height:30px;
+				
 			}
-			.category {
-				width: 49%;
-				height: 100px;
-				float: left;
+			tr, td,table{
+				padding-left:0 auto;
+				padding-right:0 auto;
 			}
-			.sub_category {
-				width: 49%;
-				height: 100px;
-				float: left;
+			th{
+				background-color:rgb(192, 192, 192);
 			}
-			table {
-				margin: 0 auto;
+			.category_title{
+				font-size:16px;
+				background-color: #CCF;
+				border:1px solid;
+				border-color: black;
+			}
+			.subcategory_title, .subcategory_title td{
+				font-size:14px;
+				border-left:1px solid;
+				border-right:1px solid;
+			}
+			h4 {
+				font-size: 18px;
+				font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+			}
+			th{
+				font-weight:bolder;
+				font-size:16px;
+			}
+			
+		    .report_title {
+				color:rgb(34, 86, 253);
+				letter-spacing: 1px;
+			}
+			.male{
+				
+			}
+			.female{
+				border-left:none;
+			}
+			#overall_adult_female_total,#overall_adult_male_total,#overall_child_female_total,#overall_child_male_total{
+				font-weight:bold;
+				color: rgb(45, 173, 13);
 			}
 		</style>
-		<h3 id="facility_name" style="text-align: center"></h3>
-		<h4 style="text-align: center">Patients Who Enrolled in The Period From <span id="start_date"></span> to <span id="end_date"></span></h4>
-		<div id="top_enrollments_panel">
-			<div id="adult_enrollments" class="category">
-				<div class="category_title">
-					Adults
-				</div>
-				<div id="adult_male_enrollments" class="sub_category">
-					<div class="category_title">
-						Male
-					</div>
-					<table>
-						<tr>
-							<th>ART</th>
-							<th>PEP</th>
-							<th>OI</th>
-						</tr>
-						<tr>
-							<td id="adult_male_art">ART</td>
-							<td id="adult_male_pep">PEP</td>
-							<td id="adult_male_oi">OI</td>
-						</tr>
-					</table>
-				</div>
-				<div id="adult_female_enrollments" class="sub_category">
-					<div class="category_title">
-						Female
-					</div>
-					<table>
-						<tr>
-							<th>ART</th>
-							<th>PEP</th>
-							<th>PMTCT</th>
-							<th>OI</th>
-						</tr>
-						<tr>
-							<td id="adult_female_art">ART</td>
-							<td id="adult_female_pep">PEP</td>
-							<td id="adult_female_pmtct">PMTCT</td>
-							<td id="adult_female_oi">OI</td>
-						</tr>
-					</table>
-				</div>
-			</div>
-			<div id="child_enrollments" class="category">
-				<div class="category_title">
-					Children
-				</div>
-				<div id="child_male_enrollments" class="sub_category">
-					<div class="category_title">
-						Male
-					</div>
-					<table>
-						<tr>
-							<th>ART</th>
-							<th>PEP</th>
-							<th>PMTCT</th>
-							<th>OI</th>
-						</tr>
-						<tr>
-							<td id="child_male_art">ART</td>
-							<td id="child_male_pep">PEP</td>
-							<td id="child_male_pmtct">PMTCT</td>
-							<td id="child_male_oi">OI</td>
-						</tr>
-					</table>
-				</div>
-				<div id="child_female_enrollments" class="sub_category">
-					<div class="category_title">
-						Female
-					</div>
-					<table>
-						<tr>
-							<th>ART</th>
-							<th>PEP</th>
-							<th>PMTCT</th>
-							<th>OI</th>
-						</tr>
-												<tr>
-							<td id="child_female_art">ART</td>
-							<td id="child_female_pep">PEP</td>
-							<td id="child_female_pmtct">PMTCT</td>
-							<td id="child_female_oi">OI</td>
-						</tr>
-					</table>
-				</div>
-			</div>
+	</head>
+	<body>
+		<!-- Menus -->
+		<div class="navbar ">
+		  <div class="navbar-inner">
+		    <div class="container">
+		 
+		      <!-- Everything you want hidden at 940px or less, place within here -->
+		      <div class="nav-collapse collapse" id="acdmenu">
+		      	<a class="brand" href="../reports.html"/><img src="../Images/home-icon.png"> | </a>
+		        <ul class="nav">
+				  <li class="dropdown">
+				    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="standard_report">
+				     Standard Reports
+				    <b class="caret"></b>
+				    </a>
+				    <ul class="dropdown-menu" id="standard_report_sub">
+				      <li><a href="#" id="patients_enrolled_in_period" class="report donor_date_range_report active_report">Number of Patients Enrolled in Period</a></li>
+				      <li><a href="#" id="patients_enrolled_in_art" class="report donor_date_range_report active_report">Number of Patients Started on ART in the Period</a></li>
+				      <li><a href="#" id="graph_patients_enrolled_in_year" class="report active_report annual_report">Graph of Number of Patients Enrolled Per Month in a Given Year</a></li>
+				      <li><a href="#" id="cumulative_patients" class="report active_report single_date_report">Cumulative Number of Patients to Date</a></li>
+				      <li><a href="#" id="patients_on_ART_active" class="report active_report single_date_report">Number of Active Patients Receiving ART (by Regimen)</a></li>
+				    </ul>
+				  </li>
+				  <li class="dropdown divider-vertical" id="visiting_patient">
+				    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+				     Visiting Patients
+				    <b class="caret"></b>
+				    </a>
+				     <ul class="dropdown-menu" id="visiting_patient_sub">
+				      <li><a href="#" id="patients_scheduled_to_visit" class="report active_report date_range_report">List of Patients Scheduled to Visit</a></li>
+				      <li><a href="#" id="patients_started_on_date" class="report active_report date_range_report">List of Patients Started (on a Particular Date)</a></li>
+				      <li><a href="#" id="patients_visitied_for_refill" class="report active_report date_range_report">List of Patients Visited for Refill</a></li>
+				      <li><a href="#" id="patients_missing_appointments" class="report active_report date_range_report">Patients Missing Appointments</a></li>
+				      <li><a href="#" id="patients_adherence" class="report active_report date_range_report">Patients Adherence Report</a></li>
+				    </ul>
+				  </li>
+				  <li class="dropdown divider-vertical">
+				    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="early_warning">
+				     Early Warning Indicators
+				    <b class="caret"></b>
+				    </a>
+				    <ul class="dropdown-menu " id="early_warning_sub">
+				      <li><a href="#" id="patients_who_changed_regimen" class="report active_report date_range_report">Active Patients who Have Changed Regimens</a></li>
+				      <li><a href="#" id="patients_starting" class="report active_report date_range_report">List of Patients Starting (By Regimen)</a></li>
+				      <li><a href="#" id="early_warning_indicators" class="report active_report date_range_report">HIV Early Warning Indicators</a></li>
+				      <li><a href="#" id="service_statistics" class="report active_report single_date_report">Service Statistics (By Regimen)</a></li>
+				     
+				    </ul>
+				  </li>
+				  <li class="dropdown divider-vertical">
+				    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="drug_inventory">
+				     Drug Inventory
+				    <b class="caret"></b>
+				    </a>
+				    <ul class="dropdown-menu" id="drug_inventory_sub">
+				      <li><a href="#" id="drug_consumption" class="report active_report annual_report">Drug Consumption Report</a></li>
+				      <li><a href="#" id="drug_stock_on_hand" class="report active_report no_filter">Drug Stock on Hand Report</a></li>
+				      <li><a href="#" id="commodity_summary" class="report active_report date_range_report">Facility Summary Commodity Report</a></li>
+				      <li><a href="#" id="expiring_drugs" class="report active_report no_filter">Short Dated Stocks &lt;6 Months to Expiry</a></li>
+				      <li><a href="#" id="expired_drugs" class="report active_report no_filter">List of Expired Drugs</a></li>
+				    </ul>
+				  </li>
+				</ul>
+		        <a onClick="window.print()" class="brand" title="Print this page"/> | <img src="../Images/printing_icon.png"> </a>
+		      </div>
+		 
+		    </div>
+		  </div>
 		</div>
+		<!-- Menus end -->
+		
+		<h2 id="facility_name" style="text-align: center"></h2>
+		<h4 style="text-align: center">Listing of Patients enrolled in the period from <input type="text" id="start_date"> to <input type="text" id="end_date"></h4>
+		<hr size="1" style="width:80%">
+		<table align='center'  width='20%' style="font-size:16px; margin-bottom: 20px">
+			<tr>
+				<td colspan="2"><h5 class="report_title" style="text-align:center;font-size:14px;">Number of patients: <span id="whole_total"></span></h5></td>
+			</tr>
+		</table>
+			
+				<table id="top_enrollments_panel" align="center">
+						<tr class="category_title">
+							<td colspan="2">Adults</td>
+						</tr>
+						<tr class="subcategory_title">
+							<td>Male</td><td>Female</td>
+						</tr>
+						<tr>
+							<td>
+								<table class="male" width="100%"  border="1" cellpadding="1" style="border-collapse:collapse;">
+									<tr>
+										<th>Source</th>
+										<th>ART</th>
+										<th>PEP</th>
+										<th>OI</th>
+										<th>Total</th>
+									</tr>
+									<tr>
+										<td><b>Outpatient</b></td>
+										<td align='center' id="adult_male_art_outpatient">0</td>
+										<td align='center' id="adult_male_pep_outpatient">0</td>
+										<td align='center' id="adult_male_oi_outpatient">0</td>
+										<td align='center' id="adult_male_outpatient_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Inpatient</b></td>
+										<td align='center' id="adult_male_art_inpatient">0</td>
+										<td  align='center' id="adult_male_pep_inpatient">0</td>
+										<td align='center' id="adult_male_oi_inpatient">0</td>
+										<td align='center' id="adult_male_inpatient_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Transfer In</b></td>
+										<td  align='center' id="adult_male_art_transferin">0</td>
+										<td  align='center' id="adult_male_pep_transferin">0</td>
+										<td  align='center' id="adult_male_oi_transferin">0</td>
+										<td align='center' id="adult_male_transitin_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Casualty</b></td>
+										<td align='center' id="adult_male_art_casualty">0</td>
+										<td align='center'  id="adult_male_pep_casualty">0</td>
+										<td  align='center' id="adult_male_oi_casualty">0</td>
+										<td align='center' id="adult_male_casualty_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Transit</b></td>
+										<td align='center' id="adult_male_art_transit">0</td>
+										<td align='center' id="adult_male_pep_transit">0</td>
+										<td align='center' id="adult_male_oi_transit">0</td>
+										<td align='center' id="adult_male_transit_total">0</td>
+									</tr>
+									<tr>
+										<td><b>HTC</b></td>
+										<td align='center' id="adult_male_art_htc">0</td>
+										<td align='center' id="adult_male_pep_htc">0</td>
+										<td align='center' id="adult_male_oi_htc">0</td>
+										<td align='center' id="adult_male_htc_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Other</b></td>
+										<td align='center' id="adult_male_art_other">0</td>
+										<td align='center' id="adult_male_pep_other">0</td>
+										<td align='center' id="adult_male_oi_other">0</td>
+										<td align='center' id="adult_male_other_total">0</td>
+									</tr>
+									<tr style="background:#DDD;">
+										<td><b>Overall Total</b></td>
+										<td align='center' id="overall_adult_male_art_total">0</td>
+										<td align='center' id="overall_adult_male_pep_total">0</td>
+										<td align='center' id="overall_adult_male_oi_total">0</td>
+										<td align='center' id="overall_adult_male_total"></td>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<table class="female" width="100%"  border="1" cellpadding="1" style="border-collapse:collapse;">
+									<tr>
+										<th>Source</th>
+										<th>ART</th>
+										<th>PEP</th>
+										<th>OI</th>
+										<th>Total</th>
+									</tr>
+									<tr>
+										<td><b>Outpatient</b></td>
+										<td align='center' id="adult_female_art_outpatient">0</td>
+										<td align='center' id="adult_female_pep_outpatient">0</td>
+										<td align='center' id="adult_female_oi_outpatient">0</td>
+										<td align='center' id="adult_female_outpatient_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Inpatient</b></td>
+										<td align='center' id="adult_female_art_inpatient">0</td>
+										<td  align='center' id="adult_female_pep_inpatient">0</td>
+										<td align='center' id="adult_female_oi_inpatient">0</td>
+										<td align='center' id="adult_female_inpatient_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Transfer In</b></td>
+										<td  align='center' id="adult_female_art_transferin">0</td>
+										<td  align='center' id="adult_female_pep_transferin">0</td>
+										<td  align='center' id="adult_female_oi_transferin">0</td>
+										<td align='center' id="adult_female_transitin_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Casualty</b></td>
+										<td align='center' id="adult_female_art_casualty">0</td>
+										<td align='center'  id="adult_female_pep_casualty">0</td>
+										<td  align='center' id="adult_female_oi_casualty">0</td>
+										<td align='center' id="adult_female_casualty_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Transit</b></td>
+										<td align='center' id="adult_female_art_transit">0</td>
+										<td align='center' id="adult_female_pep_transit">0</td>
+										<td align='center' id="adult_female_oi_transit">0</td>
+										<td align='center' id="adult_female_transit_total">0</td>
+									</tr>
+									<tr>
+										<td><b>HTC</b></td>
+										<td align='center' id="adult_female_art_htc">0</td>
+										<td align='center' id="adult_female_pep_htc">0</td>
+										<td align='center' id="adult_female_oi_htc">0</td>
+										<td align='center' id="adult_female_htc_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Other</b></td>
+										<td align='center' id="adult_female_art_other">0</td>
+										<td align='center' id="adult_female_pep_other">0</td>
+										<td align='center' id="adult_female_oi_other">0</td>
+										<td align='center' id="adult_female_other_total">0</td>
+									</tr>
+									<tr style="background:#DDD;">
+										<td><b>Overall Total</b></td>
+										<td align='center' id="overall_adult_female_art_total">0</td>
+										<td align='center' id="overall_adult_female_pep_total">0</td>
+										<td align='center' id="overall_adult_female_oi_total">0</td>
+										<td align='center' id="overall_adult_female_total">0</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr class="category_title">
+							<td colspan="2">Children</td>
+						</tr>
+						<tr class="subcategory_title">
+							<td>Male</td><td>Female</td>
+						</tr>
+						<tr>
+							<td>
+								<table class="male" width="100%"  border="1" cellpadding="1" style="border-collapse:collapse;">
+									<tr>
+										<th>Source</th>
+										<th>ART</th>
+										<th>PEP</th>
+										<th>PMTCT</th>
+										<th>OI</th>
+										<th>Total</th>
+									</tr>
+									<tr>
+										<td><b>Outpatient</b></td>
+										<td align='center' id="child_male_art_outpatient">0</td>
+										<td align='center' id="child_male_pep_outpatient">0</td>
+										<td align='center' id="child_male_pmtct_outpatient">0</td>
+										<td align='center' id="child_male_oi_outpatient">0</td>
+										<td align='center' id="child_male_outpatient_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Inpatient</b></td>
+										<td align='center' id="child_male_art_inpatient">0</td>
+										<td  align='center' id="child_male_pep_inpatient">0</td>
+										<td align='center' id="child_male_pmtct_inpatient">0</td>
+										<td align='center' id="child_male_oi_inpatient">0</td>
+										<td align='center' id="child_male_inpatient_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Transfer In</b></td>
+										<td  align='center' id="child_male_art_transferin">0</td>
+										<td  align='center' id="child_male_pep_transferin">0</td>
+										<td align='center' id="child_male_pmtct_transferin">0</td>
+										<td  align='center' id="child_male_oi_transferin">0</td>
+										<td align='center' id="child_male_transitin_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Casualty</b></td>
+										<td align='center' id="child_male_art_casualty">0</td>
+										<td align='center'  id="child_male_pep_casualty">0</td>
+										<td align='center' id="child_male_pmtct_casualty">0</td>
+										<td  align='center' id="child_male_oi_casualty">0</td>
+										<td align='center' id="child_male_casualty_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Transit</b></td>
+										<td align='center' id="child_male_art_transit">0</td>
+										<td align='center' id="child_male_pep_transit">0</td>
+										<td align='center' id="child_male_pmtct_transit">0</td>
+										<td align='center' id="child_male_oi_transit">0</td>
+										<td align='center' id="child_male_transit_total">0</td>
+									</tr>
+									<tr>
+										<td><b>HTC</b></td>
+										<td align='center' id="child_male_art_htc">0</td>
+										<td align='center' id="child_male_pep_htc">0</td>
+										<td align='center' id="child_male_pmtct_htc">0</td>
+										<td align='center' id="child_male_oi_htc">0</td>
+										<td align='center' id="child_male_htc_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Other</b></td>
+										<td align='center' id="child_male_art_other">0</td>
+										<td align='center' id="child_male_pep_other">0</td>
+										<td align='center' id="child_male_pmtct_other">0</td>
+										<td align='center' id="child_male_oi_other">0</td>
+										<td align='center' id="child_male_other_total">0</td>
+									</tr>
+									<tr style="background:#DDD;">
+										<td><b>Overall Total</b></td>
+										<td align='center' id="overall_child_male_art_total">0</td>
+										<td align='center' id="overall_child_male_pep_total">0</td>
+										<td align='center' id="overall_child_male_pmtct_total">0</td>
+										<td align='center' id="overall_child_male_oi_total">0</td>
+										<td align='center' id="overall_child_male_total">0</td>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<table class="female" width="100%"  border="1" cellpadding="1" style="border-collapse:collapse;">
+									<tr>
+										<th>Source</th>
+										<th>ART</th>
+										<th>PEP</th>
+										<th>PMTCT</th>
+										<th>OI</th>
+										<th>Total</th>
+									</tr>
+									<tr>
+										<td><b>Outpatient</b></td>
+										<td align='center' id="child_female_art_outpatient">0</td>
+										<td align='center' id="child_female_pep_outpatient">0</td>
+										<td align='center' id="child_female_pmtct_outpatient">0</td>
+										<td align='center' id="child_female_oi_outpatient">0</td>
+										<td align='center' id="child_female_outpatient_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Inpatient</b></td>
+										<td align='center' id="child_female_art_inpatient">0</td>
+										<td  align='center' id="child_female_pep_inpatient">0</td>
+										<td align='center' id="child_female_pmtct_inpatient">0</td>
+										<td align='center' id="child_female_oi_inpatient">0</td>
+										<td align='center' id="child_female_inpatient_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Transfer In</b></td>
+										<td  align='center' id="child_female_art_transferin">0</td>
+										<td  align='center' id="child_female_pep_transferin">0</td>
+										<td align='center' id="child_female_pmtct_transferin">0</td>
+										<td  align='center' id="child_female_oi_transferin">0</td>
+										<td align='center' id="child_female_transitin_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Casualty</b></td>
+										<td align='center' id="child_female_art_casualty">0</td>
+										<td align='center'  id="child_female_pep_casualty">0</td>
+										<td align='center' id="child_female_pmtct_casualty">0</td>
+										<td  align='center' id="child_female_oi_casualty">0</td>
+										<td align='center' id="child_female_casualty_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Transit</b></td>
+										<td align='center' id="child_female_art_transit">0</td>
+										<td align='center' id="child_female_pep_transit">0</td>
+										<td align='center' id="child_female_pmtct_transit">0</td>
+										<td align='center' id="child_female_oi_transit">0</td>
+										<td align='center' id="child_female_transit_total">0</td>
+									</tr>
+									<tr>
+										<td><b>HTC</b></td>
+										<td align='center' id="child_female_art_htc">0</td>
+										<td align='center' id="child_female_pep_htc">0</td>
+										<td align='center' id="child_female_pmtct_htc">0</td>
+										<td align='center' id="child_female_oi_htc">0</td>
+										<td align='center' id="child_female_htc_total">0</td>
+									</tr>
+									<tr>
+										<td><b>Other</b></td>
+										<td align='center' id="child_female_art_other">0</td>
+										<td align='center' id="child_female_pep_other">0</td>
+										<td align='center' id="child_female_pmtct_other">0</td>
+										<td align='center' id="child_female_oi_other">0</td>
+										<td align='center' id="child_female_other_total">0</td>
+									</tr>
+									<tr style="background:#DDD;">
+										<td><b>Overall Total</b></td>
+										<td align='center' id="overall_child_female_art_total">0</td>
+										<td align='center' id="overall_child_female_pep_total">0</td>
+										<td align='center' id="overall_child_female_pmtct_total">0</td>
+										<td align='center' id="overall_child_female_oi_total">0</td>
+										<td align='center' id="overall_child_female_total">0</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+	
+			<!--  ENd -->
+			<div class="result"></div>
+			
+		<!-- Pop up Window end-->
+	
 	</body>
 </html>

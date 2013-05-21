@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Patient Details</title>
+		<link rel="SHORTCUT ICON" href="Images/favicon.ico">
+		<link href="CSS/style.css" type="text/css" rel="stylesheet"/>
+		<link href="CSS/offline_css.css" type="text/css" rel="stylesheet"/>
+		<link href="CSS/jquery-ui.css" type="text/css" rel="stylesheet"/>
+		<link href="CSS/validator.css" type="text/css" rel="stylesheet"/>
+		<script type="text/javascript" src="Scripts/offlineData.js"></script>
+		<script type="text/javascript" src="Scripts/jquery.js"></script>
+		<script type="text/javascript" src="Scripts/jquery-ui.js"></script>
+		<script type="text/javascript" src="Scripts/offline_database.js"></script>
+		<script type="text/javascript" src="Scripts/validator.js"></script>
+		<script type="text/javascript" src="Scripts/validationEngine-en.js"></script>
+		<script type="text/javascript" src="Scripts/sorttable.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				initDatabase();
+				var d = new Date();
+				var n = d.getFullYear();
+				$("#year").text(n);
+
+				//Get the environmental variables to display the hospital name
+				selectEnvironmentVariables(function(transaction, results) {
+					// Handle the results
+					var row = results.rows.item(0);
+					$("#facility_name").text(row['facility_name']);
+					var facility=row['facility'];
+
+				//});
+				var regimens = Array();
+				var regimen_change_reason = Array();
+				selectDistricts(function(transaction, results) {
+					// Handle the results
+					for(var i = 0; i < results.rows.length; i++) {
+						var row = results.rows.item(i);
+						$("#pob").append($("<option></option>").attr("value", row['name']).text(row['name']));
+					}
+
+				});
+				var $_GET = getQueryParams(document.location.hash);
+				message = $_GET['message'];
+				if(message != null) {
+					$("#message").text(message);
+					$("#message").css("display", "block");
+					var fade_out = function() {
+						$("#message").fadeOut().empty();
+					}
+					setTimeout(fade_out, 3000);
+				}
+				var patient_identification = $_GET['patient_number'];
+				$("#patient_number").val(patient_identification);
+
+				//Dynamically load the list of supporters!
+				selectAll("supporter", function(transaction, results) {
+					// Handle the results
+					for(var i = 0; i < results.rows.length; i++) {
+						var row = results.rows.item(i);
+						$("#support").append($("<option></option>").attr("value", row['id']).text(row['name']));
+					}
+
+				});
+				//Dynamically load the list of patient sources
+				selectAll("patient_source", function(transaction, results) {
+					// Handle the results
+					for(var i = 0; i < results.rows.length; i++) {
+						var row = results.rows.item(i);
+						$("#source").append($("<option></option>").attr("value", row['id']).text(row['name']));
+					}
+
+				});
+				//Dynamically load the list of patient sources
+				selectAll("facilities", function(transaction, results) {
+					// Handle the results
+					for(var i = 0; i < results.rows.length; i++) {
+						var row = results.rows.item(i);
+						$("#patient_source").append($("<option></option>").attr("value", row['facilitycode']).text(row['name']));
+					}
+
+				});
+				//Dynamically load the list of patient statuses
+				selectAll("patient_status", function(transaction, results) {
+					// Handle the results
+					for(var i = 0; i < results.rows.length; i++) {
+						var row = results.rows.item(i);
+						$("#current_status").append($("<option></option>").attr("value", row['id']).text(row['name']));
+					}
+
+				});
+				//Dynamically load the list of service types
+				selectAll("regimen_service_type", function(transaction, results) {
+					// Handle the results
+					for(var i = 0; i < results.rows.length; i++) {
+						var row = results.rows.item(i);
+						$("#service").append($("<option></option>").attr("value", row['id']).text(row['name']));
+					}
+				});
+				//Dynamically load the list of regimen
+				selectAll("regimen", function(transaction, results) {
+					// Handle the results
+					for(var i = 0; i < results.rows.length; i++) {
+						var row = results.rows.item(i);
+						regimens[row['id']] = row['regimen_desc'];
+						$("#regimen").append($("<option></option>").attr("value", row['id']).text(row['regimen_desc']));
+						$("#current_regimen").append($("<option></option>").attr("value", row['id']).text(row['regimen_desc']));
+					}
+				});
+				//Dynamically load the list of regimen change reasons
+				selectAll("regimen_change_purpose", function(transaction, results) {
+					// Handle the results
+					for(var i = 0; i < results.rows.length; i++) {
+						var row = results.rows.item(i);
+						regimen_change_reason[row['id']] = row['name'];
+					}
+				});
+				$("#dob").datepicker({
+					maxDate : "0D",
+					changeMonth : true,
+					changeYear : true
+				});
+				$("#enrolled").datepicker({
+					maxDate : "0D"
+				});
+
+				$("#partner_status").change(function() {
+					var selected_value = $(this).attr("value");
+
+					if(selected_value == 2) {
+
+						$('#dcs').slideDown('slow', function() {
+							// Animation complete.
+						});
+					} else {
+						$('#disco1').attr("value", "0");
+						$('#dcs').slideUp('slow', function() {
+							// Animation complete.
+						});
+					}
+				});
+				$("#tb").change(function() {
+					var selected_value = $(this).attr("value");
+
+					if(selected_value == 1) {
+						$('#tbstats').slideDown('slow', function() {
+							// Animation complete.
+						});
+						if($("#tbphase").val() == 0) {
+							$('#ttphase').slideUp('slow', function() {
+								// Animation complete.
+
+							});
+							$('#endp').slideUp('slow', function() {
+								// Animation complete.
+
+							});
+						}
+						if($("#tbphase").val() == 3) {
+
+							$('#ttphase').slideUp('slow', function() {
+								// Animation complete.
+							});
+							$('#endp').slideDown('slow', function() {
+								// Animation complete.
+							});
+						}
+						if($("#tbphase").val() != 0 && $("#tbphase").val() != 3) {
+							$('#ttphase').slideDown('slow', function() {
+								// Animation complete.
+							});
+							$('#endp').slideDown('slow', function() {
+								// Animation complete.
+							});
+						}
+					} else {
+						$('#tbstats').slideUp('slow', function() {
+							// Animation complete.
+						});
+						$('#ttphase').slideUp('slow', function() {
+							// Animation complete.
+						});
+						$('#endp').slideUp('slow', function() {
+							// Animation complete.
+						});
+						$('#tb').attr("value", "0");
+						$('#tbphase').attr("value", "0");
+						$('#fromphase').attr("value", " ");
+						$('#tophase').attr("value", " ");
+
+					}
+				});
+
+				$("#tbphase").change(function() {
+					var selected_value = $(this).attr("value");
+
+					if(selected_value == 0) {
+
+						$('#ttphase').slideUp('slow', function() {
+							// Animation complete.
+						});
+						$('#endp').slideUp('slow', function() {
+							// Animation complete.
+						});
+					}
+					if(selected_value == 3) {
+
+						$('#ttphase').slideUp('slow', function() {
+							// Animation complete.
+						});
+						$('#endp').slideDown('slow', function() {
+							// Animation complete.
+						});
+					}
+
+					if(selected_value != 0 && selected_value != 3) {
+
+						$('#ttphase').slideDown('slow', function() {
+							// Animation complete.
+						});
+						$('#endp').slideDown('slow', function() {
+							// Animation complete.
+						});
+						$('#tophase').attr("value", " ");
+
+					}
+				});
+				getPatientDetails(patient_identification, function(transaction, results) {
+					for(var i = 0; i < results.rows.length; i++) {
+						var parent_row = results.rows.item(i);
+						$('#medical_record_number').val(parent_row['medical_record_number']);
+						$('#last_name').val(parent_row['last_name']);
+						$('#first_name').val(parent_row['first_name']);
+						$('#other_name').val(parent_row['other_name']);
+						$('#dob').val(parent_row['dob']);
+						$('#pob').attr("value", parent_row['pob']);
+						$('#gender').attr("value", parent_row['gender']);
+						$('#current_weight').attr("value", parent_row['weight']);
+						$('#current_height').attr("value", parent_row['height']);
+						$('#current_bsa').attr("value", parent_row['sa']);
+						if(parent_row['gender'] == 2) {
+							$("#pregnant_container").show();
+						}
+						$('#pregnant').attr("value", parent_row['pregnant']);
+						$('#age').val(getAge(parent_row['dob']));
+						$('#start_age').val(getStartAge(parent_row['dob'], parent_row['date_enrolled']));
+						$('#start_weight').val(parent_row['start_weight']);
+						$('#start_height').val(parent_row['start_height']);
+						$('#start_bsa').val(parent_row['start_bsa']);
+						$('#phone').val(parent_row['phone']);
+						$('#physical').text(parent_row['physical']);
+						$('#alternate').val(parent_row['alternate']);
+						if(parent_row['sms_consent'] != null || parent_row['sms_consent'] != " ") {
+							if(parent_row['sms_consent'] == 1) {
+								$('#yes_reminders').attr("checked", "checked");
+							}
+							if(parent_row['sms_consent'] == 0) {
+								$('#no_reminders').attr("checked", "checked");
+							}
+						}
+						if(parent_row['partner_type'] == 0) {
+							$('#disco1').attr("checked", true);
+						}
+						if(parent_row['partner_type'] == 1) {
+							$('#disco').attr("checked", true);
+						}
+						if(parent_row['partner_status'] == 2) {
+							$('#dcs').slideDown('slow', function() {
+								// Animation complete.
+							});
+						}
+
+						var facility_sql = "SELECT * FROM facilities WHERE facilitycode='"+facility+"'";
+						SQLExecuteAbstraction(facility_sql, function(transaction, results) {
+							for(var i = 0; i < results.rows.length; i++) {
+								var facility_row = results.rows.item(i);
+
+							}
+
+							//Get Maturity Age at facility
+							$(".maturity_age").val(facility_row['adult_age']);
+							//Check if Patients Age is above age of maturity
+							if(getAge(parent_row['dob']) >=facility_row['adult_age']) {
+								$('#adult').attr("checked", "checked");
+							}
+							//Check if Patients Age is below Age of Maturity
+							if(getAge(parent_row['dob']) <facility_row['adult_age']) {
+								$('#child').attr("checked", "checked");
+							}
+
+						});
+						if(parent_row['other_illnesses'] != null || parent_row['other_illnesses'] != " ") {
+							$('#other_illnesses').attr("checked", "checked");
+							$('#other_illnesses_listing').attr("value", parent_row['other_illnesses']);
+						}
+						$('#other_drugs').attr("value", parent_row['other_drugs']);
+						if(parent_row['adr'] != null || parent_row['adr'] != "") {
+							$('#other_allergies').attr("checked", "checked");
+							$('#other_allergies_listing').attr("value", parent_row['adr']);
+						}
+						$('#tb').attr("value", parent_row['tb']);
+
+						if(parent_row['partner_status'] == "un" || parent_row['partner_status'] == "") {
+							$('#partner_status').attr("value", "0");
+						} else {
+							$('#partner_status').attr("value", parent_row['partner_status']);
+						}
+
+						$('#smoke').attr("value", parent_row['smoke']);
+						$('#alcohol').attr("value", parent_row['alcohol']);
+						$('#enrolled').val(parent_row['date_enrolled']);
+						$('#current_status').attr("value", parent_row['current_status']);
+						$('#source').attr("value", parent_row['source']);
+
+						//If source is transfer in display source
+						if($('#source').attr("value") == 3) {
+							$("#patient_source_listing").show();
+							$('#patient_source').attr("value", parent_row['transfer_from']);
+						}
+
+						$('#support').attr("value", parent_row['supported_by']);
+						$('#service').attr("value", parent_row['service']);
+						$('#service').change();
+						$('#regimen').attr("value", parent_row['start_regimen']);
+						$('#service_started').attr("value", parent_row['start_regimen_date']);
+						$('#status_started').attr("value", parent_row['status_change_date']);
+						$('#current_regimen').attr("value", parent_row['current_regimen']);
+						if(parent_row['tb'] != null || parent_row['tb'] != " ") {
+							if(parent_row['tb'] == 0) {
+								$('#tb').attr("value", "0");
+								$('#tbphase').attr("value", "0");
+								$('#fromphase').attr("value", " ");
+								$('#tophase').attr("value", " ");
+								$('#tophase1').attr("value", " ");
+
+							}
+							if(parent_row['tb'] == 1 && parent_row['tbphase'] != 3) {
+								$('#tb').attr("value", "1");
+								if(parent_row['tbphase'] == 1) {
+									$('#tbphase').attr("value", "1");
+								}
+								if(parent_row['tbphase'] == 2) {
+									$('#tbphase').attr("value", "2");
+								}
+								if(parent_row['tbphase'] == 0) {
+									$('#tbphase').attr("value", "0");
+								}
+
+								$('#fromphase').attr("value", parent_row['startphase']);
+								$('#tophase').attr("value", parent_row['endphase']);
+								$('#tbstats').slideDown('slow', function() {
+									// Animation complete.
+								});
+
+								$('#ttphase').slideDown('slow', function() {
+									// Animation complete.
+								});
+								$('#endp').slideDown('slow', function() {
+									// Animation complete.
+								});
+							}
+							if(parent_row['tb'] == 1 && parent_row['tbphase'] == 3) {
+								$('#tb').attr("value", "1");
+								if(parent_row['tbphase'] == 3) {
+									$('#tbphase').attr("value", "3");
+									$('#tophase').attr("value", parent_row['endphase']);
+								}
+								$('#tbstats').slideDown('slow', function() {
+									// Animation complete.
+								});
+								$('#endp').slideDown('slow', function() {
+									// Animation complete.
+								});
+								$('#ttphase').slideUp('slow', function() {
+									// Animation complete.
+								});
+							}
+						}
+
+						if(parent_row['current_status'] == 1) {
+
+						} else {
+							alert("Cannot Dispense to Patient:Status Not Active");
+							$("#dispense").attr("disabled", "disabled");
+						}
+						if(parent_row['other_illnesses'] != null || parent_row['other_illnesses'] != " ") {
+
+							var myplan = parent_row['other_illnesses'];
+							var thplan = myplan.split(',');
+							for(var jj = 0; jj < thplan.length; jj++) {
+								var arr = ["-1-", "-2-", "-3-", "-4-", "-5-", "-6-", "-7-", "-8-", "-9-", "-10-", "-11-", "-12-"];
+								if(jQuery.inArray(thplan[jj], arr) == -1 && thplan[jj] != "") {
+									$(".other_illnesses_listing").attr('checked', true);
+									$("#other").show();
+									$("#other_chronic").append(thplan[jj] + "\n");
+									$("textarea[name='other_chronic']").not(this).attr("disabled", "true");
+									$(".other_illnesses_listing").val($("#other_chronic").val());
+
+								}
+								if(jQuery.inArray(thplan[jj], arr) != -1) {
+									$('input[name="other_illnesses_listing"][type="checkbox"][value="' + thplan[jj] + '"]').attr('checked', true);
+								}
+							}
+						}
+						//for support group
+						if(parent_row['support_group'] != null || parent_row['support_group'] != "") {
+							$('#support_group').attr("checked", "checked");
+							$('#support_group_listing').attr("value", parent_row['support_group']);
+						}
+
+						if(parent_row['fplan'] != null || parent_row['fplan'] != " ") {
+
+							var myplan = parent_row['fplan'];
+							var thplan = myplan.split(',');
+
+							for(var jj = 0; jj < thplan.length; jj++) {
+
+								$('input[name="family_planning"][type="checkbox"][value="' + thplan[jj] + '"]').attr('checked', true);
+
+							}
+						}
+
+						$(":checkbox:not(:checked)").attr("style", "display:none;");
+						//$(":radio:not(:checked)").attr("style", "display:none;");
+						$(':checkbox:not(:checked)').each(function() {
+							var unchecked = $(this).attr('id');
+							$('label[for="' + unchecked + '"]').attr('style', 'display:none;');
+
+						});
+
+						$(':radio:not(:checked)').each(function() {
+							var unchecked = $(this).attr('id');
+							$('label[for="' + unchecked + '"]').attr('style', 'display:none;');
+
+						});
+						getMSQ();
+					}
+				});
+				getPatientLastVisit(patient_identification, function(transaction, results) {
+					for(var i = 0; i < results.rows.length; i++) {
+						var parent_row = results.rows.item(i);
+						$('#current_weight').val(parent_row['current_weight']);
+						$('#current_height').val(parent_row['current_height']);
+						$('#current_bsa').val(getMSQ(parent_row['current_weight'], parent_row['current_height']));
+						//$('#current_regimen').attr("value", parent_row['regimen']);
+
+					}
+
+				});
+
+				$("input,select,textarea").attr("disabled", 'disabled');
+				$(".submit-button").removeAttr("disabled");
+				getLastPatientAppointment(patient_identification, function(transaction, results) {
+					var appointment = 0;
+					for(var i = 0; i < results.rows.length; i++) {
+						var parent_row = results.rows.item(i);
+
+						$('#next_appointment_date_holder').val(parent_row['appointment']);
+						appointment = parent_row['appointment'];
+
+					}
+					if(appointment != 0) {
+						var days = getDays(appointment);
+						$('#days_to_next').val(days);
+					}
+				});
+				$('#ttphase').hide();
+				$('#endp').hide();
+				getPatientDispensingHistory(patient_identification, function(transaction, results) {
+					var dispensing_row = "";
+
+					for(var i = 0; i < results.rows.length; i++) {
+						var parent_row = results.rows.item(i);
+						if(!parent_row['last_regimen']) {
+							regimens[parent_row['last_regimen']] = "N/A";
+						}
+						if(!parent_row['regimen_change_reason'] || parent_row['regimen_change_reason'] == "undefined" || parent_row['regimen_change_reason'] == "Choose One") {
+							regimen_change_reason[parent_row['regimen_change_reason']] = "N/A";
+						}
+						dispensing_row += "<tr><td>" + parent_row['dispensing_date'] + "</td><td>" + parent_row['name'] + "</td><td>" + parent_row['unit'] + "</td>" + "<td>" + parent_row['dose'] + "</td><td>" + parent_row['duration'] + "</td><td>" + parent_row['indication'] + "</td><td><input dispensing_id= '" + parent_row['id'] + "' type='button' class='button edit_dispensing' value='Edit'/></td><td>" + parent_row['drug'] + "</td>" + "<td>" + parent_row['quantity'] + "</td><td>" + parent_row['current_weight'] + "</td><td>" + parent_row['current_height'] + "</td><td>" + regimens[parent_row['last_regimen']] + "</td>" + "<td>" + regimens[parent_row['regimen']] + "</td><td>" + parent_row['batch_number'] + "</td><td>" + parent_row['pill_count'] + "</td><td>" + parent_row['adherence'] + "</td><td>" + parent_row['user'] + "</td><td>" + regimen_change_reason[parent_row['regimen_change_reason']] + "</td></tr>";
+						//console.log(parent_row);
+						/*$('#current_weight').text(parent_row['current_weight']);
+						 $('#current_height').text(parent_row['current_height']);
+						 $('#current_bsa').text(getMSQ(parent_row['current_weight'], parent_row['current_height']));
+						 $('#current_regimen').attr("value", parent_row['regimen']);*/
+					}
+
+					$('#drugs_table tr:last').after(dispensing_row);
+					$('#dispensing_history').slideDown('slow', function() {
+						// Animation complete.
+					});
+					$(".edit_dispensing").click(function() {
+						var dispensing_id = $(this).attr("dispensing_id");
+						var url = "edit_dispensing.html#?dispensing_id=" + dispensing_id;
+						window.location.href = url;
+					});
+					$("#edit_patient").click(function() {
+						var url = "edit_patient.html#?patient_number=" + patient_identification;
+						window.location.href = url;
+					});
+					$("#dispense").click(function() {
+						var url = "dispense.html#?patient_number=" + patient_identification;
+						window.location.href = url;
+					});
+					$("#patient_info").click(function() {
+						var url = "patient_info.html#?patient_number=" + patient_identification;
+						window.location.href = url;
+					});
+				});
+				});
+			});
+			function getMSQ(weight, height) {
+				if(parseInt(weight) > 0 && parseInt(height) > 0) {
+					return MSQ = Math.sqrt((parseInt(weight) * parseInt(height)) / 3600);
+				} else {
+					return "-";
+				}
+
+			}
+
+			function getDays(dateString) {
+				var base_date = new Date();
+				var today = new Date(base_date.getFullYear(), base_date.getMonth(), base_date.getDate());
+				var today_timestamp = today.getTime();
+				var one_day = 1000 * 60 * 60 * 24;
+				var appointment_timestamp = new Date(Date.parse(dateString, "YYYY/MM/dd")).getTime();
+				var difference = appointment_timestamp - today_timestamp;
+				var days_difference = Math.ceil(difference / one_day);
+				return (days_difference - 1);
+			}
+
+			function getAge(dateString) {
+				var today = new Date();
+				var birthDate = new Date(dateString);
+				var age = today.getFullYear() - birthDate.getFullYear();
+				var m = today.getMonth() - birthDate.getMonth();
+				if(m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+					age--;
+				}
+				if(isNaN(age)) {
+					return "N/A";
+				}
+				return age;
+			}
+
+			function getStartAge(dateString, baseDate) {
+				var today = new Date(baseDate);
+				console.log(today);
+				var birthDate = new Date(dateString);
+				var age = today.getFullYear() - birthDate.getFullYear();
+				var m = today.getMonth() - birthDate.getMonth();
+				if(m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+					age--;
+				}
+				if(isNaN(age)) {
+					return "N/A";
+				}
+				return age;
+			}
+		</script>
+		<style>
+			.data-holder {
+				height: 20px;
+				line-height: 20px;
+				width: 120px !important;
+			}
+			.data-holder-2 {
+				height: 15px;
+				line-height: 15px;
+				width: 70px !important;
+				overflow: hidden;
+			}
+			.data-table {
+				width: 100%;
+			}
+			.data-table tr {
+				width: 99%;
+			}
+			table.data-table td {
+				height: 20px !important;
+				width: 50%;
+			}
+			label {
+				margin: 0 !important;
+			}
+			#patient_details {
+				background: #99CCFF;
+			}
+			select {
+				height: 30px !important;
+			}
+			.column {
+				width: 32%;
+				height: 100%;
+				font-size: 85%;
+			}
+			strong {
+				width: 100%;
+				padding-right: 0;
+			}
+			.inner-table strong {
+				width: 50px;
+			}
+			#drugs_table td {
+				min-width: 60px;
+			}
+			#drugs_table {
+				font-size: 80%;
+				background: #FFF;
+			}
+			.short_title {
+				width: 100%;
+				height: 35px;
+				background: #036;
+				color: #FFF;
+				font-weight: bold;
+			}
+			.banner_text {
+				color: #FFF;
+				font-weight: bold;
+				font-family: Book Antiqua;
+			}
+			.column {
+				width: 32%;
+				font-size: 90%;
+				font-family: Arial;
+				padding: 2px;
+			}
+			strong {
+				width: 100%;
+				padding-right: 0;
+			}
+			.inner-table strong {
+				width: 50px;
+			}
+			#dispensing_history {
+				margin: 0 auto;
+				overflow: scroll;
+				min-width: 980px !important;
+				max-height: 500px !important;
+				margin-right: 10px;
+				background: #99CCFF;
+			}
+			#drugs_table td {
+				min-width: 55px;
+				text-align: center;
+			}
+			#drugs_table {
+				font-size: 80%;
+			}
+			.banner_text {
+				height: auto;
+				margin: 0px;
+			}
+			#submit_section {
+				margin: 0 20% 0 30%;
+			}
+			#current_status {
+				color: red;
+				font-weight: bold;
+			}
+			#current_regimen {
+				color: red;
+				font-weight: bold;
+			}
+			#days_to_next {
+				color: red;
+				font-weight: bold;
+			}
+			table.sortable thead {
+				background-color: #eee;
+				color: #666666;
+				font-weight: bold;
+				cursor: default;
+			}
+			#facility_name {
+				color: green;
+				margin-top: 5px;
+				font-weight: bold;
+			}
+
+		</style>
+	</head>
+	<body>
+		<div id="wrapper">
+			<div id="top-panel" style="margin:0px;">
+				<div class="logo"></div>
+				<div class="network">
+					Network Status: <span id="status" class="offline">Offline</span>
+					<p>
+						Out-of-Sync Records: <span id="local-count"></span>
+					</p>
+				</div>
+				<div id="system_title">
+					<span style="display: block; font-weight: bold; font-size: 14px; margin:2px;">Ministry of Health</span>
+					<span style="display: block; font-size: 12px;">ARV Drugs Supply Chain Management Tool</span>
+					<span style="display: block; font-size: 14px;" id="facility_name" ></span>
+				</div>
+				<div id="top_menu">
+					<a href="home_controller" class="top_menu_link  first_link">Home </a>
+					<a href="patient_management.html" class="top_menu_link top_menu_active">Patients<span class="alert red_alert">off</span></a>
+					<a href="inventory.html" class="top_menu_link">Inventory<span class="alert red_alert">off</span></a>
+					<a href="reports.html" class="top_menu_link">Reports<span class="alert red_alert">off</span></a>
+					<a href="settings_management" class="top_menu_link">Settings<span class="alert green_alert">on</span></a>
+					<a href="order_management" class="top_menu_link">Order<span class="alert green_alert">on</span></a>
+					<div id="my_profile_link_container" style="display: inline">
+						<a ref="#" class="top_menu_link" id="my_profile_link"></a>
+					</div>
+				</div>
+			</div>
+			<div id="inner_wrapper">
+				<div id="main_wrapper">
+					<div id="signup">
+						<div class="short_title" >
+							<h3 class="banner_text" style="width:auto;">Patient ART Card</h3>
+							<div id="message" style="margin-left:250px;margin-top:-30px; display:none;background:green;"></div>
+						</div>
+						<hr/>
+						<div id="patient_details">
+							<div class="column">
+								<fieldset style="height:900px;">
+									<legend>
+										Patient Information &amp; Demographics
+									</legend>
+									<label> <strong class="label">Medical Record Number</strong>
+										<input type="text" name="medical_record_number" id="medical_record_number" value="">
+									</label>
+									<br/>
+									<label> <strong class="label">*Patient Number CCC</strong>
+										<input type="text"name="patient_number" id="patient_number" >
+									</label>
+									<br/>
+									<div class="two_comlumns">
+										<label style="width:140px; float:left; margin:0px;"> <strong class="label">Last Name</strong>
+											<input style="width:140px" type="text"name="last_name" id="last_name" class="validate[required]">
+										</label>
+										<label style="width:140px; float:right; margin:20px;"> <strong class="label" >First Name</strong>
+											<input style="width:140px;" type="text"name="first_name" id="first_name" class="validate[required]">
+										</label>
+									</div>
+									<label> <strong class="label">Other Name</strong>
+										<input type="text"name="other_name" id="other_name" style="width:200px;">
+									</label>
+									<br/>
+									<div class="two_comlumns">
+										<br/>
+										<label style="width:140px; float:left;"> <strong class="label" >*Date of Birth</strong>
+											<input style="width:140px;" type="text"name="dob" id="dob" class="validate[required]">
+										</label>
+										<label style="width:140px; float:right;"> <strong class="label">Place of Birth</strong> <!--<input style="width:140px" type="text"name="pob" id="pob">-->
+											<select name="pob" id="pob" style="width:120px">
+												<option value="None">--Select--</option>
+											</select> </label>
+									</div>
+									<div class="two_comlumns">
+										<br/>
+										<label style="width:140px; float:left;"> <strong class="label" >*Gender</strong>
+											<select name="gender" id="gender">
+												<option value=""></option>
+												<option value="1">Male</option><option value="2">Female</option>
+											</select> </label>
+										<label style="width:140px; float:right; display: none" id="pregnant_container"> <strong class="label">Pregnant?</br> </strong>
+											<select name="pregnant" id="pregnant">
+												<option value="0">No</option><option value="1">Yes</option>
+											</select> </label>
+									</div>
+									<br/>
+									<div class="two_comlumns" style="margin:0 0 0 40px;">
+										<label style="width:140px; float:left;"> <strong class="label" >Start Age(Years)</strong>
+											<input type="text" id="start_age" style="width:80px;"/>
+										</label>
+										<label style="width:140px; float:right;"> <strong class="label">Current Age(Years)</strong>
+											<input type="text" id="age" style="width:80px;" disabled="disabled"/>
+									</div>
+									<div class="two_comlumns" style="margin:0 0 0 40px;">
+										<label style="width:140px; float:left;"> <strong class="label" >Start Weight (KG)</strong>
+											<input style="width:140px;" type="text"name="start_weight" id="start_weight">
+										</label>
+										<label style="width:140px; float:right;"> <strong class="label">Current Weight (KG)</strong>
+											<input style="width:140px" type="text"name="current_weight" id="current_weight"  onblur="getMSQ()">
+										</label>
+									</div>
+									<div class="two_comlumns" style="margin:0 0 0 40px;">
+										<label style="width:140px; float:left;"> <strong class="label" >Start Height (CM)</strong>
+											<input style="width:140px;" type="text"name="start_height" id="start_height">
+										</label>
+										<label style="width:140px; float:right;"> <strong class="label">Current Height (CM)</strong>
+											<input style="width:140px" type="text"name="current_height" id="current_height" onblur="getMSQ()">
+										</label>
+									</div>
+									<div class="two_comlumns" style="margin:0 0 0 40px;">
+										<label style="width:120px; float:left;"> <strong class="label">Start Body Surface Area (MSQ)</strong>
+											<input type="text" name="start_bsa" id="start_bsa" value="" style="width:140px">
+										</label>
+										<label style="width:140px; float:right;"> <strong class="label">Current Body Surface Area (MSQ)</strong>
+											<input type="text" name="current_bsa" id="current_bsa" value="" style="width:140px">
+										</label>
+									</div>
+									<p>
+										<div class="two_comlumns">
+											<label style="width:140px; float:left;"> <strong class="label" >Adult >=
+												<input type="radio" id="adult" disabled="disabled"/>
+												</strong>
+												<input type="text" class="maturity_age" style="width:80px;" disabled="disabled"/>
+											</label>
+											<label style="width:140px; float:right;"> <strong class="label">Child <
+												<input type="radio" id="child" disabled="disabled"/>
+												</strong> <!--<input style="width:140px" type="text"name="pob" id="pob">-->
+												<input type="text" class="maturity_age" style="width:80px;" disabled="disabled"/>
+										</div>
+										<br/>
+										<div class="two_comlumns">
+											<label style="width:140px; float:left;"> <strong class="label">Patient's Phone Contact(s)</strong>
+												<input style="width:140px" type="text"  name="phone" id="phone" value="">
+											</label>
+											<label style="width:140px; float:right;"> <strong class="label">Receive SMS Reminders</strong>
+												<input style="width:20px" type="radio"  name="sms_consent" id="yes_reminders" value="1">
+												Yes
+												<input style="width:20px" type="radio"  name="sms_consent" id="no_reminders" value="0">
+												No </label>
+										</div>
+										<label> <strong class="label">Patient's Physical Contact(s)</strong> 											<textarea name="physical" id="physical" value=""></textarea> </label>
+										<label> <strong class="label">Patient's Alternate Contact(s)</strong>
+											<input type="text" name="alternate" id="alternate" value="">
+										</label>
+								</fieldset>
+							</div>
+							<div class="column">
+								<fieldset style="height:900px;">
+									<legend>
+										Patient History
+									</legend>
+									<label id="stats"> <strong class="label">Partner Status</strong>
+										<select name="partner_status" id="partner_status" style="width:300px">
+											<option value="0" selected="selected">-----Select One-----</option>
+											<option value="1" > Concordant</option>
+											<option value="2" > Discordant</option>
+										</select> </label>
+									<p>
+										<label  id="dcs"><strong class="label">Disclosure</br> </strong>
+											<input style="width:20px" type="radio"  name="disco" id="disco" value="1">
+											Yes
+											<input style="width:20px" type="radio"  name="disco" id="disco1" value="0">
+											No </label>
+									<p>
+										<div class="three_columns">
+											<label> <strong class="label"> Family Planning Method</strong>
+												<table>
+													<tr>
+														<td>
+														<input type="checkbox"name="family_planning" id="family_planning_1" class="family_planning" value="-1-" disabled="disabled"/>
+														</td>
+														<td><label for="family_planning_1">Condoms</label></td>
+													</tr>
+													<tr>
+														<td>
+														<input type="checkbox"name="family_planning" id="family_planning_2" class="family_planning" value="-2-" disabled="disabled"/>
+														</td>
+														<td ><label for="family_planning_2">Intrauterine Contraceptive Device(copper T)</label></td>
+													</tr>
+													<tr>
+														<td>
+														<input type="checkbox"name="family_planning" id="family_planning_3" class="family_planning" value="-3-" disabled="disabled"/>
+														</td>
+														<td><label for="family_planning_3">Implants(levonorgestrel 75mg)</td>
+													</tr>
+													<tr>
+														<td>
+														<input type="checkbox"name="family_planning" id="family_planning_4" class="family_planning" value="-4-" disabled="disabled"/>
+														</td>
+														<td><label for="family_planning_4">Emergency Contraceptive pills(levonorgestrel0.75 mg)</label></td>
+													</tr>
+													<tr>
+														<td>
+														<input type="checkbox"name="family_planning" id="family_planning_5" class="family_planning" value="-5-" disabled="disabled"/>
+														</td>
+														<td><label for="family_planning_5">Vasectomy</label></td>
+													</tr>
+													<tr>
+														<td>
+														<input type="checkbox"name="family_planning" id="family_planning_6" class="family_planning" value="-6-" disabled="disabled"/>
+														</td>
+														<td><label for="family_planning_6">Tubaligation</label></td>
+													</tr>
+													<tr>
+														<td>
+														<input type="checkbox"name="family_planning" id="family_planning_7" value="-7-" class="family_planning" disabled="disabled"/>
+														</td>
+														<td><label for="family_planning_7">Medroxyprogestrone 150 mg</label></td>
+													</tr>
+													<tr>
+														<td>
+														<input type="checkbox"name="family_planning" id="family_planning_8" value="-8-" class="family_planning" disabled="disabled"/>
+														</td>
+														<td><label for="family_planning_8"> Combined Oral Contraception(Levonorgestrel/ethinylestradiol 0.15/0.03mg)</label></td>
+													</tr>
+													<tr>
+														<td>
+														<input type="checkbox"name="family_planning" id="family_planning_9" value="-9-" class="family_planning" disabled="disabled"/>
+														</td>
+														<td><label for="family_planning_9"> levonorgestrel 0.03mg <label></td>
+													</tr>
+												</table> </label>
+										</div>
+									<p>
+										<div class="three_columns">
+											<strong class="label">Does Patient have other Chronic illnesses?</strong>
+											<input type="checkbox"name="other_illnesses_listing" id="other_illnesses_listing_1" value="-1-" disabled="disabled"/>
+											<label for="other_illnesses_listing_1">Diabetes  &nbsp;</label>
+											<input type="checkbox"name="other_illnesses_listing" id="other_illnesses_listing_2" value="-2-" disabled="disabled"/>
+											<label for="other_illnesses_listing_2">Hypertension</label>
+											<br/>
+											<input type="checkbox"name="other_illnesses_listing" id="other_illnesses_listing_3" value="-3-" disabled="disabled"/>
+											<label for="other_illnesses_listing_3">Obesity   &nbsp; &nbsp;</label>
+											<input type="checkbox"name="other_illnesses_listing" id="other_illnesses_listing_4" value="-4-" disabled="disabled"/>
+											<label for="other_illnesses_listing_4">Asthma</label>
+											<br/>
+											<input type="checkbox"name="other_illnesses_listing" id="other_illnesses_listing_5" value="-5-" disabled="disabled"/>
+											<label for="other_illnesses_listing_5">Gout   &nbsp;  &nbsp; &nbsp; &nbsp;</label>
+											<input type="checkbox"name="other_illnesses_listing" id="other_illnesses_listing_6" value="-6-" disabled="disabled"/>
+											<label for="other_illnesses_listing_6">Arthritis</label>
+											<br/>
+											<input type="checkbox"name="other_illnesses_listing" id="other_illnesses_listing_7" value="-7-" disabled="disabled"/>
+											<label for="other_illnesses_listing_7">Cancer   &nbsp; &nbsp; &nbsp;</label>
+											<input type="checkbox"name="other_illnesses_listing" id="other_illnesses_listing_8" value="-8-" disabled="disabled"/>
+											<label for="other_illnesses_listing_8">Stroke</label>
+											<br/>
+											<input type="checkbox"name="other_illnesses_listing" id="other_illnesses_listing_9" value="-9-" disabled="disabled"/>
+											<label for="other_illnesses_listing_9">Epilepsy  &nbsp; &nbsp;</label>
+											<input type="checkbox"name="other_illnesses_listing" id="other_illnesses_listing_10" value="-10-" disabled="disabled"/>
+											<label for="other_illnesses_listing_10">Mental Disorder</label>
+											<br/>
+											<input type="checkbox"name="other_illnesses_listing" id="other_illnesses_listing_11" value="-11-" disabled="disabled"/>
+											<label for="other_illnesses_listing_11">Cryptococcal Meningitis &nbsp; &nbsp;</label>
+											<input type="checkbox"name="other_illnesses_listing" id="other_illnesses_listing_12" value="-12-" disabled="disabled"/>
+											<label for="other_illnesses_listing_12">Diability</label>
+											<br/>
+											<input type="checkbox" name="other_illnesses_listing" class="other_illnesses_listing" id="other_illnesses_listing" disabled="disabled"/>
+											<label id="other" for="other_illnesses_listing" style="display:none;">Other  &nbsp; &nbsp; 												<textarea class="list_area" name="other_chronic" id="other_chronic" disabled=""></textarea> </label>
+											<br/>
+										</div>
+										<br/>
+										<label> <strong class="label">List Other Drugs Patient is Taking</strong> 											<textarea name="other_drugs" id="other_drugs"></textarea> </label>
+										<div class="three_columns">
+											<strong class="label">Does Patient have any Drugs Allergies/ADR</strong>
+											Yes
+											<input type="checkbox" name="other_allergies" id="other_allergies" value="">
+											<div class="list">
+												List Them
+											</div>
+											<textarea class="list_area" name="other_allergies_listing" id="other_allergies_listing"></textarea>
+										</div>
+										<div class="three_columns">
+											<strong class="label">Does Patient belong to any support group?</strong>
+											Yes
+											<input type="checkbox" name="support_group" id="support_group" value="">
+											<div class="list">
+												List Them
+											</div>
+											<textarea class="list_area" name="support_group_listing" id="support_group_listing"></textarea>
+										</div>
+										<div style="width:220px;height:80px;">
+											<label style="float:left;width:100px;"> <strong class="label">Does Patient Smoke?</strong>
+												<select name="smoke" id="smoke">
+													<option value="0">No</option><option value="1">Yes</option>
+												</select> </label>
+											<label style="width:100px;float:right;"> <strong class="label">Does Patient Drink Alcohol?</strong>
+												<select name="alcohol" id="alcohol">
+													<option value="0">No</option><option value="1">Yes</option>
+												</select> </label>
+										</div>
+										<div style="width:350px;">
+											<label style="float:left;width:200px;"> <strong class="label">Does Patient Have TB?</strong>
+												<select name="tb" id="tb">
+													<option value="0">No</option><option value="1">Yes</option>
+												</select> </label>
+											<label id="tbstats" style="display:none;float:right;width:150px;"> <strong class="label">TB Phase</strong>
+												<select name="tbphase" id="tbphase">
+													<option value="0" selected="selected"></option><option value="1">Intensive</option><option value="2">Continuation</option><option value="3">Completed</option>
+												</select> </label>
+										</div>
+									<p>
+										<label id="ttphase" style="display:inline-block;"> <strong class="label">Start of Phase</strong>
+											<input type="text" name="fromphase" id="fromphase" value=""/>
+										</label>
+										&nbsp; <label id="endp" style="display:inline-block;"> <strong class="label">End of Phase</strong>
+											<input type="text" name="tophase" id="tophase" value=""/>
+										</label>
+									</p>
+									<div style="width:400px;clear:both;">
+										<label style="float:left;display:inline-block;width:200px;"> <strong class="label" >Date of Next Appointment</strong>
+											<input type="text" style="width:200px;" name="next_appointment_date_holder" id="next_appointment_date_holder" />
+											<input type="hidden" name="appointment_checker" id="appointment_checker" />
+										</label>
+										<label id="appointment_date" style="float:right;display:inline-block;width:180px;"> <strong class="label">Days to Next Appointment</strong>
+											<input style="width:140px;" type="text"name="days_to_next" id="days_to_next">
+										</label>
+									</div>
+								</fieldset>
+							</div>
+							<div class="column">
+								<fieldset style="height:900px;">
+									<legend>
+										Program Information
+									</legend>
+									<label> <strong class="label">Date Patient Enrolled</strong>
+										<input type="text" name="enrolled" id="enrolled" value="">
+									</label>
+									<p>
+										<label> <strong class="label">Current Status</strong> <select name="current_status" id="current_status"></select> </label>
+									<p>
+										<label class="status_started" ><strong class='label'>Date of Status Change </strong>
+											<input type="text" name="status_started" id="status_started" value="">
+										</label>
+									<p>
+										<label> <strong class="label">Source of Patient</strong> <select name="source" id="source"></select> </label>
+									<p>
+										<label style="display:none;" id="patient_source_listing"> <strong class="label">Transfer From</strong> <select name="patient_source" id="patient_source"></select> </label>
+									<p>
+										<label> <strong class="label">Patient Supported by</strong> <select name="support" id="support"></select> </label>
+									<p>
+										<label> <strong class="label">Type of Service</strong>
+											<select name="service" id="service">
+												<option></option>
+											</select> </label>
+									<p>
+										<label id="start_of_regimen"> <strong class="label">Start Regimen</strong> <select name="regimen" id="regimen" style="width:300px"></select> </label>
+									<p>
+										<label id="date_service_started"> <strong class="label">Start Regimen Date</strong>
+											<input type="text" name="service_started" id="service_started" value="">
+										</label>
+									<p>
+										<label > <strong class="label" style="color:red;font-weight:bold;">Current Regimen</strong>
+											<select type="text"name="current_regimen" id="current_regimen" style="width:300px" class="validate[required]">
+												<option></option>
+											</select> </label>
+								</fieldset>
+							</div>
+							<div id="button_container" style="margin: 0 37% 0 0;">
+								<input type="button" class="submit-button" id="patient_info" value="Patient Info Report" style="width:150px;"/>
+								<input type="button" class="submit-button" id="edit_patient" value="Edit Patient Record" style="width:150px;"/>
+								<input type="button" class="submit-button" id="dispense" value="Dispense to Patient" style="width:150px;"/>
+							</div>
+						</div>
+						<div id="dispensing_history" style="display:none;">
+							<fieldset>
+								<legend>
+									Dispensing History
+								</legend>
+								<table border="0" class="data-table sortable" id="drugs_table" style="width:90%;">
+									<thead>
+										<tr id="table-header">
+											<th>Date</th>
+											<th>Purpose of Visit</th>
+											<th>Unit</th>
+											<th>Dose</th>
+											<th>Duration</th>
+											<th>Indication</th>
+											<th>Action</th>
+											<th>Drug</th>
+											<th>Qty</th>
+											<th>Weight</th>
+											<th>Height</th>
+											<th>Last Regimen</th>
+											<th>Regimen</th>
+											<th>BatchNo</th>
+											<th>Pill Count</th>
+											<th>Adherence</th>
+											<th>Operator</th>
+											<th>Reasons For Change</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr></tr>
+									</tbody>
+								</table>
+							</fieldset>
+						</div>
+					</div>
+					<!--End Wrapper div-->
+				</div>
+			</div>
+			<div id="bottom_ribbon" style="top:20px; width:90%;">
+				<div id="footer">
+					<div id="footer_text">
+						Government of Kenya &copy; <span id="year" ></span>. All Rights Reserved
+					</div>
+				</div>
+			</div>
+	</body>
+</html>

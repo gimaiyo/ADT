@@ -1,10 +1,11 @@
-Imports InfoSoftGlobal
+﻿Imports InfoSoftGlobal
 Imports System.Text
 
 Partial Class FormBased_Default
     Inherits System.Web.UI.Page
 
     Private Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
         If Not IsPostBack Then
             DivSubmission.Visible = False
             DivFormParameters.Visible = True
@@ -12,9 +13,11 @@ Partial Class FormBased_Default
             DivSubmission.Visible = True
             DivFormParameters.Visible = False
         End If
+
+
     End Sub
 
-    Public Sub ButtonChart_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles ButtonChart.Click
+    Protected Sub ButtonChart_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles ButtonChart.Click
         'We first request the data from the form
         Dim desserts As String
         Dim soups As String
@@ -44,6 +47,6 @@ Partial Class FormBased_Default
         'Close <chart> element
         xmlData.Append("</chart>")
         'Create the chart - Pie 3D Chart with data from xmlData
-        LiteralChart.Text = FusionCharts.RenderChart("../FusionCharts/Pie3D.swf", "", xmlData.ToString(), "Sales", "500", "300", False, False)
+        LiteralChart.Text = FusionCharts.RenderChart("../FusionCharts/Pie3D.swf", "", xmlData.ToString(), "Sales", "500", "300", False, True)
     End Sub
 End Class

@@ -1,11 +1,21 @@
 <%
 '*************************************************************************************
-'*
-'*   FUSIONCHARTS V3 API ASP CLASS 
-'*   Author  :  Infosoft Global Pvt. Ltd. 
-'*   version :  FusionCharts V3
-'*   Company :  Infosoft Global Pvt. Ltd. 
 '*  
+'* FUSIONCHARTS XT API ASP CLASS 
+'* @author     	FusionCharts 
+'* @version 	3.2.2.1
+'*
+'*
+'* Version 3.3 (31 December 2012)
+'*  - Fixes in chart alias 
+'*
+'* Version 3.2.2 (16 August 2011)
+'*  - Added support for all FusionChart v3.2.2 chart types
+'*  - Added support for external JSON string data
+'*  - Added support to enable Print Manager
+'*  - Added support to set renderer to JavaScript mode.
+'*  
+'*
 '*   Version: 1.0 (30 July 2008)
 '*   
 '*   FusionCharts Class easily handles All FusionCharts XML Structures like
@@ -34,6 +44,8 @@ Class FusionCharts
 	' For Future Use : 3=> scatter and bubble, 4=> MSStacked
 	Private seriesType 
 	
+	' renderer settings
+	Private FCSETTINGS			' Renderer settings
 	' Charts Atribute array
     Private chartParams
 	
@@ -93,9 +105,14 @@ Class FusionCharts
     Private defCounter              ' define counter
 	Private appCounter              ' apply counter
 	
+	
+	
+	
+	
 	' Class Initialize. Initialize all variable and array class
 	Private Sub Class_Initialize()
-	
+		
+
    		' All Array class Initialize
 		Set chartParams=New AssocArray
 		Set chartsSWF=New AssocArray
@@ -111,11 +128,17 @@ Class FusionCharts
 		set msdataSetParam=New AssocArray
 		set JSC=New AssocArray
 		
+		Set FCSETTINGS = New AssocArray
+		
 		' Default Delimiter
 		del=";"
 		
 		' Chart Array List
 		Call setChartArrays()
+		' initialize renderer settings
+		Call FCINITIALIZE()
+		Call FCINITSTATIC()
+
 		
 		
 		' Default Color Array List
@@ -185,6 +208,8 @@ Class FusionCharts
 	 	Call createStyles("definition")
         Call createSubStyles("definition","style")
         Call createSubStylesParam("definition","style",defCounter)
+	
+
 		
   	End Sub
 	
@@ -810,6 +835,20 @@ Class FusionCharts
 	  end if	
 	
 	End Sub
+	
+	' Renders Chart from External XML data source
+	Public Sub renderChartFromExtData(data, dataformat ,RenderAsHTML)
+	  ' render chart using RenderAsHTML option, true then render as html and false for render as JS
+	  if RenderAsHTML=true then
+	    Response.Write renderChartHTML(SWFFile & chartMSG,"",data,chartID, width, height,JSC("debugmode"), JSC("registerwithjs"), wMode)
+	  else
+	  	If LCASE(dataformat) = "json" Then FC_SetDataFormat(dataformat)
+		Response.Write renderChartJS(SWFFile & chartMSG, "", data, chartID, width, height, JSC("debugmode"), JSC("registerwithjs"), wMode)
+	  end if	
+	
+	End Sub
+
+	
 	 ' Set JS constructor of FusionCharts.js
 	Public Sub setInitParam(tname,tvalue)
         dim trimName
@@ -825,7 +864,45 @@ Class FusionCharts
 	  	
 	
 	 	
+	' * sets renderer type (flash/javascript)
+	' *
+	' * @param	renderer String  - Name of the renderer. Default is 'flash'. Other possibility is 'javascript'
+	' *
+	Public Sub setRenderer( renderer )
+		If Trim(renderer)="" Then renderer = "flash"
+		' Stores the renderer name in global configuration store
+		Call FC_SetConfiguration ("renderer", LCase(renderer),"",True)
+	End Sub
 	
+	' * explicitely sets window mode (window(detault)/transpatent/opaque)
+	' *
+	' * @param	mode String  - Name of the mode. Default is 'windoe'. Other possibilities are 'transparent'/'opaque'
+	' *
+	Public Sub setWindowMode( mode)
+		If Trim(mode)="" Then mode = "window"
+		' Stores the window mode to configuration store
+		Call FC_SetConfiguration ( "wmode", mode, "", True )
+	End Sub
+	
+	' * Enables Print Manager for Mozilla browsers
+	' * 
+	' * This function adds a small JavaScript snippet to the page which enables the Managed Print option for Mozilla basec browsers
+	' * 
+	' * The parameter directWriteToPage which if set to true would write the code directly to page. Otherwise the 
+	' * code snippet is returned as string 
+	' * 
+	' * @param	directWriteToPage	Boolean  - Whether to write the JavaScript code directly to page or return as string
+	' *
+	' * @return	A blank string when the code is directly written to page, otherwize, the JavaScript as string.
+	Public Function enablePrintManager(directWriteToPage)
+		Dim strHTML
+		strHTML = "<script type=""text/javascript""><!--" & vbCrLf & " if(FusionCharts && FusionCharts.printManager) FusionCharts.printManager.enabled(true);" &  vbCrLf & "// -->" & vbCrLf & "</script>"
+		If (directWriteToPage=True) Then
+			%><%=strHTML%><%
+		Else
+			enablePrintManager = strHTML
+		End If
+	End Function	
 
    
 
@@ -1017,10 +1094,10 @@ Class FusionCharts
 		seriesType=sValue 
 	 End Sub
 	
-	' FusionCharts V3 Array list
+	' FusionCharts XT Array list
 	Private sub setChartArrays()
 	    ' Series Type #1
-	    chartsSWF("area2d")("0")="Area2D"
+		chartsSWF("area2d")("0")="Area2D"
 		chartsSWF("area2d")("1")=1
 		chartsSWF("bar2d")("0")="Bar2D"
 		chartsSWF("bar2d")("1")=1
@@ -1032,21 +1109,40 @@ Class FusionCharts
 		chartsSWF("doughnut2d")("1")=1
 		chartsSWF("doughnut3d")("0")="Doughnut3D"
 		chartsSWF("doughnut3d")("1")=1
-		chartsSWF("line")("0")="Line"
-		chartsSWF("line")("1")=1
 		chartsSWF("line2d")("0")="Line"
 		chartsSWF("line2d")("1")=1
+		chartsSWF("line")("0")="Line"
+		chartsSWF("line")("1")=1
 		chartsSWF("pie2d")("0")="Pie2D"
 		chartsSWF("pie2d")("1")=1		
 		chartsSWF("pie3d")("0")="Pie3D"
 		chartsSWF("pie3d")("1")=1	
 		chartsSWF("grid")("0")="SSGrid"
-		chartsSWF("grid")("1")=1
-		
+		chartsSWF("grid")("1")=1	
+		'FusionCharts  added since v3.2
+		chartsSWF("pareto2d")("0")="Pareto2D"
+		chartsSWF("pareto2d")("1")=1	
+		chartsSWF("pareto3d")("0")="Pareto3D"
+		chartsSWF("pareto3d")("1")=1	
+		'PowerCharts
+		chartsSWF("spline")("0")="Spline"
+		chartsSWF("spline")("1")=1	
+		chartsSWF("splinearea")("0")="SplineArea"
+		chartsSWF("splinearea")("1")=1	
+		chartsSWF("kagi")("0")="Kagi"
+		chartsSWF("kagi")("1")=1	
+		chartsSWF("waterfall")("0")="Waterfall2D"
+		chartsSWF("waterfall")("1")=1	
+		'FusionWidgets
+		chartsSWF("funnel")("0")="Funnel"
+		chartsSWF("funnel")("1")=1
+		chartsSWF("pyramid")("0")="Pyramid"
+		chartsSWF("pyramid")("1")=1
+
 		' Series Type #2
+		chartsSWF("msarea")("0")="MSArea"
+		chartsSWF("msarea")("1")=2
 		chartsSWF("msarea2d")("0")="MSArea"
-		chartsSWF("msarea2d")("1")=2
-		chartsSWF("msarea2d")("0")="MSArea2D"
 		chartsSWF("msarea2d")("1")=2
 		chartsSWF("msbar2d")("0")="MSBar2D"
 		chartsSWF("msbar2d")("1")=2
@@ -1064,6 +1160,8 @@ Class FusionCharts
 		chartsSWF("mscolumn3dline")("1")=2
 		chartsSWF("mscombi2d")("0")="MSCombi2D"
 		chartsSWF("mscombi2d")("1")=2
+		chartsSWF("mscombi3d")("0")="MSCombi3D"
+		chartsSWF("mscombi3d")("1")=2
 		chartsSWF("mscombidy2d")("0")="MSCombiDY2D"
 		chartsSWF("mscombidy2d")("1")=2
 		chartsSWF("msline")("0")="MSLine"
@@ -1093,19 +1191,123 @@ Class FusionCharts
 		chartsSWF("stackedcolumn3d")("0")="StackedColumn3D"
 		chartsSWF("stackedcolumn3d")("1")=2		
 		chartsSWF("stackedcolumn3dlinedy")("0")="StackedColumn3DLineDY"
-		chartsSWF("stackedcolumn3dlinedy")("1")=2		
+		chartsSWF("stackedcolumn3dlinedy")("1")=2	
 		chartsSWF("msstackedcolumn2d")("0")="MSStackedColumn2D"
-		chartsSWF("msstackedcolumn2d")("1")=2
+		chartsSWF("msstackedcolumn2d")("1")=4
+		
+		'FusionCharts charts added since v3.2
+		chartsSWF("stackedcolumn2dline")("0")="StackedColumn2DLine"
+		chartsSWF("stackedcolumn2dline")("1")=2
+		chartsSWF("stackedcolumn3dline")("0")="StackedColumn3DLine"
+		chartsSWF("stackedcolumn3dline")("1")=2
+		chartsSWF("marimekko")("0")="Marimekko"
+		chartsSWF("marimekko")("1")=2
+		chartsSWF("zoomline")("0")="ZoomLine"
+		chartsSWF("zoomline")("1")=2
+		'PowerCharts
+		chartsSWF("msspline")("0")="MSSpline"
+		chartsSWF("msspline")("1")=1	
+		chartsSWF("mssplinearea")("0")="MSSplineArea"
+		chartsSWF("mssplinearea")("1")=1	
+		
+		chartsSWF("errorbar2d")("0")="ErrorBar2D"
+		chartsSWF("errorbar2d")("1")=2
+		chartsSWF("errorline")("0")="ErrorLine"
+		chartsSWF("errorline")("1")=2
+		chartsSWF("inversemsarea")("0")="InverseMSArea"
+		chartsSWF("inversemsarea")("1")=2
+		chartsSWF("inversemscolumn2d")("0")="InverseMSColumn2D"
+		chartsSWF("inversemscolumn2d")("1")=2
+		chartsSWF("inversemsline")("0")="InverseMSLine"
+		chartsSWF("inversemsline")("1")=2
+		chartsSWF("radar")("0")="Radar"
+		chartsSWF("radar")("1")=2
+		chartsSWF("logmscolumn2d")("0")="LogMSColumn2D"
+		chartsSWF("logmscolumn2d")("1")=2
+		chartsSWF("logmsline")("0")="LogMSLine"
+		chartsSWF("logmsline")("1")=2
+		chartsSWF("candlestick")("0")="CandleStick"
+		chartsSWF("candlestick")("1")=2
+		chartsSWF("multilevelpie")("0")="MultiLevelPie"
+		chartsSWF("multilevelpie")("1")=2
+		chartsSWF("multiaxisline")("0")="MultiAxisLine"
+		chartsSWF("multiaxisline")("1")=2
+		chartsSWF("msstepline")("0")="MSStepLine"
+		chartsSWF("msstepline")("1")=2
+		chartsSWF("boxandwhisker2d")("0")="BoxAndWhisker2D"
+		chartsSWF("boxandwhisker2d")("1")=2
+		chartsSWF("heatmap")("0")="HeatMap"
+		chartsSWF("heatmap")("1")=2
+		chartsSWF("dragcolumn2D")("0")="DragColumn2D"
+		chartsSWF("dragcolumn2D")("1")=2
+		chartsSWF("dragline")("0")="DragLine"
+		chartsSWF("dragline")("1")=2
+		chartsSWF("dragarea")("0")="DragArea"
+		chartsSWF("dragarea")("1")=2
+		chartsSWF("dragnode")("0")="DragNode"
+		chartsSWF("dragnode")("1")=2
+
+		'FusionWidgets
+		chartsSWF("realtimearea")("0")="RealTimeArea"
+		chartsSWF("realtimearea")("1")=2
+		chartsSWF("realtimecolumn")("0")="RealTimeColumn"
+		chartsSWF("realtimecolumn")("1")=2
+		chartsSWF("realtimeline")("0")="RealTimeLine"
+		chartsSWF("realtimeline")("1")=2
+		chartsSWF("realtimestackedarea")("0")="RealTimeStackedArea"
+		chartsSWF("realtimestackedarea")("1")=2
+		chartsSWF("realtimestackedcolumn")("0")="RealTimeStackedColumn"
+		chartsSWF("realtimestackedcolumn")("1")=2
+		chartsSWF("realtimelinedy")("0")="RealTimeLineDY"
+		chartsSWF("realtimelinedy")("1")=2
+		chartsSWF("gantt")("0")="Gantt"
+		chartsSWF("gantt")("1")=2
+		
+		chartsSWF("sparkline")("0")="SparkLine"
+		chartsSWF("sparkline")("1")=2
+		chartsSWF("sparkcolumn")("0")="SparkColumn"
+		chartsSWF("sparkcolumn")("1")=2
+		chartsSWF("sparkwinloss")("0")="SparkWinLoss"
+		chartsSWF("sparkwinloss")("1")=2
+		chartsSWF("angulargauge")("0")="AngularGauge"
+		chartsSWF("angulargauge")("1")=2
+		chartsSWF("bulb")("0")="Bulb"
+		chartsSWF("bulb")("1")=2
+		chartsSWF("cylinder")("0")="Cylinder"
+		chartsSWF("cylinder")("1")=2
+		chartsSWF("hled")("0")="HLED"
+		chartsSWF("hled")("1")=2
+		chartsSWF("hlinearGauge")("0")="HLinearGauge"
+		chartsSWF("hlinearGauge")("1")=2
+		chartsSWF("thermometer")("0")="Thermometer"
+		chartsSWF("thermometer")("1")=2
+		chartsSWF("vled")("0")="VLED"
+		chartsSWF("vled")("1")=2
+		chartsSWF("hbullet")("0")="HBullet"
+		chartsSWF("hbullet")("1")=2
+		chartsSWF("vbullet")("0")="VBullet"
+		chartsSWF("vbullet")("1")=2
+
+		chartsSWF("drawingpad")("0")="DrawingPad"
+		chartsSWF("drawingpad")("1")=2
+		
 		
 		' Series Type #3
 		chartsSWF("bubble")("0")="Bubble"
 		chartsSWF("bubble")("1")=3
 		chartsSWF("scatter")("0")="Scatter"
 		chartsSWF("scatter")("1")=3
-		
-		' Series Type #3
+		'PowerCharts
+		chartsSWF("selectscatter")("0")="SelectScatter"
+		chartsSWF("selectscatter")("1")=3
+		chartsSWF("errorscatter")("0")="ErrorScatter"
+		chartsSWF("errorscatter")("1")=3
+
+
+		' Series Type #4
 		chartsSWF("msstackedcolumn2dlinedy")("0")="MSStackedColumn2DLineDY"
         chartsSWF("msstackedcolumn2dlinedy")("1")=4	
+
 	    
 	 End Sub
 		 
@@ -1452,7 +1654,7 @@ Class FusionCharts
 	 ' Conver ' and " to %26apos; and &quot; 
 	 Private Function encodeSpecialChars(strValue)
 	   strValue=replace(strValue,"&","%26")
-	   strValue=replace(strValue,"'","%26apos;")
+	   strValue=replace(strValue,"'","&apos;")
 	   strValue=replace(strValue,"""","&quot;")
 	   strValue=replace(strValue,"<","&lt;")
 	   strValue=replace(strValue,">","&gt;")
@@ -1560,146 +1762,154 @@ Class FusionCharts
 		encodeDataURL = Server.URLEncode(strDataURL)
 	End Function
 
-	'renderChartJS renders the JavaScript + HTML code required to embed a chart.
-	'This function assumes that you've already included the FusionCharts JavaScript class
-	'in your page.
 	
-	' chartSWF - SWF File Name (and Path) of the chart which you intend to plot
-	' strURL - If you intend to use dataURL method for this chart, pass the URL as this parameter. Else, set it to "" (in case of dataXML method)
-	' strXML - If you intend to use dataXML method for this chart, pass the XML data as this parameter. Else, set it to "" (in case of dataURL method)
-	' chartId - Id for the chart, using which it will be recognized in the HTML page. Each chart on the page needs to have a unique Id.
-	' chartWidth - Intended width for the chart (in pixels)
-	' chartHeight - Intended height for the chart (in pixels)
-	' debugMode - Whether to start the chart in debug mode
-	' registerWithJS - Whether to ask chart to register itself with JavaScript
-	' setTransparent - Whether to ask chart to Transparent SWF
+	' *  renderChart renders the JavaScript + HTML code required to embed a chart.
+	' *  This function assumes that you've already included the FusionCharts JavaScript class
+	' *  in your page.
+	
+	' *   chartSWF - SWF File Name (and Path) of the chart which you intend to plot
+	' *   strURL - If you intend to use dataURL method for this chart, pass the URL as this parameter. Else, set it to "" (in case of dataXML method)
+	' *   strXML - If you intend to use dataXML method for this chart, pass the XML data as this parameter. Else, set it to "" (in case of dataURL method)
+	' *   chartId - Id for the chart, using which it will be recognized in the HTML page. Each chart on the page needs to have a unique Id.
+	' *   chartWidth - Intended width for the chart (in pixels)
+	' *   chartHeight - Intended height for the chart (in pixels)
+	' *   debugMode - Whether to start the chart in debug mode
+	' *   registerWithJS - Whether to ask chart to register itself with JavaScript
+	' *	  setTransparent - Whether to ask chart to Transparent SWF
 	Private Function renderChartJS(chartSWF, strURL, strXML, chartId, chartWidth, chartHeight, debugMode, registerWithJS, setTransparent)
-		
-		' Transparent Enable
-		dim nSetTransparent
-		nSetTransparent="false"
-		if setTransparent=true Then
-		   nSetTransparent="true"
-		end if
-		'''''''''''''''''
-		
 		'First we create a new DIV for each chart. We specify the name of DIV as "chartId"Div.			
 		'DIV names are case-sensitive.
+		Dim dataFormat
+		Dim windowMode
+		windowMode = "Opaque"
+		
+		dataFormat = FC_GetConfiguration ("dataFormat","")
+		
+		If Trim(dataFormat) = "" Then dataFormat="xml"
+		
+		If Trim(strXML) = "" Then dataFormat = dataFormat & "url"
+		
+		If (FC_GetConfiguration ("renderAt", "")="") Then
+			Call FC_SetConfiguration("renderAt", chartId & "Div","",True )
+		End If
+	
+		Call FC_SetConfiguration("swfUrl" , chartSWF, "", True)
+		Call FC_SetConfiguration("dataFormat" , dataFormat, "", True)
+		Call FC_SetConfiguration("id", chartId, "", True) 
+		Call FC_SetConfiguration("width", chartWidth, "", True) 
+		Call FC_SetConfiguration("height", chartHeight, "", True)
+		
+		If (debugMode) Then Call FC_SetConfiguration("debugMode", boolToNum(debugMode), "", True )
+		
+		If(setTransparent OR wMode) Then Call FC_SetConfiguration("wmode", "transparent")  
+		windowMode = FC_GetConfiguration("wmode", "") 
+		
+		If ( windowMode = "" ) Then 
+			windowMode = "opaque"
+		End If
+		
+		Dim dataSource
+		Dim datasource_json
+		Dim chart_config_json
+		
+		If Trim(strXML) = "" Then
+			dataSource = strURL
+		Else
+			dataSource = strXML
+		End If
+		dataSource = Replace(dataSource, vbCrLF , "")
+		
+		If LCase(dataFormat) = "json" Then
+			datasource_json = """dataSource"" : " & dataSource
+		Else
+			datasource_json = """dataSource"" : " & """" & dataSource & """" 
+		End If
+		
+		chart_config_json = "{ " & fc_encode_json( FC_GetConfiguration("params","" ), False ) & ", " & datasource_json & " }"
+		
 	%>
-		<!-- START Script Block for Chart <%=chartId%> -->
-		<div id='<%=chartId%>Div' >
-			Chart.
-			<%
-			'The above text "Chart" is shown to users before the chart has started loading
-			'(if there is a lag in relaying SWF from server). This text is also shown to users
-			'who do not have Flash Player installed. You can configure it as per your needs.
-			%>
-		</div>
-			<%
-			'Now, we render the chart using FusionCharts Class. Each chart's instance (JavaScript) Id 
-			'is named as chart_"chartId".		
-			%>
-		<script type="text/javascript">	
-			//Instantiate the Chart	
-			var chart_<%=chartId%> = new FusionCharts("<%=chartSWF%>", "<%=chartId%>", "<%=chartWidth%>", "<%=chartHeight%>", "<%=boolToNum(debugMode)%>", "<%=boolToNum(registerWithJS)%>","<%=JSC("bgcolor")%>","<%=JSC("scalemode")%>","<%=JSC("lang")%>");
-			
-			<% 
-			'Check whether we've to provide data using dataXML method or dataURL method
-			if strXML="" then %>
-			//Set the dataURL of the chart
-			chart_<%=chartId%>.setDataURL("<%=strURL%>");
-			<% else %>
-			//Provide entire XML data using dataXML method 
-			chart_<%=chartId%>.setDataXML("<%=strXML%>");
-			<% end if %>	
-			// Provide Transparent SWF
-			chart_<%=chartId%>.setTransparent(<%=nSetTransparent%>);
-			//Finally, render the chart.
-			chart_<%=chartId%>.render("<%=chartId%>Div");
-		</script>	
-		<!-- END Script Block for Chart <%=chartId%> -->
+<!-- START Script Block for Chart <%=chartId%> -->
+	<div id='<%=chartId%>Div' align='center' style='width:<%=FC_GetConfiguration("width", "params")%>;height:<%=FC_GetConfiguration("height", "params")%>;'>Chart.
+	<%
+	'The above text "Chart" is shown to users before the chart has started loading
+	'(if there is a lag in relaying SWF from server). This text is also shown to users
+	'who do not have Flash Player installed. You can configure it as per your needs.
+	%>
+	</div>
+	<%
+	'Now, we render the chart using FusionCharts Class. Each chart's instance (JavaScript) Id 
+	'is named as chart_"chartId".		
+	%>
+	<script type="text/javascript"><!--	
+		//Instantiate the Chart	
+		if ( FusionCharts("<%=chartId%>") && FusionCharts("<%=chartId%>").dispose ) FusionCharts("<%=chartId%>").dispose();
+		var chart_<%=chartId%> = new FusionCharts( <%=chart_config_json%> ).render();
+	// --></script>	
+	<!-- END Script Block for Chart <%=chartId%> -->
 		<%
+		Call FCINITIALIZE()
 	End Function
-
-	'renderChartHTML function renders the HTML code for the JavaScript. This
-	'method does NOT embed the chart using JavaScript class. Instead, it uses
-	'direct HTML embedding. So, if you see the charts on IE 6 (or above), you'll
-	'see the "Click to activate..." message on the chart.
-	' chartSWF - SWF File Name (and Path) of the chart which you intend to plot
-	' strURL - If you intend to use dataURL method for this chart, pass the URL as this parameter. Else, set it to "" (in case of dataXML method)
-	' strXML - If you intend to use dataXML method for this chart, pass the XML data as this parameter. Else, set it to "" (in case of dataURL method)
-	' chartId - Id for the chart, using which it will be recognized in the HTML page. Each chart on the page needs to have a unique Id.
-	' chartWidth - Intended width for the chart (in pixels)
-	' chartHeight - Intended height for the chart (in pixels)
-	' debugMode - Whether to start the chart in debug mode
+	
+	' *  renderChartHTML function renders the HTML code for the JavaScript. This
+	' *  method does NOT embed the chart using JavaScript class. Instead, it uses
+	' *  direct HTML embedding. So, if you see the charts on IE 6 (or above), you'll
+	' *  see the "Click to activate..." message on the chart.
+	' *   chartSWF - SWF File Name (and Path) of the chart which you intend to plot
+	' *   strURL - If you intend to use dataURL method for this chart, pass the URL as this parameter. Else, set it to "" (in case of dataXML method)
+	' *   strXML - If you intend to use dataXML method for this chart, pass the XML data as this parameter. Else, set it to "" (in case of dataURL method)
+	' *   chartId - Id for the chart, using which it will be recognized in the HTML page. Each chart on the page needs to have a unique Id.
+	' *   chartWidth - Intended width for the chart (in pixels)
+	' *   chartHeight - Intended height for the chart (in pixels)
+	' *   debugMode - Whether to start the chart in debug mode
+	' *   registerWithJS - Whether to ask chart to register itself with JavaScript
+	' *	  setTransparent - Whether to ask chart to Transparent SWF
 	Private Function renderChartHTML(chartSWF, strURL, strXML, chartId, chartWidth, chartHeight, debugMode,registerWithJS, setTransparent)
 		'Generate the FlashVars string based on whether dataURL has been provided
 		'or dataXML.
-		Dim strFlashVars
-		if strXML="" then
-			'DataURL Mode
-			strFlashVars = "&chartWidth=" & chartWidth & "&chartHeight=" & chartHeight & "&debugMode=" & boolToNum(debugMode) & "&dataURL=" & strURL
-		else
-			'DataXML Mode
-			strFlashVars = "&chartWidth=" & chartWidth & "&chartHeight=" & chartHeight & "&debugMode=" & boolToNum(debugMode) & "&dataXML=" & strXML 		
-		end if
+		Dim windowMode
+		Dim strFlashVars, strObjectNode, strObjectParamsNode, strEmbedNode
 		
-		strFlashVars = strFlashVars & "&scaleMode=" & JSC("scalemode") & "&lang=" & JSC("lang")
+		If(setTransparent OR wMode) Then Call FC_SetConfiguration("wmode", "transparent")  
+		windowMode = FC_GetConfiguration("wmode", "") 
 		
-		dim nregisterWithJS
-		' Register with JS
-		nregisterWithJS = boolToNum(registerWithJS)
+		If ( windowMode = "" ) Then 
+			windowMode = "opaque"
+		End If
 		
-		' For Transparent SWF
-		dim nsetTransparent
-		nsetTransparent=""
-		if setTransparent<>"window" then
-		  if(setTransparent=false) then
-			nsetTransparent="opaque"
-		  else
-			nsetTransparent="transparent"
-		  end if
-		else
-		  nsetTransparent="window"
-		end if
-				
+		Call FC_SetConfiguration("movie",chartSWF, "", True)
+		Call FC_SetConfiguration("src",chartSWF, "", True)
+		Call FC_SetConfiguration("dataXML",strXML, "", True)
+		Call FC_SetConfiguration("dataURL",strURL, "", True)
+		Call FC_SetConfiguration("width",chartWidth, "", True)
+		Call FC_SetConfiguration("height",chartHeight, "", True)
+		Call FC_SetConfiguration("chartWidth",chartWidth, "", True)
+		Call FC_SetConfiguration("chartHeight",chartHeight, "", True)
+		Call FC_SetConfiguration("DOMId",chartId, "", True)
+		Call FC_SetConfiguration("id",chartId, "", True)
+		Call FC_SetConfiguration("debugMode",boolToNum(debugMode), "", True)
+		Call FC_SetConfiguration("registerWithJS",boolToNum(registerWithJS), "", True)
+		
+		' Generate the FlashVars string based on whether dataUrl has been provided
+		' or dataXML.
+		strFlashVars = FC_Transform(FC_GetConfiguration("fvars", ""), "&{key}={value}", True)
+		Call FC_SetConfiguration ("flashvars", strFlashVars, "", True )
+		
+		strObjectNode = "<object " & FC_Transform(FC_GetConfiguration("object", ""), " {key}=""{value}""", True) & " >" & vbCrLf
+		strObjectParamsNode = FC_Transform(FC_GetConfiguration("objparams", ""), vbTab & "<param name=""{key}"" value=""{value}"">" & vbCrLf, True)
+		strEmbedNode = vbTab & "<embed " & FC_Transform(FC_GetConfiguration("embed", ""), " {key}=""{value}""", True) & " />" 
 		%>
-		<!-- START Code Block for Chart <%=chartId%> -->
-        <%  
-		dim HTTP
-		HTTP="http"
-        if lcase(Request.ServerVariables("HTTPS"))="on" then
-           HTTP="https"
-        end if 
-		 
-		' Check Client Browser type
-		dim Strval
-        Strval = Request.ServerVariables("HTTP_USER_AGENT")
-        If(Instr(1, Strval, "MSIE", 1) <> 0) Then
-		 ' For IE Browser 
-		%>
-		<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="<%=HTTP%>://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="<%=chartWidth%>" height="<%=chartHeight%>" id="<%=chartId%>">
-			<param name="allowScriptAccess" value="always" />
-			<param name="movie" value="<%=chartSWF%>"/>		
-			<param name="FlashVars" value="<%=strFlashVars%>" />
-			<param name="quality" value="high" />
-			<param name="wmode" value="<%=nsetTransparent%>" />
-            <%
-		       'Set background color
-	           If JSC("bgcolor")<>"" Then 
-		          Response.Write "<param name='bgcolor' value=" & JSC("bgcolor") &  " />"
-		       End If 	
-			%>
-         </object>
-        <%
-		else
-		  ' For Mozilla, Opera
-		%>   
-			<embed src="<%=chartSWF%>" FlashVars="<%=strFlashVars%>&registerWithJS=<%=nregisterWithJS%>" quality="high" width="<%=chartWidth%>" height="<%=chartHeight%>" name="<%=chartId%>" <%  If JSC("bgcolor")<>"" Then Response.Write " bgcolor=""" & JSC("bgcolor") &  """" 			%> allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="<%=HTTP%>://www.macromedia.com/go/getflashplayer"   wmode="<%=nsetTransparent%>" />
-		<% End If %>
-		<!-- END Code Block for Chart <%=chartId%> -->
+<!-- START Code Block for Chart <%=chartId%> -->
+<%=strObjectNode%>
+	<%=strObjectParamsNode%>
+	<%=strEmbedNode%>
+</object>
+<!-- END Code Block for Chart <%=chartId%> -->
 		<%
+		Call FCINITIALIZE()
 	End Function
+
+
+
 
 	'boolToNum function converts boolean values to numeric (1/0)
 	Private Function boolToNum(bVal)
@@ -1712,10 +1922,268 @@ Class FusionCharts
 		end if
 		boolToNum = intNum
 	End Function
-End Class
 
-' Array Class
-' For Creating ASP Associative Array
+
+
+	' * Prepares the wrapper to load default chart configurations
+	Private SUB FCINITSTATIC()
+		FCSETTINGS("constants")( "scriptBaseUri" ) = "" 
+		FCSETTINGS("params")( "wmode" ) = "opaque"
+		FCSETTINGS("embed")( "wmode" ) = "opaque" 
+		FCSETTINGS("objparams")( "wmode" ) = "opaque" 
+		
+	End SUB
+	
+	Private sub FCINITIALIZE()
+		
+		'chartsSWF("area2d")("0")="Area2D"
+		'Set FCSETTINGS = Nothing
+		FCSETTINGS( "params" )( "swfUrl" ) = "" 
+		FCSETTINGS("params")("width") = "" 
+		FCSETTINGS("params")( "height" ) =  "" 
+		FCSETTINGS("params")( "renderAt" ) = "" 
+		FCSETTINGS("params")( "renderer" ) = "" 
+		FCSETTINGS("params")( "dataSource" ) = "" 
+		FCSETTINGS("params")( "dataFormat" ) = "" 
+		FCSETTINGS("params")( "id" ) = "" 
+		FCSETTINGS("params")( "lang" ) = "" 
+		FCSETTINGS("params")( "debugMode" ) = ""  
+		FCSETTINGS("params")( "registerWithJS" ) = ""  
+		FCSETTINGS("params")( "detectFlashVersion" ) = "" 
+		FCSETTINGS("params")( "autoInstallRedirect" ) = "" 
+		FCSETTINGS("params")( "scaleMode" ) = ""  
+		FCSETTINGS("params")( "menu" ) = "" 
+		FCSETTINGS("params")( "bgColor" ) = "" 
+		FCSETTINGS("params")( "quality" ) = "" 
+	
+	
+		FCSETTINGS("fvars")( "dataURL" ) = "" 
+		FCSETTINGS("fvars")( "dataXML" ) = "" 
+		FCSETTINGS("fvars")( "chartWidth" ) = "" 
+		FCSETTINGS("fvars")( "chartHeight" ) = "" 
+		FCSETTINGS("fvars")( "DOMId" ) = "" 
+		FCSETTINGS("fvars")( "registerWithJS" ) = "1" 
+		FCSETTINGS("fvars")( "debugMode" ) = "0" 
+		FCSETTINGS("fvars")( "scaleMode" ) = "noScale" 
+		FCSETTINGS("fvars")( "lang" ) = "EN" 
+		
+		FCSETTINGS("object")( "height" ) = "" 
+		FCSETTINGS("object")( "width" ) = "" 
+		FCSETTINGS("object")( "id" ) = "" 
+		FCSETTINGS("object")( "classid" ) = "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" 
+		FCSETTINGS("object")( "codebase" ) = "http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" 
+		
+		FCSETTINGS("objparams")( "movie" ) = "" 
+		FCSETTINGS("objparams")( "FlashVars" ) = "" 
+		FCSETTINGS("objparams")( "scaleMode" ) = "noScale" 
+		FCSETTINGS("objparams")( "bgColor" ) = "" 
+		FCSETTINGS("objparams")( "quality" ) = "best" 
+		FCSETTINGS("objparams")("allowScriptAccess") = "always" 
+		FCSETTINGS("objparams")( "swLiveConnect" ) = "" 
+		FCSETTINGS("objparams")( "base" ) = "" 
+		FCSETTINGS("objparams")( "align" ) = "" 
+		FCSETTINGS("objparams")( "salign" ) = "" 
+		FCSETTINGS("objparams")( "scale" ) = "" 
+		FCSETTINGS("objparams")( "menu" ) = "" 
+	
+	
+		FCSETTINGS("embed")( "height" ) = "" 
+		FCSETTINGS("embed")( "width" ) = "" 
+		FCSETTINGS("embed")( "id" ) = "" 
+		FCSETTINGS("embed")( "src" ) = "" 
+		FCSETTINGS("embed")( "flashvars" ) = "" 
+		FCSETTINGS("embed")( "name" ) = "" 
+		FCSETTINGS("embed")( "scaleMode" ) = "noScale" 
+		FCSETTINGS("embed")( "bgColor" ) = "" 
+		FCSETTINGS("embed")( "quality" ) = "best" 
+		FCSETTINGS("embed")("allowScriptAccess") = "always" 
+		FCSETTINGS("embed")("type") = "application/x-shockwave-flash"
+		FCSETTINGS("embed")("pluginspage")= "http://www.macromedia.com/go/getflashplayer" 
+		FCSETTINGS("embed")( "swLiveConnect" ) = "" 
+		FCSETTINGS("embed")( "base" ) = "" 
+		FCSETTINGS("embed")( "align" ) = "" 
+		FCSETTINGS("embed")( "salign" ) = "" 
+		FCSETTINGS("embed")( "scale" ) = "" 
+		FCSETTINGS("embed")( "menu" ) = "" 
+	End SUB
+	
+	Private Function FC_SetConfiguration (name, value, group, addNew)
+		
+		dim isSet
+		dim oObject
+		dim oObject1
+		
+		isSet=False
+		' Triming keys and converting to lower case.
+		group = LCase(Trim(group))
+		If (group <> ""  Or (FCSETTINGS.Exists(group))) Then
+			' Set in global configuration store
+			For Each oObject In FCSETTINGS(group).Keys
+				If LCase(oObject)=LCase(name) then
+					FCSETTINGS(group)(oObject)=value
+					isSet=True
+				End If
+			Next
+		Else
+			For Each oObject In FCSETTINGS.Keys
+				For Each oObject1 In FCSETTINGS(oObject).Keys
+					If LCase(oObject1)=LCase(name) then
+						FCSETTINGS(oObject)(oObject1)=value
+						isSet=True
+					End If
+				Next
+			Next
+		End If
+	
+		If (isSet = False And group <> "" And addNew = True) Then
+			FCSETTINGS(group)(name) = value
+			isSet = True
+		End If
+		
+		FC_SetConfiguration = isSet
+		
+		Set oObject1 = Nothing
+		Set oObject = Nothing
+		
+	End Function
+	
+	Private Function FC_GetConfiguration(name, group)
+		Dim oObject
+		Dim oObject1
+		
+		Dim retVal
+		group = LCase(Trim(group))
+		name = LCase(Trim(name))
+	
+		If ( group = "" ) Then
+			' If the configuration is in store
+			For Each oObject In FCSETTINGS.Keys
+				If (LCase(name) = LCase(oObject)) Then
+					Set FC_GetConfiguration = FCSETTINGS(oObject)
+					Exit Function
+				Else
+					For Each oObject1 In FCSETTINGS(oObject).Keys 
+						If (LCase(oObject1) = LCase(name)) Then
+							FC_GetConfiguration = FCSETTINGS(oObject)(oObject1)
+							Exit Function
+						End If
+					Next
+				End If
+			Next 
+		Else
+			If FCSETTINGS.Exists(group) = True Then
+				For Each oObject In  FCSETTINGS(group).Keys
+					If ( oObject = name ) Then
+						FC_GetConfiguration = FCSETTINGS(group)(oObject) 
+						Exit Function
+					End If
+				Next
+			End If
+			
+		End If
+		
+		FC_GetConfiguration = ""
+	
+		Set oObject = Nothing
+		Set oObject1 = Nothing
+		
+	End Function
+	
+	'**
+	' * Sets a collection of configurations
+	' * 
+	' * @param	objConfig	Array  - An Array of configurations with key as configuration name and values as  configuration value
+	' */
+	Private Function FC_SetConfigurations( objConfig )
+		
+		Dim oObject
+		
+		' Iterate through array
+		For Each oObject In objConfig
+			' Set config
+			Call FC_SetConfiguration (oObject, objConfig(oObject), "", True)
+		Next
+	End Function
+	
+	' * sets the dataformat to be provided to charts (json/xml)
+	' *
+	' * @param	format String  - data format. Default is 'xml'. Other format is 'json'
+	' *
+	Private Function FC_SetDataFormat(format)
+		If format="" Then format = "xml"
+		' Stores the dataformat in global configuration store
+		Call FC_SetConfiguration ("dataFormat", format, "", True)
+	End Function
+	
+
+	' * Converts associative array to To JSON String 
+	' *
+	' * @param	mask			String - what part of the date to return "m' for month,"d" for day, and "y" for year
+	' * @param	dateTimeStr String - MySQL date/time format (yyyy-mm-dd HH:ii:ss)
+	' *
+	' * @return	converted date
+	' *
+	Private Function fc_encode_json(json, enclosed )
+	
+		Dim strjson 
+		strjson = ""
+		
+		If(enclosed) Then strjson = strjson & "{"
+		
+		strjson = strjson & FC_Transform (json, """{key}"" : ""{value}"", ", True)
+		
+		' Removes last two (, ) from the string
+		If Right(strjson, 2) = ", " Then
+			strjson = Left(strjson, Len(strjson) - 2)
+		End If	
+		
+		If(enclosed) Then strjson  = strjson & "}"
+		
+		fc_encode_json = strjson
+		
+	End Function
+	
+	' *  Transforms an associaitive array to string
+	' * 
+	' *
+	' * @param	arr			Array - Associative array
+	' * @param	tFormat 		String - String builder format. The format is a string with placeholder for key and value.
+	' * 									The function iterated through the array 
+	' * 									replaces all "{key}" (placeholder for key) in the String with the key name of the array element
+	' * 									replaces all "{value}"  (placeholder for value) in the String with the value associated with the above key
+	' *
+	' * @param	ignoreBlankValues		Boolean - If true it igonores all elements with blank values (Default: True)
+	' *
+	' * @return	converted date
+	' *
+	Private Function FC_Transform(arr, tFormat, ignoreBlankValues) 
+		Dim converted
+		Dim oObject
+		Dim TFApplied
+		
+		converted = "" 
+		
+		For Each oObject In arr.Keys 
+			If(ignoreBlankValues = True And arr(oObject) <> "" ) Then
+				TFApplied = Replace(tFormat,"{key}", oObject)
+				TFApplied = Replace(TFApplied, "{value}", arr(oObject))
+				converted = converted & TFApplied
+			End If
+		Next
+		
+		FC_Transform =  converted
+		Set oObject = Nothing
+		
+	End Function
+	
+End Class
+%><%
+'*************************************************************************************
+'*  
+'* Array Class
+'* For Creating ASP Associative Array
+'*  
+'*************************************************************************************
 Class AssocArray
   Private dicContainer
   
@@ -1754,6 +2222,15 @@ Class AssocArray
    Else
     dicContainer.Add sName,vValue    
    End If
+  End Property
+  
+  
+  Public Property Get Exists(sKey)
+	Exists = dicContainer.Exists(sKey)
+  End Property
+
+  Public Property Get Keys()
+	Keys = dicContainer.Keys
   End Property
   
   ' Get Collections
