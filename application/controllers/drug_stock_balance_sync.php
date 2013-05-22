@@ -6,7 +6,7 @@ class Drug_stock_balance_sync extends MY_Controller {
 	function __construct() {
 		parent::__construct();
 		$this->load->database();
-		
+		ini_set("max_execution_time", "1000000");
 	}
 	public function index() {
 		$this->synch_balance();	
@@ -28,6 +28,7 @@ class Drug_stock_balance_sync extends MY_Controller {
 		$get_all_drugs="select '" .$facility_code. "' as facility,d.id as id,drug from drugcode d where d.Enabled=1";
 		$drugs=$this -> db -> query($get_all_drugs);
 		$results=$drugs -> result_array();
+		$count_it=0;
 		//Loop through each drug to get the batches
 		foreach ($results as $key => $value) {
 			$stock_status=0;
@@ -37,6 +38,7 @@ class Drug_stock_balance_sync extends MY_Controller {
 			$bacthes=$this -> db -> query($get_batches_sql);
 			$batch_results=$bacthes -> result_array();
 			foreach ($batch_results as $key => $batch_row) {
+				echo $count_it."<br>";
 				//Query to check if batch has had a physical count
 				$batch_no = $batch_row['batch'];
 				$expiry_date=$batch_row['expiry_date'];
@@ -62,7 +64,7 @@ class Drug_stock_balance_sync extends MY_Controller {
 							$batch_number_save=$batch_no;
 							$drug_id_save=$drug_id;
 							$expiry_date_save=$expiry_date;
-							$insert_balance_sql="INSERT INTO drug_stock_balance(drug_id,batch_number,stock_type,expiry_date,facility_code,balance) VALUES('".$drug_id_save."','".$batch_number_save."','".$stock_type."','".$expiry_date_save."','".$facility_code."','".$batch_balance_save."') ON DUPLICATE KEY UPDATE balance=balance";
+							$insert_balance_sql="INSERT INTO drug_stock_balance(drug_id,batch_number,stock_type,expiry_date,facility_code,balance) VALUES('".$drug_id_save."','".$batch_number_save."','".$stock_type."','".$expiry_date_save."','".$facility_code."','".$batch_balance_save."') ON DUPLICATE KEY UPDATE balance='".$batch_balance_save."'";
 							$q=$this -> db -> query($insert_balance_sql);
 							if(!$q){
 								$not_saved++;
@@ -86,7 +88,7 @@ class Drug_stock_balance_sync extends MY_Controller {
 							$batch_number_save=$batch_no;
 							$drug_id_save=$drug_id;
 							$expiry_date_save=$expiry_date;
-							$insert_balance_sql="INSERT INTO drug_stock_balance(drug_id,batch_number,stock_type,expiry_date,facility_code,balance) VALUES('".$drug_id_save."','".$batch_number_save."','".$stock_type."','".$expiry_date_save."','".$facility_code."','".$batch_balance_save."') ON DUPLICATE KEY UPDATE balance=balance";
+							$insert_balance_sql="INSERT INTO drug_stock_balance(drug_id,batch_number,stock_type,expiry_date,facility_code,balance) VALUES('".$drug_id_save."','".$batch_number_save."','".$stock_type."','".$expiry_date_save."','".$facility_code."','".$batch_balance_save."') ON DUPLICATE KEY UPDATE balance='".$batch_balance_save."'";
 							$q=$this -> db -> query($insert_balance_sql);
 							if(!$q){
 								$not_saved++;
@@ -95,7 +97,8 @@ class Drug_stock_balance_sync extends MY_Controller {
 					}
 				}
 			}
-			
+
+			$count_it++."<br>";
 		}
 	}
 
