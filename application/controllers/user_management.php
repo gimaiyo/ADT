@@ -48,7 +48,7 @@ class User_Management extends MY_Controller {
 
 			//Is user is a system admin, allow him to edit only system  admin and nascop users
 			if($access_level=="system_administrator"){
-				if($user['Access'] == "System Administrator" or $user['Access'] == "NASCOP Pharmacist"){
+				if($user['Access'] == "System Administrator" or $user['Access'] == "NASCOP Pharmacist" or $user['Access'] == "Facility Administrator"){
 					$links = anchor('user_management/edit/' . $user['id'], 'Edit', array('class' => 'edit_user', 'id' => $user['id']));
 					$links .= " | ";
 				}
@@ -351,11 +351,11 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 		$username=$this -> input -> post('username');
 		if($phone!=""){
 			$user -> Signature = rand(11111,99999);
-			$this->sendActivationCode($phone,'phone');
+			$this->sendActivationCode($username,$phone,'phone');
 		}
 		else {
 			$user -> Signature=md5($user.$email); 
-			$this->sendActivationCode($email,'email');
+			$this->sendActivationCode($username,$email,'email');
 		}
 		$user -> Active = "1";
 
@@ -452,8 +452,40 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 		$this -> db -> query("UPDATE access_log al,(SELECT MAX( id ) AS id FROM  `access_log` WHERE user_id = '$user_id' AND access_type =  'Login') as temp_log SET al.machine_code='$machine_code' WHERE al.id=temp_log.id");
 	}
 	
-	public function sendActivationCode($contact,$type="phone"){
+	public function sendActivationCode($username,$contact,$type="phone"){
 		
+		//If activation code is to be sent through email
+		if($type=="email"){
+			$email="gauthierabdala@gmail.com";
+			//setting the connection variables
+			$config['mailtype']="html";
+			$config['protocol'] = 'smtp';
+			$config['smtp_host'] = 'ssl://smtp.googlemail.com';
+			$config['smtp_port'] = 465;
+			$config['smtp_user'] = stripslashes('webadt.chai@gmail.com');
+			$config['smtp_pass'] = stripslashes('WebAdt_052013');
+			ini_set("SMTP", "ssl://smtp.gmail.com");
+			ini_set("smtp_port", "465");
+			$this -> load -> library('email', $config);
+			$this -> email -> set_newline("\r\n");
+			$this -> email -> from('webadt.chai@gmail.com', "WEB_ADT CHAI");
+			$this -> email -> to("$email");
+			$this -> email -> subject("Account Activation");
+			$this -> email -> message("Dear $username, Please click the following link to activate your account.<a href='www.google.com'>AFDAFDAF</a>");
+			
+			//success message else show the error
+			if ($this -> email -> send()) {
+				echo 'Your email was sent, successfully to ' . $email . '<br/>';
+				//unlink($file);
+				$this -> email -> clear(TRUE);
+
+			} else {
+				show_error($this -> email -> print_debugger());
+			}
+			
+			
+			
+		}
 	}
 	public function fixlogout(){
 		$this->load->view("fix_v");
