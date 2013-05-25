@@ -173,15 +173,40 @@ if ($user_is_pharmacist) {
 		    var chart= new FusionCharts("<?php echo base_url().'Scripts/FusionCharts/MSBar2D.swf';?>","ChartId","80%","100%","0","0");	
 	        chart.setDataURL("<?php echo base_url().'facilitydashboard_management/getExpiringDrugs/2';?>");
 	        chart.render("chart_area");	
+	        
+	        var chart1= new FusionCharts("<?php echo base_url().'Scripts/FusionCharts/StackedColumn2D.swf';?>","ChartId","80%","100%","0","0");	
+	        chart1.setDataURL("<?php echo base_url().'facilitydashboard_management/getPatientEnrolled/2013-03-17/2013-03-24';?>");
+	        chart1.render("chart_area2");
+	        
+	         var chart2= new FusionCharts("<?php echo base_url().'Scripts/FusionCharts/StackedColumn2D.swf';?>","ChartId","80%","100%","0","0");	
+	        chart2.setDataURL("<?php echo base_url().'facilitydashboard_management/getExpectedPatients/2013-03-17/2013-03-24';?>");
+	        chart2.render("chart_area3");	
+	        
+	        $('#table1').load('<?php echo base_url().'facilitydashboard_management/stock_notification'?>');
 
 		});
 
     </script>
+    <link rel="stylesheet" href="<?php echo base_url()?>css/bootstrap.css"/>
+    <link rel="stylesheet" href="<?php echo base_url()?>css/bootstrap-responsive.css"/>
     <style type="text/css">
-    	#chart_area{
+    	.tile{
+    		display:inline-block;
     		float:left;
     		width:50%; 
-    		height:400px;
+    		height:100%;
+    		
+
+    		
+    	}
+    	.tile-half{
+    		height:43%;
+    		display:block;
+    		border-bottom:1px solid #ccc;
+    		padding:1%;
+    	}
+    	.tile-half:first-child{
+    		border-right:1px solid #ccc;
     	}
     </style>
 <style type="text/css">
@@ -379,17 +404,44 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 
 <div class="main-content">
 	
-	<div class="left-content">
-		
+	<div class="left-content" style="float: left">
+		    <ul class="nav nav-list">
+    <li class="nav-header">List header</li>
+    <li><a class="active">Dashboard</a></li>
+    <li><a>User Manual</a></li>
+			<li><a>Add Patients</a></li>
+			<li><a>Add Inventory</a></li>
+			<li><a>Main Site Report</a></li>
+  
+    </ul>
+		<h3>Quick Links</h3>
+		<ul>
+			<li><a>User Manual</a></li>
+			<li><a>Add Patients</a></li>
+			<li><a>Add Inventory</a></li>
+			<li><a>Main Site Report</a></li>
+			
+		</ul>
+		<h3>Notifications</h3>
 	</div>
+	
 	<div class="center-content">
-		<div id="chart_area">
+		<h3>Summary Data</h3>
+		<div class="tile-half">
+		<div class="tile" id="chart_area">
 	
 </div>
+<div class="tile" id="chart_area2">
+</div>
+</div>
+<div class="tile-half">
+<div class="tile" id="chart_area3">
+</div>
+<div class="tile" id="table1">
+</div>
+</div>
 	</div>
-	<div class="right-content">
-		
-	</div>
+	
 </div>
 
 

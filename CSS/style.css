@@ -546,9 +546,17 @@ tr th{
  * Facility Dashboard
  * 
  */
-
+.main-content h3{
+	-webkit-margin-before: 0.5em;
+	font-family:"Helvetica";
+	color:#666;
+	font-size:2em;
+	border-bottom:2px solid #ccc;
+	padding:2%;
+}
 .left-content,.right-content, .center-content{
-	border:1px solid #333;
+	border:2px solid #ccc;
+	position:relative;
 }
 .main-content{
 	width:100%;
@@ -556,19 +564,45 @@ tr th{
 }
 
 .left-content{
-	width:20%;
-	float:left;
+	width:19%;
+	float:left:
+	margin-bottom:2%;
+	
+	
 }
-
+.left-content,.right-content{
+	padding:0.5%;
+}
+.center-content h3{
+	padding:1%;
+	margin:0 0 1% 0;
+}
 .center-content{
-	width:55%;
-	margin:auto;
+	padding:1%;
+	width:75%;
+	margin:0 0 0 1.5%;
 	height:90%;
+	display:inline-block;
 }
 .right-content{
-	width:20%;
+	width:19%;
 	float:right;
 }
 #main_wrapper{
-	height:600px;
+	height:950px;
+}
+ul, li {
+	list-style: none;
+	margin: 0;
+	padding: 1%;
+	font-size:1.1em;
+}
+ul {
+	text-align: left;
+}
+ul li {
+	display: block;
+}
+ul li.last {
+	margin-right: 0;
 }
