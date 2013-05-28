@@ -1,6 +1,6 @@
 <?php ?>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html >
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" manifest="/ADT/offline.appcache">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -30,6 +30,7 @@ echo "<link href=\"".base_url()."CSS/".$style."\" type=\"text/css\" rel=\"styles
 <!-- Bootstrap -->
 <link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap.min.css'?>" rel="stylesheet" media="screen">
 <link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap-responsive.min.css'?>" rel="stylesheet" media="screen">
+<script type="text/javascript" src="<?php echo base_url().'Scripts/bootstrap/js/jquery_bootstrap.js'?>"></script>
 <style type="text/css">
 #signup_form{ 
 background-color:whiteSmoke; 
@@ -76,7 +77,9 @@ width: auto;
 border:0px;
 }
 
-
+#contact_email,#contact_phone{
+	height:29px;
+}
 </style>
 </head>
 
@@ -100,54 +103,25 @@ border:0px;
 
 <div id="main_wrapper"> 
 
- 
- 
-
 <div id="signup_form">
 	 <div class="short_title" >
-<h1 class="banner_text" >Sign in</h1>
+<h1 class="banner_text" >Reset Password</h1>
+<hr size="1">
 </div>
 <?php
-echo validation_errors('
-<p class="error">','</p>
-'); 
-if($this->session->userdata("changed_password")){
-	$message=$this->session->userdata("changed_password");
-	echo "<p class='error'>".$message."</p>";
-	$this->session->set_userdata("changed_password","");
+if(isset($error)){
+	echo $error;		
 }
-if(isset($invalid)){
-	echo "<p class='error'>Invalid Credentials. Please try again ".@$login_attempt."</p>";
+else if(isset($message)){
+	echo $message;
 }
-else if(isset($inactive)){
-	echo "<p class='error'>The Account is not active. Seek help from the Administrator</p>";
-}
-else if(isset($expired)){
-   echo "<p class='error'>".@$login_attempt."</p>";	
-}
-?>
-<form action="<?php echo base_url().'user_management/authenticate'?>" method="post" >
-<label>
-<strong class="label">Email or Phone or Username</strong>
-<input type="text" name="username" class="input-xlarge" id="username" value="">
-</label>
-<label>
-<strong class="label">Password</strong>
-<input type="password" name="password" class="input-xlarge" id="password">
-</label>
- <input type="submit" class="btn" name="register" id="register" value="Sign in" style="margin-left:200px; padding-left:30px; padding-right:30px;margin-right:50px ">
-<label style="display:inline">
- <input type="checkbox" name="remember"> <strong class="remember-label">  Stay signed in  </strong>
-</label>
-<div style="margin-left:200px;margin-top:20px">
-	<strong><a href="<?php echo base_url().'user_management/resetPassword' ?>">Forgot Password?</a></strong>
-</div>
 
-</form>
+?>
+
 </div>
 
 </div>  
- 
+
   <!--End Wrapper div--></div>
     <div id="bottom_ribbon" style="top:150px; width:90%;">
         <div id="footer">

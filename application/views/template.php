@@ -91,6 +91,7 @@ if (isset($styles)) {
 if (!$user_is_pharmacist) {?>
 <script type="text/javascript">
 	$(document).ready(function() {
+		
 		$("#my_profile_link_container").hover(function() {
 			var html = "<a href='<?php echo site_url('user_management/change_password')?>' class='top_menu_link temp_link'>Change Password</a> <a href='<?php echo site_url('user_management/logout');?>' class='top_menu_link temp_link'>Logout</a> ";
 			$("#my_profile_link").css('display','none'); 
@@ -99,6 +100,7 @@ if (!$user_is_pharmacist) {?>
 			$("#my_profile_link").css('display','block');
 			$(this).find(".temp_link").remove();
 		});
+		
 	});
 
 </script>
