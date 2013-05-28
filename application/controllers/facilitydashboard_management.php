@@ -24,9 +24,9 @@ class Facilitydashboard_Management extends MY_Controller {
 		$results[0]['total'];
 	}
 
-	public function stock_notification($stock_type="2") {
-		$drugs_array=array();
-		$counter=0;
+	public function stock_notification($stock_type = "2") {
+		$drugs_array = array();
+		$counter = 0;
 		//Get the facility_code
 		$facility_code = $this -> session -> userdata("facility");
 		$strDATA = "";
@@ -41,7 +41,7 @@ class Facilitydashboard_Management extends MY_Controller {
 		else if ($stock_type == '2') {
 			$stock_param = " AND (source=destination) AND(source='" . $facility_code . "') ";
 		}
-		
+
 		//Get all drugs that are active
 		$drugs_query = "select d.id as id,drug, pack_size, u.name from drugcode d left join drug_unit u on d.unit = u.id  where d.Enabled=1  ";
 		$drugs = $this -> db -> query($drugs_query);
@@ -54,17 +54,16 @@ class Facilitydashboard_Management extends MY_Controller {
 			$drug_packsize = $drugs_result['pack_size'];
 			$stock_level = 0;
 			$today = date("Y-m-d");
-			
-			
+
 			//Get all batches not expired
 			$allbatches_query = "SELECT SUM(balance) as total FROM drug_stock_balance d WHERE d.drug_id =  '$drug' AND d.expiry_date > '$today' AND facility_code='$facility_code' AND stock_type='$stock_type'";
 			$batches = $this -> db -> query($allbatches_query);
 			$batches_results = $batches -> result_array();
 			//Get stock balance for a drug
-			foreach($batches_results as $stock_balance){
-				$stock_level=$stock_balance['total'];
+			foreach ($batches_results as $stock_balance) {
+				$stock_level = $stock_balance['total'];
 			}
-			
+
 			//Get consumption for the past three months
 			$safetystock_query = "SELECT SUM(d.quantity_out) AS TOTAL FROM drug_stock_movement d WHERE d.drug ='$drug' AND DATEDIFF(CURDATE(),d.transaction_date)<= 90 and facility='$facility_code' $stock_param";
 			$safetystocks = $this -> db -> query($safetystock_query);
@@ -84,21 +83,20 @@ class Facilitydashboard_Management extends MY_Controller {
 				$minimum_consumption = $monthly_consumption * 1.5;
 				//$minimum_consumption = number_format($monthly_consumption, 2);
 
-				
 				//If current stock balance is less than minimum consumption
 				if ($stock_level < $minimum_consumption) {
-					
+
 					if ($minimum_consumption < 0) {
 						$minimum_consumption = 0;
 					}
-					if ($stock_level < 0 or $stock_level=="NULL") {
+					if ($stock_level < 0 or $stock_level == "NULL") {
 						$stock_level = 0;
 					}
-					$drugs_array[$counter]['drug_name']=$drug_name;
-					$drugs_array[$counter]['drug_unit']=$drug_unit;
-					$drugs_array[$counter]['stock_level']=number_format($stock_level);
-					$drugs_array[$counter]['minimum_consumption']=ceil($minimum_consumption);
-					
+					$drugs_array[$counter]['drug_name'] = $drug_name;
+					$drugs_array[$counter]['drug_unit'] = $drug_unit;
+					$drugs_array[$counter]['stock_level'] = number_format($stock_level);
+					$drugs_array[$counter]['minimum_consumption'] = ceil($minimum_consumption);
+
 					$strDATA .= "<set label='$drug_name' value='$stock_level' />";
 					$strLEVEL .= "<set label='$drug_name' value='$minimum_consumption' />";
 					$strcat .= "<category label='$drug_name'/>";
@@ -106,31 +104,28 @@ class Facilitydashboard_Management extends MY_Controller {
 			}
 			$counter++;
 		}
-		
+
 		//Create table to store data
-		$tmpl = array ( 'table_open'  => '<table id="stock_level" class="setting_table">' );
-		$this -> table ->set_template($tmpl);
-		$this -> table -> set_heading('No', 'Drug', 'Unit', 'Quantity (Units)', 'Saferty Quantity (Units)', 'Priority');
-		$data="";
-		$x=1;
-		$priority="";
+		$tmpl = array('table_open' => '<table id="stock_level" class="setting_table table table-striped table-condensed">');
+		$this -> table -> set_template($tmpl);
+		$this -> table -> set_heading('No', 'Drug', 'Unit', 'Quantity (Units)', 'Threshold Quantity (Units)', 'Priority');
+		$data = "";
+		$x = 1;
+		$priority = "";
 		foreach ($drugs_array as $drugs) {
-			if($drugs['minimum_consumption']==0 and $drugs['stock_level']==0){
-				$priority=100;
-			}
-			else{
-				$priority=($drugs['stock_level']/$drugs['minimum_consumption'])*100;
+			if ($drugs['minimum_consumption'] == 0 and $drugs['stock_level'] == 0) {
+				$priority = 100;
+			} else {
+				$priority = ($drugs['stock_level'] / $drugs['minimum_consumption']) * 100;
 			}
 			//Check for priority
-			if($priority>=50){
-				$priority_level="<span class='low_priority'>LOW</span>";
+			if ($priority >= 50) {
+				$priority_level = "<span class='low_priority'>LOW</span>";
+			} else {
+				$priority_level = "<span class='high_priority'>HIGH</span>";
 			}
-			else{
-				$priority_level="<span class='high_priority'>HIGH</span>";
-			}
-			
-			
-			$this -> table -> add_row($x,$drugs['drug_name'],$drugs['drug_unit'],$drugs['stock_level'],$drugs['minimum_consumption'],$priority_level);
+
+			$this -> table -> add_row($x, $drugs['drug_name'], $drugs['drug_unit'], $drugs['stock_level'], $drugs['minimum_consumption'], $priority_level);
 			$x++;
 		}
 		$drug_display = $this -> table -> generate();
@@ -159,7 +154,7 @@ class Facilitydashboard_Management extends MY_Controller {
 		}
 		$d = 0;
 		$drugs_array = $this -> drug_array;
-		$strXML = "<chart useroundedges='1' showborder='0' bgcolor='ffffff' caption='Summary of Drugs Expiring in 30 Days' showValues= '0' baseFont='Arial' baseFontSize='11' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
+		$strXML = "<chart useroundedges='1' showborder='0' bgcolor='ffffff' showValues= '0' baseFont='Arial' baseFontSize='11' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
 		$strSTOCK = "<dataset seriesName='Stock Level' color='AFD8F8' showValues= '0' >";
 		$strDays = "<dataset seriesName='Days to Expiry' color='FDC12E' showValues= '0' renderas='line'>";
 		$strCAT = "<categories>";
@@ -371,14 +366,14 @@ class Facilitydashboard_Management extends MY_Controller {
 			}
 
 		}
-		$strXML = "<chart useroundedges='1' caption='Weekly Summary of Patient Enrollment' bgcolor='ffffff' showborder='0' yAxisName='Enrollments' showvalues='0' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='11' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
+		$strXML = "<chart useroundedges='1' bgcolor='ffffff' showborder='0' yAxisName='Enrollments' showvalues='0' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='9' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
 		$stradultmale = "<dataset seriesName='Adult Male' showValues= '0' >";
 		$stradultfemale = "<dataset seriesName='Adult Female' showValues= '0' >";
 		$strchildmale = "<dataset seriesName='Child Male' showValues= '0' >";
 		$strchildfemale = "<dataset seriesName='Child Female' showValues= '0' >";
 		$strCAT = "<categories>";
 		foreach ($patients_array as $patients) {
-			$strCAT .= "<category label='" . date('D M d,Y',strtotime($patients['date_enrolled'])) . "'/>";
+			$strCAT .= "<category label='" . date('D M d,Y', strtotime($patients['date_enrolled'])) . "'/>";
 			$stradultmale .= "<set value='" . $patients['total_male_adult'] . "' />";
 			$stradultfemale .= "<set value='" . $patients['total_female_adult'] . "' />";
 			$strchildmale .= "<set value='" . $patients['total_male_child'] . "' />";
@@ -486,12 +481,12 @@ class Facilitydashboard_Management extends MY_Controller {
 			}
 
 		}
-		$strXML = "<chart useroundedges='1' showsum='1' caption='Weekly Summary of Patient Appointment' yAxisName='Enrollments' bgcolor='ffffff' showborder='0' showvalues='1' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='11' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
+		$strXML = "<chart useroundedges='1' showsum='1' yAxisName='Enrollments' bgcolor='ffffff' showborder='0' showvalues='1' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='9' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
 		$strtotalvisited = "<dataset seriesName='Visited' showValues= '0' >";
 		$strtotalnotvisited = "<dataset seriesName='Missed' showValues= '0' >";
 		$strCAT = "<categories>";
 		foreach ($patients_array as $patients) {
-			$strCAT .= "<category label='" . date('D M d,Y',strtotime($patients['date_appointment'])). "'/>";
+			$strCAT .= "<category label='" . date('D M d,Y', strtotime($patients['date_appointment'])) . "'/>";
 			$strtotalvisited .= "<set value='" . $patients['patient_visited'] . "' />";
 			$strtotalnotvisited .= "<set value='" . $patients['patient_not_visited'] . "' />";
 		}

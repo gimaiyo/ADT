@@ -178,7 +178,7 @@ if ($user_is_pharmacist) {
 	        chart1.setDataURL("<?php echo base_url().'facilitydashboard_management/getPatientEnrolled/2013-03-17/2013-03-24';?>");
 	        chart1.render("chart_area2");
 	        
-	         var chart2= new FusionCharts("<?php echo base_url().'Scripts/FusionCharts/StackedColumn2D.swf';?>","ChartId","80%","100%","0","0");	
+	         var chart2= new FusionCharts("<?php echo base_url().'Scripts/FusionCharts/MSBar2D.swf';?>","ChartId","80%","100%","0","0");	
 	        chart2.setDataURL("<?php echo base_url().'facilitydashboard_management/getExpectedPatients/2013-03-17/2013-03-24';?>");
 	        chart2.render("chart_area3");	
 	        
@@ -193,21 +193,21 @@ if ($user_is_pharmacist) {
     	.tile{
     		display:inline-block;
     		float:left;
-    		width:50%; 
-    		height:100%;
+    		width:49%; 
+    		height:99.5%;
+    		padding: 0 0.5% 0.5% 0.5%;
     		
 
     		
     	}
-    	.tile-half{
-    		height:43%;
+    	
+      	.tile-half{
+    		height:50%;
     		display:block;
-    		border-bottom:1px solid #ccc;
-    		padding:1%;
+    		
+    		
     	}
-    	.tile-half:first-child{
-    		border-right:1px solid #ccc;
-    	}
+    
     </style>
 <style type="text/css">
 	#environment_variables {
@@ -387,7 +387,9 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
   #bottom_ribbon{
   	margin-top:120px;
   }
-
+#chart_area,#chart_area2,#chart_area3,#table1{
+	height:80%;
+}
 </style>
 <div id="environment_variables" title="System Initialization">
 	<h1 class="banner_text" style="width:auto; font-size: 20px;">Environment Variables</h1>
@@ -405,17 +407,9 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 <div class="main-content">
 	
 	<div class="left-content" style="float: left">
-		    <ul class="nav nav-list">
-    <li class="nav-header">List header</li>
-    <li><a class="active">Dashboard</a></li>
-    <li><a>User Manual</a></li>
-			<li><a>Add Patients</a></li>
-			<li><a>Add Inventory</a></li>
-			<li><a>Main Site Report</a></li>
-  
-    </ul>
+
 		<h3>Quick Links</h3>
-		<ul>
+		<ul class="nav nav-list">
 			<li><a>User Manual</a></li>
 			<li><a>Add Patients</a></li>
 			<li><a>Add Inventory</a></li>
@@ -426,21 +420,28 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 	</div>
 	
 	<div class="center-content">
-		<h3>Summary Data</h3>
-		<div class="tile-half">
-		<div class="tile" id="chart_area">
-	
-</div>
-<div class="tile" id="chart_area2">
-</div>
-</div>
-<div class="tile-half">
-<div class="tile" id="chart_area3">
-</div>
-<div class="tile" id="table1">
-</div>
-</div>
+	<div class="tile-half">
+		<div class="tile">
+			<h3>Summary of Drugs Expiring in 30 Days</h3>
+			<div id="chart_area"></div>
+		</div>
+
+		<div class="tile">
+			<h3>Weekly Summary of Patient Enrolment</h3>
+			<div id="chart_area2"></div>
+		</div>
 	</div>
+	<div class="tile-half">
+		<div class="tile">
+			<h3>Weekly Summary of Patient Appointments</h3>
+			<div id="chart_area3"></div>
+		</div>
+		<div class="tile">
+			<h3>Stocks About to Run Out</h3>
+			<div id="table1"></div>
+		</div>
+	</div>
+</div>
 	
 </div>
 

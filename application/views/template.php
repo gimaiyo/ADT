@@ -173,8 +173,8 @@ if (!$user_is_pharmacist) {?>
 	<?php }?>
 
 				<div id="system_title">
-					<span style="display: block; font-weight: bold; font-size: 24px; margin:2px;">Ministry of Health</span>
-					<span style="display: block; font-size: 20px;">ARV Drugs Supply Chain Management Tool</span>
+					<span style="display: block; font-weight: bold; font-size: 22px; margin:2px;">Ministry of Health</span>
+					<span style="display: block; font-size: 18px;">ARV Drugs Supply Chain Management Tool</span>
 					<?php
 					if ($user_is_pharmacist) {?>
 						<style>
@@ -198,7 +198,7 @@ if (!$user_is_pharmacist) {?>
 						</style>
 						<div id="facility_name">
 							
-							<span style="display: block; font-size: 14px;"><?php echo $this -> session -> userdata('facility_name');?></span>
+							<span style="display: block; font-size: 16px;"><?php echo $this -> session -> userdata('facility_name');?></span>
 						</div>
 					<?php }?>
 				</div>
@@ -256,7 +256,7 @@ if($menus){
  
 <!-- end inner wrapper --></div>
   <!--End Wrapper div--></div>
-    <div id="bottom_ribbon" style="top:200px; width:90%;">
+    <div id="bottom_ribbon" style= "width:90%;">
         <div id="footer">
  <?php $this -> load -> view("footer_v");?>
     </div>

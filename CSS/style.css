@@ -405,7 +405,7 @@ body {
 }
 #system_title {
 	position: absolute;
-	top: 30px;
+	top: 10px;
 	left: 110px;
 	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
 	letter-spacing: 1px;
@@ -549,13 +549,14 @@ tr th{
 .main-content h3{
 	-webkit-margin-before: 0.5em;
 	font-family:"Helvetica";
-	color:#666;
-	font-size:2em;
-	border-bottom:2px solid #ccc;
-	padding:2%;
+	color:#fff;
+	font-size:1.4em;
+	padding:0.3em;
+	background:#999;
+	box-shadow:0 1.2px 3px 1px #000;
+	-webkit-box-shadow:0 1.2px 3px 1px #000;
 }
 .left-content,.right-content, .center-content{
-	border:2px solid #ccc;
 	position:relative;
 }
 .main-content{
@@ -605,4 +606,7 @@ ul li {
 }
 ul li.last {
 	margin-right: 0;
+}
+#stock_level th{
+	background:#999;
 }
