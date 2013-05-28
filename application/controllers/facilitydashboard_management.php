@@ -154,7 +154,7 @@ class Facilitydashboard_Management extends MY_Controller {
 		}
 		$d = 0;
 		$drugs_array = $this -> drug_array;
-		$strXML = "<chart useroundedges='1' showborder='0' bgcolor='ffffff' showValues= '0' baseFont='Arial' baseFontSize='11' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
+		$strXML = "<chart showvalues='1' useroundedges='1' showborder='0' bgcolor='ffffff' showsum='1' baseFont='Arial' baseFontSize='11' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
 		$strSTOCK = "<dataset seriesName='Stock Level' color='AFD8F8' showValues= '0' >";
 		$strDays = "<dataset seriesName='Days to Expiry' color='FDC12E' showValues= '0' renderas='line'>";
 		$strCAT = "<categories>";
@@ -366,7 +366,7 @@ class Facilitydashboard_Management extends MY_Controller {
 			}
 
 		}
-		$strXML = "<chart useroundedges='1' bgcolor='ffffff' showborder='0' yAxisName='Enrollments' showvalues='0' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='9' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
+		$strXML = "<chart useroundedges='1' bgcolor='ffffff' showborder='0' yAxisName='Enrollments' showvalues='1' showsum='1' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='9' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
 		$stradultmale = "<dataset seriesName='Adult Male' showValues= '0' >";
 		$stradultfemale = "<dataset seriesName='Adult Female' showValues= '0' >";
 		$strchildmale = "<dataset seriesName='Child Male' showValues= '0' >";
@@ -481,9 +481,9 @@ class Facilitydashboard_Management extends MY_Controller {
 			}
 
 		}
-		$strXML = "<chart useroundedges='1' showsum='1' yAxisName='Enrollments' bgcolor='ffffff' showborder='0' showvalues='1' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='9' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
-		$strtotalvisited = "<dataset seriesName='Visited' showValues= '0' >";
-		$strtotalnotvisited = "<dataset seriesName='Missed' showValues= '0' >";
+		$strXML = "<chart useroundedges='1' showsum='1' yAxisName='Enrollments' bgcolor='ffffff' showborder='0' showvalues='1' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='11' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
+		$strtotalvisited = "<dataset seriesName='Visited' showValues= '1' >";
+		$strtotalnotvisited = "<dataset seriesName='Missed' showValues= '1' >";
 		$strCAT = "<categories>";
 		foreach ($patients_array as $patients) {
 			$strCAT .= "<category label='" . date('D M d,Y', strtotime($patients['date_appointment'])) . "'/>";

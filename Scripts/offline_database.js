@@ -265,7 +265,7 @@ function check_authentic(){
 	//Get the environment variables and display them appropriately
 	selectEnvironmentVariables(function(transaction, results) {
 		var variables = results.rows.item(0);
-		$("#my_profile_link").html(variables["operator"]);
+		$("#my_profile_link").html("Welcome "+variables["operator"]);
 		if(variables["status"] == 0) {
 
 			if(navigator.onLine) {

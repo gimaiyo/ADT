@@ -182,7 +182,18 @@ if ($user_is_pharmacist) {
 	        chart2.setDataURL("<?php echo base_url().'facilitydashboard_management/getExpectedPatients/2013-03-17/2013-03-24';?>");
 	        chart2.render("chart_area3");	
 	        
-	        $('#table1').load('<?php echo base_url().'facilitydashboard_management/stock_notification'?>');
+	        $('#table1').load('<?php echo base_url().'facilitydashboard_management/stock_notification'?>',function(){
+	        
+				$('#stock_level').dataTable( {
+			        "sDom": "<'row'r>t<'row'<'span5'i><'span7'p>>",
+			        "sPaginationType": "bootstrap",
+			        "bSort": true
+			        //"aaSorting": []
+			    } );
+	        });
+	       
+	        	 
+	       
 
 		});
 
@@ -389,6 +400,9 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
   }
 #chart_area,#chart_area2,#chart_area3,#table1{
 	height:80%;
+}
+.dataTables_wrapper{
+	width:100%;
 }
 </style>
 <div id="environment_variables" title="System Initialization">

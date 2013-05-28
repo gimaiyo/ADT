@@ -39,11 +39,13 @@ else if ($access_level == "nascop_staff") {
 <link href="<?php echo base_url().'CSS/datatable/demo_table.css" type="text/css'?>" rel="stylesheet"/>
 
 <script src="<?php echo base_url().'Scripts/jquery.js'?>" type="text/javascript"></script> 
+<script src="<?php echo base_url().'Scripts/sorttable.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'Scripts/jquery.form.js'?>" type="text/javascript"></script>
 <script src="<?php echo base_url().'Scripts/jquery.blockUI.js'?>" type="text/javascript"></script>
 <!-- Datatables -->
 <script type="text/javascript" src="<?php echo base_url().'Scripts/datatable/jquery.dataTables.min.js'?>"></script>
+<script type="text/javascript" src="<?php echo base_url().'Scripts/bootstrap/js/paging.js'?>"></script>
 <!-- Datatables end --> 
 
 
@@ -224,10 +226,10 @@ foreach($menus as $menu){?>
 	if ($current == $menu['url'] || $menu['url'] == $link) {echo " top_menu_active ";
 	}
 ?>"><?php echo $menu['text']; if($menu['offline'] == "1"){?>
-	 <span class="alert red_alert">off</span></a>
+	 <span class=" red_">off</span></a>
 	
 <?php } else{?>
-	 <span class="alert green_alert">on</span></a>
+	 <span class=" green_">on</span></a>
 <?php }?>
 
 
@@ -237,8 +239,8 @@ $counter++;
 }}
 if($menus){
 	?>
-<div id="my_profile_link_container" style="display: inline">
-<a ref="#" class="top_menu_link" id="my_profile_link"><?php echo $this -> session -> userdata('full_name');?></a>
+<div id="my_profile_link_containe" style="display: inline">
+<a ref="#" class="top_menu_link" id="my_profile_link">Welcome <?php echo $this -> session -> userdata('full_name');?></a>
 </div>
 <?php }?>
  </div>
