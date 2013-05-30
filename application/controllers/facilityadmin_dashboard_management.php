@@ -16,6 +16,7 @@ class Facilityadmin_dashboard_Management extends MY_Controller {
 		$data['total_inactive']=$total_inactive;
 		$data['users']=$users;
 		
+
 		return $data;
 	}
 	
@@ -47,18 +48,21 @@ class Facilityadmin_dashboard_Management extends MY_Controller {
 	
 	//Get orders in a specific status
 	function getOrders($status){
+
+		$orderVal=0;
 		$order_array=array();
 		$status_title="";
-		if($status=='0'){
+		if($status=='pending'){
 			$status_title='Pending';
 		}
-		else if($status=='1'){
-			$status_title='Approve';
+		else if($status=='approved'){
+			$status_title='Approved';
 		}
-		else if($status=='2'){
+		else if($status=='declined'){
 			$status_title='Declined';
 		}
-		else if($status=='3'){
+		else if($status=='dispatched'){
+
 			$status_title='Dispatched';
 		}
 		$facility_code = $this -> session -> userdata("facility");
@@ -67,12 +71,15 @@ class Facilityadmin_dashboard_Management extends MY_Controller {
 		
 		if($count>0){
 			$data=array();
-			$get_orders_sql=$this->db->query("SELECT id,period_begin,period_end FROM facility_order WHERE status='$status'");
-			$order_array['orders']=$get_orders_sql->result_array();
+
+			$get_orders_sql=$this->db->query("SELECT count(*)as total FROM facility_order WHERE status='$status'");
+			$orderVal=$get_orders_sql->result_array();
 			
 		}
 		$order_array['title']=$status_title;
-		return $order_array;
+		
+		echo "<li class='status-title' ><i class='icon-tasks'></i>No. of ".$status_title." Orders</div><div class='badge badge-important'>".$orderVal[0]['total']."</li>";
+
 		
 	}
 	

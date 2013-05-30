@@ -51,7 +51,7 @@ class Home_Controller extends MY_Controller {
 
 		$data['title'] = "System Home";
 		$data['content_view'] = "home_v";
-		$data['banner_text'] = "System Home";
+		$data['banner_text'] = "Facility Dashboard";
 		$data['link'] = "home";
 
        //Get mac address

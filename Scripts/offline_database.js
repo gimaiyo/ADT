@@ -267,8 +267,8 @@ function check_authentic(){
 	//Get the environment variables and display them appropriately
 	selectEnvironmentVariables(function(transaction, results) {
 		var variables = results.rows.item(0);
-		$("#my_profile_link").html(variables["operator"]);
-
+		$("#my_profile_link").html("Welcome "+variables["operator"]);
+		
 		var href = window.location.href;
 		var base_url=href.substr(href.lastIndexOf('http://'),href.lastIndexOf('/ADT'));
 		var _href = href.substr(href.lastIndexOf('/') + 1);
