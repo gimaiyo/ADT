@@ -271,7 +271,7 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 					$user_id = Users::getUserID($username);
 					$this -> session -> set_userdata('user_id', $user_id);
 					$facility_details = Facilities::getCurrentFacility($logged_in -> Facility_Code);
-					$session_data = array('user_id' => $logged_in -> id, 'user_indicator' => $logged_in -> Access -> Indicator, 'facility_name' => $logged_in -> Facility -> name, 'access_level' => $logged_in -> Access_Level, 'username' => $logged_in -> Username, 'full_name' => $logged_in -> Name, 'facility' => $logged_in -> Facility_Code, 'facility_id' => $facility_details[0]['id']);
+					$session_data = array('user_id' => $logged_in -> id, 'user_indicator' => $logged_in -> Access -> Indicator, 'facility_name' => $logged_in -> Facility -> name, 'access_level' => $logged_in -> Access_Level, 'username' => $logged_in -> Username, 'full_name' => $logged_in -> Name,'Email_Address'=> $logged_in ->Email_Address,'Phone_Number'=>$logged_in->Phone_Number, 'facility' => $logged_in -> Facility_Code, 'facility_id' => $facility_details[0]['id'],'county'=>$facility_details[0]['county']);
 					$this -> session -> set_userdata($session_data);
 					$this -> activation_view();
 				}
@@ -279,7 +279,7 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 				else {
 
 					$facility_details = Facilities::getCurrentFacility($logged_in -> Facility_Code);
-					$session_data = array('user_id' => $logged_in -> id, 'user_indicator' => $logged_in -> Access -> Indicator, 'facility_name' => $logged_in -> Facility -> name, 'access_level' => $logged_in -> Access_Level, 'username' => $logged_in -> Username, 'full_name' => $logged_in -> Name, 'facility' => $logged_in -> Facility_Code, 'facility_id' => $facility_details[0]['id']);
+					$session_data = array('user_id' => $logged_in -> id, 'user_indicator' => $logged_in -> Access -> Indicator, 'facility_name' => $logged_in -> Facility -> name, 'access_level' => $logged_in -> Access_Level, 'username' => $logged_in -> Username, 'full_name' => $logged_in -> Name,'Email_Address'=> $logged_in ->Email_Address,'Phone_Number'=>$logged_in->Phone_Number, 'facility' => $logged_in -> Facility_Code, 'facility_id' => $facility_details[0]['id'],'county'=>$facility_details[0]['county']);
 					$this -> session -> set_userdata($session_data);
 					//Execute queries that update the patient statuses
 					/*
@@ -627,9 +627,66 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 		}
 		
 	}
+
+	public function profile($data=""){
+		$data['title']='User Profile';
+		$data['banner_text']='My Profile';
+		$data['content_view']='user_profile_v';
+		$this->base_params($data);
+	}
+	
+	public function profile_update(){
+		$data['title']='User Profile';
+		$data['banner_text']='My Profile';
+		$user_id=$this->session->userdata('user_id');
+		$full_name=$this->input->post('u_fullname');
+		$user_name=$this->input->post('u_username');
+		$email=$this->input->post('u_email');
+		$phone=$this->input->post('u_phone');
+		$c_user=0;
+		$e_user=0;
+		
+		//Check if username does not already exist
+		//If username was changed by the user, check if it exists in the db
+		if($this->session->userdata('username')!=$user_name){
+			$username_exist_sql=$this->db->query("SELECT * FROM users WHERE username='$user_name'");
+			$c_user=count($username_exist_sql->result_array());
+		}
+		//If email was changed by the user, check if it exists in the db
+		if($this->session->userdata('Email_Address')!=$email){
+			$email_exist_sql=$this->db->query("SELECT * FROM users WHERE Email_Address='$email'");
+			$e_user=count($email_exist_sql->result_array());
+		}
+		
+		if($c_user>0 and $e_user>0){
+			$data['error']="<span class='alert-error'>The username and email entered are already in use!</span>";
+			
+		}
+		else if($c_user>0){
+			$data['error']="<span class='alert-error'>The username entered is already in use !</span>";
+		}
+		else if($e_user>0){
+			$data['error']="<span class='alert-error'>The email entered is already in use !</span>";
+		}
+		
+		//Neither email nor username is in use
+		else if($e_user==0 and $c_user==0){
+			//Update user details
+			$update_user_sql=$this->db->query("UPDATE users SET Name='$full_name',username='$user_name',Email_Address='$email',Phone_Number='$phone' WHERE id='$user_id'");
+			if($update_user_sql==1){
+				$data['message_success']="<span class='alert-info'>Your details were successfully updated!<span>";
+			}
+			//Update session details!
+			$session_data = array('username' => $user_name, 'full_name' => $full_name,'Email_Address'=> $email,'Phone_Number'=>$phone);
+			$this -> session -> set_userdata($session_data);
+			
+		}
+		$this->profile($data);
+		
+	}
 	
 	public function base_params($data) {
-		$this -> load -> view("template_admin", $data);
+		$this -> load -> view("template", $data);
 	}
 
 }

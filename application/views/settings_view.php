@@ -4,7 +4,7 @@
 	}  
 ?>
 
-<div class="container-fluid" style="margin:0px auto;margin-top:80px;margin-left:20%;margin-right:20%;">
+<div class="container-fluid" style="margin:0px auto;margin-top:80px;margin-left:12%;margin-right:12%;">
 
 	<div class="span5 well" >
 		<div class="btn-toolbar ">

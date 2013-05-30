@@ -190,6 +190,7 @@ if ($user_is_pharmacist) {
 		margin: 0 auto;
 	}
 	#synchronize {
+		display:none;
 		text-align: left;
 		font-size: 16px;
 		text-shadow: 0 1px rgba(0, 0, 0, 0.1);
