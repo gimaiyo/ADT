@@ -599,7 +599,6 @@ tr th{
 ul, li {
 	list-style: none;
 	margin: 0;
-	padding: 1%;
 	font-size:1.1em;
 }
 ul {
@@ -622,4 +621,24 @@ ul li.last {
 .low_priority{
 	color:orange;
 	
+}
+
+/**
+ * 	Notifications
+ */
+.status-title,.status-value{
+	padding:1%;
+}
+.status-title{
+	display:inline-block;
+}
+
+.status-value{
+	display:inline-block;
+	color:#999
+}
+
+.notif{
+	font-size:1.3em;
+	margin-top:2%;
 }

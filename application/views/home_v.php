@@ -3,6 +3,7 @@ $access_level = $this -> session -> userdata('user_indicator');
 $user_is_administrator = false;
 $user_is_nascop = false;
 $user_is_pharmacist = false;
+$user_is_facilityadmin = false;
 
 if ($access_level == "system_administrator") {
 	$user_is_administrator = true;
@@ -14,15 +15,17 @@ if ($access_level == "pharmacist") {
 if ($access_level == "nascop_staff") {
 	$user_is_nascop = true;
 }
+if ($access_level == "facility_administrator") {
+	$user_is_facilityadmin = true;
+}
+
+
+
 if($this->session->userdata("changed_password")){
 	$message=$this->session->userdata("changed_password");
 	echo "<p class='error'>".$message."</p>";
 	$this->session->set_userdata("changed_password","");
 }
-?>
-
-<?php
-if ($user_is_pharmacist) {
 ?>
 
 <script type="text/javascript">
@@ -168,6 +171,7 @@ if ($user_is_pharmacist) {
 </script>
 
 <script src="<?php echo base_url().'Scripts/FusionCharts/FusionCharts.js';?>"></script>
+
 <script type="text/javascript">
 		$(document).ready(function() {
 		    var chart= new FusionCharts("<?php echo base_url().'Scripts/FusionCharts/MSBar2D.swf';?>","ChartId","80%","100%","0","0");	
@@ -182,6 +186,9 @@ if ($user_is_pharmacist) {
 	        chart2.setDataURL("<?php echo base_url().'facilitydashboard_management/getExpectedPatients/2013-03-17/2013-03-24';?>");
 	        chart2.render("chart_area3");	
 	        
+	      
+	        
+	        
 	        $('#table1').load('<?php echo base_url().'facilitydashboard_management/stock_notification'?>',function(){
 	        
 				$('#stock_level').dataTable( {
@@ -191,7 +198,27 @@ if ($user_is_pharmacist) {
 			        //"aaSorting": []
 			    } );
 	        });
-	       
+	       <?php 
+			if($user_is_pharmacist){
+				?>
+				
+			
+				
+				
+				<?php
+			}
+			
+			if($user_is_facilityadmin){
+				?>
+				
+				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
+				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
+				$('#notification3').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/dispatched'?>');
+				
+				<?php
+			}
+				?>
+	          
 	        	 
 	       
 
@@ -424,16 +451,46 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 
 		<h3>Quick Links</h3>
 		<ul class="nav nav-list">
-			<li><a>User Manual</a></li>
-			<li><a>Add Patients</a></li>
-			<li><a>Add Inventory</a></li>
-			<li><a>Main Site Report</a></li>
+			<?php 
+			if($user_is_pharmacist){
+				?>
+				
+				<li><a>User Manual</a></li>			
+			    <li><a>Main Site Report</a></li>
+				
+				
+				<?php
+			}
+			
+			if($user_is_facilityadmin){
+				?>
+				<li><a>Add Patients</a></li>
+			    <li><a>Add Inventory</a></li>
+			    <li class="divider"></li>
+				<li><a>User Manual</a></li>			
+			    <li><a>Main Site Report</a></li>
+				
+				<?php
+			}
+				?>
+			
+			
 			
 		</ul>
 		<h3>Notifications</h3>
+		<ul class="nav nav-list">
+			
+			
+		</ul>
+		<li class="notif" id="notification1"></li>
+		<li class="notif"id="notification2"></li>
+		<li class="notif" id="notification3"></li>
+		<div></div>
+		<div></div>
 	</div>
 	
 	<div class="center-content">
+		<div id="expDiv>"></div>
 	<div class="tile-half">
 		<div class="tile">
 			<h3>Summary of Drugs Expiring in 30 Days</h3>
@@ -554,7 +611,7 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 		</div>
 </div>
 
-<?php }?>
+
 
 <script type="text/javascript">
 	var base_url="<?php echo base_url(); ?>";

@@ -39,6 +39,7 @@ else if ($access_level == "nascop_staff") {
 <link href="<?php echo base_url().'CSS/datatable/demo_table.css" type="text/css'?>" rel="stylesheet"/>
 
 <script src="<?php echo base_url().'Scripts/jquery.js'?>" type="text/javascript"></script> 
+<script src="<?php echo base_url().'js/bootstrap.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'Scripts/sorttable.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'Scripts/jquery.form.js'?>" type="text/javascript"></script>
@@ -62,9 +63,11 @@ else if ($access_level == "nascop_staff") {
 </script>
 
 <?php
-if ($user_is_pharmacist) {
+if ($user_is_pharmacist || $user_is_facility_administrator) {
 	echo "<script src=\"" . base_url() . "Scripts/offline_database.js\" type=\"text/javascript\"></script>";
 }
+
+
 if (isset($script_urls)) {
 	foreach ($script_urls as $script_url) {
 		echo "<script src=\"" . $script_url . "\" type=\"text/javascript\"></script>";

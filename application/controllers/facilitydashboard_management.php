@@ -21,7 +21,8 @@ class Facilitydashboard_Management extends MY_Controller {
 		$facility_code = $this -> session -> userdata("facility");
 		$query = $this -> db -> query("SELECT COUNT(*) as total FROM facility_order f WHERE (f.status =  '3' AND (f.facility_id ='$facility_code' OR f.central_facility='$facility_code'))ORDER BY ABS(f.id) DESC ");
 		$results = $query -> result_array();
-		$results[0]['total'];
+		$res = $results[0]['total'];
+		echo "<div class='status-title' ><i class='icon-tasks'></i>No. of Pending Orders</div><div class='badge badge-important'>".$res."</div>";
 	}
 
 	public function stock_notification($stock_type = "2") {
@@ -154,9 +155,9 @@ class Facilitydashboard_Management extends MY_Controller {
 		}
 		$d = 0;
 		$drugs_array = $this -> drug_array;
-		$strXML = "<chart showvalues='1' useroundedges='1' showborder='0' bgcolor='ffffff' showsum='1' baseFont='Arial' baseFontSize='11' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
-		$strSTOCK = "<dataset seriesName='Stock Level' color='AFD8F8' showValues= '0' >";
-		$strDays = "<dataset seriesName='Days to Expiry' color='FDC12E' showValues= '0' renderas='line'>";
+		$strXML = "<chart showvalues='1' useroundedges='1' showborder='0' bgcolor='ffffff' showsum='1' baseFont='Arial' baseFontSize='11'  palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'  exportEnabled='1' exportHandler='" . base_url() . "Scripts/FusionCharts/ExportHandlers/PHP/FCExporter.php' exportAtClient='0' exportAction='download' >";
+		$strSTOCK = "<dataset seriesName='Stock Level' color='AFD8F8' showValues= '1' >";
+		$strDays = "<dataset seriesName='Days to Expiry' color='FDC12E' showValues= '1' renderas='line'>";
 		$strCAT = "<categories>";
 		foreach ($drugs_array as $drugs) {
 			$strCAT .= "<category label='" . $drugs['drug_name'] . "(" . $drugs['batch'] . ")" . "'/>";
@@ -366,7 +367,7 @@ class Facilitydashboard_Management extends MY_Controller {
 			}
 
 		}
-		$strXML = "<chart useroundedges='1' bgcolor='ffffff' showborder='0' yAxisName='Enrollments' showvalues='1' showsum='1' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='9' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
+		$strXML = "<chart useroundedges='1' bgcolor='ffffff' showborder='0' yAxisName='Enrollments' showvalues='1' showsum='1' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='9' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1' exportEnabled='1' exportHandler='" . base_url() . "Scripts/FusionCharts/ExportHandlers/PHP/FCExporter.php' exportAtClient='0' exportAction='download'>";
 		$stradultmale = "<dataset seriesName='Adult Male' showValues= '0' >";
 		$stradultfemale = "<dataset seriesName='Adult Female' showValues= '0' >";
 		$strchildmale = "<dataset seriesName='Child Male' showValues= '0' >";
@@ -481,7 +482,7 @@ class Facilitydashboard_Management extends MY_Controller {
 			}
 
 		}
-		$strXML = "<chart useroundedges='1' showsum='1' yAxisName='Enrollments' bgcolor='ffffff' showborder='0' showvalues='1' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='11' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
+		$strXML = "<chart useroundedges='1' showsum='1' yAxisName='Enrollments' bgcolor='ffffff' showborder='0' showvalues='1' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='11' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1' exportEnabled='1' exportHandler='" . base_url() . "Scripts/FusionCharts/ExportHandlers/PHP/FCExporter.php' exportAtClient='0' exportAction='download'>";
 		$strtotalvisited = "<dataset seriesName='Visited' showValues= '1' >";
 		$strtotalnotvisited = "<dataset seriesName='Missed' showValues= '1' >";
 		$strCAT = "<categories>";
