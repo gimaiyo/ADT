@@ -3,6 +3,7 @@ $access_level = $this -> session -> userdata('user_indicator');
 $user_is_administrator = false;
 $user_is_nascop = false;
 $user_is_pharmacist = false;
+$user_is_facilityadmin = false;
 
 if ($access_level == "system_administrator") {
 	$user_is_administrator = true;
@@ -14,15 +15,17 @@ if ($access_level == "pharmacist") {
 if ($access_level == "nascop_staff") {
 	$user_is_nascop = true;
 }
+if ($access_level == "facility_administrator") {
+	$user_is_facilityadmin = true;
+}
+
+
+
 if($this->session->userdata("changed_password")){
 	$message=$this->session->userdata("changed_password");
 	echo "<p class='error'>".$message."</p>";
 	$this->session->set_userdata("changed_password","");
 }
-?>
-
-<?php
-if ($user_is_pharmacist) {
 ?>
 
 <script type="text/javascript">
@@ -166,6 +169,88 @@ if ($user_is_pharmacist) {
 	    	
 		      
 </script>
+
+
+<script src="<?php echo base_url().'Scripts/FusionCharts/FusionCharts.js';?>"></script>
+
+<script type="text/javascript">
+		$(document).ready(function() {
+		    var chart= new FusionCharts("<?php echo base_url().'Scripts/FusionCharts/MSBar2D.swf';?>","ChartId","80%","100%","0","0");	
+	        chart.setDataURL("<?php echo base_url().'facilitydashboard_management/getExpiringDrugs/2';?>");
+	        chart.render("chart_area");	
+	        
+	        var chart1= new FusionCharts("<?php echo base_url().'Scripts/FusionCharts/StackedColumn2D.swf';?>","ChartId","80%","100%","0","0");	
+	        chart1.setDataURL("<?php echo base_url().'facilitydashboard_management/getPatientEnrolled/2013-03-17/2013-03-24';?>");
+	        chart1.render("chart_area2");
+	        
+	         var chart2= new FusionCharts("<?php echo base_url().'Scripts/FusionCharts/MSBar2D.swf';?>","ChartId","80%","100%","0","0");	
+	        chart2.setDataURL("<?php echo base_url().'facilitydashboard_management/getExpectedPatients/2013-03-17/2013-03-24';?>");
+	        chart2.render("chart_area3");	
+	        
+	      
+	        
+	        
+	        $('#table1').load('<?php echo base_url().'facilitydashboard_management/stock_notification'?>',function(){
+	        
+				$('#stock_level').dataTable( {
+			        "sDom": "<'row'r>t<'row'<'span5'i><'span7'p>>",
+			        "sPaginationType": "bootstrap",
+			        "bSort": true
+			        //"aaSorting": []
+			    } );
+	        });
+	       <?php 
+			if($user_is_pharmacist){
+				?>
+				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
+				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
+				$('#notification3').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/dispatched'?>');
+			
+				
+				
+				<?php
+			}
+			
+			if($user_is_facilityadmin){
+				?>
+				
+				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
+				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
+				$('#notification3').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/dispatched'?>');
+				
+				<?php
+			}
+				?>
+	          
+	        	 
+	       
+
+		});
+
+    </script>
+    <link rel="stylesheet" href="<?php echo base_url()?>css/bootstrap.css"/>
+    <link rel="stylesheet" href="<?php echo base_url()?>css/bootstrap-responsive.css"/>
+    <style type="text/css">
+    	.tile{
+    		display:inline-block;
+    		float:left;
+    		width:49%; 
+    		height:99.5%;
+    		padding: 0 0.5% 0.5% 0.5%;
+    		
+
+    		
+    	}
+    	
+      	.tile-half{
+    		height:50%;
+    		display:block;
+    		
+    		
+    	}
+    
+    </style>
+
 <style type="text/css">
 	#environment_variables {
 		width: 600px;
@@ -344,7 +429,12 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
   #bottom_ribbon{
   	margin-top:120px;
   }
-
+#chart_area,#chart_area2,#chart_area3,#table1{
+	height:80%;
+}
+.dataTables_wrapper{
+	width:100%;
+}
 </style>
 <div id="environment_variables" title="System Initialization">
 	<h1 class="banner_text" style="width:auto; font-size: 20px;">Environment Variables</h1>
@@ -358,97 +448,78 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 	</div>
 	<input type="submit" class="submit-button" id="save_variables" value="Save" style="width:100px; margin: 10px auto;"/>
 </div>
-<div id="main-container">
-	<div class="content-left">
+
+<div class="main-content">
+	
+	<div class="left-content" style="float: left">
+
+		<h3>Quick Links</h3>
+		<ul class="nav nav-list">
+			<?php 
+			if($user_is_pharmacist){
+				?>
+				
+				<li><a>User Manual</a></li>			
+			    <li><a>Main Site Report</a></li>
+				
+				
+				<?php
+			}
+			
+			if($user_is_facilityadmin){
+				?>
+				<li><a>Add Patients</a></li>
+			    <li><a>Add Inventory</a></li>
+			    <li class="divider"></li>
+				<li><a>User Manual</a></li>			
+			    <li><a>Main Site Report</a></li>
+				
+				<?php
+			}
+				?>
+			
+			
+			
+		</ul>
+		<h3>Notifications</h3>
+		<ul class="nav nav-list">
+			
+			
+		</ul>
+		<li class="notif" id="notification1"></li>
+		<li class="notif"id="notification2"></li>
+		<li class="notif" id="notification3"></li>
+		<div></div>
+		<div></div>
 	</div>
-		<div class="content-center">
+	
+	<div class="center-content">
+		<div id="expDiv>"></div>
+	<div class="tile-half">
+		<div class="tile">
+			<h3>Summary of Drugs Expiring in 30 Days</h3>
+			<div id="chart_area"></div>
 		</div>
-		
-		<div class="content-right">
+
+		<div class="tile">
+			<h3>Weekly Summary of Patient Enrolment</h3>
+			<div id="chart_area2"></div>
 		</div>
 	</div>
-	<div id="manual_dialog" title="User Manual">
-			<div id="manualcontent">
-			<ul>
-				<li><a href="#tabs-1" class="tabs">1.0 Login</a></li>
-				<li><a href="#tabs-2" class="tabs">2.0 Machine Code</a></li>
-				<li><a href="#tabs-3" class="tabs">3.0 Synchronization</a></li>
-			</ul>
-				 <div id="tabs-1">
-                   	<u><h3>Login</h3></u>
-                   	<p>
-                   	The login allows users at facility, national and administrator levels to login. Depending on each user it would lead to different homepage.<p>
-                    <img src="<?php echo base_url().'Images/login.bmp';?>" width='auto' height='auto'/>
-                   </p>
-                 </div>
-                 <div id="tabs-2">
-                 	<u><h3>Machine Code</h3></u>
-                   <p>
-                   	The users if logged in for the first time they would be required to enter their <b>Operator name</b> (Their Name) and <b>machine code</b> (Number of computer if there are multiple in organization e.g. 5)
-                   <p>
-                   	<img src="<?php echo base_url().'Images/machine.bmp';?>" width='auto' height='auto'/>
-                   </p>
-                 </div>
-                 <div id="tabs-3">
-                 	<u><h3>Synchronization</h3></u>
-                   <p>
-                   	After the user keys in their operator name,a notification on the top right corner notifies them of any information that is <b>out of sync</b> i.e. if local database in browser is consistent with that in the server. If it is not as below it is in <b style="color:red;">red</b> and if in sync then it is <b style="color:green;">green</b> . 
-                   	<p>
-                   <img src="<?php echo base_url().'Images/sync.bmp';?>" width='auto' height='auto'/>		
-                   	<p>
-                   	To synchronize just click on the button that shows up when you hover on the notification
-                   	<p>
-                   	<img src="<?php echo base_url().'Images/syncbutton.bmp';?>" width='auto' height='auto'/>
-                   	<p>
-                   	When clicked it displays the synchronization of data from server to local database. As shown below.
-                   	<p>
-                   	<img src="<?php echo base_url().'Images/syncdisplay.bmp';?>" width='auto' height='auto'/>
-                   </p>
-                   
-                 </div>
+	<div class="tile-half">
+		<div class="tile">
+			<h3>Weekly Summary of Patient Appointments</h3>
+			<div id="chart_area3"></div>
 		</div>
+		<div class="tile">
+			<h3>Stocks About to Run Out</h3>
+			<div id="table1"></div>
 		</div>
+	</div>
+</div>
+	
 </div>
 
-<?php }?>
-<?php
-if ($user_is_administrator) {
-?>
-<div class="tabbable tabs-left admin_menu">
-<div class="quick_menu">
-<ul class="nav nav-list">
-  <li class="nav-header">Quick Menu</li>
-  <li class="active"><a href="#"><i class="icon-home icon-white"></i> Dashboard</a></li>
-  <li><a href="#"><i class="icon-user"></i>Add User(s)</a></li>
-  <li><a href="#"><i class="icon-upload"></i> Update Pipeline Report</a></li>
-</ul>
-</div>
-
-<div class="admin_notification">
-<ul class="nav nav-list">
-  <li class="nav-header">Notification</li>
-  <li><a href="#">User Alerts<span class="badge badge-important badge_text">2</span></a></li>
-  <li><a href="#">Pipeline Alerts<span class="badge badge-warning badge_text">4</span></a></li>
-</ul>
-</div>
-</div>
-
-<div class="dash_content">
-	<span class="nav-header">Admin Dashboard</span>
-<div class="dash_left">
-	<span class="nav-header">User Info</span>
-</div>
-<div class="dash_right">
-	<span class="nav-header">Pipeline Info</span>
-</div>
-</div>
-
-
-
-
-
-
-<?php }?>
 <script type="text/javascript">
 $(document).ready(function(){
 	var base_url="<?php echo base_url(); ?>";    	

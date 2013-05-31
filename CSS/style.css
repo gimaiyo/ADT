@@ -134,6 +134,10 @@ body {
 	right: 0;
 	margin-top: -5px;
 }
+#top_menu a{
+	font-size:18px;
+	font-weight:normal;
+}
 #my_profile_link {
 	background-color: #00B831;
 	width: auto;
@@ -427,7 +431,7 @@ body {
 }
 #system_title {
 	position: absolute;
-	top: 30px;
+	top: 10px;
 	left: 110px;
 	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
 	letter-spacing: 1px;
@@ -555,11 +559,105 @@ hr {
 	padding: 0.25em;
 	border: 1px solid #000;
 }
-tr th {
-	cursor: pointer;
-}
-.brand {
-	cursor: pointer;
+
+.brand{
+	cursor:pointer;
 }
 
-/**/
+/*
+ * Facility Dashboard
+ * 
+ */
+.main-content h3{
+	-webkit-margin-before: 0.5em;
+	font-family:"Helvetica";
+	color:#fff;
+	font-size:1.4em;
+	padding:0.3em;
+	background:#999;
+	box-shadow:0 1.2px 3px 1px #000;
+	-webkit-box-shadow:0 1.2px 3px 1px #000;
+}
+.left-content,.right-content, .center-content{
+	position:relative;
+}
+.main-content{
+	width:100%;
+	height:100%;
+}
+
+.left-content{
+	width:19%;
+	float:left:
+	margin-bottom:2%;
+	
+	
+}
+.left-content,.right-content{
+	padding:0.5%;
+}
+.center-content h3{
+	padding:1%;
+	margin:0 0 1% 0;
+}
+.center-content{
+	padding:1%;
+	width:75%;
+	margin:0 0 0 1.5%;
+	height:90%;
+	display:inline-block;
+}
+.right-content{
+	width:19%;
+	float:right;
+}
+#main_wrapper{
+	height:950px;
+}
+ul, li {
+	list-style: none;
+	margin: 0;
+	font-size:1.1em;
+}
+ul {
+	text-align: left;
+}
+ul li {
+	display: block;
+}
+ul li.last {
+	margin-right: 0;
+}
+#stock_level th{
+	background:#999;
+}
+
+.high_priority{
+	color:red;
+}
+
+.low_priority{
+	color:orange;
+	
+}
+
+/**
+ * 	Notifications
+ */
+.status-title,.status-value{
+	padding:1%;
+}
+.status-title{
+	display:inline-block;
+}
+
+.status-value{
+	display:inline-block;
+	color:#999
+}
+
+.notif{
+	font-size:1.3em;
+	margin-top:2%;
+}
+

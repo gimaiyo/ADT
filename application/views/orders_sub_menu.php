@@ -1,4 +1,4 @@
-<?php
+h<?php
 if(!isset($quick_link)){
 $quick_link = null;
 }  
