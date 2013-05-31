@@ -116,20 +116,22 @@
 	
 	
 </script>
-<?php
-echo validation_errors('
-<p class="error">','</p>
-'); 
-if($this->session->userdata("matching_password")){
-	$message=$this->session->userdata("matching_password");
-	echo "<p class='error'>".$message."</p>";
-	$this->session->set_userdata("matching_password","");
-}
-?>
+
 
 
 <form id="fmChangePassword" action="<?php echo base_url().'user_management/save_new_password'?>" method="post"  width:500px;">
 	<legend>Change Password</legend>
+	<?php
+	echo validation_errors('
+	<p class="error">','</p>
+	'); 
+	if($this->session->userdata("matching_password")){
+		$message=$this->session->userdata("matching_password");
+		echo "<p class='alert-error'>".$message."</p>";
+		$this->session->set_userdata("matching_password","");
+	}
+	?>
+	<br>
 	<table>
 		<tr>
 			<td><label >Old Password</label></td><td><input type="password" name="old_password" id="old_password" required=""></td>
