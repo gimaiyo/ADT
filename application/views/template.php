@@ -42,6 +42,11 @@ else if ($access_level == "nascop_staff") {
 <script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'Scripts/jquery.form.js'?>" type="text/javascript"></script>
 <script src="<?php echo base_url().'Scripts/jquery.blockUI.js'?>" type="text/javascript"></script>
+<script src="<?php echo base_url().'Scripts/bootstrap/js/bootstrap.min.js'?>"></script>
+<!-- Bootstrap -->
+    <link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap.min.css'?>" rel="stylesheet" media="screen">
+    <link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap-responsive.min.css'?>" rel="stylesheet" media="screen">
+    <link href="<?php echo base_url().'CSS/admin_dash.css'?>" rel="stylesheet" media="screen">
 <!-- Datatables -->
 <script type="text/javascript" src="<?php echo base_url().'Scripts/datatable/jquery.dataTables.min.js'?>"></script>
 <!-- Datatables end --> 
@@ -62,7 +67,7 @@ else if ($access_level == "nascop_staff") {
 <?php
 if ($user_is_pharmacist) {
 	echo "<script src=\"" . base_url() . "Scripts/offline_database.js\" type=\"text/javascript\"></script>";
-}
+} 
 if (isset($script_urls)) {
 	foreach ($script_urls as $script_url) {
 		echo "<script src=\"" . $script_url . "\" type=\"text/javascript\"></script>";

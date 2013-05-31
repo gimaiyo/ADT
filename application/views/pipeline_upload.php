@@ -169,7 +169,7 @@
 					<div class="errormessage"></div>
 					<div class="pipeline_import">
 						
-						<form name="frm" method="post" enctype="multipart/form-data" id="frm" action="<?php echo base_url()."pipeline_management/import"?>">
+						<form name="frm" method="post" enctype="multipart/form-data" id="frm" action="<?php echo base_url()."pipeline_import/upload"?>">
 							<legend>
 							Pipeline Data Upload 
 							

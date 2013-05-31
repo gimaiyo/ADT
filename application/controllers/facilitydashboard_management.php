@@ -3,6 +3,7 @@ if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
 
 class Facilitydashboard_Management extends MY_Controller {
+
 	var $drug_array = array();
 	var $drug_count = 0;
 	var $counter = 0;
@@ -23,24 +24,26 @@ class Facilitydashboard_Management extends MY_Controller {
 		$results[0]['total'];
 	}
 
-	public function stock_notification($level) {
+	public function stock_notification($stock_type="2") {
+		$drugs_array=array();
+		$counter=0;
 		//Get the facility_code
 		$facility_code = $this -> session -> userdata("facility");
 		$strDATA = "";
 		$strcat = "";
 		$strLEVEL = "";
-
 		$strXML = "<chart caption='Drugs Below Safety Stock' useroundedges='1' >";
-		//Level is Main Store
-		if ($level == 1) {
-			$stock_param = " AND (source='$facility_code' OR destination='$facility_code') AND source!=destination";
+		//Store
+		if ($stock_type == '1') {
+			$stock_param = " AND (source='" . $facility_code . "' OR destination='" . $facility_code . "') AND source!=destination ";
 		}
-		//Level is Pharmacy
-		else if ($level == 2) {
-			$stock_param = " AND (source=destination) AND(source='$facility_code')";
+		//Pharmacy
+		else if ($stock_type == '2') {
+			$stock_param = " AND (source=destination) AND(source='" . $facility_code . "') ";
 		}
+		
 		//Get all drugs that are active
-		$drugs_query = "select d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id where d.Enabled=1 and d.id IN('15','166','108','175') ";
+		$drugs_query = "select d.id as id,drug, pack_size, u.name from drugcode d left join drug_unit u on d.unit = u.id  where d.Enabled=1  ";
 		$drugs = $this -> db -> query($drugs_query);
 		$drugs_results = $drugs -> result_array();
 		foreach ($drugs_results as $drugs_result) {
@@ -51,38 +54,18 @@ class Facilitydashboard_Management extends MY_Controller {
 			$drug_packsize = $drugs_result['pack_size'];
 			$stock_level = 0;
 			$today = date("Y-m-d");
+			
+			
 			//Get all batches not expired
-			$allbatches_query = "SELECT DISTINCT d.batch_number AS batch FROM drug_stock_movement d WHERE d.drug =  '$drug' AND expiry_date > '$today' AND facility='$facility_code' $stock_param GROUP BY d.batch_number";
+			$allbatches_query = "SELECT SUM(balance) as total FROM drug_stock_balance d WHERE d.drug_id =  '$drug' AND d.expiry_date > '$today' AND facility_code='$facility_code' AND stock_type='$stock_type'";
 			$batches = $this -> db -> query($allbatches_query);
 			$batches_results = $batches -> result_array();
-			foreach ($batches_results as $batches_result) {
-				//Get Batch
-				$batch = $batches_result['batch'];
-				$physicalcount_query = "SELECT SUM(d.quantity) AS Initial_stock, d.transaction_date AS transaction_date FROM drug_stock_movement d WHERE d.drug ='$drug' AND transaction_type ='11' AND facility='$facility_code' $stock_param AND d.batch_number = '$batch'";
-				$physicalcount = $this -> db -> query($physicalcount_query);
-				$physicalcount_results = $physicalcount -> result_array();
-				foreach ($physicalcount_results as $physicalcount_result) {
-					//Get Initial Stock
-					$initial_stock = $physicalcount_result['Initial_stock'];
-					$transaction_date = $physicalcount_result['transaction_date'];
-					//Check if initial stock is present meaning physical count done
-					if ($initial_stock != null) {
-						//Query to get stock level after physical count is done
-						$stocklevel_query = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out )) AS stock_levels,ds.batch_number FROM drug_stock_movement ds WHERE ds.transaction_date BETWEEN  '$transaction_date' AND '$today' AND facility='$facility_code' $stock_param AND ds.drug ='$drug'  AND ds.batch_number ='$batch'";
-					} else {
-						//Query to get stock level when no physical count is done
-						$stocklevel_query = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out ) ) AS stock_levels,ds.batch_number FROM drug_stock_movement ds WHERE ds.drug =  '$drug' AND ds.expiry_date > '$today' AND facility='$facility_code' $stock_param AND ds.batch_number='$batch'";
-					}
-					$stocklevels = $this -> db -> query($stocklevel_query);
-					$stocklevels_results = $stocklevels -> result_array();
-					foreach ($stocklevels_results as $stocklevels_result) {
-						//Get stock Levels
-						$stock_level += $stocklevels_result['stock_levels'];
-					}
-
-				}
+			//Get stock balance for a drug
+			foreach($batches_results as $stock_balance){
+				$stock_level=$stock_balance['total'];
 			}
-			//End of Drug(Switching to Next Drug)
+			
+			//Get consumption for the past three months
 			$safetystock_query = "SELECT SUM(d.quantity_out) AS TOTAL FROM drug_stock_movement d WHERE d.drug ='$drug' AND DATEDIFF(CURDATE(),d.transaction_date)<= 90 and facility='$facility_code' $stock_param";
 			$safetystocks = $this -> db -> query($safetystock_query);
 			$safetystocks_results = $safetystocks -> result_array();
@@ -99,40 +82,59 @@ class Facilitydashboard_Management extends MY_Controller {
 
 				//Therefore Minimum Consumption
 				$minimum_consumption = $monthly_consumption * 1.5;
-				$minimum_consumption = number_format($monthly_consumption, 2);
+				//$minimum_consumption = number_format($monthly_consumption, 2);
 
-				//divides actual stocks by packsize
-				$soh_packs = ($stock_level / $drug_packsize);
-				$soh_packs = number_format($soh_packs, 1);
-
+				
+				//If current stock balance is less than minimum consumption
 				if ($stock_level < $minimum_consumption) {
+					
 					if ($minimum_consumption < 0) {
 						$minimum_consumption = 0;
 					}
-					if ($stock_level < 0) {
+					if ($stock_level < 0 or $stock_level=="NULL") {
 						$stock_level = 0;
 					}
+					$drugs_array[$counter]['drug_name']=$drug_name;
+					$drugs_array[$counter]['drug_unit']=$drug_unit;
+					$drugs_array[$counter]['stock_level']=number_format($stock_level);
+					$drugs_array[$counter]['minimum_consumption']=ceil($minimum_consumption);
+					
 					$strDATA .= "<set label='$drug_name' value='$stock_level' />";
 					$strLEVEL .= "<set label='$drug_name' value='$minimum_consumption' />";
 					$strcat .= "<category label='$drug_name'/>";
 				}
 			}
-
+			$counter++;
 		}
-		$mainstrcat = "<categories>";
-		$mainstrcat .= $strcat;
-		$mainstrcat .= "</categories>";
-		$mainsrtdata = "<dataset><dataset seriesName='Paediatric ART Patients'  showValues= '0'>";
-		$mainsrtdata .= $strDATA;
-		$mainsrtdata .= "</dataset></dataset>";
-		$mainsrtlevel = "<lineset seriesname='Total ART Patients' showValues= '1' lineThickness='4' >";
-		$mainsrtlevel .= $strLEVEL;
-		$mainsrtlevel .= "</lineset>";
-		$strXML .= $mainstrcat;
-		$strXML .= $mainsrtdata;
-		$strXML .= $mainsrtlevel;
-		header('Content-type: text/xml');
-		echo $strXML .= "</chart>";
+		
+		//Create table to store data
+		$tmpl = array ( 'table_open'  => '<table id="stock_level" class="setting_table">' );
+		$this -> table ->set_template($tmpl);
+		$this -> table -> set_heading('No', 'Drug', 'Unit', 'Quantity (Units)', 'Saferty Quantity (Units)', 'Priority');
+		$data="";
+		$x=1;
+		$priority="";
+		foreach ($drugs_array as $drugs) {
+			if($drugs['minimum_consumption']==0 and $drugs['stock_level']==0){
+				$priority=100;
+			}
+			else{
+				$priority=($drugs['stock_level']/$drugs['minimum_consumption'])*100;
+			}
+			//Check for priority
+			if($priority>=50){
+				$priority_level="<span class='low_priority'>LOW</span>";
+			}
+			else{
+				$priority_level="<span class='high_priority'>HIGH</span>";
+			}
+			
+			
+			$this -> table -> add_row($x,$drugs['drug_name'],$drugs['drug_unit'],$drugs['stock_level'],$drugs['minimum_consumption'],$priority_level);
+			$x++;
+		}
+		$drug_display = $this -> table -> generate();
+		return $drug_display;
 
 	}
 
@@ -156,23 +158,22 @@ class Facilitydashboard_Management extends MY_Controller {
 			$data['drug_details'] = "null";
 		}
 		$d = 0;
-	
 		$drugs_array = $this -> drug_array;
 		$strXML = "<chart useroundedges='1' caption='Summary of Drugs Expiring in 30 Days' showValues= '0' baseFont='Arial' baseFontSize='11' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
-		$strSTOCK="<dataset seriesName='Stock Level' color='AFD8F8' showValues= '0' >";
-		$strDays="<dataset seriesName='Days to Expiry' color='FDC12E' showValues= '0'>";
+		$strSTOCK = "<dataset seriesName='Stock Level' color='AFD8F8' showValues= '0' >";
+		$strDays = "<dataset seriesName='Days to Expiry' color='FDC12E' showValues= '0'>";
 		$strCAT = "<categories>";
 		foreach ($drugs_array as $drugs) {
 			$strCAT .= "<category label='" . $drugs['drug_name'] . "(" . $drugs['batch'] . ")" . "'/>";
-			$strSTOCK.="<set value='".$drugs['stocks_display']."' />";   
-			$strDays.="<set value='".$drugs['expired_days_display']."' />";   
+			$strSTOCK .= "<set value='" . $drugs['stocks_display'] . "' />";
+			$strDays .= "<set value='" . $drugs['expired_days_display'] . "' />";
 		}
 		$strCAT .= "</categories>";
-		$strDays.="</dataset>";
-		$strSTOCK.="</dataset>";
-		$strXML.=$strCAT.$strDays.$strSTOCK;
-		
-        header('Content-type: text/xml');
+		$strDays .= "</dataset>";
+		$strSTOCK .= "</dataset>";
+		$strXML .= $strCAT . $strDays . $strSTOCK;
+
+		header('Content-type: text/xml');
 		echo $strXML .= "</chart>";
 	}
 
@@ -231,10 +232,12 @@ class Facilitydashboard_Management extends MY_Controller {
 						$batch_balance = $value['stock_levels'];
 						$ed = substr($expired_days, 0, 1);
 						if ($ed == "-") {
+
 							$expired_days = $expired_days;
 						}
 						$batch_stock = $batch_balance / $pack_size;
 						$expired_days_display = number_format($expired_days);
+
 						$stocks_display = number_format($batch_stock, 1);
 
 						$this -> drug_array[$this -> counter]['drug_name'] = $drug_name;
@@ -250,7 +253,7 @@ class Facilitydashboard_Management extends MY_Controller {
 	}
 
 	//Get patients enrolled
-	public function getPatientsStartDate($startdate = "", $enddate = "") {
+	public function getPatientEnrolled($startdate = "", $enddate = "") {
 		$facility_code = $this -> session -> userdata('facility');
 		$timestamp = time();
 		$edate = date('Y-m-d', $timestamp);
@@ -278,15 +281,123 @@ class Facilitydashboard_Management extends MY_Controller {
 			$start_date = $startdate;
 			$end_date = $enddate;
 		}
-		$get_patient_sql = "SELECT COUNT(DISTINCT p.patient_number_ccc) as total,p.date_enrolled FROM patient p  LEFT JOIN regimen r ON r.id = p.start_regimen LEFT JOIN regimen_service_type t ON t.id = p.service LEFT JOIN supporter s ON s.id = p.supported_by  WHERE p.date_enrolled Between '" . $start_date . "' and '" . $end_date . "'  and p.facility_code='" . $facility_code . "' GROUP BY p.date_enrolled";
+		$get_patient_sql = "SELECT p.gender, dob , date_enrolled FROM patient p WHERE p.date_enrolled
+							BETWEEN  '" . $start_date . "' AND  '" . $end_date . "' AND p.facility_code='" . $facility_code . "' ORDER BY p.date_enrolled  ";
 		$res = $this -> db -> query($get_patient_sql);
-		foreach($results as  $result){
-			
-			
+		$x = 0;
+		$y = 0;
+		$count_patient_date = 0;
+		$date_enrolled = "";
+		$counter = 0;
+		$total_male_adult = 0;
+		$total_female_adult = 0;
+		$total_male_child = 0;
+		$total_female_child = 0;
+		$patients_array = array();
+
+		$results = $res -> result_array();
+
+		//Loop through the array to get totals for each category
+		foreach ($results as $key => $value) {
+			$count_patient_date++;
+			if ($x == 0) {
+				$x = 1;
+				$date_enrolled = $value['date_enrolled'];
+			}
+			//If enrollement date changes
+			if ($value['date_enrolled'] != $date_enrolled) {
+				$count_patient_date = 1;
+				$y = 0;
+				$total_male_adult = 0;
+				$total_female_adult = 0;
+				$total_male_child = 0;
+				$total_female_child = 0;
+				$counter++;
+				$patients_array[$counter]['date_enrolled'] = $value['date_enrolled'];
+				$patients_array[$counter]['total_day'] = $count_patient_date;
+				$date_enrolled = $value['date_enrolled'];
+
+			} else if ($value['date_enrolled'] == $date_enrolled) {
+
+				if ($y != 1) {
+					//Initialise totals
+					$patients_array[$counter]['date_enrolled'] = $value['date_enrolled'];
+					$patients_array[$counter]['total_male_adult'] = 0;
+					$patients_array[$counter]['total_female_adult'] = 0;
+					$patients_array[$counter]['total_male_child'] = 0;
+					$patients_array[$counter]['total_female_child'] = 0;
+				}
+				$patients_array[$counter]['total_day'] = $count_patient_date;
+				$y = 1;
+
+			}
+
+			$birthDate = $value['dob'];
+			//get age from date or birthdate
+			$age = $this -> age_from_dob($birthDate);
+			//If patient is male, check if he is an adult or child
+			if ($value['gender'] == 1) {
+				//Check if adult
+				if ($age >= 15) {
+					$total_male_adult++;
+					$patients_array[$counter]['total_male_adult'] = $total_male_adult;
+					$patients_array[$counter]['total_male_child'] = $total_male_child;
+					$patients_array[$counter]['total_female_adult'] = $total_female_adult;
+					$patients_array[$counter]['total_female_child'] = $total_female_child;
+				} else {
+					$total_male_child++;
+					$patients_array[$counter]['total_male_adult'] = $total_male_adult;
+					$patients_array[$counter]['total_male_child'] = $total_male_child;
+					$patients_array[$counter]['total_female_adult'] = $total_female_adult;
+					$patients_array[$counter]['total_female_child'] = $total_female_child;
+				}
+			}
+			//If patient is female, check if he is an adult or child
+			else if ($value['gender'] == 2) {
+				//Check if adult
+				if ($age >= 15) {
+					$total_female_adult++;
+					$patients_array[$counter]['total_male_adult'] = $total_male_adult;
+					$patients_array[$counter]['total_male_child'] = $total_male_child;
+					$patients_array[$counter]['total_female_adult'] = $total_female_adult;
+					$patients_array[$counter]['total_female_child'] = $total_female_child;
+				} else {
+					$total_female_child++;
+					$patients_array[$counter]['total_male_adult'] = $total_male_adult;
+					$patients_array[$counter]['total_male_child'] = $total_male_child;
+					$patients_array[$counter]['total_female_adult'] = $total_female_adult;
+					$patients_array[$counter]['total_female_child'] = $total_female_child;
+				}
+			}
+
 		}
+		$strXML = "<chart useroundedges='1' caption='Weekly Summary of Patient Enrollment' yAxisName='Enrollments' showvalues='0' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='11' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
+		$stradultmale = "<dataset seriesName='Adult Male' showValues= '0' >";
+		$stradultfemale = "<dataset seriesName='Adult Female' showValues= '0' >";
+		$strchildmale = "<dataset seriesName='Child Male' showValues= '0' >";
+		$strchildfemale = "<dataset seriesName='Child Female' showValues= '0' >";
+		$strCAT = "<categories>";
+		foreach ($patients_array as $patients) {
+			$strCAT .= "<category label='" . date('D M d,Y',strtotime($patients['date_enrolled'])) . "'/>";
+			$stradultmale .= "<set value='" . $patients['total_male_adult'] . "' />";
+			$stradultfemale .= "<set value='" . $patients['total_female_adult'] . "' />";
+			$strchildmale .= "<set value='" . $patients['total_male_child'] . "' />";
+			$strchildfemale .= "<set value='" . $patients['total_female_child'] . "' />";
+		}
+		$strCAT .= "</categories>";
+		$stradultmale .= "</dataset>";
+		$stradultfemale .= "</dataset>";
+		$strchildmale .= "</dataset>";
+		$strchildfemale .= "</dataset>";
+		$strXML .= $strCAT . $stradultmale . $stradultfemale . $strchildmale . $strchildfemale;
+
+		header('Content-type: text/xml');
+		echo $strXML .= "</chart>";
+
 	}
 
 	//Get patients expected for appointment
+
 	public function getExpectedPatients($startdate = "", $enddate = "") {
 
 		$facility_code = $this -> session -> userdata('facility');
@@ -307,8 +418,6 @@ class Facilitydashboard_Management extends MY_Controller {
 				}
 				//If sunday is included, add one more day
 				else {$x = 8;
-				//Exclude sundays
-				$sunday=date("Y-m-d", $timestamp);
 				}
 				$timestamp -= 24 * 3600;
 			}
@@ -369,17 +478,41 @@ class Facilitydashboard_Management extends MY_Controller {
 			if (count($results) != 0) {
 				$v++;
 				$patients_array[$counter]['patient_visited'] = $v;
+				$patients_array[$counter]['patient_not_visited'] = $n;
 			} else {
 				$n++;
 				$patients_array[$counter]['patient_not_visited'] = $n;
+				$patients_array[$counter]['patient_visited'] = $v;
 			}
 
 		}
-		//var_dump($patients_array);
-		$strXML = "<chart useroundedges='1' caption='Weekly summary of patient appointment'>";
+		$strXML = "<chart useroundedges='1' caption='Weekly Summary of Patient Appointment' yAxisName='Enrollments' showvalues='0' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='11' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1'>";
+		$strtotalvisited = "<dataset seriesName='Visited' showValues= '0' >";
+		$strtotalnotvisited = "<dataset seriesName='Missed' showValues= '0' >";
+		$strCAT = "<categories>";
 		foreach ($patients_array as $patients) {
-
+			$strCAT .= "<category label='" . date('D M d,Y',strtotime($patients['date_appointment'])). "'/>";
+			$strtotalvisited .= "<set value='" . $patients['patient_visited'] . "' />";
+			$strtotalnotvisited .= "<set value='" . $patients['patient_not_visited'] . "' />";
 		}
+		$strCAT .= "</categories>";
+		$strtotalvisited .= "</dataset>";
+		$strtotalnotvisited .= "</dataset>";
+		$strXML .= $strCAT . $strtotalvisited . $strtotalnotvisited;
+
+		header('Content-type: text/xml');
+		echo $strXML .= "</chart>";
+
+	}
+
+	function age_from_dob($dob) {
+		list($y, $m, $d) = explode('-', $dob);
+		if (($m = (date('m') - $m)) < 0) {
+			$y++;
+		} elseif ($m == 0 && date('d') - $d < 0) {
+			$y++;
+		}
+		return date('Y') - $y;
 
 	}
 

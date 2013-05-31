@@ -411,7 +411,44 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 </div>
 
 <?php }?>
+<?php
+if ($user_is_administrator) {
+?>
+<div class="tabbable tabs-left admin_menu">
+<div class="quick_menu">
+<ul class="nav nav-list">
+  <li class="nav-header">Quick Menu</li>
+  <li class="active"><a href="#"><i class="icon-home icon-white"></i> Dashboard</a></li>
+  <li><a href="#"><i class="icon-user"></i>Add User(s)</a></li>
+  <li><a href="#"><i class="icon-upload"></i> Update Pipeline Report</a></li>
+</ul>
+</div>
 
+<div class="admin_notification">
+<ul class="nav nav-list">
+  <li class="nav-header">Notification</li>
+  <li><a href="#">User Alerts<span class="badge badge-important badge_text">2</span></a></li>
+  <li><a href="#">Pipeline Alerts<span class="badge badge-warning badge_text">4</span></a></li>
+</ul>
+</div>
+</div>
+
+<div class="dash_content">
+	<span class="nav-header">Admin Dashboard</span>
+<div class="dash_left">
+	<span class="nav-header">User Info</span>
+</div>
+<div class="dash_right">
+	<span class="nav-header">Pipeline Info</span>
+</div>
+</div>
+
+
+
+
+
+
+<?php }?>
 <script type="text/javascript">
 $(document).ready(function(){
 	var base_url="<?php echo base_url(); ?>";    	

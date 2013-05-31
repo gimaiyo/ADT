@@ -4,6 +4,7 @@ class Facility_Soh extends Doctrine_Record {
 	public function setTableDefinition() {
 		$this -> hasColumn('id', 'int', 11);
 		$this -> hasColumn('facilityname', 'varchar', 200);
+		$this -> hasColumn('facilitycode', 'varchar', 100);
 		$this -> hasColumn('drugname', 'varchar', 200);
 		$this -> hasColumn('month', 'varchar',50);
 		$this -> hasColumn('year', 'varchar',50);
