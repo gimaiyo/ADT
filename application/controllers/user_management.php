@@ -6,6 +6,7 @@ class User_Management extends MY_Controller {
 		parent::__construct();
 		$this -> load -> library('encrypt');
 		$this -> load -> helper('geoiploc');
+		$this -> load -> database();
 	}
 
 	public function index() {
@@ -45,8 +46,23 @@ class User_Management extends MY_Controller {
 		$this -> table -> set_heading('id', 'Name', 'Username', 'Email Address', 'Phone Number', 'Access Level', 'Registered By', 'Options');
 
 		foreach ($users as $user) {
-			$links = anchor('user_management/edit/' . $user['id'], 'Edit', array('class' => 'edit_user', 'id' => $user['id']));
-			$links .= " | ";
+
+			//Is user is a system admin, allow him to edit only system  admin and nascop users
+			if($access_level=="system_administrator"){
+				if($user['Access'] == "System Administrator" or $user['Access'] == "NASCOP Pharmacist" or $user['Access'] == "Facility Administrator"){
+					$links = anchor('user_management/edit/' . $user['id'], 'Edit', array('class' => 'edit_user', 'id' => $user['id']));
+					$links .= " | ";
+				}
+				else{
+					$links="";
+				}
+			}
+			else{
+				$links = anchor('user_management/edit/' . $user['id'], 'Edit', array('class' => 'edit_user', 'id' => $user['id']));
+				$links .= " | ";
+			}
+			
+
 			if ($user['Active'] == 1) {
 				$links .= anchor('user_management/disable/' . $user['id'], 'Disable', array('class' => 'disable_user'));
 			} else {
@@ -116,7 +132,7 @@ class User_Management extends MY_Controller {
 			$encrypted_password = md5($key . $this -> input -> post("new_password"));
 			$user_id = $this -> session -> userdata('user_id');
 			$timestamp = date("Y-m-d");
-			$this -> load -> database();
+			
 			//check if password matches last three passwords for this user
 			$checkpassword_query = $this -> db -> query("SELECT * FROM (SELECT password FROM `password_log` WHERE user_id='$user_id' order by id desc limit 3) as pl where pl.password='$encrypted_password'");
 			$check_results = $checkpassword_query -> result_array();
@@ -255,7 +271,7 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 					$user_id = Users::getUserID($username);
 					$this -> session -> set_userdata('user_id', $user_id);
 					$facility_details = Facilities::getCurrentFacility($logged_in -> Facility_Code);
-					$session_data = array('user_id' => $logged_in -> id, 'user_indicator' => $logged_in -> Access -> Indicator, 'facility_name' => $logged_in -> Facility -> name, 'access_level' => $logged_in -> Access_Level, 'username' => $logged_in -> Username, 'full_name' => $logged_in -> Name, 'facility' => $logged_in -> Facility_Code, 'facility_id' => $facility_details[0]['id']);
+					$session_data = array('user_id' => $logged_in -> id, 'user_indicator' => $logged_in -> Access -> Indicator, 'facility_name' => $logged_in -> Facility -> name, 'access_level' => $logged_in -> Access_Level, 'username' => $logged_in -> Username, 'full_name' => $logged_in -> Name,'Email_Address'=> $logged_in ->Email_Address,'Phone_Number'=>$logged_in->Phone_Number, 'facility' => $logged_in -> Facility_Code, 'facility_id' => $facility_details[0]['id'],'county'=>$facility_details[0]['county']);
 					$this -> session -> set_userdata($session_data);
 					$this -> activation_view();
 				}
@@ -263,7 +279,7 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 				else {
 
 					$facility_details = Facilities::getCurrentFacility($logged_in -> Facility_Code);
-					$session_data = array('user_id' => $logged_in -> id, 'user_indicator' => $logged_in -> Access -> Indicator, 'facility_name' => $logged_in -> Facility -> name, 'access_level' => $logged_in -> Access_Level, 'username' => $logged_in -> Username, 'full_name' => $logged_in -> Name, 'facility' => $logged_in -> Facility_Code, 'facility_id' => $facility_details[0]['id']);
+					$session_data = array('user_id' => $logged_in -> id, 'user_indicator' => $logged_in -> Access -> Indicator, 'facility_name' => $logged_in -> Facility -> name, 'access_level' => $logged_in -> Access_Level, 'username' => $logged_in -> Username, 'full_name' => $logged_in -> Name,'Email_Address'=> $logged_in ->Email_Address,'Phone_Number'=>$logged_in->Phone_Number, 'facility' => $logged_in -> Facility_Code, 'facility_id' => $facility_details[0]['id'],'county'=>$facility_details[0]['county']);
 					$this -> session -> set_userdata($session_data);
 					//Execute queries that update the patient statuses
 					/*
@@ -302,7 +318,11 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 	private function _submit_validate() {
 		// validation rules
 		$this -> form_validation -> set_rules('username', 'Username', 'trim|required|min_length[6]|max_length[30]');
+
+
 		$this -> form_validation -> set_rules('password', 'Password', 'trim|required|min_length[6]|max_length[30]');
+
+
 
 		return $this -> form_validation -> run();
 	}
@@ -333,12 +353,14 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 		$email=$this -> input -> post('email');
 		$username=$this -> input -> post('username');
 		if($phone!=""){
-			$user -> Signature = rand(11111,99999);
-			$this->sendActivationCode($phone,'phone');
+			$code=rand(11111,99999);
+			$user -> Signature = $code;
+			$this->sendActivationCode($username,$phone,$code,'phone');
 		}
 		else {
-			$user -> Signature=md5($user.$email); 
-			$this->sendActivationCode($email,'email');
+			$code=md5($user.$email);
+			$user -> Signature=$code; 
+			$this->sendActivationCode($username,$email,$code,'email');
 		}
 		$user -> Active = "1";
 
@@ -404,9 +426,7 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 		redirect('user_management');
 	}
 
-	public function base_params($data) {
-		$this -> load -> view("template_admin", $data);
-	}
+	
 
 	public function logout() {
 		$machine_code=$this->session->userdata("machine_code_id");
@@ -435,11 +455,240 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 		$this -> db -> query("UPDATE access_log al,(SELECT MAX( id ) AS id FROM  `access_log` WHERE user_id = '$user_id' AND access_type =  'Login') as temp_log SET al.machine_code='$machine_code' WHERE al.id=temp_log.id");
 	}
 	
-	public function sendActivationCode($contact,$type="phone"){
+	public function sendActivationCode($username,$contact,$code="",$type="phone"){
+		
+		//If activation code is to be sent through email
+		if($type=="email"){
+			$email=$contact;
+			//setting the connection variables
+			$config['mailtype']="html";
+			$config['protocol'] = 'smtp';
+			$config['smtp_host'] = 'ssl://smtp.googlemail.com';
+			$config['smtp_port'] = 465;
+			$config['smtp_user'] = stripslashes('webadt.chai@gmail.com');
+			$config['smtp_pass'] = stripslashes('WebAdt_052013');
+			ini_set("SMTP", "ssl://smtp.gmail.com");
+			ini_set("smtp_port", "465");
+			$this -> load -> library('email', $config);
+			$this -> email -> set_newline("\r\n");
+			$this -> email -> from('webadt.chai@gmail.com', "WEB_ADT CHAI");
+			$this -> email -> to("$email");
+			$this -> email -> subject("Account Activation");
+			$this -> email -> message("Dear $username, Please click the following link to activate your account.
+			<form action='".base_url()."user_management/activation' method='post'>
+			<input type='submit' value='Activate account' id='btn_activate_account'>
+			<input type='hidden' name='activation_code' id='activation_code' value='".$code."'>
+			</form>
+			<br>
+			Regards, <br>
+			Web ADT Team.
+			");
+			
+			//success message else show the error
+			if ($this -> email -> send()) {
+				echo 'Your email was successfully sent to ' . $email . '<br/>';
+				//unlink($file);
+				$this -> email -> clear(TRUE);
+
+			} else {
+				show_error($this -> email -> print_debugger());
+			}
+			ob_end_flush();
+			
+			
+		}
+		
+		//If activatio code is to be sent via sms
+		else if($type=='phone'){
+			$phone=$contact;
+			$message="Your Web adt verification code is : ".$code;
+			//$x= file_get_contents("http://41.57.109.238:13000cgi-bin/sendsms?username=clinton&password=ch41sms&to=$phone&text=$message");
+			//ob_flush();
+			
+		}
 		
 	}
 	public function fixlogout(){
 		$this->load->view("fix_v");
+	}
+	public function resetPassword($data=""){
+		
+		$data['title'] = "Reset password";
+		$this -> load -> view("resend_password_v", $data);
+		
+		
+	}
+	public function resendPassword(){
+		$type=$this -> input -> post("type");
+		//If user want to reset his password using email
+		$input = array("Jpqw_!90)", "Jpqop_!290-", "Ksqop_!293-", "W9qip_!290", "W01ip_!134","T41tf_!126","442et_!237","CJai34_*5","34Tgd!*_","Jat_23@*");
+		$rand_keys = array_rand($input, 2);
+		$password= $input[$rand_keys[0]];
+		$key = $this -> encrypt -> get_key();
+		$encrypted_password =md5($key . $password);
+		$timestamp = date("Y-m-d");
+		
+		//Change the password
+		if($type=='email'){
+			$email=$this -> input -> post("contact_email");
+			$user_id_sql=$this->db->query("SELECT id FROM users WHERE Email_Address='$email' LIMIT 1");
+			$arr=$user_id_sql->result_array();
+			$count=count($arr);
+			$user_id="";
+			if($count==0){
+				$data['error']='<p class="error">The email you entered does not exist ! </p>';
+				$this ->resetPassword($data);
+			}
+			else{
+				foreach($arr as $us_id){
+					$user_id=$us_id['id'];
+				}
+				$query = $this -> db -> query("update users set Password='$encrypted_password',Time_Created='$timestamp' where Email_Address='$email'");
+				$new_password_log = new Password_Log();
+				$new_password_log -> user_id = $user_id;
+				$new_password_log -> password = $encrypted_password;
+				$new_password_log -> save();
+				$this->sendPassword($email,$password,'email');
+			}
+			
+		}
+		else if($type=='phone'){
+			$phone=$this -> input -> post("contact_phone");
+			$user_id_sql=$this->db->query("SELECT id FROM users WHERE Phone_Number='$phone' LIMIT 1");
+			$arr=$user_id_sql->result_array();
+			$count=count($arr);
+			$user_id="";
+			if($count==0){
+				$data['error']='<p class="error">The phone number your entered does not exist ! </p>';
+				$this ->resetPassword($data);
+			}
+			else{
+				foreach($arr as $us_id){
+					$user_id=$us_id['id'];
+				}
+				$query = $this -> db -> query("update users set Password='$encrypted_password',Time_Created='$timestamp' where Phone_Number='$phone'");
+				$new_password_log = new Password_Log();
+				$new_password_log -> user_id = $user_id;
+				$new_password_log -> password = $encrypted_password;
+				$new_password_log -> save();
+				$this->sendPassword($phone,$password,"phone");
+			}
+			
+		}
+		
+		
+	}
+	
+	public function sendPassword($contact,$code="",$type="phone"){
+		
+		//If activation code is to be sent through email
+		if($type=="email"){
+			$email=$contact;
+			//setting the connection variables
+			$config['mailtype']="html";
+			$config['protocol'] = 'smtp';
+			$config['smtp_host'] = 'ssl://smtp.googlemail.com';
+			$config['smtp_port'] = 465;
+			$config['smtp_user'] = stripslashes('webadt.chai@gmail.com');
+			$config['smtp_pass'] = stripslashes('WebAdt_052013');
+			ini_set("SMTP", "ssl://smtp.gmail.com");
+			ini_set("smtp_port", "465");
+			$this -> load -> library('email', $config);
+			$this -> email -> set_newline("\r\n");
+			$this -> email -> from('webadt.chai@gmail.com', "WEB_ADT CHAI");
+			$this -> email -> to("$email");
+			$this -> email -> subject("Account Activation");
+			$this -> email -> message("Dear $contact, This is your new password: $code.<br>
+										<br>
+										Regards,<br>
+										Web ADT Team
+										");
+			
+			//success message else show the error
+			if ($this -> email -> send()) {
+				$data['message']= '<span class="alert-info">An email was successfully sent to <b>' . $email . '</b>. Please Click <a href="'.base_url().'user_management/login">Here</a> to proceed to login</span><br/>';
+				//unlink($file);
+				$this -> email -> clear(TRUE);
+				
+			} else {
+				$data['error']=$this -> email -> print_debugger();
+				//show_error($this -> email -> print_debugger());
+			}
+			ob_end_flush();
+			$this->load->view("resend_password_success_v",$data);
+			
+		}
+		
+		//If activatio code is to be sent via sms
+		else if($type=='phone'){
+			$phone=$contact;
+			$message="Your Web adt verification code is : ".$code;
+			//$x= file_get_contents("http://41.57.109.238:13000cgi-bin/sendsms?username=clinton&password=ch41sms&to=$phone&text=$message");
+			//ob_flush();
+			
+		}
+		
+	}
+
+	public function profile($data=""){
+		$data['title']='User Profile';
+		$data['banner_text']='My Profile';
+		$data['content_view']='user_profile_v';
+		$this->base_params($data);
+	}
+	
+	public function profile_update(){
+		$data['title']='User Profile';
+		$data['banner_text']='My Profile';
+		$user_id=$this->session->userdata('user_id');
+		$full_name=$this->input->post('u_fullname');
+		$user_name=$this->input->post('u_username');
+		$email=$this->input->post('u_email');
+		$phone=$this->input->post('u_phone');
+		$c_user=0;
+		$e_user=0;
+		
+		//Check if username does not already exist
+		//If username was changed by the user, check if it exists in the db
+		if($this->session->userdata('username')!=$user_name){
+			$username_exist_sql=$this->db->query("SELECT * FROM users WHERE username='$user_name'");
+			$c_user=count($username_exist_sql->result_array());
+		}
+		//If email was changed by the user, check if it exists in the db
+		if($this->session->userdata('Email_Address')!=$email){
+			$email_exist_sql=$this->db->query("SELECT * FROM users WHERE Email_Address='$email'");
+			$e_user=count($email_exist_sql->result_array());
+		}
+		
+		if($c_user>0 and $e_user>0){
+			$data['error']="<span class='alert-error'>The username and email entered are already in use!</span>";
+			
+		}
+		else if($c_user>0){
+			$data['error']="<span class='alert-error'>The username entered is already in use !</span>";
+		}
+		else if($e_user>0){
+			$data['error']="<span class='alert-error'>The email entered is already in use !</span>";
+		}
+		
+		//Neither email nor username is in use
+		else if($e_user==0 and $c_user==0){
+			//Update user details
+			$update_user_sql=$this->db->query("UPDATE users SET Name='$full_name',username='$user_name',Email_Address='$email',Phone_Number='$phone' WHERE id='$user_id'");
+			if($update_user_sql==1){
+				$data['message_success']="<span class='alert-info'>Your details were successfully updated!<span>";
+			}
+			//Update session details!
+			$session_data = array('username' => $user_name, 'full_name' => $full_name,'Email_Address'=> $email,'Phone_Number'=>$phone);
+			$this -> session -> set_userdata($session_data);
+			
+		}
+		$this->profile($data);
+		
+	}
+	
+	public function base_params($data) {
+		$this -> load -> view("template", $data);
 	}
 
 }

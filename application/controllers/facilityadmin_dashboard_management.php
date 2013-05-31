@@ -16,7 +16,8 @@ class Facilityadmin_dashboard_Management extends MY_Controller {
 		$data['total_inactive']=$total_inactive;
 		$data['users']=$users;
 		
-		 $data;
+
+		return $data;
 	}
 	
 	function getPatientNotified(){
@@ -47,6 +48,7 @@ class Facilityadmin_dashboard_Management extends MY_Controller {
 	
 	//Get orders in a specific status
 	function getOrders($status){
+
 		$orderVal=0;
 		$order_array=array();
 		$status_title="";
@@ -60,6 +62,7 @@ class Facilityadmin_dashboard_Management extends MY_Controller {
 			$status_title='Declined';
 		}
 		else if($status=='dispatched'){
+
 			$status_title='Dispatched';
 		}
 		$facility_code = $this -> session -> userdata("facility");
@@ -68,13 +71,16 @@ class Facilityadmin_dashboard_Management extends MY_Controller {
 		
 		if($count>0){
 			$data=array();
+
 			$get_orders_sql=$this->db->query("SELECT count(*)as total FROM facility_order WHERE status='$status'");
 			$orderVal=$get_orders_sql->result_array();
 			
 		}
 		$order_array['title']=$status_title;
 		
+
 		echo "<div class='status-title' ><i class='icon-tasks'></i>No. of ".$status_title." Orders</div><div class='badge badge-important'>".$orderVal[0]['total']."</div>";
+
 		
 	}
 	

@@ -138,6 +138,17 @@ body {
 	font-size:18px;
 	font-weight:normal;
 }
+.welcome_msg{
+	clear:left; 
+	text-align: right;
+	padding:20px;
+	font-size:16px;
+	color: rgb(8, 172, 47);
+}
+.welcome_msg a{
+	color: rgb(24, 161, 214);
+}
+
 #my_profile_link {
 	background-color: #00B831;
 	width: auto;
@@ -159,11 +170,17 @@ body {
 	font-weight: bold;
 	display: block;
 	text-align: center;
-	background: #036;
+	background: rgb(43, 89, 126);
 	border: 1px solid rgba(0, 0, 0, 0.2);
 	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
 	position: relative;
 	z-index: 2;
+}
+#my_profile{ 
+	width: 140px !important;
+	margin:0px !important;
+	padding:0px !important;
+	line-height: 40px;
 }
 .first_link {
 	width: 120px !important;
@@ -563,6 +580,7 @@ hr {
 .brand{
 	cursor:pointer;
 }
+
 
 /*
  * Facility Dashboard

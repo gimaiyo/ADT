@@ -90,4 +90,10 @@ class Users extends Doctrine_Record {
 		$user = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
 		return $user[0]['id'];
 	}
+	
+	public function getUsersFacility($q='1') {
+		$query = Doctrine_Query::create() -> select("u.Name,u.Username, a.Level_Name as Access, u.Email_Address, u.Phone_Number, b.Name as Creator,u.Active as Active") -> from("Users u") -> leftJoin('u.Access a, u.Creator b')->where($q);
+		$users = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $users;
+	}
 }

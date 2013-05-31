@@ -312,7 +312,7 @@ class CI_Session {
 
 		// To make the session ID even more secure we'll combine it with the user's IP
 		$sessid .= $this->CI->input->ip_address();
-
+		
 		$this->userdata = array(
 							'session_id'	=> md5(uniqid($sessid, TRUE)),
 							'ip_address'	=> $this->CI->input->ip_address(),

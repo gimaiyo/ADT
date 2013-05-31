@@ -21,7 +21,7 @@ if ($access_level == "nascop_staff") {
 	$user_is_nascop = true;
 }
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -93,32 +93,13 @@ if (isset($styles)) {
 	}
 }
 ?>  
-<?php
-if (!$user_is_pharmacist) {?>
-<script type="text/javascript">
-	$(document).ready(function() {
-		$("#my_profile_link_container").hover(function() {
-			var html = "<a href='<?php echo site_url('user_management/change_password')?>' class='top_menu_link temp_link'>Change Password</a> <a href='<?php echo site_url('user_management/logout');?>' class='top_menu_link temp_link'>Logout</a> ";
-			$("#my_profile_link").css('display','none'); 
-			$(this).append(html);
-		}, function() {
-			$("#my_profile_link").css('display','block');
-			$(this).find(".temp_link").remove();
-		});
-	});
 
-</script>
-<?php }?>
 <style>
 	#my_profile_link_container .generated_link{
 		display: none;
 	}
-	#my_profile_link{ 
-		width: 200px !important;
-		margin:0px !important;
-		padding:0px !important;
-	}
-	#my_profile_link_continer{
+	
+	#my_profile_link_containe{
 		min-width: 200px !important;
 		background-color: red;
 		height:100px;
@@ -265,6 +246,15 @@ if (!$user_is_pharmacist) {?>
 	table.dataTable thead th{
 		border-bottom: none;
 	}
+	.btn .caret {
+		margin:0 auto;
+		vertical-align:middle;
+		margin-left:10px;
+	}
+	#profile_list{
+		right:0;
+		left:auto;
+	}
 </style>
 
 
@@ -346,8 +336,23 @@ foreach($menus as $menu){?>
 $counter++;
 }
 	?>
-<div id="my_profile_link_container" style="display: inline">
-<a ref="#" class="top_menu_link" id="my_profile_link"><?php echo $this -> session -> userdata('full_name');?></a>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#my_profile").click(function(){
+			$("#profile_list").toggle();
+		})
+	})
+</script>
+<div  class="btn-group" id="div_profile" >
+<a href="#" class="top_menu_link btn dropdown-toggle" data-toggle="dropdown"  id="my_profile"><i class="icon-user icon-black"></i> Profile  <span class="caret"></span></a>
+<ul class="dropdown-menu" id="profile_list" role="menu">
+	<li><a href="<?php echo base_url().'user_management/profile' ?>"><i class="icon-edit"></i> Edit Profile</a></li>
+	<li><a href="<?php echo base_url().'user_management/change_password' ?>"><i class=" icon-asterisk"></i> Change Password</a></li>
+</ul>
+</div>
+<div class="welcome_msg">
+	<span>Welcome <b style="font-weight: bolder;font-size: 20px;"><?php echo $this -> session -> userdata('full_name');?></b>. <a href="<?php echo base_url().'user_management/logout' ?>">Logout</a></span><br>
+	<br><span><?php echo date('l, jS \of F Y') ?></span>
 </div>
  </div>
 

@@ -155,7 +155,11 @@ span.rspgSpan{ font-size:11px; } /*results per page select label*/
 span.keyword{ background-color: #ffcc00;}/*highlighted word*/
 
 .even{ background-color:#fff; }/*row bg alternating color*/
+<<<<<<< HEAD
+.odd{ background-color:rgb(234,255,232);}/*row bg alternating color*/
+=======
 .odd{ background-color:#E5E5E5; }/*row bg alternating color*/
+>>>>>>> c959eeb2fed050f5ee1654716903038493730d25
 
 .loader{ /* loader appearance */
 	position:absolute; padding: 5px 10px 5px 10px;

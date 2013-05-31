@@ -1,5 +1,4 @@
 
-
 <style type="text/css">
 	.actions_panel {
 		width: 200px;
@@ -58,6 +57,17 @@
 
 	#DataTables_Table_0_wrapper{
 		font-size: 14px;
+	}
+	._red{
+		color:red;
+		font-style:italic;
+		font-size: 11px;
+	}
+	input[type='text'],input[type='email'],input[type='tel'],input[type='password']{
+		height:30px;
+	}
+	legend{
+		font-size: 18px;
 	}
 
 </style>
@@ -202,16 +212,16 @@
 		
 		//Dialog form for new user form
 		$("#user_form").dialog({
-			height : 380,
-			width : "37em",
+			height : 420,
+			width : "41em",
 			modal : true,
 			autoOpen : false
 		});
 		
 		//Dialog form for edit user form
 		$("#edit_user").dialog({
-			height : 350,
-			width : "35em",
+			height : 420,
+			width : "41em",
 			modal : true,
 			autoOpen : false
 		});
@@ -284,10 +294,11 @@
 	      			}
 	      			
 	      			if(key=="user_type"){
+	      				$("#e_access_level option").remove();
 	     				for(var y in msg[key]) {
 	     					if (msg[key].hasOwnProperty(y)) {
 	     						//if(msg[key][y].Id==access_level){
-	     							$("#e_access_level").html("<option value='"+msg[key][y].Id+"'>"+msg[key][y].Access+"</option>")
+	     							$("#e_access_level").append("<option value='"+msg[key][y].Id+"'>"+msg[key][y].Access+"</option>")
 	      						//}
 	     						
 	     					}
@@ -339,16 +350,18 @@ foreach($actions as $action){
 	</div>
 
 	<div id="user_form" title="New User">
+		<legend>User details</legend>
 			<?php
 			$attributes = array('class' => 'input_form','id'=>'fm_user');
 			echo form_open('user_management/save', $attributes);
 			echo validation_errors('<p class="error">', '</p>');
 			?>
-			<div><span class="_red" id="msg_error">Fields with * are compulsory</span></div>
+			<div><span class="_red" id="msg_error">Fields with <i class="icon-star icon-black"></i> are compulsory</span></div>
 			<br>
 			<table style="margin:0 auto" class="table-striped" width="100%">
 				<tr><td><strong class="label">Usertype</strong> </td>
 					<td>
+						<span class="add-on"><i class=" icon-chevron-down icon-black"></i></span>
 						<select class="input-xlarge" id="access_level" name="access_level">
 							<?php
 							foreach($user_types as $user_type){ 
@@ -367,12 +380,39 @@ foreach($actions as $action){
 				</tr>
 				
 				
-				<tr><td><strong class="label">Full Name</strong></td><td><input type="text" name="fullname" id="fullname" class="input-xlarge" required=""></td><td class="_red">*</td></tr>
-				<tr><td><strong class="label">Username</strong></td><td><input type="text" name="username" id="username" class="input-xlarge" required=""></td><td class="_red">*</td></tr>
-				<tr ><td><strong class="label">Phone number</strong></td><td><input type="text" name="phone" id="phone" class="input-xlarge"><br><span class="msg">e.g. +254721112333</span></td><td></td></tr>
-				<tr><td><strong class="label">Email address</strong></td><td><input type="email" name="email" id="email" class="input-xlarge"></td><td class="_red" id="invalid_email"></td></tr>
+				<tr><td><strong class="label">Full Name</strong></td>
+					<td>
+						<div >
+							<span class="add-on"><i class="icon-user icon-black"></i></span>
+							<input type="text" class="input-xlarge" id="fullname" name="fullname" required="" >
+							<span class="add-on"><i class="icon-star icon-black"></i></span>
+						</div>
+					</td><td class="_red"></td></tr>
+				<tr><td><strong class="label">Username</strong></td>
+					<td><div>
+							<span class="add-on"><i class="icon-user icon-black"></i></span>
+							<input type="text" name="username" id="username" class="input-xlarge" required=""> 
+							<span class="add-on"><i class="icon-star icon-black"></i></span>
+						</div>
+					</td><td class="_red"></td></tr>
+				<tr ><td><strong class="label">Phone number</strong></td>
+					<td>
+						<div >
+							<span class="add-on"><i class="icon-calendar icon-black"></i> </span>
+							<input type="text" name="phone" id="phone" class="input-xlarge" placeholder="e.g. +254721111111">
+							<span class="add-on"><i class="icon-star icon-black"></i></span>
+						</div>
+					</td><td></td></tr>
+				<tr><td><strong class="label">Email address</strong></td>
+					<td>
+						<div >
+							<span class="add-on"><i class=" icon-envelope icon-black"></i></span>
+							<input type="email" name="email" id="email" class="input-xlarge" placeholder="e.g. youremail@example.com">
+						</div></td><td class="_red" id="invalid_email">
+					</td></tr>
 				<tr><td><strong class="label">Facility</strong></td>
 					<td>
+						<span class="add-on"><i class=" icon-chevron-down icon-black"></i></span>
 						<select name="facility" id="facility" class="input-xlarge">
 							<?php 
 							foreach($facilities as $facility){
@@ -392,15 +432,17 @@ foreach($actions as $action){
 		</div>
 
 		<div id="edit_user" title="Edit User" >
+			<legend>User details</legend>
 			<?php
 			$attributes = array('class' => 'input_form','id'=>'fm_edit_user');
 			echo form_open('user_management/update', $attributes);
 			echo validation_errors('<p class="error">', '</p>');
 			?>
-			<div><span class="_red" id="e_msg_error">Fields with * are compulsory</span></div>
-			<table style="margin:0 auto">
+			<div><span class="_red" id="e_msg_error">Fields with <i class="icon-star icon-black"></i> are compulsory</span></div>
+			<table style="margin-top:10px" class="table-striped" width="100%">
 				<tr><td><strong class="label">Usertype</strong> </td>
 					<td>
+						<span class="add-on"><i class=" icon-chevron-down icon-black"></i></span>
 						<select class="input-xlarge" id="e_access_level" name="access_level">
 							
 						</select>
@@ -409,17 +451,39 @@ foreach($actions as $action){
 				<tr><td><strong class="label">Full Name</strong></td>
 					<td>
 						<input type="hidden" name="user_id" id="e_user_id" class="input" >
-						<input type="text" name="fullname" id="e_fullname" class="input-xlarge">
+						<div>
+							<span class="add-on"><i class="icon-user icon-black"></i></span>
+							<input type="text" name="fullname" id="e_fullname" class="input-xlarge">
+							<span class="add-on"><i class="icon-star icon-black"></i></span>
+						</div>
 						
 					</td>
 				</tr>
 				<tr><td><strong class="label">Username</strong></td>
-					<td><input type="text" name="username" id="e_username" class="input"></td></tr>
-				<tr><td><strong class="label">Phone number</strong></td><td><input type="text" name="phone" id="e_phone" class="input-xlarge"></td></tr>
-				<tr><td><strong class="label">Email address</strong></td><td><input type="text" name="email" id="e_email" class="input-xlarge"></td></tr>
+					<td>
+						<div >
+							<span class="add-on"><i class="icon-user icon-black"></i></span>
+							<input type="text" name="username" id="e_username" class="input-xlarge">
+							<span class="add-on"><i class="icon-star icon-black"></i></span>
+						</div>
+					</td></tr>
+				<tr><td><strong class="label">Phone number</strong></td>
+					<td>
+						<div >
+							<span class="add-on"><i class="icon-calendar icon-black"></i></span>
+							<input type="text" name="phone" id="e_phone" class="input-xlarge">
+							<span class="add-on"><i class="icon-star icon-black"></i></span>
+						</div>
+					</td></tr>
+				<tr><td><strong class="label">Email address</strong></td>
+					<td><div >
+						<span class="add-on"><i class="icon-envelope icon-black"></i></span>
+						<input type="text" name="email" id="e_email" class="input-xlarge">
+					</td></tr>
 				<tr><td><strong class="label">Facility</strong></td>
 					
 					<td>
+						<span class="add-on"><i class=" icon-chevron-down icon-black"></i></span>
 						<select name="facility" id="e_facility" class="input-xlarge">
 							<?php 
 							foreach($facilities as $facility){

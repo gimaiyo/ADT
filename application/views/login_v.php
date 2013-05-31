@@ -27,6 +27,9 @@ foreach ($styles as $style){
 echo "<link href=\"".base_url()."CSS/".$style."\" type=\"text/css\" rel=\"stylesheet\"></link>";
 }
 }?> 
+<!-- Bootstrap -->
+<link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap.min.css'?>" rel="stylesheet" media="screen">
+<link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap-responsive.min.css'?>" rel="stylesheet" media="screen">
 <style type="text/css">
 #signup_form{ 
 background-color:whiteSmoke; 
@@ -36,11 +39,7 @@ width:700px;
 margin:0 auto;
 }
 
-#signup_form input[type="submit"] {
-margin: 0 1.5em 1.2em 0;
-height: 32px;
-font-size: 13px;
-}
+
 #signup_form label{
 display: block;
 margin: 0 auto 1.5em auto;
@@ -130,16 +129,19 @@ else if(isset($expired)){
 <form action="<?php echo base_url().'user_management/authenticate'?>" method="post" >
 <label>
 <strong class="label">Email or Phone or Username</strong>
-<input type="text" name="username" id="username" value="">
+<input type="text" name="username" class="input-xlarge" id="username" value="">
 </label>
 <label>
 <strong class="label">Password</strong>
-<input type="password" name="password" id="password">
+<input type="password" name="password" class="input-xlarge" id="password">
 </label>
- <input type="submit" class="button " name="register" id="register" value="Sign in" style="margin-left:200px;">
+ <input type="submit" class="btn" name="register" id="register" value="Sign in" style="margin-left:200px; padding-left:30px; padding-right:30px;margin-right:50px ">
 <label style="display:inline">
  <input type="checkbox" name="remember"> <strong class="remember-label">  Stay signed in  </strong>
 </label>
+<div style="margin-left:200px;margin-top:20px">
+	<strong><a href="<?php echo base_url().'user_management/resetPassword' ?>">Forgot Password?</a></strong>
+</div>
 
 </form>
 </div>

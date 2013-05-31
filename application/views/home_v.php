@@ -234,12 +234,14 @@ if($this->session->userdata("changed_password")){
     	.tile{
     		display:inline-block;
     		float:left;
+
     		width:49%; 
     		height:99.5%;
     		padding: 0 0.5% 0.5% 0.5%;
     		
 
     		
+
     	}
     	
       	.tile-half{
@@ -257,6 +259,7 @@ if($this->session->userdata("changed_password")){
 		margin: 0 auto;
 	}
 	#synchronize {
+		display:none;
 		text-align: left;
 		font-size: 16px;
 		text-shadow: 0 1px rgba(0, 0, 0, 0.1);
@@ -451,6 +454,7 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 
 <div class="main-content">
 	
+
 	<div class="left-content" style="float: left">
 
 		<h3>Quick Links</h3>
@@ -515,6 +519,7 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 			<h3>Stocks About to Run Out</h3>
 			<div id="table1"></div>
 		</div>
+
 	</div>
 </div>
 	
