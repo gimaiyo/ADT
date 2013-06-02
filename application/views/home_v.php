@@ -229,23 +229,7 @@ if($this->session->userdata("changed_password")){
     <link rel="stylesheet" href="<?php echo base_url()?>css/bootstrap.css"/>
     <link rel="stylesheet" href="<?php echo base_url()?>css/bootstrap-responsive.css"/>
     <style type="text/css">
-    	.tile{
-    		display:inline-block;
-    		float:left;
-    		width:49%; 
-    		height:99.5%;
-    		padding: 0 0.5% 0.5% 0.5%;
-    		
-
-    		
-    	}
     	
-      	.tile-half{
-    		height:50%;
-    		display:block;
-    		
-    		
-    	}
     
     </style>
 <style type="text/css">

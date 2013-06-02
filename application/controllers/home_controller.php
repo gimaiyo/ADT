@@ -22,7 +22,7 @@ class Home_Controller extends MY_Controller {
 		$data['title'] = "System Dashboard";
 		$data['banner_text'] = "System Dashboard";
 		$data['content_view'] = "platform_home_v";
-		$this -> load -> view("platform_template", $data);
+		$this -> load -> view("template_platform", $data);
 	}
 
 	public function home() {
