@@ -214,6 +214,7 @@ if($this->session->userdata("changed_password")){
 				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
 				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
 				$('#notification3').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/dispatched'?>');
+				$('#notification4').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/prepared'?>');
 				
 				<?php
 			}
@@ -450,7 +451,7 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 	<div class="left-content" style="float: left">
 
 		<h3>Quick Links</h3>
-		<ul class="nav nav-list">
+		<ul class="nav nav-list well">
 			<?php 
 			if($user_is_pharmacist){
 				?>
@@ -478,11 +479,13 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 			
 		</ul>
 		<h3>Notifications</h3>
+		<div class="well">
 		<div class="notif" id="notification1"></div>
+		<li class="divider"></li>
 		<div class="notif"id="notification2"></div>
 		<div class="notif" id="notification3"></div>
-		<div></div>
-		<div></div>
+		<div class="notif" id="notification4"></div>
+		</div>
 	</div>
 	
 	<div class="center-content">

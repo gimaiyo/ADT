@@ -78,7 +78,7 @@ class Facilityadmin_dashboard_Management extends MY_Controller {
 		}
 		$order_array['title']=$status_title;
 		
-		echo "<li class='status-title' ><i class='icon-tasks'></i>No. of ".$status_title." Orders</div><div class='badge badge-important'>".$orderVal[0]['total']."</li>";
+		echo "<div class='status-title' ><i class='icon-tasks'></i>No. of ".$status_title." Orders</div><div class='badge badge-important'>".$orderVal[0]['total']."</div>";
 
 		
 	}
