@@ -319,7 +319,9 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 		// validation rules
 		$this -> form_validation -> set_rules('username', 'Username', 'trim|required|min_length[6]|max_length[30]');
 
+
 		$this -> form_validation -> set_rules('password', 'Password', 'trim|required|min_length[6]|max_length[30]');
+
 
 
 		return $this -> form_validation -> run();

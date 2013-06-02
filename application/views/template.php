@@ -33,6 +33,55 @@ if ($access_level == "system_administrator") {
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title><?php echo $title; ?></title>
 <link rel="SHORTCUT ICON" href="<?php echo base_url().'Images/favicon.ico'?>">
+<<<<<<< HEAD
+=======
+<link href="<?php echo base_url().'CSS/style.css'?>" type="text/css" rel="stylesheet"/> 
+<link href="<?php echo base_url().'CSS/jquery-ui.css'?>" type="text/css" rel="stylesheet"/>
+
+<link href="<?php echo base_url().'CSS/datatable/jquery.dataTables.css'?>" type="text/css" rel="stylesheet"/>
+<link href="<?php echo base_url().'CSS/datatable/jquery.dataTables_themeroller.css'?>" type="text/css" rel="stylesheet"/>
+<link href="<?php echo base_url().'CSS/datatable/demo_table.css" type="text/css'?>" rel="stylesheet"/>
+
+<link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap.min.css'?>" rel="stylesheet" media="screen">
+<link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap-responsive.min.css'?>" rel="stylesheet" media="screen">
+
+
+<script src="<?php echo base_url().'Scripts/jquery.js'?>" type="text/javascript"></script> 
+<script src="<?php echo base_url().'js/bootstrap.js'?>" type="text/javascript"></script> 
+<script src="<?php echo base_url().'Scripts/sorttable.js'?>" type="text/javascript"></script> 
+<script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script> 
+<script src="<?php echo base_url().'Scripts/jquery.form.js'?>" type="text/javascript"></script>
+<script src="<?php echo base_url().'Scripts/jquery.blockUI.js'?>" type="text/javascript"></script>
+
+<script src="<?php echo base_url().'Scripts/bootstrap/js/bootstrap.min.js'?>"></script>
+<!-- Bootstrap -->
+    <link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap.min.css'?>" rel="stylesheet" media="screen">
+    <link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap-responsive.min.css'?>" rel="stylesheet" media="screen">
+    <link href="<?php echo base_url().'CSS/admin_dash.css'?>" rel="stylesheet" media="screen">
+
+
+
+<script src="<?php echo base_url().'Scripts/bootstrap/js/bootstrap.min.js'?>"></script>
+
+<!-- Datatables -->
+<script type="text/javascript" src="<?php echo base_url().'Scripts/datatable/jquery.dataTables.min.js'?>"></script>
+<script type="text/javascript" src="<?php echo base_url().'Scripts/bootstrap/js/paging.js'?>"></script>
+<!-- Datatables end --> 
+
+
+<!--Load datatables settings -->
+<script type="text/javascript">
+	$(document).ready(function() {
+	    oTable = $('.setting_table').dataTable({
+	    	"sScrollY": "240px",
+	        "bJQueryUI": true,
+	        "sPaginationType": "full_numbers"
+	    });
+	} );
+
+</script>
+
+>>>>>>> f4318c2d10aa05cf701785aeefe28d13d3ea9d91
 <?php
 /**
  * Load View with Head Section
@@ -41,7 +90,10 @@ $this -> load -> view('sections/head');
 
 if ($user_is_pharmacist || $user_is_facility_administrator) {
 	echo "<script src=\"" . base_url() . "Scripts/offline_database.js\" type=\"text/javascript\"></script>";
-}
+
+
+} 
+
 
 if (isset($script_urls)) {
 	foreach ($script_urls as $script_url) {

@@ -82,7 +82,6 @@ if (isset($styles)) {
 <div id="inner_wrapper"> 
 
 <div id="main_wrapper"> 
- 
 <?php $this -> load -> view($content_view);?>
  
  

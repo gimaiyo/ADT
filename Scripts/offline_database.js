@@ -261,6 +261,7 @@ function selectAll(table, dataSelectHandler) {
 
 
 
+
 //Function to check if user has logged in to view offline pages
 function check_authentic(){
 
@@ -281,9 +282,9 @@ function check_authentic(){
 				window.location.href = base_url+"/ADT/login.html";
 				}
 
+
 			}
 		}
-
 	});
 }
 

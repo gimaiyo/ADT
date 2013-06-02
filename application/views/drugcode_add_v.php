@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <div class="view_content">
 	<?php
 	$attributes = array('id' => 'entry_form');
@@ -264,5 +263,5 @@
 		</tr>
 	</table>
 	</form>
->>>>>>> c959eeb2fed050f5ee1654716903038493730d25
+
 </div>
