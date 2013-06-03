@@ -46,7 +46,7 @@ if ($access_level == "nascop_staff") {
 	<script src="<?php echo base_url().'Scripts/jquery.form.js'?>" type="text/javascript"></script>
 
 	<?php 
-		if(isset($settings_view) && $settings_view=="settings_view"){
+		if(isset($settings_view) && $settings_view=="settings_view" || $settings_view=="settings_system_admin_v"){
 			echo "<script src=\"".base_url()."Scripts/bootstrap/js/jquery_bootstrap.js\" type=\"text/javascript\"></script>";
 		}
 	?>
@@ -172,7 +172,7 @@ if ($access_level == "nascop_staff") {
 		 .btn-xlarge{
 		 	min-width: 100%;
 		 }
-		 .btn-group{
+		 #inner_wrapper  .btn-group{
 		 	width: 100%;
 		 	font-size:20px;
 		 }

@@ -67,6 +67,12 @@ class Patient extends Doctrine_Record {
 		$patients = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
 		return $patients;
 	}
+	
+	public function getAllPatients($facility){
+		$query=Doctrine_Query::create() -> select("*")->from ("patient")->where("Facility_Code='$facility'");
+		$patients = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $patients;
+	}
 
 	public function getPagedFacilityPatients($offset, $items, $facility) {
 		$query = Doctrine_Query::create() -> select("*") -> from("Patient") -> where("Facility_Code=$facility") -> offset($offset) -> limit($items);

@@ -70,7 +70,7 @@ else if ($access_level == "nascop_staff") {
 </script>
 
 <?php
-if ($user_is_pharmacist || $user_is_facility_administrator) {
+if ($user_is_pharmacist || $user_is_facility_administrator || $user_is_administrator) {
 	echo "<script src=\"" . base_url() . "Scripts/offline_database.js\" type=\"text/javascript\"></script>";
 }
 
@@ -132,7 +132,7 @@ if (isset($styles)) {
 	}
 
 	.ui-widget-header{
-		background:rgb(140, 214, 140);
+		background:rgb(226, 250, 252);
 	}
 	table.dataTable tr.odd{
 		background-color:rgb(234,255,232);

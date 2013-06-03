@@ -128,17 +128,15 @@ else if(isset($expired)){
 ?>
 <form action="<?php echo base_url().'user_management/authenticate'?>" method="post" >
 <label>
-<strong class="label">Email or Phone or Username</strong>
-<input type="text" name="username" class="input-xlarge" id="username" value="">
+<strong class="label">Please Enter Your Email/Username</strong>
+<input type="text" name="username" class="input-xlarge" id="username" value="" >
 </label>
 <label>
 <strong class="label">Password</strong>
 <input type="password" name="password" class="input-xlarge" id="password">
 </label>
  <input type="submit" class="btn" name="register" id="register" value="Sign in" style="margin-left:200px; padding-left:30px; padding-right:30px;margin-right:50px ">
-<label style="display:inline">
- <input type="checkbox" name="remember"> <strong class="remember-label">  Stay signed in  </strong>
-</label>
+
 <div style="margin-left:200px;margin-top:20px">
 	<strong><a href="<?php echo base_url().'user_management/resetPassword' ?>">Forgot Password?</a></strong>
 </div>
