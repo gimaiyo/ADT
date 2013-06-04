@@ -2,9 +2,11 @@
 class Patient_Management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
+		$this -> load -> database();
 		$this -> load -> library('PHPExcel');
 		ini_set("max_execution_time", "100000");
 		ini_set('memory_limit', '512M');
+		$this -> load -> database();
 	}
 
 	public function index() {
@@ -17,26 +19,193 @@ class Patient_Management extends MY_Controller {
 		$this -> base_params($data);
 	}
 
+	public function addpatient_show() {
+		$data = array();
+		$data['content_view'] = "add_patient_v";
+		$this -> base_params($data);
+	}
+
+	public function checkpatient_no($patient_no) {
+		//Variables
+		$facility_code = $this -> session -> userdata('facility');
+		$sql = "select * from patient where facility_code='$facility_code' and patient_number_ccc='$patient_no'";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			echo json_decode("1");
+		} else {
+			echo json_decode("0");
+		}
+
+	}
+
 	public function listing() {
 		$data = array();
+		$facility_code = $this -> session -> userdata('facility');
+		$patients = patient::getAllPatients($facility_code);
+		$data['patients'] = $patients;
 		$data['content_view'] = "patient_listing_v";
 		$this -> base_params($data);
 	}
 
-	public function save() {
-		$this -> load -> database();
-		$sql = $this -> input -> post("sql");
-		$queries = explode(";", $sql);
-		foreach ($queries as $query) {
-			if (strlen($query) > 0) {
-				$this -> db -> query($query);
-				$new_log = new Sync_Log();
-				$new_log -> logggedsql = $query;
-				$new_log -> machine_code ="1";
-				$new_log -> facility = $this -> session -> userdata('facility');
-				$new_log -> save();
-			}
+	public function edit($record_no) {
+		$sql = "select * from patient where id='$record_no'";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			return $results;
+
 		}
+	}
+
+	public function save() {
+		//Patient Information & Demographics
+		$medical_record_number = $_POST['medical_record_number'];
+		$patient_number_ccc = $_POST['patient_number'];
+		$last_name = $_POST['last_name'];
+		$first_name = $_POST['first_name'];
+		$other_name = $_POST['other_name'];
+		$dob = $_POST['dob'];
+		$pob = $_POST['pob'];
+		$gender = $_POST['gender'];
+		$pregnant = $_POST['pregnant'];
+		$start_weight = $_POST['weight'];
+		$start_height = $_POST['height'];
+		$start_bsa = $_POST['surface_area'];
+		$phone = $_POST['phone'];
+		$sms_consent = $_POST['sms_consent'];
+		$physical_address = $_POST['physical'];
+		$alternate_address = $POST['alternate'];
+
+		//Patient History
+		$patient_status = $_POST['pstatus'];
+		$disclosure = $_POST['disco'];
+		$family_planning = $_POST['plan_listing'];
+		$other_illness_listing = $_POST['other_illnesses_listing'];
+		$other_chronic = $_POST['other_chronic'];
+		$other_drugs = $_POST['other_drugs'];
+		$other_allergies = $_POST['other_allergies'];
+		$other_allergies_listing = $_POST['other_allergies_listing'];
+		$support_group = $_POST['support_group'];
+		$smoke = $_POST['smoke'];
+		$alcohol = $POST['alcohol'];
+		$tb = $_POST['tb'];
+		$tbphase = $_POST['tbphase'];
+		$fromphase = $_POST['fromphase'];
+		$tophase = $_POST['tophase'];
+
+		//Program Information
+		$date_enrolled = $_POST['current_status'];
+		$date_of_status_change = $_POST['status_started'];
+		$patient_source = $_POST['source'];
+		$transfer_from = $_POST['patient_source'];
+		$supported_by = $_POST['support'];
+		$type_of_service = $_POST['service'];
+		$start_regimen = $_POST['regimen'];
+		$start_regimen_date = $_POST['service_started'];
+
+		//Save data
+
+		//Patient Information & Demographics
+		$new_patient = new Patient();
+		$new_patient -> Medical_Record_Number = $medical_record_number;
+		$new_patient -> Patient_Number_CCC = $patient_number_ccc;
+		$new_patient -> First_Name = $first_name;
+		$new_patient -> Last_Name = $last_name;
+		$new_patient -> Other_Name = $other_name;
+		$new_patient -> Dob = $dob;
+		$new_patient -> Pob = $pob;
+		$new_patient -> Gender = $gender;
+		$new_patient -> Dob = $dob;
+		$new_patient -> Pob = $pob;
+		$new_patient -> Gender = $gender;
+		$new_patient -> Pregnant = $pregnant;
+		$new_patient -> Start_Weight = $start_weight;
+		$new_patient -> Start_Height = $start_height;
+		$new_patient -> Start_Bsa = $start_bsa;
+		$new_patient -> Phone = $phone;
+		$new_patient -> SMS_Consent = $sms_consent;
+		$new_patient -> Physical = $physical_address;
+		$new_patient -> Alternate = $alternate_address;
+
+		//Patient History
+		$new_patient -> Partner = $patient_status;
+		$new_patient -> Partner_Status = $disclosure;
+		$new_patient -> Fplan = $family_planning;
+		$new_patient -> Other_Illnesses = $other_illness_listing;
+		$new_patient -> Other_Drugs = $other_chronic;
+		$new_patient -> Adr = $other_allergies;
+		$new_patient -> Smoke = $smoke;
+		$new_patient -> Alcohol = $alcohol;
+		$new_patient -> Tb = $tb;
+		$new_patient -> Tbphase = $tbphase;
+		$new_patient -> Startphase = $fromphase;
+		$new_patient -> Endphase = $tophase;
+
+		//Program Information
+		$new_patient -> Date_Enrolled = $date_enrolled;
+		$new_patient -> Status_Change_Date = $date_of_status_change;
+		$new_patient -> Source = $patient_source;
+		$new_patient -> Supported_By = $supported_by;
+		$new_patient -> Facility_Code = $this -> session -> userdata('facility');
+		$new_patient -> Service = $type_of_service;
+		$new_patient -> Start_Regimen = $start_regimen;
+		$new_patient -> Start_Regimen_Date = $start_regimen_date;
+		$new_patient -> save();
+	}
+
+	public function update($record_id) {
+
+		//Patient Information & Demographics
+		$medical_record_number = $_POST['medical_record_number'];
+		$patient_number_ccc = $_POST['patient_number'];
+		$last_name = $_POST['last_name'];
+		$first_name = $_POST['first_name'];
+		$other_name = $_POST['other_name'];
+		$dob = $_POST['dob'];
+		$pob = $_POST['pob'];
+		$gender = $_POST['gender'];
+		$pregnant = $_POST['pregnant'];
+		$start_weight = $_POST['weight'];
+		$start_height = $_POST['height'];
+		$start_bsa = $_POST['surface_area'];
+		$phone = $_POST['phone'];
+		$sms_consent = $_POST['sms_consent'];
+		$physical_address = $_POST['physical'];
+		$alternate_address = $POST['alternate'];
+
+		//Patient History
+		$patient_status = $_POST['pstatus'];
+		$disclosure = $_POST['disco'];
+		$family_planning = $_POST['plan_listing'];
+		$other_illness_listing = $_POST['other_illnesses_listing'];
+		$other_chronic = $_POST['other_chronic'];
+		$other_drugs = $_POST['other_drugs'];
+		$other_allergies = $_POST['other_allergies'];
+		$other_allergies_listing = $_POST['other_allergies_listing'];
+		$support_group = $_POST['support_group'];
+		$smoke = $_POST['smoke'];
+		$alcohol = $POST['alcohol'];
+		$tb = $_POST['tb'];
+		$tbphase = $_POST['tbphase'];
+		$fromphase = $_POST['fromphase'];
+		$tophase = $_POST['tophase'];
+
+		//Program Information
+		$date_enrolled = $_POST['current_status'];
+		$date_of_status_change = $_POST['status_started'];
+		$patient_source = $_POST['source'];
+		$transfer_from = $_POST['patient_source'];
+		$supported_by = $_POST['support'];
+		$type_of_service = $_POST['service'];
+		$start_regimen = $_POST['regimen'];
+		$start_regimen_date = $_POST['service_started'];
+
+		//Update data
+
+		$data = array('Medical_Record_Number' => $medical_record_number, 'Patient_Number_CCC' => $patient_number_ccc, 'First_Name' => $first_name, 'Last_Name' => $last_name, 'Other_Name' => $other_name, 'Dob' => $dob, 'Pob' => $pob, 'Gender' => $gender, 'Pregnant' => $pregnant, 'Start_Weight' => $start_weight, 'Start_Height' => $start_height, 'Start_Bsa' => $start_bsa, 'Phone' => $phone, 'SMS_Consent' => $sms_consent, 'Physical' => $physical_address, 'Alternate' => $alternate_address, 'Partner' => $patient_status, 'Partner_Status' => $disclosure, 'Fplan' => $family_planning, 'Other_Illnesses' => $other_illness_listing, 'Other_Drugs' => $other_chronic, 'Adr' => $other_allergies, 'Smoke' => $smoke, 'Alcohol' => $alcohol, 'Tb' => $tb, 'Tbphase' => $tbphase, 'Startphase' => $fromphase, 'Endphase' => $tophase, 'Date_Enrolled' => $date_enrolled, 'Status_Change_Date' => $date_of_status_change, 'Source' => $patient_source, 'Supported_By' => $supported_by, 'Facility_Code' => $this -> session -> userdata('facility'), 'Service' => $type_of_service, 'Start_Regimen' => $start_regimen, 'Start_Regimen_Date' => $start_regimen_date);
+		$this -> db -> where('id', $record_id);
+		$this -> db -> update('patient', $data);
 	}
 
 	public function base_params($data) {
@@ -61,7 +230,6 @@ class Patient_Management extends MY_Controller {
 		if (isset($selected_facility)) {
 			$facility = $this -> input -> post('facility');
 		}
-		$this -> load -> database();
 		$data = array();
 		$data['current'] = "patient_management";
 		$data['title'] = "Patient Regimen Breakdown";
@@ -107,7 +275,6 @@ class Patient_Management extends MY_Controller {
 
 	public function export() {
 		$facility_code = $this -> session -> userdata('facility');
-		$this -> load -> database();
 		$sql = "SELECT medical_record_number,patient_number_ccc,first_name,last_name,other_name,dob,pob,IF(gender=1,'MALE','FEMALE')as gender,IF(pregnant=1,'YES','NO')as pregnant,weight as Current_Weight,height as Current_height,sa as Current_BSA,p.phone,physical as Physical_Address,alternate as Alternate_Address,other_illnesses,other_drugs,adr as Drug_Allergies,IF(tb=1,'YES','NO')as TB,IF(smoke=1,'YES','NO')as smoke,IF(alcohol=1,'YES','NO')as alcohol,date_enrolled,ps.name as Patient_source,s.Name as supported_by,timestamp,facility_code,rst.name as Service,r1.regimen_desc as Start_Regimen,start_regimen_date,pst.Name as Current_status,migration_id,machine_code,IF(sms_consent=1,'YES','NO') as SMS_Consent,fplan as Family_Planning,tbphase,startphase,endphase,IF(partner_status=1,'Concordant',IF(partner_status=2,'Discordant','')) as partner_status,status_change_date,IF(partner_type=1,'YES','NO') as Disclosure,support_group,r.regimen_desc as Current_Regimen,nextappointment,start_height,start_weight,start_bsa,IF(p.transfer_from !='',f.name,'N/A') as Transfer_From,DATEDIFF(nextappointment,CURDATE()) AS Days_to_NextAppointment
 FROM patient p
 left join regimen r on r.id=p.current_regimen

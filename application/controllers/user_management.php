@@ -7,6 +7,9 @@ class User_Management extends MY_Controller {
 		$this -> load -> library('encrypt');
 		$this -> load -> helper('geoiploc');
 		$this -> load -> database();
+		ini_set("SMTP",'ssl://smtp.googlemail.com');
+		ini_set("smtp_port",'465');
+		ini_set("sendmail_from",'webadt.chai@gmail.com');
 	}
 
 	public function index() {
@@ -536,7 +539,7 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 			$count=count($arr);
 			$user_id="";
 			if($count==0){
-				$data['error']='<p class="error">The email you entered does not exist ! </p>';
+				$data['error']='<p class="alert-error">The email you entered was not found ! </p>';
 				$this ->resetPassword($data);
 			}
 			else{
@@ -559,7 +562,7 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 			$count=count($arr);
 			$user_id="";
 			if($count==0){
-				$data['error']='<p class="error">The phone number your entered does not exist ! </p>';
+				$data['error']='<p class="alert-error">The phone number your entered was not found ! </p>';
 				$this ->resetPassword($data);
 			}
 			else{
@@ -583,6 +586,7 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 		
 		//If activation code is to be sent through email
 		if($type=="email"){
+			
 			$email=$contact;
 			//setting the connection variables
 			$config['mailtype']="html";

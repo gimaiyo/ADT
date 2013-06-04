@@ -9,7 +9,14 @@ class Settings_Management extends MY_Controller {
 
 	public function index() {
 		//redirect("regimen_management");
-		$data['settings_view']='settings_view';
+		$access_level = $this -> session -> userdata('user_indicator');
+		if($access_level=="system_administrator"){
+			$data['settings_view']='settings_system_admin_v';
+		}
+		else{
+			$data['settings_view']='settings_view';
+		}
+		
 		$this->base_params($data);
 
 	}

@@ -54,6 +54,8 @@ class Patient extends Doctrine_Record {
 
 	public function setUp() {
 		$this -> setTableName('patient');
+		$this -> hasOne('regimen as Parent_Regimen', array('local' => 'Current_Regimen', 'foreign' => 'id'));
+		$this -> hasOne('patient_status as Parent_Status', array('local' => 'Current_Status', 'foreign' => 'id'));
 	}
 
 	public function getPatientNumbers($facility) {
@@ -65,6 +67,12 @@ class Patient extends Doctrine_Record {
 	public function getPagedPatients($offset, $items, $machine_code, $patient_ccc, $facility) {
 		$query = Doctrine_Query::create() -> select("p.*") -> from("Patient p") -> leftJoin("Patient p2") -> where("p2.Patient_Number_CCC = '$patient_ccc' and p2.Machine_Code = '$machine_code' and p2.Facility_Code=$facility and p.Facility_Code=$facility") -> offset($offset) -> limit($items);
 		$patients = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $patients;
+	}
+	
+	public function getAllPatients($facility){
+		$query=Doctrine_Query::create() -> select("*")->from ("patient")->where("Facility_Code='$facility'");
+		$patients = $query -> execute();
 		return $patients;
 	}
 

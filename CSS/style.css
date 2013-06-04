@@ -160,7 +160,7 @@ body {
 }
 .top_menu_link {
 	float: left;
-	width: 115px;
+	min-width: 115px;
 	height: 40px;
 	line-height: 40px;
 	color: white;
@@ -556,10 +556,7 @@ hr {
 	.fltrow, .navbar {
 		display: none;
 	}
-<<<<<<< HEAD
-
-=======
->>>>>>> f4318c2d10aa05cf701785aeefe28d13d3ea9d91
+	
 }
 #patient_listing, #drug_listing, #drug_summary {
 	margin: 0 auto;
@@ -570,14 +567,11 @@ hr {
 #patient_listing td, #patient_listing th {
 	padding: 0.25em;
 	border: 1px solid #000;
-<<<<<<< HEAD
+
 }
 tr th {
 	cursor: pointer;
-}
-.brand {
-	cursor: pointer;
-=======
+
 }
 
 .brand{
@@ -717,16 +711,16 @@ table.setting_table {
 	max-width: 300px;
 }
 
-.ui-widget-header {
+.ui-widget-header{
+	background:#4a92cb;
+}
+table.dataTable tr.odd{
+	background-color:rgb(234,255,232);
+}
+table.dataTable tr.odd td sorting_1{
+	background-color:rgb(234,255,232);
+}
 
-	background: rgb(184, 255, 184);
-}
-table.dataTable tr.odd {
-	background-color: rgb(234,255,232);
-}
-table.dataTable tr.odd td sorting_1 {
-	background-color: rgb(234,255,232);
-}
 .sidebar-nav-fixed {
 	/*/*padding: 9px 0;**/
 	position: fixed;

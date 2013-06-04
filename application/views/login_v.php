@@ -82,24 +82,20 @@ if (isset($invalid)) {
 	echo "<p class='error'>" . @$login_attempt . "</p>";
 }
 ?>
-<form class="login-form" action="<?php echo base_url().'user_management/authenticate'?>" method="post" >
-	<label for="username">Email or Phone or Username</label>
-	<input type="text" name="username" class="input-xlarge" id="username" value="" placeholder="e.g John Doe">
-	<label for="password"> Password</label>
-	<input type="password" name="password" class="input-xlarge" id="password" placeholder="e.g password">
-	<input type="submit" class="btn" name="register" id="register" value="Sign in">
-	
-	
-	<div id="login-other">
-	<label for="remember" class="remember-label" >
-		 Stay signed in 
-	</label>
-	
-	<input type="checkbox" name="remember">
-		
-	
-		<strong class="forgotten-password"><a href="<?php echo base_url().'user_management/resetPassword' ?>">Forgot Password?</a></strong>
-	</div>
+<form action="<?php echo base_url().'user_management/authenticate'?>" method="post" >
+<label>
+<strong class="label">Please Enter Your Email/Username</strong>
+<input type="text" name="username" class="input-xlarge" id="username" value="" >
+</label>
+<label>
+<strong class="label">Password</strong>
+<input type="password" name="password" class="input-xlarge" id="password">
+</label>
+ <input type="submit" class="btn" name="register" id="register" value="Sign in" style="margin-left:200px; padding-left:30px; padding-right:30px;margin-right:50px ">
+
+<div style="margin-left:200px;margin-top:20px">
+	<strong><a href="<?php echo base_url().'user_management/resetPassword' ?>">Forgot Password?</a></strong>
+</div>
 
 </form>
 </div>

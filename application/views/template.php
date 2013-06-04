@@ -34,7 +34,11 @@ if ($access_level == "system_administrator") {
 <title><?php echo $title; ?></title>
 <link rel="SHORTCUT ICON" href="<?php echo base_url().'Images/favicon.ico'?>">
 
+
 <?php
+if ($user_is_pharmacist || $user_is_facility_administrator || $user_is_administrator) {
+	echo "<script src=\"" . base_url() . "Scripts/offline_database.js\" type=\"text/javascript\"></script>";
+}
 /**
  * Load View with Head Section
  */
@@ -62,6 +66,7 @@ if (isset($styles)) {
 	}
 }
 ?> 
+
 <script>
 $(document).ready(function() {
 	<?php 
@@ -87,6 +92,7 @@ $(document).ready(function() {
 				});
 </script>
       
+
 </head>
 
 <body>

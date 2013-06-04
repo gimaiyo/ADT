@@ -27,6 +27,7 @@ if ($access_level == "nascop_staff") {
     
 
 	<?php 
+		if(isset($settings_view) && $settings_view=="settings_view" || $settings_view=="settings_system_admin_v"){
 	
 	/**
 	 * Load View with Head Section
@@ -72,6 +73,75 @@ if ($access_level == "nascop_staff") {
 	
 	<style>
 
+			max-width: 300px;
+		}
+
+		.ui-widget-header{
+
+			background:rgb(184, 255, 184);
+		}
+		table.dataTable tr.odd{
+			background-color:rgb(234,255,232);
+		}
+		table.dataTable tr.odd td sorting_1{
+			background-color:rgb(234,255,232);
+		}
+		.sidebar-nav-fixed {
+		    /*/*padding: 9px 0;**/
+		    position:fixed;
+		    left:30px;
+		    top:157px;
+		    width:250px;
+		}
+		@media (max-width: 767px) {
+		     .sidebar-nav-fixed {
+		         width:auto;
+		     }
+		 }
+
+		 @media (max-width: 979px) {
+		     .sidebar-nav-fixed {
+		         position:static;
+		        width: auto;
+		     }
+		 }
+		 .well{
+		 	margin-bottom: 0px;
+		 }
+
+		 .btn-xlarge{
+		 	min-width: 100%;
+		 }
+		 #inner_wrapper  .btn-group{
+		 	width: 100%;
+		 	font-size:20px;
+		 }
+		 .hero-unit{
+		 	padding: 0px;
+		 }
+		 .btn{
+		 	margin: 3px;
+		 	padding-left:25px;
+		 	padding-right:25px;
+		 }
+		 
+		 .rowCount-grid{
+		 	color: green;
+		 }
+		.blue{
+			color:#000044;
+			
+		}
+		.btn .caret {
+			margin:0 auto;
+			vertical-align:middle;
+			margin-left:10px;
+		}
+		#profile_list{
+			right:0;
+			left:auto;
+		}
+		
 
 	</style>
   </head>

@@ -2,329 +2,30 @@
 <html lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>Add Patient</title>
-		<link rel="SHORTCUT ICON" href="Images/favicon.ico">
-		<link href="CSS/style.css" type="text/css" rel="stylesheet"/>
-		<link href="CSS/offline_css.css" type="text/css" rel="stylesheet"/>
-		<link href="CSS/jquery-ui.css" type="text/css" rel="stylesheet"/>
-		<link href="CSS/validator.css" type="text/css" rel="stylesheet"/>
-		<link rel="stylesheet" type="text/css" href="CSS/assets/jquery.multiselect.css" />
-		<link rel="stylesheet" type="text/css" href="CSS/assets/jquery.multiselect.filter.css" />
-		<link rel="stylesheet" type="text/css" href="CSS/assets/style.css" />
-		<link rel="stylesheet" type="text/css" href="CSS/assets/prettify.css" />
-		<script type="text/javascript" src="Scripts/offlineData.js"></script>
-		<script type="text/javascript" src="Scripts/jquery.js"></script>
-		<script type="text/javascript" src="Scripts/jquery-ui.js"></script>
-		<script type="text/javascript" src="Scripts/offline_database.js"></script>
-		<script type="text/javascript" src="Scripts/validator.js"></script>
-		<script type="text/javascript" src="Scripts/validationEngine-en.js"></script>
+
 		<script type="text/javascript" src="Scripts/jquery.multiselect.filter.js"></script>
 		<script type="text/javascript" src="Scripts/jquery.multiselect.js"></script>
-		<script type="text/javascript">
-			$(document).ready(function() {
-				initDatabase();
-				var d = new Date();
-				var n = d.getFullYear();
-				$("#year").text(n);
-
-				//Get the environmental variables to display the hospital name
-				selectEnvironmentVariables(function(transaction, results) {
-					// Handle the results
-					var row = results.rows.item(0);
-					$("#facility_name").text(row['facility_name']);
-
-				});
-				//Dynamically load the list of statuses!
-				selectAll("patient_status", function(transaction, results) {
-					// Handle the results
-					for(var i = 0; i < results.rows.length; i++) {
-						var row = results.rows.item(i);
-						$("#current_status").append($("<option></option>").attr("value", row['id']).text(row['name']));
-					}
-				});
-				selectDistricts(function(transaction, results) {
-					// Handle the results
-					for(var i = 0; i < results.rows.length; i++) {
-						var row = results.rows.item(i);
-						$("#pob").append($("<option></option>").attr("value", row['name']).text(row['name']));
-					}
-
-				});
-				//Dynamically load the list of supporters!
-				selectAll("supporter", function(transaction, results) {
-					// Handle the results
-					for(var i = 0; i < results.rows.length; i++) {
-						var row = results.rows.item(i);
-						$("#support").append($("<option></option>").attr("value", row['id']).text(row['name']));
-					}
-
-				});
-				//Dynamically load the list of patient sources
-				selectAll("patient_source", function(transaction, results) {
-					// Handle the results
-					for(var i = 0; i < results.rows.length; i++) {
-						var row = results.rows.item(i);
-						$("#source").append($("<option></option>").attr("value", row['id']).text(row['name']));
-					}
-
-				});
-				$("#patient_source").append($("<option></option>").attr("value","").text("--Select One--"));
-				//Dynamically load the list of patient sources
-				selectAll("facilities", function(transaction, results) {
-					// Handle the results
-					for(var i = 0; i < results.rows.length; i++) {
-						var row = results.rows.item(i);
-						$("#patient_source").append($("<option></option>").attr("value", row['facilitycode']).text(row['name']));
-					}
-
-				});
-				//Dynamically load the list of service types
-				selectAll("regimen_service_type", function(transaction, results) {
-					// Handle the results
-					for(var i = 0; i < results.rows.length; i++) {
-						var row = results.rows.item(i);
-						$("#service").append($("<option></option>").attr("value", row['id']).text(row['name']));
-					}
-				});
-				//Dynamically change the regimens based on the service type!
-				$("#service").change(function() {
-					$("#regimen option").remove();
-					var value = $("#service option:selected").attr("value");
-					//Dynamically load the list of service types
-					selectServiceRegimen(value, function(transaction, results) {
-						// Handle the results
-						$("#regimen").append($("<option></option>"));
-						for(var i = 0; i < results.rows.length; i++) {
-							var row = results.rows.item(i);
-							$("#regimen").append($("<option></option>").attr("value", row['id']).text(row['regimen_desc']));
-						}
-					});
-				});
-				//When date of birth changes automatically calculate age in years and months
-				$("#dob").change(function() {
-					var dob = $(this).val();
-					dob = new Date(dob);
-					var today = new Date();
-					var age_in_years = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
-					$("#age_in_years").attr("value", age_in_years);
-					//calculate age in months
-					var yearDiff = today.getFullYear() - dob.getFullYear();
-					var y1 = today.getFullYear();
-					var y2 = dob.getFullYear();
-					var age_in_months = (today.getMonth() + y1 * 12) - (dob.getMonth() + y2 * 12);
-					$("#age_in_months").attr("value", age_in_months);
-
-				});
-
-				$("#dob").datepicker({
-					yearRange : "-120:+0",
-					maxDate : "0D",
-					dateFormat : $.datepicker.ATOM,
-					changeMonth : true,
-					changeYear : true
-				});
-				$("#enrolled").datepicker({
-					yearRange : "-30:+0",
-					maxDate : "0D",
-					dateFormat : $.datepicker.ATOM,
-					changeMonth : true,
-					changeYear : true
-				});
-				$("#service_started").datepicker({
-					yearRange : "-30:+0",
-					dateFormat : $.datepicker.ATOM,
-					changeMonth : true,
-					changeYear : true,
-					maxDate : "0D"
-				});
-				$("#partner").change(function() {
-
-					$('#tstatus').slideDown('slow', function() {
-						// Animation complete.
-					});
-					$('#plani').slideDown('slow', function() {
-						// Animation complete.
-					});
-				});
-
-				$("#other_chronic").change(function() {
-					var other_diseases = $(this).val();
-					$("select#other_illnesses_listing option[id='13']").val(other_diseases);
-					var values = $("select#other_illnesses_listing").val();
-				});
-
-				$("#current_status").change(function() {
-					var status_start_date = new Date();
-					var status_date = ("0" + status_start_date.getDate()).slice(-2)
-					var status_year = status_start_date.getFullYear();
-					var status_month = ("0" + (status_start_date.getMonth() + 1)).slice(-2)
-					var status_full_date = status_year + "-" + status_month + "-" + status_date;
-
-					$("#status_started").attr("value", status_full_date);
-
-				});
-				$("#regimen").change(function() {
-					var regimen_start_date = new Date();
-					var regimen_date = ("0" + regimen_start_date.getDate()).slice(-2);
-					var regimen_year = regimen_start_date.getFullYear();
-					var regimen_month = ('0' + (regimen_start_date.getMonth() + 1)).slice(-2);
-					var regimen_full_date = regimen_year + "-" + regimen_month + "-" + regimen_date;
-
-					$("#service_started").attr("value", regimen_full_date);
-
-				});
-				var status_start_date = new Date();
-				var status_date = ("0" + status_start_date.getDate()).slice(-2)
-				var status_year = status_start_date.getFullYear();
-				var status_month = ("0" + (status_start_date.getMonth() + 1)).slice(-2)
-				var status_full_date = status_year + "-" + status_month + "-" + status_date;
-				$("#status_started").attr("value", status_full_date);
-
-				$("#partner1").change(function() {
-
-					$('#tstatus').slideUp('slow', function() {
-						// Animation complete.
-
-					});
-					$('#plani').slideUp('slow', function() {
-						// Animation complete.
-
-					});
-					$('#npstatus').attr('checked', true);
-					$('#plan_listing').attr("value", "0");
-
-				});
-				//Add listener to the gender drop down
-				$("#gender").change(function() {
-					var selected_value = $(this).attr("value");
-					//if female, display the prengancy selector
-					if(selected_value == 2) {
-						$('#pregnant_container').slideDown('slow', function() {
-							// Animation complete.
-						});
-					} else {
-						$('#pregnant_container').slideUp('slow', function() {
-							// Animation complete.
-						});
-					}
-				});
-				$("#status_started").datepicker({
-					yearRange : "-30:+0",
-					dateFormat : $.datepicker.ATOM,
-					changeMonth : true,
-					maxDate : "0D",
-					changeYear : true
-				});
-
-				$("#fromphase").datepicker({
-					maxDate : "0D",
-					dateFormat : $.datepicker.ATOM,
-					changeMonth : true,
-					changeYear : true
-				});
-				$("#tophase").datepicker({
-					dateFormat : $.datepicker.ATOM,
-					changeMonth : true,
-					changeYear : true
-				});
-				//If source selected is transfer_in then a list of facilities will display
-				$("#source").change(function() {
-					var selected_value = $(this).val();
-					if(selected_value == 3) {
-						$("#patient_source_listing").show();
-					} else {
-						$("#patient_source_listing").hide();
-					}
-				});
-
-				$(".tb").change(function() {
-					var selected_value = $(this).attr("value");
-					//if has tb(yes)
-					if(selected_value == 1) {
-						$('#tbstats').slideDown('slow', function() {
-							// Animation complete.
-						});
-					} else {
-						$('#tbstats').slideUp('slow', function() {
-							// Animation complete.
-						});
-						$('#ttphase').slideUp('slow', function() {
-							// Animation complete.
-						});
-						$('#endp').slideUp('slow', function() {
-							// Animation complete.
-						});
-					}
-				});
-				$("#tbphase").change(function() {
-					var selected_value = $(this).attr("value");
-
-					if(selected_value == 0) {
-
-						$('#ttphase').slideUp('slow', function() {
-							// Animation complete.
-						});
-						$('#endp').slideUp('slow', function() {
-							// Animation complete.
-						});
-					}
-					if(selected_value == 3) {
-
-						$('#ttphase').slideUp('slow', function() {
-							// Animation complete.
-						});
-						$('#endp').slideDown('slow', function() {
-							// Animation complete.
-						});
-					}
-
-					if(selected_value != 0 && selected_value != 3) {
-
-						$('#ttphase').slideDown('slow', function() {
-							// Animation complete.
-						});
-						$('#endp').slideDown('slow', function() {
-							// Animation complete.
-						});
-						$('#tophase').attr("value", " ");
-
-					}
-				});
-
-				$('#ttphase').hide();
-				$('#endp').hide();
-
-				$("textarea[name='other_chronic']").not(this).attr("disabled", "true");
-				$("#plan_listing").multiselect().multiselectfilter();
-				$("#other_illnesses_listing").multiselect({
-					click : function(event, ui) {
-						if(ui.value == "-13-" && ui.checked) {
-							$("textarea[name='other_chronic']").not(this).removeAttr("disabled");
-						}
-						if(ui.value == "-13-" && !ui.checked) {
-							$("textarea[name='other_chronic']").not(this).attr("disabled", "true");
-							var prev_value = $("#other_chronic").val();
-							$("select#other_illnesses_listing option[value='" + prev_value + "']").val("-13-");
-							$("#other_chronic").attr("value", "");
-
-						}
-
-					}
-				});
-				// bind to uncheckall
-				$("#other_illnesses_listing").bind("multiselectuncheckall", function(event, ui) {
-					$("textarea[name='other_chronic']").not(this).attr("disabled", "true");
-					var prev_value = $("#other_chronic").val();
-					$("select#other_illnesses_listing option[value='" + prev_value + "']").val("-13-");
-					$("#other_chronic").attr("value", "");
+		<link rel="stylesheet" type="text/css" href="CSS/assets/jquery.multiselect.css" />
+		<link rel="stylesheet" type="text/css" href="CSS/assets/jquery.multiselect.filter.css" />
+		<title>Add Patient</title>
+        <script type="text/javascript">
+			$(document).ready(function(){
+				var base_url="<?php echo base_url();?>";
+				$("#patient_number").change(function(){
+					var patient_no=$("#patient_number").val();
+					var link=base_url+"patient_management/checkpatient_no/"+patient_no;
+					  $.ajax({
+                       url: link,
+                       type: 'POST',        
+                       success: function(data) {
+                              if(data==1){
+                              	alert("Patient Number Matches an existing record");
+                              }
+                       }
+                      });
 				});
 			});
-			function getMSQ() {
-				var weight = $('#weight').attr('value');
-				var height = $('#height').attr('value');
-				var MSQ = Math.sqrt((parseInt(weight) * parseInt(height)) / 3600);
-				$('#surface_area').attr('value', MSQ);
-			}
+
 		</script>
 		<style type="text/css">
 			#signup {
@@ -440,34 +141,13 @@
 				font-weight: bold;
 			}
 		</style>
+
 	</head>
 	<body>
 		<input type="hidden" id="sql">
 		<div id="wrapper">
 			<div id="top-panel" style="margin:0px;">
-				<div class="logo"></div>
-				<div class="network">
-					Network Status: <span id="status" class="offline">Offline</span>
-					<p>
-						Out-of-Sync Records: <span id="local-count"></span>
-					</p>
-				</div>
-				<div id="system_title">
-					<span style="display: block; font-weight: bold; font-size: 14px; margin:2px;">Ministry of Health</span>
-					<span style="display: block; font-size: 12px;">ARV Drugs Supply Chain Management Tool</span>
-					<span style="display: block; font-size: 14px;" id="facility_name" ></span>
-				</div>
-				<div id="top_menu">
-					<a href="home_controller" class="top_menu_link  first_link">Home </a>
-					<a href="patient_management.html" class="top_menu_link top_menu_active">Patients<span class="alert red_alert">off</span></a>
-					<a href="inventory.html" class="top_menu_link">Inventory<span class="alert red_alert">off</span></a>
-					<a href="reports.html" class="top_menu_link">Reports<span class="alert red_alert">off</span></a>
-					<a href="settings_management" class="top_menu_link">Settings<span class="alert green_alert">on</span></a>
-					<a href="order_management" class="top_menu_link">Order<span class="alert green_alert">on</span></a>
-					<div id="my_profile_link_container" style="display: inline">
-						<a href="#" class="top_menu_link" id="my_profile_link"></a>
-					</div>
-				</div>
+
 			</div>
 			<div id="inner_wrapper">
 				<div id="main_wrapper">
@@ -516,7 +196,9 @@
 									<br/>
 									<div class="two_comlumns">
 										<label style="width:140px; float:left;"> <strong class="label" >*Age(Years)</strong>
-											<input type="text" id="age_in_years" style="width:80px;" disabled="disabled"/>
+
+											<input type="text" id="age_in_years" name="age_in_years" style="width:80px;" disabled="disabled"/>
+
 										</label>
 										<label style="width:140px; float:right;"> <strong class="label">Age(Months)</strong> <!--<input style="width:140px" type="text"name="pob" id="pob">-->
 											<input type="text" id="age_in_months" style="width:80px;" disabled="disabled"/>
@@ -704,7 +386,9 @@
 								</fieldset>
 							</div>
 							<div id="submit_section">
-								<input form="add_patient_form" class="submit-button" id="submit" value="Save &amp View List" style="width:200px;"/>
+
+								<input form="add_patient_form" class="submit-button" id="submit" value="Save" style="width:200px;"/>
+
 								<input form="add_patient_form" class="submit-button" id="dispense" value="Save &amp Dispense" style="width:200px;"/>
 								<input type="reset" class="submit-button" id="reset" value="Reset Page" style="width:200px;"/>
 							</div>

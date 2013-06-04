@@ -55,7 +55,7 @@
 		</tr>
 		<tr>
 			<td colspan="2">
-				<input type="submit" class="btn btn-large btn-success " value=" Submit " />
+				<input type="submit" class="btn btn-success " value=" Submit " />
 			</td>
 			
 		</tr>
