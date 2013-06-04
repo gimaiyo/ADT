@@ -2,6 +2,7 @@
 class Patient_Management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
+		$this -> load -> database();
 		$this -> load -> library('PHPExcel');
 		ini_set("max_execution_time", "100000");
 		ini_set('memory_limit', '512M');
@@ -34,6 +35,9 @@ class Patient_Management extends MY_Controller {
 
 	public function listing() {
 		$data = array();
+		$facility_code = $this -> session -> userdata('facility');
+		$patients = patient::getAllPatients($facility_code);
+		$data['patients'] = $patients;
 		$data['content_view'] = "patient_listing_v";
 		$this -> base_params($data);
 	}
@@ -44,8 +48,8 @@ class Patient_Management extends MY_Controller {
 		$results = $query -> result_array();
 		if ($results) {
 			return $results;
-		}
 
+		}
 	}
 
 	public function save() {
@@ -145,7 +149,7 @@ class Patient_Management extends MY_Controller {
 	}
 
 	public function update($record_id) {
-		
+
 		//Patient Information & Demographics
 		$medical_record_number = $_POST['medical_record_number'];
 		$patient_number_ccc = $_POST['patient_number'];
@@ -193,43 +197,7 @@ class Patient_Management extends MY_Controller {
 
 		//Update data
 
-		$data=array('Medical_Record_Number' => $medical_record_number,
-		'Patient_Number_CCC' => $patient_number_ccc,
-		'First_Name' => $first_name,
-		'Last_Name' => $last_name,
-		'Other_Name' => $other_name,
-		'Dob' => $dob,
-		'Pob' => $pob,
-		'Gender' =>$gender,
-        'Pregnant' => $pregnant,
-		'Start_Weight' => $start_weight,
-		'Start_Height' =>$start_height,
-		'Start_Bsa' => $start_bsa,
-		'Phone' => $phone,
-		'SMS_Consent' =>$sms_consent,
-		'Physical' => $physical_address,
-		'Alternate' => $alternate_address,
-        'Partner' => $patient_status,
-		'Partner_Status' => $disclosure,
-		'Fplan' => $family_planning,
-		'Other_Illnesses' => $other_illness_listing,
-		'Other_Drugs' => $other_chronic,
-		'Adr' =>$other_allergies,
-		'Smoke' => $smoke,
-		'Alcohol' => $alcohol,
-		'Tb' => $tb,
-		'Tbphase' => $tbphase,
-		'Startphase' =>$fromphase,
-		'Endphase' => $tophase,
-        'Date_Enrolled' => $date_enrolled,
-		'Status_Change_Date' => $date_of_status_change,
-		'Source' => $patient_source,
-		'Supported_By' => $supported_by,
-		'Facility_Code' => $this -> session -> userdata('facility'),
-		'Service' => $type_of_service,
-		'Start_Regimen' => $start_regimen,
-		'Start_Regimen_Date' => $start_regimen_date
-		);
+		$data = array('Medical_Record_Number' => $medical_record_number, 'Patient_Number_CCC' => $patient_number_ccc, 'First_Name' => $first_name, 'Last_Name' => $last_name, 'Other_Name' => $other_name, 'Dob' => $dob, 'Pob' => $pob, 'Gender' => $gender, 'Pregnant' => $pregnant, 'Start_Weight' => $start_weight, 'Start_Height' => $start_height, 'Start_Bsa' => $start_bsa, 'Phone' => $phone, 'SMS_Consent' => $sms_consent, 'Physical' => $physical_address, 'Alternate' => $alternate_address, 'Partner' => $patient_status, 'Partner_Status' => $disclosure, 'Fplan' => $family_planning, 'Other_Illnesses' => $other_illness_listing, 'Other_Drugs' => $other_chronic, 'Adr' => $other_allergies, 'Smoke' => $smoke, 'Alcohol' => $alcohol, 'Tb' => $tb, 'Tbphase' => $tbphase, 'Startphase' => $fromphase, 'Endphase' => $tophase, 'Date_Enrolled' => $date_enrolled, 'Status_Change_Date' => $date_of_status_change, 'Source' => $patient_source, 'Supported_By' => $supported_by, 'Facility_Code' => $this -> session -> userdata('facility'), 'Service' => $type_of_service, 'Start_Regimen' => $start_regimen, 'Start_Regimen_Date' => $start_regimen_date);
 		$this -> db -> where('id', $record_id);
 		$this -> db -> update('patient', $data);
 	}
@@ -256,7 +224,6 @@ class Patient_Management extends MY_Controller {
 		if (isset($selected_facility)) {
 			$facility = $this -> input -> post('facility');
 		}
-		$this -> load -> database();
 		$data = array();
 		$data['current'] = "patient_management";
 		$data['title'] = "Patient Regimen Breakdown";
@@ -302,7 +269,6 @@ class Patient_Management extends MY_Controller {
 
 	public function export() {
 		$facility_code = $this -> session -> userdata('facility');
-		$this -> load -> database();
 		$sql = "SELECT medical_record_number,patient_number_ccc,first_name,last_name,other_name,dob,pob,IF(gender=1,'MALE','FEMALE')as gender,IF(pregnant=1,'YES','NO')as pregnant,weight as Current_Weight,height as Current_height,sa as Current_BSA,p.phone,physical as Physical_Address,alternate as Alternate_Address,other_illnesses,other_drugs,adr as Drug_Allergies,IF(tb=1,'YES','NO')as TB,IF(smoke=1,'YES','NO')as smoke,IF(alcohol=1,'YES','NO')as alcohol,date_enrolled,ps.name as Patient_source,s.Name as supported_by,timestamp,facility_code,rst.name as Service,r1.regimen_desc as Start_Regimen,start_regimen_date,pst.Name as Current_status,migration_id,machine_code,IF(sms_consent=1,'YES','NO') as SMS_Consent,fplan as Family_Planning,tbphase,startphase,endphase,IF(partner_status=1,'Concordant',IF(partner_status=2,'Discordant','')) as partner_status,status_change_date,IF(partner_type=1,'YES','NO') as Disclosure,support_group,r.regimen_desc as Current_Regimen,nextappointment,start_height,start_weight,start_bsa,IF(p.transfer_from !='',f.name,'N/A') as Transfer_From,DATEDIFF(nextappointment,CURDATE()) AS Days_to_NextAppointment
 FROM patient p
 left join regimen r on r.id=p.current_regimen

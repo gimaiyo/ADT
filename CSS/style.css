@@ -160,7 +160,7 @@ body {
 }
 .top_menu_link {
 	float: left;
-	width: 115px;
+	min-width: 115px;
 	height: 40px;
 	line-height: 40px;
 	color: white;

@@ -75,6 +75,7 @@ user-select: none;
 margin-top:100px;	
 width: auto;	
 border:0px;
+height:auto;
 }
 
 #contact_email,#contact_phone{
@@ -123,44 +124,45 @@ if(isset($error)){
 <div class="input-prepend" id='div_email'>
 	<span class="add-on">@</span><input style="height:31px;" type="text" name="contact_email" class="input-xlarge" id="contact_email" value="" placeholder="youremail@example.com" required="">
 </div>
-<div class="input-prepend" id='div_phone' style="display: none">
-	<span class="add-on">+</span><input style="height:31px;"  type="text"  name="contact_phone" class="input-xlarge" id="contact_phone" value="" placeholder="254721122345" required="" >
-</div>
-<input type="submit" class="btn btn-primary" name="resendPassword" id="register" value="Submit" style="margin-left:50px; padding-left:30px; padding-right:30px;margin-right:50px ">
+<input type="submit" class="btn btn-success" name="resendPassword" id="register" value="Submit" style="margin-left:50px; padding-left:30px; padding-right:30px;margin-right:50px ">
 
 </form>
+
+<p>
+	<span><a href="<?php echo 'user_management/login' ?>" class='btn btn-primary'> Go to login</a></span>
+</p>
+
 </div>
 
 </div>  
 
 <script type="text/javascript">
 	$(document).ready(function(){
+		
 		$('#phone').change(function(){
 			if($(this).is(':checked')){
-				$("#div_email").hide();
-				$("#div_phone").show();
-				$("#contact_phone").attr("required","");
-				$("#contact_email").removeAttr("required");
-				$("#contact_email").attr("value","");
+				
+				$(".add-on").html("+");
+				$(".input-xlarge").attr("placeholder","254721122345");
+				$(".input-xlarge").attr("name","contact_phone");
 			}
 			else{
-				$("#div_phone").hide();
-				$("#contact_phone").attr("value","");
-				$("#contact_phone").removeAttr("required");
+				
+				$(".add-on").html("@");
+				$(".input-xlarge").attr("placeholder","youremail@example.com");
+				$(".input-xlarge").attr("name","contact_email");
 			}
 		});
 		$('#email').change(function(){
 			if($(this).is(':checked')){
-				$("#div_phone").hide();
-				$("#div_email").show();
-				$("#contact_email").attr("required","");
-				$("#contact_phone").removeAttr("required");
-				$("#contact_phone").attr("value","");
+				$(".add-on").html("@");
+				$(".input-xlarge").attr("placeholder","youremail@example.com");
+				$(".input-xlarge").attr("name","contact_email");
 			}
 			else{
-				$("#div_email").hide();
-				$("#contact_email").removeAttr("required");
-				$("#contact_email").attr("value","");
+				$(".add-on").html("+");
+				$(".input-xlarge").attr("placeholder","254721122345");
+				$(".input-xlarge").attr("name","contact_phone");
 			}
 		});
 	});

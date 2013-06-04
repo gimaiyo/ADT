@@ -11,8 +11,25 @@
 	    color:#2D98F3;
 	}
 	 
-	#fmChangePassword .strong{
-	    color:#006400;
+	legend{
+		font-size:22px;
+	}
+	table tr{
+		line-height: 40px;
+	}
+	label{
+		margin-right: 20px;
+	}
+	#fmChangePassword {
+		background-color: whiteSmoke;
+		border: 1px solid #E5E5E5;
+		padding: 20px 25px 15px;
+		width: 700px;
+		margin: 0 auto;
+		margin-top: 50px;
+	}
+	#main_wrapper{
+		height:auto;
 	}
 </style>
 
@@ -74,8 +91,13 @@
 		$('#result_confirm').html("");
 		event.preventDefault();
 		var new_password=$("#new_password").attr("value");
+		
+		
 		var new_password_confirm=$("#new_password_confirm").attr("value");
-		if($("#result").attr("class")=="weak" || $('#new_password').val().length<6){
+		if(new_password==""){
+			
+		}
+		else if($("#result").attr("class")=="weak" || $('#new_password').val().length<6){
 			
 		}
 		else if(new_password!=new_password_confirm){
@@ -94,26 +116,36 @@
 	
 	
 </script>
-<?php
-echo validation_errors('
-<p class="error">','</p>
-'); 
-if($this->session->userdata("matching_password")){
-	$message=$this->session->userdata("matching_password");
-	echo "<p class='error'>".$message."</p>";
-	$this->session->set_userdata("matching_password","");
-}
-?>
-<form id="fmChangePassword" action="<?php echo base_url().'user_management/save_new_password'?>" method="post" style="margin:0 auto; width:500px;">
-	<label> <strong class="label">Old Password</strong>
-		<input type="password" name="old_password" id="old_password" required="">
-	</label><label> <strong class="label">New Password</strong>
-		<input type="password" name="new_password" id="new_password" required=""><span id="result"></span>
-	</label><label> <strong class="label">Confirm New Password</strong>
-		<input type="password" name="new_password_confirm" id="new_password_confirm" required=""><span id="result_confirm"></span>
-	</label>
-	<br/> 
-	<br/> 
-		<input type="submit" class="button" name="register" id="register" value="Change Password">
+
+
+
+<form id="fmChangePassword" action="<?php echo base_url().'user_management/save_new_password'?>" method="post"  width:500px;">
+	<legend>Change Password</legend>
+	<?php
+	echo validation_errors('
+	<p class="error">','</p>
+	'); 
+	if($this->session->userdata("matching_password")){
+		$message=$this->session->userdata("matching_password");
+		echo "<p class='alert-error'>".$message."</p>";
+		$this->session->set_userdata("matching_password","");
+	}
+	?>
+	<br>
+	<table>
+		<tr>
+			<td><label >Old Password</label></td><td><input type="password" name="old_password" id="old_password" required=""></td>
+		</tr>
+		<tr>
+			<td><label >New Password</label></td><td><input type="password" name="new_password" id="new_password" required=""><span id="result"></span></td>
+		</tr>
+		<tr>
+			<td><label >Confirm New Password</label></td><td><input type="password" name="new_password_confirm" id="new_password_confirm" required=""><span id="result_confirm"></span></td>
+		</tr>
+		<tr>
+			<td colspan="2"><input type="submit" class="btn btn-success" name="register" id="register" value=" Submit "></td>
+		</tr>
+	</table>
+	
  
 </form>
