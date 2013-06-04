@@ -170,6 +170,7 @@ if($this->session->userdata("changed_password")){
 		      
 </script>
 
+
 <script src="<?php echo base_url().'Scripts/FusionCharts/FusionCharts.js';?>"></script>
 
 <script type="text/javascript">
@@ -198,26 +199,7 @@ if($this->session->userdata("changed_password")){
 			        //"aaSorting": []
 			    } );
 	        });
-	       <?php 
-			if($user_is_pharmacist){
-				?>
-				
-			
-				
-				
-				<?php
-			}
-			
-			if($user_is_facilityadmin){
-				?>
-				
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
-				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
-				$('#notification3').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/dispatched'?>');
-				
-				<?php
-			}
-				?>
+	 
 	          
 	        	 
 	       
@@ -228,34 +210,16 @@ if($this->session->userdata("changed_password")){
     <link rel="stylesheet" href="<?php echo base_url()?>css/bootstrap.css"/>
     <link rel="stylesheet" href="<?php echo base_url()?>css/bootstrap-responsive.css"/>
     <style type="text/css">
-    	.tile{
-    		display:inline-block;
-    		float:left;
-
-    		width:49%; 
-    		height:99.5%;
-    		padding: 0 0.5% 0.5% 0.5%;
-    		
-
-    		
-
-    	}
     	
-      	.tile-half{
-    		height:50%;
-    		display:block;
-    		
-    		
-    	}
     
     </style>
+
 <style type="text/css">
 	#environment_variables {
 		width: 600px;
 		margin: 0 auto;
 	}
 	#synchronize {
-		display:none;
 		text-align: left;
 		font-size: 16px;
 		text-shadow: 0 1px rgba(0, 0, 0, 0.1);
@@ -451,47 +415,6 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 <div class="main-content">
 	
 
-	<div class="left-content" style="float: left">
-
-		<h3>Quick Links</h3>
-		<ul class="nav nav-list">
-			<?php 
-			if($user_is_pharmacist){
-				?>
-				
-				<li><a>User Manual</a></li>			
-			    <li><a>Main Site Report</a></li>
-				
-				
-				<?php
-			}
-			
-			if($user_is_facilityadmin){
-				?>
-				<li><a>Add Patients</a></li>
-			    <li><a>Add Inventory</a></li>
-			    <li class="divider"></li>
-				<li><a>User Manual</a></li>			
-			    <li><a>Main Site Report</a></li>
-				
-				<?php
-			}
-				?>
-			
-			
-			
-		</ul>
-		<h3>Notifications</h3>
-		<ul class="nav nav-list">
-			
-			
-		</ul>
-		<li class="notif" id="notification1"></li>
-		<li class="notif"id="notification2"></li>
-		<li class="notif" id="notification3"></li>
-		<div></div>
-		<div></div>
-	</div>
 	
 	<div class="center-content">
 		<div id="expDiv>"></div>
@@ -515,112 +438,14 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 			<h3>Stocks About to Run Out</h3>
 			<div id="table1"></div>
 		</div>
-
 	</div>
 </div>
 	
 </div>
 
-
-<!--div id="main_container">
-	<div id="main_sidebar">
-		<div id="maincontent_header">
-			<strong class="label">Quick Links</strong>
-		</div>
-		<div id="main_manualcontent">
-			<ul>
-				<li><a href="#" class="tabs label"><span style="padding:5px;"><img src="<?php echo base_url().'Images/manual.jpg';?>" width='50' height='40'/></span> User Manual</a></li>
-				
-			</ul>		
-		</div>
-	</div>	
-	</div>
-	<!--div id="main_contentbar">
-		<div id="maincontent_header">
-			<strong class="label">Facility Dashboard</strong>
-		</div>
-		<div id="main_videocontent">
-			<div class="section tleft">
-				<table border="1" width="100%" cellpadding="5" cellspacing="0.5" id="weekly_summary">
-					<tr><th colspan="5">Weekly Summary</th></tr>
-					<tr><th colspan="2">Day of Week</th><th>No. of Appointments</th><th>No. of Visits</th><th>Percentage(%)of Adherence(By Appointment)</th></tr>
-				
-				</table>
-			</div>
-			<div class="section tmiddle">
-				
-				
-			</div>
-			<div class="section tright">
-				
-				
-			</div>
-			<div class="section bleft">
-				
-				
-			</div>
-			<div class="section bmiddle">
-				
-				
-			</div>
-			<div class="section bright">
-				
-				
-			</div>
-			
-		</div>
-		
-		
-		
-	</div-->
-	<div id="manual_dialog" title="User Manual">
-			<div id="manualcontent">
-			<ul>
-				<li><a href="#tabs-1" class="tabs">1.0 Login</a></li>
-				<li><a href="#tabs-2" class="tabs">2.0 Machine Code</a></li>
-				<li><a href="#tabs-3" class="tabs">3.0 Synchronization</a></li>
-			</ul>
-				 <div id="tabs-1">
-                   	<u><h3>Login</h3></u>
-                   	<p>
-                   	The login allows users at facility, national and administrator levels to login. Depending on each user it would lead to different homepage.<p>
-                    <img src="<?php echo base_url().'Images/login.bmp';?>" width='auto' height='auto'/>
-                   </p>
-                 </div>
-                 <div id="tabs-2">
-                 	<u><h3>Machine Code</h3></u>
-                   <p>
-                   	The users if logged in for the first time they would be required to enter their <b>Operator name</b> (Their Name) and <b>machine code</b> (Number of computer if there are multiple in organization e.g. 5)
-                   <p>
-                   	<img src="<?php echo base_url().'Images/machine.bmp';?>" width='auto' height='auto'/>
-                   </p>
-                 </div>
-                 <div id="tabs-3">
-                 	<u><h3>Synchronization</h3></u>
-                   <p>
-                   	After the user keys in their operator name,a notification on the top right corner notifies them of any information that is <b>out of sync</b> i.e. if local database in browser is consistent with that in the server. If it is not as below it is in <b style="color:red;">red</b> and if in sync then it is <b style="color:green;">green</b> . 
-                   	<p>
-                   <img src="<?php echo base_url().'Images/sync.bmp';?>" width='auto' height='auto'/>		
-                   	<p>
-                   	To synchronize just click on the button that shows up when you hover on the notification
-                   	<p>
-                   	<img src="<?php echo base_url().'Images/syncbutton.bmp';?>" width='auto' height='auto'/>
-                   	<p>
-                   	When clicked it displays the synchronization of data from server to local database. As shown below.
-                   	<p>
-                   	<img src="<?php echo base_url().'Images/syncdisplay.bmp';?>" width='auto' height='auto'/>
-                   </p>
-                   
-                 </div>
-		</div>
-		</div>
-</div>
-
-
-
 <script type="text/javascript">
-	var base_url="<?php echo base_url(); ?>";
-	    	
+$(document).ready(function(){
+	var base_url="<?php echo base_url(); ?>";    	
 		      $.ajax({
 			        type: "POST",
 					url: base_url+'home_controller/getNotified',
@@ -635,5 +460,6 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 						$("#weekly_summary").append($(weekly_summary));
 					}
 					
+		      });
 		      });
 </script>

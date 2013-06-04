@@ -7,6 +7,17 @@ class Inventory_Management extends MY_Controller {
 	public function index() {
 		$this -> listing();
 	} 
+	
+	public function mainstore_show(){
+		$data = array();
+		$data['content_view'] = "add_stock_v";
+		$this -> base_params($data);
+	}
+	public function pharmacy_show(){
+		$data = array();
+		$data['content_view'] = "add_stock_pharmacy_v";
+		$this -> base_params($data);
+	}
 
 	public function save() {
 		$this->load->database();
@@ -35,6 +46,12 @@ class Inventory_Management extends MY_Controller {
 			
 		}
 	} 
+	public function base_params($data) {
+		$data['title'] = "Inventory";
+		$data['banner_text'] = "Inventory Management";
+		$data['link'] = "inventory";
+		$this -> load -> view('template', $data);
+	}
 
 }
 ?>

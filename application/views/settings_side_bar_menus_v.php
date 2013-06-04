@@ -3,7 +3,8 @@
 	$quick_link = null;
 	}  
 ?>
-<div class="span3">
+
+<!--div class="span3">
 
   <div class="well sidebar-nav-fixed ">
     
@@ -57,4 +58,4 @@
         
       </ul>
   </div><!--/.well -->
-</div><!--/span-->
+<!--/div--><!--/span-->
