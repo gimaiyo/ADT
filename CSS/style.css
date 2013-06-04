@@ -208,8 +208,7 @@ body {
 	background: white;
 	color: black;
 	text-decoration: none;
-<<<<<<< HEAD
-=======
+
 }
 .short_title {
 	width: 90%;
@@ -227,7 +226,7 @@ body {
 	/*overflow: hidden;*/
 	text-shadow: none;
 	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
->>>>>>> f4318c2d10aa05cf701785aeefe28d13d3ea9d91
+
 }
 
 input[type = email]:hover, input[type = password]:hover, input[type = text]:hover, input[type = url]:hover {
@@ -582,7 +581,7 @@ tr th {
 
 .brand{
 	cursor:pointer;
->>>>>>> f4318c2d10aa05cf701785aeefe28d13d3ea9d91
+
 }
 
 /*
@@ -594,8 +593,8 @@ tr th {
 	font-family: "Helvetica";
 	color: #fff;
 	font-size: 1.4em;
-	padding: 0.3em;
-	background: #999;
+	padding: 0 0 0 0.3em;
+	background: #2B597E;
 	box-shadow: 0 1.2px 3px 1px #000;
 	-webkit-box-shadow: 0 1.2px 3px 1px #000;
 }
@@ -616,7 +615,6 @@ tr th {
 	padding: 0.5%;
 }
 .center-content h3 {
-	padding: 1%;
 	margin: 0 0 1% 0;
 }
 .center-content {
@@ -935,7 +933,6 @@ table.dataTable tr.odd td sorting_1 {
 	letter-spacing: 1px;
 }
 #main_wrapper {
-	margin-top: 100px;
 	width: auto;
 	border: 0px;
 }

@@ -12,10 +12,7 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-<<<<<<< HEAD
-=======
 		<nature>com.aptana.projects.webnature</nature>
->>>>>>> 50d6b68a7a15e7a864bf4216e39305ff6ebbe9eb
 		<nature>com.aptana.ruby.core.rubynature</nature>
 	</natures>
 </projectDescription>
