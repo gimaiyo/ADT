@@ -36,13 +36,16 @@ if ($access_level == "system_administrator") {
 
 
 <?php
+$this -> load -> view('sections/head');
 if ($user_is_pharmacist || $user_is_facility_administrator || $user_is_administrator) {
-	echo "<script src=\"" . base_url() . "Scripts/offline_database.js\" type=\"text/javascript\"></script>";
+	//echo "<script src=\"" . base_url() . "Scripts/offline_database.js\" type=\"text/javascript\"></script>";
+	
+	
 }
 /**
  * Load View with Head Section
  */
-$this -> load -> view('sections/head');
+
 
 
 

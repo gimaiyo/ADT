@@ -1,14 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
-		<script type="text/javascript" src="Scripts/jquery.multiselect.filter.js"></script>
-		<script type="text/javascript" src="Scripts/jquery.multiselect.js"></script>
-		<link rel="stylesheet" type="text/css" href="CSS/assets/jquery.multiselect.css" />
-		<link rel="stylesheet" type="text/css" href="CSS/assets/jquery.multiselect.filter.css" />
-		<title>Add Patient</title>
-        <script type="text/javascript">
+		  <script type="text/javascript">
 			$(document).ready(function(){
 				var base_url="<?php echo base_url();?>";
 				$("#patient_number").change(function(){
@@ -24,136 +17,21 @@
                        }
                       });
 				});
+				//Add Multiselect Library to Family planning methods
+				$("#plan_listing").multiselect().multiselectfilter();
+				
+				
 			});
 
 		</script>
-		<style type="text/css">
-			#signup {
-				width: 100%;
-			}
-			.first_column {
-				border: 1px solid #000;
-				width: 30%;
-				float: left;
-				padding: 5px;
-			}
-			.middle_column {
-				border: 1px solid #000;
-				width: 30%;
-				float: left;
-				padding: 5px;
-			}
-			.last_column {
-				border: 1px solid #000;
-				width: 30%;
-				float: right;
-				padding: 5px;
-			}
-			.submit_section {
-				clear: both;
-				margin-top: 10px;
-			}
-
-		</style>
-		<style>
-			.data-holder {
-				height: 20px;
-				line-height: 20px;
-				width: 120px !important;
-			}
-			.data-holder-2 {
-				height: 15px;
-				line-height: 15px;
-				width: 70px !important;
-				overflow: hidden;
-			}
-			.data-table {
-				width: 90%;
-			}
-			.data-table tr {
-				width: 99%;
-			}
-			table.data-table td {
-				height: 20px !important;
-				width: 45%;
-			}
-			label {
-				margin: 0 !important;
-				display: inline;
-				font-size: 11px;
-			}
-			#patient_demographics {
-				margin: 5px;
-			}
-			select {
-				height: 30px !important;
-			}
-			.column {
-				width: 32%;
-				font-size: 90%;
-				font-family: Arial;
-				padding: 2px;
-				height: 850px;
-			}
-			strong {
-				width: 100%;
-				padding-right: 0;
-			}
-			.inner-table strong {
-				width: 50px;
-			}
-			#dispensing_history {
-				min-width: 980px !important;
-				max-height: 500px !important;
-				overflow: scroll;
-				margin: 0 auto;
-			}
-			#drugs_table td {
-				min-width: 60px;
-			}
-			#drugs_table {
-				font-size: 85%;
-			}
-			.banner_text {
-				height: auto;
-				margin: 0px;
-			}
-			#submit_section {
-				margin: 0 20% 0 20%;
-			}
-			#add_patient_form {
-				background: #CCFFCC;
-			}
-			.short_title {
-				height: 35px;
-				background: #036;
-				color: #FFF;
-				font-weight: bold;
-			}
-			.banner_text {
-				color: #FFF;
-				font-weight: bold;
-				font-family: Book Antiqua;
-			}
-			#facility_name {
-				color: green;
-				margin-top: 5px;
-				font-weight: bold;
-			}
-		</style>
-
+	
 	</head>
-	<body>
-		<input type="hidden" id="sql">
-		<div id="wrapper">
-			<div id="top-panel" style="margin:0px;">
+      
 
-			</div>
-			<div id="inner_wrapper">
-				<div id="main_wrapper">
-					<div id="signup">
-						<div class="short_title" style="width:auto;" >
-							<h3 class="banner_text" style="float:left;">New Patient Registration</h3>
+	
+	<body>
+						<div class="short_title" >
+							<h3 class="banner_text" style="float:left;">Patient Registration</h3>
 							<h4 style="float:right;margin:5px 40px 0 0;">(Fields Marked with <b>*</b> Asterisks are required)</h4>
 						</div>
 						<hr/>
@@ -384,7 +262,7 @@
 											<input type="text" name="service_started" id="service_started" value="">
 										</label>
 								</fieldset>
-							</div>
+							
 							<div id="submit_section">
 
 								<input form="add_patient_form" class="submit-button" id="submit" value="Save" style="width:200px;"/>
@@ -393,10 +271,6 @@
 								<input type="reset" class="submit-button" id="reset" value="Reset Page" style="width:200px;"/>
 							</div>
 						</form>
-					</div>
-				</div>
-				<!--End Wrapper div-->
-			</div>
 			<div id="bottom_ribbon" style="top:20px; width:90%;">
 				<div id="footer">
 					<div id="footer_text">
