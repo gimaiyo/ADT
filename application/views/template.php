@@ -132,7 +132,7 @@ if (isset($styles)) {
 	}
 
 	.ui-widget-header{
-		background:rgb(226, 250, 252);
+		background:#4a92cb;
 	}
 	table.dataTable tr.odd{
 		background-color:rgb(234,255,232);
