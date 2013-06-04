@@ -218,6 +218,7 @@ if($this->session->userdata("changed_password")){
 	#environment_variables {
 		width: 600px;
 		margin: 0 auto;
+		display:none;
 	}
 	#synchronize {
 		text-align: left;

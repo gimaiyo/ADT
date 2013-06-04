@@ -22,7 +22,7 @@ class Facilitydashboard_Management extends MY_Controller {
 		$query = $this -> db -> query("SELECT COUNT(*) as total FROM facility_order f WHERE (f.status =  '3' AND (f.facility_id ='$facility_code' OR f.central_facility='$facility_code'))ORDER BY ABS(f.id) DESC ");
 		$results = $query -> result_array();
 		$res = $results[0]['total'];
-		echo "<div class='status-title' ><i class='icon-tasks'></i>No. of Pending Orders</div><div class='badge badge-important'>".$res."</div>";
+		echo "<div class='status-title' ><i class='icon-tasks'></i><a href='#'>No. of Pending Orders</a></div><div class='badge badge-important'>".$res."</div>";
 	}
 
 

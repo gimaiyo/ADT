@@ -69,7 +69,6 @@ $(document).ready(function() {
 				?>
 				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
 				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
-				$('#notification3').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/dispatched'?>');
 			
 				
 				
@@ -81,8 +80,6 @@ $(document).ready(function() {
 				
 				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
 				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
-				$('#notification3').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/dispatched'?>');
-				$('#notification4').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/prepared'?>');
 				
 				<?php
 			}

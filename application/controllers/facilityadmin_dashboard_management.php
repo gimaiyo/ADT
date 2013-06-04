@@ -53,17 +53,17 @@ class Facilityadmin_dashboard_Management extends MY_Controller {
 		$order_array=array();
 		$status_title="";
 		if($status=='pending'){
-			$status_title='Pending';
+			$status_title='Pending Orders';
 		}
 		else if($status=='approved'){
-			$status_title='Approved';
+			$status_title='Orders Pending Dispatch';
 		}
 		else if($status=='declined'){
-			$status_title='Declined';
+			$status_title='Declined Orders';
 		}
 		else if($status=='dispatched'){
 
-			$status_title='Dispatched';
+			$status_title='Dispatched Orders';
 		}
 		$facility_code = $this -> session -> userdata("facility");
 		$is_central_sql=$this->db->query("SELECT * FROM facilities WHERE Facilitycode='$facility_code' AND parent='$facility_code'");
@@ -79,7 +79,7 @@ class Facilityadmin_dashboard_Management extends MY_Controller {
 		$order_array['title']=$status_title;
 		
 
-		echo "<div class='status-title' ><i class='icon-tasks'></i>No. of ".$status_title." Orders</div><div class='badge badge-important'>".$orderVal[0]['total']."</div>";
+		echo "<div class='status-title' ><i class='icon-tasks'></i><a href='#'>No. of ".$status_title."</a></div><div class='badge badge-important'>".$orderVal[0]['total']."</div>";
 
 		
 	}
