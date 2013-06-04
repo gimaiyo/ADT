@@ -28,6 +28,7 @@
     <!-- JS --------------------------------------------------------------->
     <!-- Bootstrap -->
     <script src="<?php echo base_url().'Scripts/bootstrap/js/bootstrap.min.js'?>"></script>
+    <script src="<?php echo base_url().'Scripts/bootstrap/js/paging.js'?>"></script>
     
     <!-- JQuery -->
     <script src="<?php echo base_url().'Scripts/jquery.js'?>" type="text/javascript"></script> 

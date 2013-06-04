@@ -107,7 +107,6 @@ height:auto;
 <div id="signup_form">
 	 <div class="short_title" >
 <h1 class="banner_text" >Forgot Your Password ?</h1>
-<hr size="1">
 </div>
 <?php
 if(isset($error)){
@@ -117,19 +116,24 @@ if(isset($error)){
 ?>
 <form action="<?php echo base_url().'user_management/resendPassword'?>" method="post" class="form-inline">
 	<br>
+	<!--
 <span style="margin-right:30px"><input style="float:left" type="radio" name="type" id="email" value="email" checked> &nbsp &nbsp Email Address</span>
 <input type="radio" name="type" id="phone" value="phone"> &nbsp &nbsp Phone Number
-
+-->
 <br><br>
+<p>
+	<span class="alert-info">To reset your password, please enter your email address</span>
+</p>
+
 <div class="input-prepend" id='div_email'>
 	<span class="add-on">@</span><input style="height:31px;" type="text" name="contact_email" class="input-xlarge" id="contact_email" value="" placeholder="youremail@example.com" required="">
 </div>
-<input type="submit" class="btn btn-success" name="resendPassword" id="register" value="Submit" style="margin-left:50px; padding-left:30px; padding-right:30px;margin-right:50px ">
+<input type="submit" class="btn" name="resendPassword" id="register" value="Submit" style="margin-left:50px; padding-left:30px; padding-right:30px;margin-right:50px ">
 
 </form>
 
 <p>
-	<span><a href="<?php echo 'user_management/login' ?>" class='btn btn-primary'> Go to login</a></span>
+	<span><a href="<?php echo 'user_management/login' ?>" class='btn'> Go to login</a></span>
 </p>
 
 </div>

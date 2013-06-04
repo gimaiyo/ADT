@@ -62,9 +62,8 @@ if (isset($styles)) {
  
 
 <div id="signup_form">
-	 <div class="short_title" >
-Sign in
-</div>
+	 <div class="short_title" >Sign in </div>
+	 
 <?php
 echo validation_errors('
 <p class="error">', '</p>
@@ -82,18 +81,18 @@ if (isset($invalid)) {
 	echo "<p class='error'>" . @$login_attempt . "</p>";
 }
 ?>
-<form action="<?php echo base_url().'user_management/authenticate'?>" method="post" >
+<form action="<?php echo base_url().'user_management/authenticate'?>" method="post" style="margin:0 auto " >
 <label>
-<strong class="label">Please Enter Your Email/Username</strong>
+<strong >Please Enter Your Email/Username</strong><br>
 <input type="text" name="username" class="input-xlarge" id="username" value="" >
 </label>
 <label>
-<strong class="label">Password</strong>
+<strong >Password</strong><br>
 <input type="password" name="password" class="input-xlarge" id="password">
 </label>
- <input type="submit" class="btn" name="register" id="register" value="Sign in" style="margin-left:200px; padding-left:30px; padding-right:30px;margin-right:50px ">
+ <input type="submit" class="btn" name="register" id="register" value="Sign in" style=" padding-left:30px; padding-right:30px;margin-right:40px ">
 
-<div style="margin-left:200px;margin-top:20px">
+<div style="margin-top:20px;display:inline">
 	<strong><a href="<?php echo base_url().'user_management/resetPassword' ?>">Forgot Password?</a></strong>
 </div>
 

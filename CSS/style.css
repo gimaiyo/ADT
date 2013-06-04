@@ -1135,3 +1135,6 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 .dataTables_wrapper{
 	width:100%;
 }
+.left-content{
+	font-size:75%;
+}
