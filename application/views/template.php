@@ -121,11 +121,11 @@ $(document).ready(function() {
 							
 							<span><?php echo $this -> session -> userdata('facility_name'); ?></span>
 						</div>
-					
+						<div class="banner_text" style="font-size: 22px;"><?php echo $banner_text; ?></div>
 					
 					
 				</div>
-				<div class="banner_text" style="font-size: 22px;"><?php echo $banner_text; ?></div>
+				
 				
  <div id="top_menu"> 
 

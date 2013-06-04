@@ -1131,30 +1131,6 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 .dataTables_wrapper{
 	width:100%;
 }
-
-#add_patient_form {
-background: #CCFFCC;
-width: 76%;
-float: right;
-padding: 1%;
-}
-
-.column {
-width: 32%;
-font-size: 90%;
-font-family: Arial;
-padding: 2px;
-height: 850px;
-float: left;
-margin-right: 0.5%;
-}
-
-.short_title {
-width: 78%;
-height: auto;
-background: #036;
-float: right;
-}
-.plan_listing{
-	width:200px;
+.left-content{
+	font-size:75%;
 }

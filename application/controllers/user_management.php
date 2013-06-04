@@ -442,7 +442,8 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 		$new_access_log -> access_type = "Logout";
 		$new_access_log -> save();
 		$this -> session -> sess_destroy();
-		$this->fixlogout();
+		$this->login();
+		//$this->fixlogout();
 	}
 
 	public function getIPLocation() {
