@@ -7,6 +7,9 @@ class User_Management extends MY_Controller {
 		$this -> load -> library('encrypt');
 		$this -> load -> helper('geoiploc');
 		$this -> load -> database();
+		ini_set("SMTP",'ssl://smtp.googlemail.com');
+		ini_set("smtp_port",'465');
+		ini_set("sendmail_from",'webadt.chai@gmail.com');
 	}
 
 	public function index() {

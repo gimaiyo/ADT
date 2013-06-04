@@ -40,7 +40,8 @@ else if ($access_level == "nascop_staff") {
 
 <link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap.min.css'?>" rel="stylesheet" media="screen">
 <link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap-responsive.min.css'?>" rel="stylesheet" media="screen">
-
+<link rel="stylesheet" type="text/css" href="<?php echo base_url().'CSS/assets/jquery.multiselect.css'?>" />
+<link rel="stylesheet" type="text/css" href="<?php echo base_url().'CSS/assets/jquery.multiselect.filter.css'?>" />
 
 <script src="<?php echo base_url().'Scripts/jquery.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'js/bootstrap.js'?>" type="text/javascript"></script> 
@@ -48,6 +49,9 @@ else if ($access_level == "nascop_staff") {
 <script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'Scripts/jquery.form.js'?>" type="text/javascript"></script>
 <script src="<?php echo base_url().'Scripts/jquery.blockUI.js'?>" type="text/javascript"></script>
+<script type="text/javascript" src="<?php echo base_url().'Scripts/jquery.multiselect.filter.js'?>"></script>
+<script type="text/javascript" src="<?php echo base_url().'Scripts/jquery.multiselect.js'?>"></script>
+
 
 <script src="<?php echo base_url().'Scripts/bootstrap/js/bootstrap.min.js'?>"></script>
 <!-- Bootstrap -->

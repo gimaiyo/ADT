@@ -5,13 +5,26 @@ class Dispensement_Management extends MY_Controller {
 	}
 
 	public function index() {
-		$this -> listing();
+		//$this -> listing();
 	}
 
-	public function listing() {
+	public function dispense($patient_no) {
 		$data = array();
-		$data['content_view'] = "dispensement_listing_v";  
+		$facility_code=$this -> session -> userdata('facility');
+		$sql = "select * from patient where patient_number_ccc='$patient_no' and facility_code='$facility_code'";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			$data['patients']=$results;
+		}
+		$data['regimens']=Regimen::getAllEnabled();
+		$data['non_adherence_reasons']=Non_Adherence_Reasons::getAll();
+		$data['content_view'] = "dispense_v";  
 		$this -> base_params($data);
+	}
+	
+	public function edit_dispense($record_no){
+		
 	}
 
 	public function save() {
