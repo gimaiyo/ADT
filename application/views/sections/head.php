@@ -26,9 +26,7 @@
     
     
     <!-- JS --------------------------------------------------------------->
-    <!-- Bootstrap -->
-    <script src="<?php echo base_url().'Scripts/bootstrap/js/bootstrap.min.js'?>"></script>
-    
+        
     <!-- JQuery -->
     <script src="<?php echo base_url().'Scripts/jquery.js'?>" type="text/javascript"></script> 
     <script src="<?php echo base_url().'Scripts/jquery.form.js'?>" type="text/javascript"></script>
@@ -36,8 +34,11 @@
     <!-- Jquery UI -->
 	<script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script> 
 	
+	<!-- Bootstrap -->
+    <script src="<?php echo base_url().'Scripts/bootstrap/js/bootstrap.min.js'?>"></script>
+    <script src="<?php echo base_url().'Scripts/bootstrap/js/paging.js'?>" type="text/javascript"></script>
 	<!-- Datatables -->
-	<script type="text/javascript" src="<?php echo base_url().'Scripts/datatable/jquery.dataTables.min.js'?>"></script>
+	<script src="<?php echo base_url().'Scripts/datatable/jquery.dataTables.min.js'?>"></script>
 	
 	<!-- Merged JS
 		** Has the separate customized functions  -->

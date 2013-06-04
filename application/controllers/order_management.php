@@ -261,7 +261,7 @@ class Order_Management extends MY_Controller {
 		$data['_type']='order_facility';
 		$data['title'] = "Commodity Orders";
 		$data['link'] = "order_management";
-		$this -> load -> view('template_order', $data);
+		$this -> load -> view('template', $data);
 	}
 
 	public function save() {
