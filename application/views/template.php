@@ -36,13 +36,16 @@ if ($access_level == "system_administrator") {
 
 
 <?php
+$this -> load -> view('sections/head');
 if ($user_is_pharmacist || $user_is_facility_administrator || $user_is_administrator) {
-	echo "<script src=\"" . base_url() . "Scripts/offline_database.js\" type=\"text/javascript\"></script>";
+	//echo "<script src=\"" . base_url() . "Scripts/offline_database.js\" type=\"text/javascript\"></script>";
+	
+	
 }
 /**
  * Load View with Head Section
  */
-$this -> load -> view('sections/head');
+
 
 
 
@@ -115,11 +118,11 @@ $(document).ready(function() {
 							
 							<span><?php echo $this -> session -> userdata('facility_name'); ?></span>
 						</div>
-					
+						<div class="banner_text" style="font-size: 22px;"><?php echo $banner_text; ?></div>
 					
 					
 				</div>
-				<div class="banner_text" style="font-size: 22px;"><?php echo $banner_text; ?></div>
+				
 				
  <div id="top_menu"> 
 

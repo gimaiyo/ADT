@@ -112,7 +112,7 @@ class Facilitydashboard_Management extends MY_Controller {
 		}
 
 		//Create table to store data
-		$tmpl = array('table_open' => '<table id="stock_level" class="setting_table table table-striped table-condensed">');
+		$tmpl = array('table_open' => '<table id="stock_level" class="table table-striped table-condensed">');
 		$this -> table -> set_template($tmpl);
 		$this -> table -> set_heading('No', 'Drug', 'Unit', 'Quantity (Units)', 'Threshold Quantity (Units)', 'Priority');
 		$data = "";

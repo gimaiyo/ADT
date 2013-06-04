@@ -193,14 +193,11 @@ if($this->session->userdata("changed_password")){
 	        $('#table1').load('<?php echo base_url().'facilitydashboard_management/stock_notification'?>',function(){
 	        
 				$('#stock_level').dataTable( {
-			        "sDom": "<'row'r>t<'row'<'span5'i><'span7'p>>",
-			        "sPaginationType": "bootstrap",
-			        "bSort": true
-			        //"aaSorting": []
-			    } );
+					"bJQueryUI": true,
+	        		"sPaginationType": "full_numbers"
 	        });
 	 
-	          
+	           });
 	        	 
 	       
 

@@ -26,7 +26,11 @@
     
     
     <!-- JS --------------------------------------------------------------->
-        
+
+    <!-- Bootstrap -->
+    <script src="<?php echo base_url().'Scripts/bootstrap/js/bootstrap.min.js'?>"></script>
+    <script src="<?php echo base_url().'Scripts/bootstrap/js/paging.js'?>"></script>
+
     <!-- JQuery -->
     <script src="<?php echo base_url().'Scripts/jquery.js'?>" type="text/javascript"></script> 
     <script src="<?php echo base_url().'Scripts/jquery.form.js'?>" type="text/javascript"></script>
@@ -45,8 +49,15 @@
 	<script src="<?php echo base_url().'Scripts/Merged_JS.js'?>" type="text/javascript"></script>
 	
     <!-- End of JS  Section ------------------------------------------------>
-    
-    
-    
 
-    
+<!-- Jquery UI -->
+<script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script>
+<!-- Datatables -->
+<script type="text/javascript" src="<?php echo base_url().'Scripts/datatable/jquery.dataTables.min.js'?>"></script>
+<!-- Multiselect -->
+<script type='text/javascript' src='<?php echo base_url()."Scripts/jquery.multiselect.filter.js";?>'></script>
+<script type='text/javascript' src='<?php echo base_url()."Scripts/jquery.multiselect.js"?>'></script>
+<!-- Merged JS
+** Has the separate customized functions  -->
+<script src="<?php echo base_url().'Scripts/Merged_JS.js'?>" type="text/javascript"></script>
+<!-- End of JS  Section ------------------------------------------------>

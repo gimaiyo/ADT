@@ -210,17 +210,12 @@ body {
 	text-decoration: none;
 
 }
-.short_title {
-	width: 90%;
-	height: auto;
-}
 .banner_text {
-	position:absolute;
 	font-weight: 100;
 	letter-spacing: -1px;
-	margin: 0.5em 0 10px 10px;
+	margin: 0.1em 0 10px 10px;
 	font-size: 28px;
-	color: #3F3F38;
+	color: #FFF;
 	width: 500px;
 	height: 30px;
 	display: block;
@@ -897,10 +892,11 @@ table.dataTable tr.odd td sorting_1 {
 }
 
 .short_title {
-	height: auto;
-	margin: 0 0 1.2em 0;
+	height: 40px;
+    padding: 5px;
+	margin: 0 0 0.2em 0;
 	font-size: 2em;
-	color: #3F3F38;
+	color: #FFF;
 }
 
 .remember {
@@ -1132,4 +1128,7 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 }
 .dataTables_wrapper{
 	width:100%;
+}
+.left-content{
+	font-size:75%;
 }
