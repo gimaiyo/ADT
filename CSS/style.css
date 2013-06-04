@@ -712,7 +712,7 @@ table.setting_table {
 }
 
 .ui-widget-header{
-	background:#4a92cb;
+	background:#2B597E;
 }
 table.dataTable tr.odd{
 	background-color:rgb(234,255,232);
@@ -844,7 +844,6 @@ table.setting_table {
 }
 
 .ui-widget-header {
-	background: #7194b0;
 	color:#fff;
 }
 table.dataTable tr.odd { background-color: rgb(235, 236, 238);

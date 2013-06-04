@@ -144,10 +144,12 @@ foreach($menus as $menu){?>
 	if ($current == $menu['url'] || $menu['url'] == $link) {echo " top_menu_active ";
 	}
 ?>"><?php echo $menu['text']; if($menu['offline'] == "1"){?>
-	 <span class=" red_">off</span></a>
+	 <!-- Offline -->
+	 <span class=" red_"></span></a>
 	
 <?php } else{ ?>
-	 <span class=" green_">on</span></a>
+	<!-- Online -->
+	 <span class=" green_"></span></a>
 <?php } ?>
 
 
