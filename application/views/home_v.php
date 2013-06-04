@@ -199,28 +199,7 @@ if($this->session->userdata("changed_password")){
 			        //"aaSorting": []
 			    } );
 	        });
-	       <?php 
-			if($user_is_pharmacist){
-				?>
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
-				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
-				$('#notification3').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/dispatched'?>');
-			
-				
-				
-				<?php
-			}
-			
-			if($user_is_facilityadmin){
-				?>
-				
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
-				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
-				$('#notification3').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/dispatched'?>');
-				
-				<?php
-			}
-				?>
+	 
 	          
 	        	 
 	       
@@ -231,25 +210,7 @@ if($this->session->userdata("changed_password")){
     <link rel="stylesheet" href="<?php echo base_url()?>css/bootstrap.css"/>
     <link rel="stylesheet" href="<?php echo base_url()?>css/bootstrap-responsive.css"/>
     <style type="text/css">
-    	.tile{
-    		display:inline-block;
-    		float:left;
-
-    		width:49%; 
-    		height:99.5%;
-    		padding: 0 0.5% 0.5% 0.5%;
-    		
-
-    		
-
-    	}
     	
-      	.tile-half{
-    		height:50%;
-    		display:block;
-    		
-    		
-    	}
     
     </style>
 
@@ -260,7 +221,6 @@ if($this->session->userdata("changed_password")){
 		display:none;
 	}
 	#synchronize {
-		display:none;
 		text-align: left;
 		font-size: 16px;
 		text-shadow: 0 1px rgba(0, 0, 0, 0.1);
@@ -456,47 +416,6 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 <div class="main-content">
 	
 
-	<div class="left-content" style="float: left">
-
-		<h3>Quick Links</h3>
-		<ul class="nav nav-list">
-			<?php 
-			if($user_is_pharmacist){
-				?>
-				
-				<li><a>User Manual</a></li>			
-			    <li><a>Main Site Report</a></li>
-				
-				
-				<?php
-			}
-			
-			if($user_is_facilityadmin){
-				?>
-				<li><a>Add Patients</a></li>
-			    <li><a>Add Inventory</a></li>
-			    <li class="divider"></li>
-				<li><a>User Manual</a></li>			
-			    <li><a>Main Site Report</a></li>
-				
-				<?php
-			}
-				?>
-			
-			
-			
-		</ul>
-		<h3>Notifications</h3>
-		<ul class="nav nav-list">
-			
-			
-		</ul>
-		<li class="notif" id="notification1"></li>
-		<li class="notif"id="notification2"></li>
-		<li class="notif" id="notification3"></li>
-		<div></div>
-		<div></div>
-	</div>
 	
 	<div class="center-content">
 		<div id="expDiv>"></div>
@@ -520,7 +439,6 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 			<h3>Stocks About to Run Out</h3>
 			<div id="table1"></div>
 		</div>
-
 	</div>
 </div>
 	

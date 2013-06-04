@@ -2,6 +2,7 @@
 <html lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
 		<script type="text/javascript" src="Scripts/jquery.multiselect.filter.js"></script>
 		<script type="text/javascript" src="Scripts/jquery.multiselect.js"></script>
 		<link rel="stylesheet" type="text/css" href="CSS/assets/jquery.multiselect.css" />
@@ -24,6 +25,7 @@
                       });
 				});
 			});
+
 		</script>
 		<style type="text/css">
 			#signup {
@@ -139,13 +141,13 @@
 				font-weight: bold;
 			}
 		</style>
-		
+
 	</head>
 	<body>
 		<input type="hidden" id="sql">
 		<div id="wrapper">
 			<div id="top-panel" style="margin:0px;">
-				
+
 			</div>
 			<div id="inner_wrapper">
 				<div id="main_wrapper">
@@ -194,7 +196,9 @@
 									<br/>
 									<div class="two_comlumns">
 										<label style="width:140px; float:left;"> <strong class="label" >*Age(Years)</strong>
+
 											<input type="text" id="age_in_years" name="age_in_years" style="width:80px;" disabled="disabled"/>
+
 										</label>
 										<label style="width:140px; float:right;"> <strong class="label">Age(Months)</strong> <!--<input style="width:140px" type="text"name="pob" id="pob">-->
 											<input type="text" id="age_in_months" style="width:80px;" disabled="disabled"/>
@@ -382,7 +386,9 @@
 								</fieldset>
 							</div>
 							<div id="submit_section">
+
 								<input form="add_patient_form" class="submit-button" id="submit" value="Save" style="width:200px;"/>
+
 								<input form="add_patient_form" class="submit-button" id="dispense" value="Save &amp Dispense" style="width:200px;"/>
 								<input type="reset" class="submit-button" id="reset" value="Reset Page" style="width:200px;"/>
 							</div>
