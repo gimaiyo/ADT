@@ -40,11 +40,6 @@ if ($access_level == "system_administrator") {
  */
 $this -> load -> view('sections/head');
 
-if ($user_is_pharmacist || $user_is_facility_administrator) {
-	echo "<script src=\"" . base_url() . "Scripts/offline_database.js\" type=\"text/javascript\"></script>";
-
-
-} 
 
 
 if (isset($script_urls)) {
@@ -67,8 +62,34 @@ if (isset($styles)) {
 	}
 }
 ?> 
-
-
+<script>
+$(document).ready(function() {
+	<?php 
+			if($user_is_pharmacist){
+				?>
+				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
+				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
+				$('#notification3').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/dispatched'?>');
+			
+				
+				
+				<?php
+			}
+			
+			if($user_is_facility_administrator){
+				?>
+				
+				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
+				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
+				$('#notification3').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/dispatched'?>');
+				$('#notification4').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/prepared'?>');
+				
+				<?php
+			}
+				?>
+				});
+</script>
+      
 </head>
 
 <body>
@@ -82,8 +103,8 @@ if (isset($styles)) {
 
 				<div id="system_title">
 
-					<?php 
-					$this -> load -> view('sections/banner');					
+					<?php
+	$this -> load -> view('sections/banner');
 					?>
 				
 						
@@ -165,24 +186,30 @@ if($menus){
 			<?php 
 			if($user_is_pharmacist){
 				?>
-				
-				<li><a>User Manual</a></li>			
-			    <li><a>Main Site Report</a></li>
+				<li><a href="<?php echo base_url().'patient_management/addpatient_show' ?>">Add Patients</a></li>
+			    <li><a href="<?php echo base_url().'inventory_management/mainstore_show' ?>">Add Main Store Inventory</a></li>
+			    <li><a href="<?php echo base_url().'inventory_management/pharmacy_show' ?>">Add Pharmacy Inventory</a></li>
+			    <li><a href="<?php echo base_url().'user_management/index' ?>">Add Facility Users</a></li>
+
+				<li class="divider"></li>
+				<li><a href="<?php echo base_url().'user_manual.pdf' ?>">User Manual</a></li>		
+			  
 				
 				
 				<?php
-			}
-			
-			if($user_is_facility_administrator){
+				}
+
+				if($user_is_facility_administrator){
 				?>
-				<li><a>Add Patients</a></li>
-			    <li><a>Add Inventory</a></li>
+				<li><a href="<?php echo base_url().'patient_management/addpatient_show' ?>">Add Patients</a></li>
+			    <li><a href="<?php echo base_url().'inventory_management/mainstore_show' ?>">Add Main Store Inventory</a></li>
+			    <li><a href="<?php echo base_url().'inventory_management/pharmacy_show' ?>">Add Pharmacy Inventory</a></li>
 			    <li class="divider"></li>
-				<li><a>User Manual</a></li>			
-			    <li><a>Main Site Report</a></li>
+				<li><a href="<?php echo base_url().'user_manual.pdf' ?>">User Manual</a></li>			
+			    
 				
 				<?php
-			}
+				}
 				?>
 			
 			

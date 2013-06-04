@@ -199,29 +199,7 @@ if($this->session->userdata("changed_password")){
 			        //"aaSorting": []
 			    } );
 	        });
-	       <?php 
-			if($user_is_pharmacist){
-				?>
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
-				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
-				$('#notification3').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/dispatched'?>');
-			
-				
-				
-				<?php
-			}
-			
-			if($user_is_facilityadmin){
-				?>
-				
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
-				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
-				$('#notification3').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/dispatched'?>');
-				$('#notification4').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/prepared'?>');
-				
-				<?php
-			}
-				?>
+	 
 	          
 	        	 
 	       

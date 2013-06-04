@@ -408,7 +408,7 @@ table.data-table tr.alternate_row td {
 	background: #F1F1F1;
 }
 #view_content {
-	overflow: hidden;
+	
 }
 .link {
 	text-decoration: none;
@@ -850,11 +850,10 @@ table.setting_table {
 }
 
 .ui-widget-header {
-	background: #2B597E;
+	background: #7194b0;
 	color:#fff;
 }
-table.dataTable tr.odd {
-	background-color: rgb(234,255,232);
+table.dataTable tr.odd { background-color: rgb(235, 236, 238);
 }
 table.dataTable tr.odd td sorting_1 {
 	background-color: rgb(234,255,232);
