@@ -436,45 +436,7 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 
 <div class="main-content">
 	
-	<div class="left-content" style="float: left">
 
-		<h3>Quick Links</h3>
-		<ul class="nav nav-list well">
-			<?php 
-			if($user_is_pharmacist){
-				?>
-				
-				<li><a>User Manual</a></li>			
-			    <li><a>Main Site Report</a></li>
-				
-				
-				<?php
-			}
-			
-			if($user_is_facilityadmin){
-				?>
-				<li><a>Add Patients</a></li>
-			    <li><a>Add Inventory</a></li>
-			    <li class="divider"></li>
-				<li><a>User Manual</a></li>			
-			    <li><a>Main Site Report</a></li>
-				
-				<?php
-			}
-				?>
-			
-			
-			
-		</ul>
-		<h3>Notifications</h3>
-		<div class="well">
-		<div class="notif" id="notification1"></div>
-		<li class="divider"></li>
-		<div class="notif"id="notification2"></div>
-		<div class="notif" id="notification3"></div>
-		<div class="notif" id="notification4"></div>
-		</div>
-	</div>
 	
 	<div class="center-content">
 		<div id="expDiv>"></div>

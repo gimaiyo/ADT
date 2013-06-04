@@ -81,12 +81,12 @@ class User_Management extends MY_Controller {
 		$data['user_types'] = $user_types;
 		$data['facilities'] = $facilities;
 		$data['title'] = "System Users";
-		$data['settings_view'] = "users_v";
+		$data['content_view'] = "users_v";
 		$data['banner_text'] = "System Users";
 		$data['link'] = "users";
 		$actions = array(0 => array('Edit', 'edit'), 1 => array('Disable', 'disable'));
 		$data['actions'] = $actions;
-		$this -> load -> view("template_admin", $data);
+		$this -> load -> view("template", $data);
 	}
 
 	public function change_password() {

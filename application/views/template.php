@@ -89,11 +89,14 @@ if (isset($styles)) {
 						
 						<div id="facility_name">
 							
-							<span style="display: block; font-size: 16px;"><?php echo $this -> session -> userdata('facility_name'); ?></span>
+							<span><?php echo $this -> session -> userdata('facility_name'); ?></span>
 						</div>
+					
+					
 					
 				</div>
 				<div class="banner_text" style="font-size: 22px;"><?php echo $banner_text; ?></div>
+				
  <div id="top_menu"> 
 
  	<?php
@@ -155,7 +158,45 @@ if($menus){
 
 
 <div id="main_wrapper"> 
- 
+ 	<div class="left-content" style="float: left">
+
+		<h3>Quick Links</h3>
+		<ul class="nav nav-list well">
+			<?php 
+			if($user_is_pharmacist){
+				?>
+				
+				<li><a>User Manual</a></li>			
+			    <li><a>Main Site Report</a></li>
+				
+				
+				<?php
+			}
+			
+			if($user_is_facility_administrator){
+				?>
+				<li><a>Add Patients</a></li>
+			    <li><a>Add Inventory</a></li>
+			    <li class="divider"></li>
+				<li><a>User Manual</a></li>			
+			    <li><a>Main Site Report</a></li>
+				
+				<?php
+			}
+				?>
+			
+			
+			
+		</ul>
+		<h3>Notifications</h3>
+		<div class="well">
+		<div class="notif" id="notification1"></div>
+		<li class="divider"></li>
+		<div class="notif"id="notification2"></div>
+		<div class="notif" id="notification3"></div>
+		<div class="notif" id="notification4"></div>
+		</div>
+	</div>
 <?php $this -> load -> view($content_view); ?>
  
  
