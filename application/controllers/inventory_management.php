@@ -8,7 +8,16 @@ class Inventory_Management extends MY_Controller {
 		$this -> listing();
 	} 
 	
-	public function listing(){
+	public function listing($stock_type=1){
+		$data['active']="";
+		//Make pharmacy inventory active
+		if($stock_type==2){
+			$data['active']='pharmacy';
+		}
+		//Make store inventory active
+		else{
+			$data['active']='main_store';
+		}
 		$data['content_view'] = "inventory_listing_v";
 		$this -> base_params($data);
 	}
@@ -132,7 +141,7 @@ class Inventory_Management extends MY_Controller {
 					$row[]=$aRow['supported_by'];
 					$row[]=$aRow['dose'];
 					$id=$aRow['id'];
-					$row[]="<a href='".base_url()."iventory_management/view_bincard/".$id."'>View Bin Card</a>";
+					$row[]="<a href='".base_url()."inventory_management/view_bin_card/".$id."/1'>View Bin Card</a>";
 				}
             	
 			}
@@ -261,13 +270,70 @@ class Inventory_Management extends MY_Controller {
 					$row[]=$aRow['supported_by'];
 					$row[]=$aRow['dose'];
 					$id=$aRow['id'];
-					$row[]="<a href='".base_url()."iventory_management/view_bincard/".$id."'>View Bin Card</a>";
+					$row[]="<a href='".base_url()."inventory_management/view_bin_card/".$id."/2'>View Bin Card</a>";
 				}
             	
 			}
 			$output['aaData'][] = $row;
 		}
 		echo json_encode($output);
+	}
+
+	public function view_bin_card($drug_id,$stock_type=1){
+		$store="";
+		if($stock_type==1){
+			$data['store']="Main Store";
+			$data['previous']='inventory_management/1';
+		}
+		else if($stock_type==2){
+			$data['store']="Pharmacy";
+			$data['previous']='inventory_management/2';
+		}
+		
+		$today = date('Y-m-d');
+		$facility_code = $this -> session -> userdata('facility');
+		$results=Drug_Stock_Movement::getDrugTransactions($drug_id,$facility_code,$stock_type);
+		
+		$query=$this->db->query("SELECT d.drug,d.unit,d.pack_size,dsb.batch_number,dsb.expiry_date,dsb.stock_type,dsb.balance FROM drug_stock_balance dsb LEFT JOIN drugcode d ON d.id=dsb.drug_id WHERE dsb.drug_id='$drug_id'  AND dsb.expiry_date > '$today' AND dsb.balance > 0   AND dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' order by dsb.expiry_date asc");
+		$stock_bactchinfo_array=$query->result_array();
+		$stock_level=0;
+		foreach ($stock_bactchinfo_array as $total) {
+			$stock_level+=$total['balance'];
+		}
+		$data['stock_level']=$stock_level;
+		
+		$data['drug_name']="";
+		foreach ($stock_bactchinfo_array as $value) {
+			$data['drug_name']=$value['drug'];
+			$drug_unit_array=Drug_Unit::getUnit($value['unit']);
+			
+			foreach ($drug_unit_array as $row) {
+				$data['drug_unit']=$row['Name'];
+			}
+			
+		}
+		
+		$data['batch_info']=$stock_bactchinfo_array;
+		$data['drug_transactions']=$results;
+		$consumption=Drug_Stock_Movement::getDrugMonthlyConsumption($drug_id,$facility_code,$stock_type);
+		
+		$three_months_consumption = 0;
+		$drug_name="";
+		
+		foreach ($consumption as $value) {
+			$three_months_consumption=$consumption['total_out'];
+		}
+		
+		echo $three_months_consumption;
+		die();
+		
+		$data['three_months_consumption']=$three_months_consumption;
+		$data['content_view']='bin_card_v';
+		//Hide side menus
+		$data['hide_side_menu']='1';
+		$this->base_params($data);
+		
+		
 	}
 	
 	public function mainstore_show(){

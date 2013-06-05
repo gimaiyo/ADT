@@ -26,7 +26,7 @@ class Drug_Stock_Movement extends Doctrine_Record {
 
 	public function setUp() {
 		$this -> setTableName('drug_stock_movement');
-		$this -> hasOne('Drug as Drug_Object', array('local' => 'Drug', 'foreign' => 'id'));
+		$this -> hasOne('drugcode as Drug_Object', array('local' => 'Drug', 'foreign' => 'id'));
 	}
 
 	public function getTotalTransactions($facility) {
@@ -47,6 +47,40 @@ class Drug_Stock_Movement extends Doctrine_Record {
 		$query = Doctrine_Query::create() -> select("*") -> from("Drug_Stock_Movement") -> where("Facility='$facility'") -> offset($offset) -> limit($items);
 		$drug_transactions = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
 		return $drug_transactions;
+	}
+	
+	
+	public function getDrugTransactions($drug_id,$facility,$stock_type=1){
+		$where="";
+		$today = date('Y-m-d');
+			
+		if($stock_type==1){
+			$where="and (ds.source='$facility'  or ds.destination='$facility') and ds.source!=ds.destination";
+		}
+		else if($stock_type==2){
+			$where="and ds.source='$facility'  and ds.source=ds.destination";
+		}
+		
+		$query = Doctrine_Query::create() -> select("*") -> from("Drug_Stock_Movement ds") -> where("ds.Facility='$facility' and ds.expiry_date>'$today' and ds.drug='$drug_id' $where");
+		$drug_transactions = $query -> execute();
+		return $drug_transactions;
+	}
+	
+	public function getDrugMonthlyConsumption($drug_id,$facility,$stock_type=1){
+		$where="";
+		$today = date('Y-m-d');
+		//Store transaction	
+		if($stock_type==1){
+			$where="and (dsm.source='$facility'  or dsm.destination='$facility') and dsm.source!=dsm.destination";
+		}
+		//Pharmacy transaction
+		else if($stock_type==2){
+			$where="and dsm.source='$facility'  and dsm.source=dsm.destination";
+		}
+		
+		$query=Doctrine_Query::create() -> select("dsm.quantity_out as total_out")-> from("drug_stock_movement dsm")->where("dsm.drug='$drug_id' AND facility ='$facility' AND DATEDIFF(CURDATE(),dsm.transaction_date) <= 90 $where");
+		$drug_monthly_consumption = $query -> execute();
+		return $drug_monthly_consumption;
 	}
 
 }
