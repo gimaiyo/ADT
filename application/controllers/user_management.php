@@ -442,7 +442,7 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 		$new_access_log -> access_type = "Logout";
 		$new_access_log -> save();
 		$this -> session -> sess_destroy();
-		$this->login();
+		redirect("user_management/login");
 		//$this->fixlogout();
 	}
 

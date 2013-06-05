@@ -71,7 +71,7 @@ class Patient extends Doctrine_Record {
 	}
 	
 	public function getAllPatients($facility){
-		$query=Doctrine_Query::create() -> select("*")->from ("patient")->where("Facility_Code='$facility'")->limit("500");;
+		$query=Doctrine_Query::create() -> select("*")->from ("patient")->where("Facility_Code='$facility'");
 		$patients = $query -> execute();
 		return $patients;
 	}

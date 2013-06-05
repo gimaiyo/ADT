@@ -700,8 +700,10 @@ table.setting_table {
 	max-width: 300px;
 }
 
+
 table.dataTable tr.odd {
 	background-color: rgb(234,255,232);
+
 }
 table.dataTable tr.odd td sorting_1 {
 	background-color: rgb(234,255,232);
@@ -830,8 +832,11 @@ table.setting_table {
 }
 
 .ui-widget-header {
+
 	background: #2B597E;
 	color: #fff;
+
+
 }
 table.dataTable tr.odd {
 	background-color: rgb(235, 236, 238);

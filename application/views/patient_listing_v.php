@@ -2,6 +2,9 @@
 	
 	$(document).ready( function () {
 		$('.listing_table').dataTable( {
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "patient_management/listing",
 	        "bJQueryUI": true,
 	        "sPaginationType": "full_numbers"
 		} );
@@ -44,7 +47,6 @@ if ($access_level == "facility_administrator") {
 
 <?php 
 //COunt number of patients
-$count_patient=count($patients);
 ?>
 <div class="main-content">
 	
@@ -52,25 +54,10 @@ $count_patient=count($patients);
 		<table class="table table-bordered table-striped listing_table" style="font-size:0.8em">
 			<thead>
 				<tr>
-					<th style="width: 45px">CCC No</th><th>Patient Name</th><th style="width: 100px">Next Appointment</th><th>Phone No</th><th style="width: 100px">Date Enrolled</th><th>Current Regimen</th><th style="width:150px">Status</th><th style="width: 140px">Action</th>
+					<th style="width: 45px">CCC No</th><th>Patient Name</th><th>Phone No</th><th style="width: 100px">Date Enrolled</th><th style="width: 100px">Next Appointment</th><th>Current Regimen</th><th style="width:150px">Status</th><th style="width: 140px">Action</th>
 				</tr>
 			</thead>
 			<tbody>
-		<?php
-		foreach ($patients as $patient) {
-			?>
-			<tr><td><?php echo $patient->Patient_Number_CCC ?></td>
-				<td><?php echo strtoupper($patient->First_Name.' '.$patient->Last_Name.' '.$patient->Other_Name) ?></td>
-				<td><?php echo date("d-M-Y",strtotime($patient->NextAppointment)) ?></td>
-				<td><?php echo $patient->Phone ?></td>
-				<td><?php echo date("d-M-Y",strtotime($patient->Date_Enrolled)) ?></td>
-				<td><?php echo $patient->Parent_Regimen['Regimen_Desc'] ?></td>
-				<td><?php echo $patient->Parent_Status->Name ?></td>
-				<td><a href="">Detail</a> | <a href="<?php echo base_url().'patient_management/edit/'.$patient->id ?>">Edit</a> | <a href="">Disable</a></td>
-			</tr>
-			<?php
-		}
-		?>
 			</tbody>
 		</table>
 	</div>
