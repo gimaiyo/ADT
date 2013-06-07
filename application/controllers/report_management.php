@@ -921,12 +921,31 @@ class report_management extends MY_Controller {
 				$status_totals[$result['current_status']] = $result['total'];
 				$current_status = $result['current_status'];
 				//SQL for Adult Male Status
-				$sql = "SELECT count(*) as total_adult_male, ps.Name,ps.id as current_status FROM patient p,patient_status ps WHERE  p.current_status=ps.id AND p.facility_code='$facility_code' AND p.gender=1  AND round(datediff('$from',p.dob)/360)>=15 GROUP BY p.current_status";
+				$sql = "SELECT count(*) as total_adult_male, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.facility_code='$facility_code' AND p.gender=1  AND round(datediff('$from',p.dob)/360)>=15 GROUP BY p.current_status,service";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				if ($results) {
 					foreach ($results as $result) {
+						$status_name = $result['Name'];
+						$status = $result['current_status'];
+						$service = $result['service'];
+						//Loop Through all service lines for Adult Male
+						for ($i = 0; $i < 3; $i++) {
+							//IF ART
+							if ($service == "ART") {
 
+							}
+							//IF PEP
+							if ($service == "PEP") {
+
+							}
+							//IF OI
+							if ($service == "OI Only") {
+
+							} else {
+
+							}
+						}
 					}
 
 				}
