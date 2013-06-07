@@ -183,10 +183,7 @@ if($menus){
 
 </div>
 
-<div id="inner_wrapper"> 
 
-
-<div id="main_wrapper"> 
  	<div class="left-content" style="float: left">
 
 		<h3>Quick Links</h3>
@@ -236,10 +233,10 @@ if($menus){
  
  
  
-<!-- end inner wrapper --></div>
-  <!--End Wrapper div--></div>
 
-    <div id="bottom_ribbon" style= "width:90%;">
+
+
+    <div id="bottom_ribbon">
 
         <div id="footer">
  <?php $this -> load -> view("footer_v"); ?>

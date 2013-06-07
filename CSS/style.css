@@ -41,14 +41,14 @@ body {
 	color: #333;
 }
 #bottom_ribbon {
+	background:white;
 	height: 50px;
-	width: auto;
-	position: relative;
+	width: 100%;
+	position: fixed;
 	bottom: 0;
 	margin: 0 auto;
-	margin-top: 150px;
 	border-top: 2px solid #036;
-	min-width: 980px;
+	
 }
 .pagination.flip a {
 	text-decoration: none;
@@ -459,7 +459,6 @@ legend {
 }
 fieldset {
 	margin-top: 20px;
-	border: 1px solid #DDD;!important;
 }
 /*NOTIFICATION MESSAGES*/
 .message {
@@ -591,30 +590,27 @@ tr th {
 }
 
 .left-content {
+	padding: 10.5% 0.5% 0.5% 1%;
 	width: 19%;
-	float: left         :
+	float: left;
 	margin-bottom: 2%;
 }
-.left-content, .right-content {
-	padding: 0.5%;
-}
+
 .center-content h3 {
 	margin: 0 0 1% 0;
 }
 .center-content {
-	padding: 1%;
+	padding: 11% 1% 1% 1%;
 	width: 75%;
 	margin: 0 0 0 1.5%;
-	height: 90%;
+	margin-bottom:5%;
 	display: inline-block;
 }
 .right-content {
 	width: 19%;
 	float: right;
 }
-#main_wrapper {
-	height: 950px;
-}
+
 ul, li {
 	list-style: none;
 	margin: 0;
@@ -832,10 +828,8 @@ table.setting_table {
 }
 
 .ui-widget-header {
-
 	background: #2B597E;
 	color: #fff;
-
 
 }
 table.dataTable tr.odd {
@@ -1119,10 +1113,6 @@ html > body #main_manualcontent li a {
 	text-align: center;
 }
 
-#bottom_ribbon {
-	margin-top: 120px;
-}
-
 #chart_area, #chart_area2, #chart_area3, #table1 {
 	height: 80%;
 }
@@ -1134,10 +1124,48 @@ html > body #main_manualcontent li a {
  */
 
 .column{
+	background:#80f26d;
 	width:32%;
 	float:left;
 	margin-left:1%;
+	height:inherit;
+}
+.column fieldset{
+	padding:5%;
+	width:90%
 }
 .column input{
+	width:100%;
+}
+.column input[type=checkbox]{
 	width:45%;
 }
+
+.column select{
+	width:45%;
+}
+.column .max-row{
+	margin-top:0.5em;
+	clear:all;
+	width:100%;
+	display:block;
+}
+.column .mid-row{
+	width:45%;
+	display:inline-block;
+}
+
+.column .mid-row input, .mid-row textarea{
+	width:100%;
+}
+
+.column .mid-row input[type=radio]{
+	width:auto;
+}
+.column .mid-row select{
+	width:100%;
+}
+.column .mid-row:nth-child(even){
+	float:right;
+}
+
