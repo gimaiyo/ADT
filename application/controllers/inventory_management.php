@@ -2,6 +2,7 @@
 class Inventory_Management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
+		$this->load->database();
 	}
 
 	public function index() {
@@ -12,11 +13,11 @@ class Inventory_Management extends MY_Controller {
 		$data['active']="";
 		//Make pharmacy inventory active
 		if($stock_type==2){
-			$data['active']='pharmacy';
+			$data['active']='pharmacy_btn';
 		}
 		//Make store inventory active
 		else{
-			$data['active']='main_store';
+			$data['active']='store_btn';
 		}
 		$data['content_view'] = "inventory_listing_v";
 		$this -> base_params($data);
@@ -135,7 +136,7 @@ class Inventory_Management extends MY_Controller {
             	//Append Generic name
             	if($x==1){
             		$row[]=strtoupper($aRow['generic_name']);
-					$row[]='<b>'.$aRow['stock_level'].'</b>';
+					$row[]='<b style="color:green">'.$aRow['stock_level'].'</b>';
             	}
 				else if($x==3){
 					$row[]=$aRow['supported_by'];
@@ -264,7 +265,7 @@ class Inventory_Management extends MY_Controller {
             	//Append Generic name
             	if($x==1){
             		$row[]=strtoupper($aRow['generic_name']);
-					$row[]='<b>'.$aRow['stock_level'].'</b>';
+					$row[]='<b style="color:green">'.$aRow['stock_level'].'</b>';
             	}
 				else if($x==3){
 					$row[]=$aRow['supported_by'];
@@ -300,7 +301,8 @@ class Inventory_Management extends MY_Controller {
 		foreach ($stock_bactchinfo_array as $total) {
 			$stock_level+=$total['balance'];
 		}
-		$data['stock_level']=$stock_level;
+		$data['stock_type']=$stock_type;
+		$data['stock_level']=number_format($stock_level);
 		
 		$data['drug_name']="";
 		foreach ($stock_bactchinfo_array as $value) {
@@ -315,24 +317,44 @@ class Inventory_Management extends MY_Controller {
 		
 		$data['batch_info']=$stock_bactchinfo_array;
 		$data['drug_transactions']=$results;
+		
 		$consumption=Drug_Stock_Movement::getDrugMonthlyConsumption($drug_id,$facility_code,$stock_type);
+		
 		
 		$three_months_consumption = 0;
 		$drug_name="";
 		
 		foreach ($consumption as $value) {
-			$three_months_consumption=$consumption['total_out'];
+			$three_months_consumption+=$value['total_out'];
+			
 		}
+		$maximum_consumption=number_format($three_months_consumption);
+		$monthly_consumption =($three_months_consumption) / 3 ;
+		$minimum_consumption = number_format(($monthly_consumption) * 1.5);
+		$monthly_consumption=number_format($monthly_consumption);
 		
-		echo $three_months_consumption;
-		die();
+		$data['maximum_consumption']=$maximum_consumption;
+		$data['avg_consumption']=$monthly_consumption;
+		$data['minimum_consumption']=$minimum_consumption;
 		
-		$data['three_months_consumption']=$three_months_consumption;
 		$data['content_view']='bin_card_v';
 		//Hide side menus
 		$data['hide_side_menu']='1';
 		$this->base_params($data);
 		
+		
+	}
+
+	public function stock_transaction($stock_type=1){
+		$facility_code = $this -> session -> userdata('facility');
+		$transaction_type=Transaction_Type::getAll();
+		$drug_source=Drug_Source::getAll();
+		$drug_destination=Drug_Destination::getAll();
+		$data['transaction_types']=$transaction_type;
+		$data['drug_sources']=$drug_source;
+		$data['drug_destinations']=$drug_destination;
+		$data['content_view'] = "stock_transaction_v";
+		$this -> base_params($data);
 		
 	}
 	
@@ -348,7 +370,7 @@ class Inventory_Management extends MY_Controller {
 	}
 
 	public function save() {
-		$this->load->database();
+		
 		$sql = $this->input->post("sql");
 		$queries = explode(";", $sql);
 		foreach($queries as $query){

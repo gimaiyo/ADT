@@ -27,6 +27,11 @@ class Drug_Stock_Movement extends Doctrine_Record {
 	public function setUp() {
 		$this -> setTableName('drug_stock_movement');
 		$this -> hasOne('drugcode as Drug_Object', array('local' => 'Drug', 'foreign' => 'id'));
+		$this -> hasOne('drug_destination as Destination_Object', array('local' => 'Destination', 'foreign' => 'id'));
+		$this -> hasOne('drug_source as Source_Object', array('local' => 'Source', 'foreign' => 'id'));
+		$this -> hasOne('facilities as Facility_Object', array('local' => 'Facility', 'foreign' => 'facilitycode'));
+		$this -> hasOne('transaction_type as Transaction_Object', array('local' => 'Transaction_Type', 'foreign' => 'id'));
+		
 	}
 
 	public function getTotalTransactions($facility) {
@@ -61,7 +66,7 @@ class Drug_Stock_Movement extends Doctrine_Record {
 			$where="and ds.source='$facility'  and ds.source=ds.destination";
 		}
 		
-		$query = Doctrine_Query::create() -> select("*") -> from("Drug_Stock_Movement ds") -> where("ds.Facility='$facility' and ds.expiry_date>'$today' and ds.drug='$drug_id' $where");
+		$query = Doctrine_Query::create() -> select("*") -> from("Drug_Stock_Movement ds")-> where("ds.Facility='$facility' and ds.expiry_date>'$today' and ds.drug='$drug_id' $where")->orderBy("ds.transaction_date desc");
 		$drug_transactions = $query -> execute();
 		return $drug_transactions;
 	}

@@ -39,17 +39,21 @@
 	.table-bordered td ,.table-bordered th{
 		border-color: #000;
 	}
+	#sub_title{
+		margin-bottom:15px;
+		font-size:16px;
+	}
+	#drug_info th{
+		font-size:14px;
+	}
 </style>
 
 <div class="main-content">
 	
 	<div class="center-content">
-		<div id="quick_menu" class="btn-group">
-			<a href="#" id="receive_issue_medicine" class="btn btn-success dropdown-toggle btn-quickmenu" data-toggle="dropdown" ><img  src="<?php echo base_url() ?>Images/medicine-icon.png">Receive/Issue Medicine <span class="caret"></span></a> 
-			<ul class="dropdown-menu" id="transaction_type">
-				<li><a href="add_stock.html">Main Store Transaction</a></li>
-			    <li><a href="add_stock_pharmacy.html">Pharmacy Transaction</a></li>
-			</ul>
+		<div id="sub_title" >
+			<a href="<?php  echo base_url().'inventory_management ' ?>">Inventory</a> <i class=" icon-chevron-right"></i>  <?php echo $store ?> <i class=" icon-chevron-right"></i> <strong>Bin Card</strong>
+			<hr size="1">
 		</div>
 		
 		<div id="bin_card_details">
@@ -57,7 +61,7 @@
 				<div class="row-fluid">
 					<div class="span5" style="width:35%">
 						<div><span class="title">Drug Information</span></div>
-						<table class="table">
+						<table class="table" id="drug_info">
 							
 							<tbody>
 								<tr><td>Commodity</td><th id="drug_name"><?php echo $drug_name?></th></tr>
@@ -68,13 +72,13 @@
 									<td>Total Stock</td><th id="stock_status" style="color:#00B831;font-weight:bold;"><?php echo $stock_level ?></th>
 								</tr>
 								<tr>
-									<td>Max Stock Level</td><th id="maximum_consumption"></th></th>
+									<td>Max Stock Level</td><th id="maximum_consumption"><?php echo $maximum_consumption ?></th>
 								</tr>
 								<tr>
-									<td>Min Stock Level</td><th id="minimum_consumption"></th>
+									<td>Min Stock Level</td><th id="minimum_consumption"><?php echo $minimum_consumption ?></th>
 								</tr>
 								<tr >
-									<td>Avg Stock Level</td><th id="avg_consumption"></th>
+									<td>Avg Stock Level</td><th id="avg_consumption"><?php echo $avg_consumption ?></th>
 								</tr>
 							</tbody>
 						</table>
@@ -90,7 +94,6 @@
 							</thead>
 							<tbody>
 								<?php
-								
 								foreach ($batch_info as $batch) {
 									$drug_name=$batch['drug'];
 								?>
@@ -122,6 +125,77 @@
 						</tr>
 					</thead>
 					<tbody>
+						<?php foreach ($drug_transactions as $drug_transaction) {
+						?>
+							<tr>
+								<td><?php echo  $drug_transaction->Order_Number ?></td>
+								<td><?php echo  $drug_transaction->Transaction_Date ?></td>
+								<?php
+								$transaction_type=$drug_transaction->Transaction_Object->Name;
+								
+								//Main store transaction
+								if($drug_transaction->Source!=$drug_transaction->Destination){
+									//Stock going out
+									if($drug_transaction->Quantity==0){
+										//From Main Store to pharmacy
+										if($drug_transaction->Destination==""){
+											$transaction_type.=" Pharmacy";
+										}
+										//If destination is not a facility,get the destination name
+										else if($drug_transaction->Destination < 10000){
+											$transaction_type.=" ".$drug_transaction->Destination_Object->name;
+										}
+										//If destination is a facility,get the destination name
+										else if($drug_transaction->Destination >= 10000){
+											$transaction_type.=" ".$drug_transaction->Facility_Object->name;
+										}
+									}
+									
+									//Stock coming in, received
+									else if($drug_transaction->Quantity>0){
+										
+										if($drug_transaction->Source=="" and $drug_transaction->Source!=""){
+											$transaction_type.=" ".$drug_transaction->Facility_Object->name;
+										}
+										//Source is not a facility
+										else if($drug_transaction->Source < 10000){
+											$transaction_type.=" ".$drug_transaction->Source_Object->name;
+										}
+										//Source is a facility
+										else if($drug_transaction->Source >= 10000){
+											$transaction_type.=" ".$drug_transaction->Facility_Object->name;
+										}
+									}
+								}	
+								//Pharmacy transaction
+								else if($drug_transaction->Source==$drug_transaction->Destination){
+									//Receive from
+									if($drug_transaction->Transaction_Type==1){
+										$transaction_type.=" Main Store";
+									}
+									//Dispensed to patients
+									else if($drug_transaction->Transaction_Type==5){
+										
+									}
+									else if($drug_transaction->Quantity==0){
+										$transaction_type.=" Patients";
+									}
+									
+								}
+								?>
+								<td><?php echo $transaction_type;  ?></td>
+								<td><?php echo  $drug_transaction->Batch_Number ?></td>
+								<td><?php echo  $drug_transaction->Expiry_date ?></td>
+								<td><?php echo  $drug_transaction->Drug_Object->Pack_Size ?></td>
+								<td><?php echo  $drug_transaction->Packs ?></td>
+								<td><?php echo  $drug_transaction->Quantity ?></td>
+								<td><?php echo  $drug_transaction->Unit_Cost ?></td>
+								<td><?php echo  $drug_transaction->Amount ?></td>
+							</tr>
+						<?php	
+						}
+						?>
+						
 						
 					</tbody>
 				</table>

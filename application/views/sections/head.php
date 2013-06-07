@@ -37,6 +37,9 @@
     <!-- Jquery UI -->
 	<script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script> 
 	
+	<!-- Sortable JS -->
+	<script type="text/javascript" src="<?php echo base_url().'Scripts/sorttable.js' ?>"></script>
+	
 	<!-- Datatables -->
 	<script type="text/javascript" src="<?php echo base_url().'Scripts/datatable/jquery.dataTables.min.js'?>"></script>
 	
