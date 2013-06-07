@@ -26,6 +26,11 @@ class Drug_Unit extends Doctrine_Record {
 		$drugunits = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
 		return $drugunits;
 	}
+	public function getUnit($unit_id){
+		$query = Doctrine_Query::create() -> select("*") -> from("drug_unit")->where("id='$unit_id'");
+		$drugunits = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $drugunits;
+	}
 
 	public function getTotalNumber() {
 		$query = Doctrine_Query::create() -> select("count(*) as Total_Units") -> from("Drug_Unit");

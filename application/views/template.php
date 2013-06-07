@@ -184,7 +184,14 @@ if($menus){
 </div>
 
 
- 	<div class="left-content" style="float: left">
+
+<div id="main_wrapper"> 
+	
+	<?php
+	if(!isset($hide_side_menu)){
+	?>
+	<div class="left-content" style="float: left">
+
 
 		<h3>Quick Links</h3>
 		<ul class="nav nav-list well">
@@ -229,6 +236,12 @@ if($menus){
 		<div class="notif" id="notification4"></div>
 		</div>
 	</div>
+	<?php	
+	}
+	?>
+ 	
+	
+	
 <?php $this -> load -> view($content_view); ?>
  
  

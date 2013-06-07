@@ -20,6 +20,7 @@
 		$("#pharmacy_table_wrapper").css("display","none");
 		$("#pharmacy_table").css("display","none");
 		
+		
 		$("#store_btn").click(function(){
 			$("#pharmacy_btn").removeClass();
 			$(this).addClass("active");
