@@ -38,10 +38,6 @@ if ($access_level == "facility_administrator") {
 		width:100%;
 		
 	}
-	.center-content{
-		width:78%;
-		margin:0px;
-	}
 	
 </style>
 
