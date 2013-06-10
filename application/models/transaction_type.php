@@ -11,7 +11,7 @@ class Transaction_Type extends Doctrine_Record {
 	}
 	
 	public function getAll() {
-		$query = Doctrine_Query::create() -> select("*") -> from("transaction_type") -> where("effect", "1");
+		$query = Doctrine_Query::create() -> select("*") -> from("transaction_type");
 		$transaction_types = $query -> execute();
 		return $transaction_types;
 	}

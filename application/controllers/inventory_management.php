@@ -136,7 +136,7 @@ class Inventory_Management extends MY_Controller {
             	//Append Generic name
             	if($x==1){
             		$row[]=strtoupper($aRow['generic_name']);
-					$row[]='<b style="color:green">'.$aRow['stock_level'].'</b>';
+					$row[]='<b style="color:green">'.number_format($aRow['stock_level']).'</b>';
             	}
 				else if($x==3){
 					$row[]=$aRow['supported_by'];
@@ -265,7 +265,7 @@ class Inventory_Management extends MY_Controller {
             	//Append Generic name
             	if($x==1){
             		$row[]=strtoupper($aRow['generic_name']);
-					$row[]='<b style="color:green">'.$aRow['stock_level'].'</b>';
+					$row[]='<b style="color:green">'.number_format($aRow['stock_level']).'</b>';
             	}
 				else if($x==3){
 					$row[]=$aRow['supported_by'];
@@ -346,10 +346,17 @@ class Inventory_Management extends MY_Controller {
 	}
 
 	public function stock_transaction($stock_type=1){
+		$data['hide_side_menu']=1;
 		$facility_code = $this -> session -> userdata('facility');
+		$user_id = $this -> session -> userdata('user_id');
 		$transaction_type=Transaction_Type::getAll();
 		$drug_source=Drug_Source::getAll();
 		$drug_destination=Drug_Destination::getAll();
+		$satelittes=facilities::getSatellites($facility_code);
+		$data['satelittes']=$satelittes;
+		$data['user_id']=$user_id;
+		$data['facility']=$facility_code;
+		$data['stock_type']=$stock_type;
 		$data['transaction_types']=$transaction_type;
 		$data['drug_sources']=$drug_source;
 		$data['drug_destinations']=$drug_destination;
@@ -358,32 +365,88 @@ class Inventory_Management extends MY_Controller {
 		
 	}
 	
-	public function mainstore_show(){
-		$data = array();
-		$data['content_view'] = "add_stock_v";
-		$this -> base_params($data);
+	public function getStockDrugs(){
+		$stock_type=$this->input ->post("stock_type");
+		$facility_code = $this -> session -> userdata('facility');
+		$drugs_sql=$this->db->query("SELECT DISTINCT(d.id),d.drug FROM drugcode d LEFT JOIN drug_stock_balance dsb on dsb.drug_id=d.id WHERE dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE()");
+		$drugs_array=$drugs_sql->result_array();
+		echo json_encode($drugs_array);
+		
 	}
-	public function pharmacy_show(){
-		$data = array();
-		$data['content_view'] = "add_stock_pharmacy_v";
-		$this -> base_params($data);
+	
+	public function getAllDrugs(){
+		$facility_code = $this -> session -> userdata('facility');
+		$drugs_sql=$this->db->query("SELECT DISTINCT(d.id),d.drug FROM drugcode d  WHERE d.enabled='1' ");
+		$drugs_array=$drugs_sql->result_array();
+		echo json_encode($drugs_array);
+		
 	}
+	
+	public function getBacthes(){
+		$facility_code = $this -> session -> userdata('facility');
+		$stock_type=$this->input ->post("stock_type");
+		$selected_drug=$this->input ->post("selected_drug");
+		$batch_sql=$this->db->query("SELECT DISTINCT d.pack_size,u.Name,dsb.batch_number FROM drugcode d LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id LEFT JOIN drug_unit u ON u.id=d.unit  WHERE d.enabled=1 AND dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' AND dsb.drug_id='$selected_drug' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE()");
+		$batches_array=$batch_sql->result_array();
+		echo json_encode($batches_array);
+	}
+	
+	public function getBacthDetails(){
+		$facility_code = $this -> session -> userdata('facility');
+		$stock_type=$this->input ->post("stock_type");
+		$selected_drug=$this->input ->post("selected_drug");
+		$batch_selected=$this->input ->post("batch_selected");
+		$batch_sql=$this->db->query("SELECT dsb.balance,dsb.expiry_date FROM drug_stock_balance dsb  WHERE dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' AND dsb.drug_id='$selected_drug' AND dsb.batch_number='$batch_selected' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE() LIMIT 1");
+		$batches_array=$batch_sql->result_array();
+		echo json_encode($batches_array);
+	}
+	
+	public function getDrugDetails(){
+		
+		$selected_drug=$this->input ->post("selected_drug");
+		$drug_details_sql=$this->db->query("SELECT d.pack_size,u.Name FROM drugcode d LEFT JOIN drug_unit u ON u.id=d.unit WHERE d.enabled=1 AND d.id='$selected_drug' ");
+		$drug_details_array=$drug_details_sql->result_array();
+		echo json_encode($drug_details_array);
+	}
+	
 
 	public function save() {
-		
+		$data=array();
 		$sql = $this->input->post("sql");
 		$queries = explode(";", $sql);
+		$count=count($queries);
+		$c=0;
 		foreach($queries as $query){
+			$c++;
 			if(strlen($query)>0){
 				$this->db->query($query);
-				$new_log = new Sync_Log();
-				$new_log -> logggedsql = $query;
-				$new_log -> machine_code ="1";
-				$new_log -> facility = $this -> session -> userdata('facility');
-				$new_log -> save();
+				//$new_log = new Sync_Log();
+				//$new_log -> logggedsql = $query;
+				//$new_log -> machine_code ="1";
+				//$new_log -> facility = $this -> session -> userdata('facility');
+				//$new_log -> save();
 			}
 			
 		}
+		
+		if($count==$c){
+			$data['msg']="success";
+		}
+		else if($c==0){
+			$data['msg']="all_failure";
+		}
+		else{
+			$data['msg']="some_failure";
+		}
+		echo json_encode($data);
+		
+	}
+	
+	public function test(){
+		$data['msg1']="success";
+		$data['msg2']="all_failure";
+		$data['msg3']="some_failure";
+		echo json_encode($data);
 	}
 	public function save_edit() {
 		$this->load->database();
