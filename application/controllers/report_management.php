@@ -1110,6 +1110,96 @@ class report_management extends MY_Controller {
 		}
 	}
 
+	public function getScheduledPatients($from = "2013-03-01", $to = "2013-03-31", $facility_code = "13050") {
+		//Variables
+		$visited = 0;
+		$not_visited = 0;
+		$visited_later = 0;
+		$row_string = "";
+		$status = "";
+
+		//Get all patients who have apppointments on the selected date range
+		$sql = "select p.patient_number_ccc as patient,UPPER(p.first_name) as first_name,UPPER(p.other_name) as other_name,p.phone,UPPER(p.last_name) as last_name,IF(p.gender=1,'Male','Female') as gender,ROUND(DATEDIFF('$to',p.dob)/360) as age,UPPER(p.physical) as physical,UPPER(p.alternate) as alternate ,pa.appointment from patient_appointment pa, patient p where pa.appointment between '$from' and '$to' and pa.patient = p.patient_number_ccc and p.facility_code='$facility_code' and pa.facility=p.facility_code group by patient";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$overall_total = sizeof($results);
+		if ($results) {
+			$row_string = "
+			<table id='patient_listing' width='1200px' >
+				<thead >
+					<tr>
+						<th> Patient No </th>
+						<th> Patient Name </th>
+						<th> Phone No /Alternate No</th>
+						<th> Phys. Address </th>
+						<th> Sex </th>
+						<th> Age </th>
+						<th> Last Regimen </th>
+						<th> Appointment Date </th>
+						<th> Visit Status</th>
+					</tr>
+				</thead>";
+
+			foreach ($results as $result) {
+				//Get Last Regimen
+				$patient_id = $result['patient'];
+				$first_name = $result['first_name'];
+				$other_name = $result['other_name'];
+				$last_name = $result['last_name'];
+				$phone = $result['phone'];
+				if (!$phone) {
+					$phone = $result['alternate'];
+				}
+				$address = $result['physical'];
+				$gender = $result['gender'];
+				$age = $result['age'];
+				$appointment = date('d-M-Y', strtotime($result['appointment']));
+
+				$sql = "select pv.patient_id as patient,r.regimen_desc from patient_visit pv,regimen r where pv.regimen=r.id and pv.patient_id='$patient_id' and pv.facility='$facility_code' order by pv.id desc limit 1";
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				$last_regimen = $results[0]['regimen_desc'];
+				$sql = "select * from patient_visit pv,patient p where pv.dispensing_date between '$from' and '$to' and p.patient_number_ccc=pv.patient_id and pv.patient_id='$patient_id' and pv.facility='$facility_code' and pv.facility=p.facility_code";
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				if ($results) {
+					//If Patient did Visit on appointment
+					$status = "<span style='color:green'>Yes</span>";
+					$visited++;
+				} else {
+					//If Patient did not Visit(Check if patient came later)
+					$sql = "select ROUND(DATEDIFF(dispensing_date,'$to')) as Late_Days from patient_visit pv where pv.patient_id = '$patient_id' and pv.dispensing_date >'$to' and pv.facility='$facility_code' order by pv.dispensing_date asc limit 1";
+					$query = $this -> db -> query($sql);
+					$results = $query -> result_array();
+					if ($results) {
+						$visited_later++;
+						$lateby = $results[0]['Late_Days'];
+						$status = "<span style='color:blue'>LateBy($lateby Days)</span>";
+					} else {
+						$not_visited++;
+						$status = "<span style='color:red'>Not Visited</span>";
+					}
+				}
+				$row_string .= "<tr><td>$patient_id</td><td width='300' style='text-align:left;'>$first_name $other_name $last_name</td><td>$phone</td><td>$address</td><td>$gender</td><td>$age</td><td >$last_regimen</td><td>$appointment</td><td width='100px'>$status</td></tr>";
+
+			}
+			$row_string .= "</table>";
+			$data['from'] = date('d-M-Y', strtotime($from));
+			$data['to'] = date('d-M-Y', strtotime($to));
+			$data['dyn_table'] = $row_string;
+			$data['visited_later'] = $visited_later;
+			$data['not_visited'] = $not_visited;
+			$data['visited'] = $visited;
+			$data['all_count'] = $overall_total;
+			$this -> load -> view('reports/patients_scheduled_v', $data);
+		}
+	}
+
+	public function getPatientMissingAppointments($from = "2013-03-01", $to = "2013-03-31", $facility_code = "13050") {
+		$sql="";
+
+	}
+
 	public function base_params($data) {
 		$data['title'] = "Reports";
 		$data['banner_text'] = "Facility Reports";
