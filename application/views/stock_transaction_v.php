@@ -7,7 +7,7 @@
 	}
 	.center-content{
 		width:99%;
-		padding-left: 1%;
+		padding: 6.5% 1% 1% 1%;
 		background: #D1EAF0;
 		margin:0 auto;
 	}
@@ -28,6 +28,9 @@
 		float:left;
 		width:17%;
 	}
+	#transaction_type_details th{
+		text-align:left;
+	}
 	#drug_details{
 		width:82%;
 		float:left;
@@ -39,7 +42,10 @@
 		
 		text-align:center;
 	}
-	
+	#sub_title{
+		margin-bottom:15px;
+		font-size:16px;
+	}
 </style>
 
 
@@ -497,10 +503,14 @@
 					
 				}
 				
-				sql_queries+=balance_sql;;
+				sql_queries+=balance_sql;
+				
 				//Done looping, post the queries to the server
 				if((i+1)==drugs_count){
-					var _url="<?php echo base_url().'inventory_management/save'; ?>";
+					$("#sql").val(sql_queries);
+					$("#stock_form").submit();
+					/*
+					 * 
 					var request=$.ajax({
 				     url: _url,
 				     type: 'post',
@@ -524,6 +534,7 @@
 				    request.fail(function(jqXHR, textStatus) {
 					  alert( "There was an error while saving your data! : " + textStatus );
 					});
+					 */
 				}
 				
 				
@@ -649,11 +660,15 @@
 		<div>
 			<span id="msg_server"></span>
 		</div>
-		<form id="stock_form" method="post" >
-			
+		<form id="stock_form" method="post" action="<?php echo base_url().'inventory_management/save' ?>">
+			<textarea name="sql" id="sql"></textarea>
 		<div class="center-content" id="stock_div">
-		
+			<div id="sub_title" >
+				<a href="<?php  echo base_url().'inventory_management ' ?>">Inventory</a> <i class=" icon-chevron-right"></i>  <?php echo $store ?> 
+				<hr size="1">
+			</div>
 			<div id="transaction_type_details">
+				<h3>Transaction details</h3>
 				<table>
 					<tr><th>Transaction Date</th></tr>
 					<tr><td><input type="text" name="transaction_date" id="transaction_date" class="input-large" /></td></tr>
@@ -676,8 +691,13 @@
 					<tr class="t_source"><th>Source</th></tr>
 					<tr class="t_source"><td>
 						<select name="source" id="select_source" class="input-large">
+							<option value="0">--Select Source --</option>
 							<?php
 							foreach ($drug_sources as $drug_source) {
+								//If stock type is main store, don't display main store as source
+								if($stock_type==1 && $drug_source['id']==1){
+									continue;
+								}
 							?>
 							<option value="<?php echo $drug_source['id'] ?>"><?php echo $drug_source['Name'] ?></option>
 							<?php
@@ -689,6 +709,7 @@
 					<tr class="t_destination"><th>Destination</th></tr>
 					<tr class="t_destination"><td>
 							<select name="destination" id="select_destination" class="input-large">
+								<option value="0">--Select Destination --</option>
 								<?php
 								//Add satelittes
 								foreach ($satelittes as $satelitte) {
@@ -698,6 +719,11 @@
 								}
 								
 								foreach ($drug_destinations as $drug_destination) {
+									
+									//Not picking outpatien pharmacy if stock type is pharmacy
+									if($stock_type==2 && $drug_destination['id']==1){
+										continue;
+									}
 									//Outpatient pharmacy
 									if($drug_destination['id']==1){
 									?>
@@ -721,6 +747,7 @@
 				</table>
 			</div>
 			<div id="drug_details">
+				<h3>Drug details</h3>
 				<table border="0" class="table table-bordered" id="drugs_table">
 					<thead>
 						<tr>
