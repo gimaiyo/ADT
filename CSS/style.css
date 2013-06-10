@@ -211,7 +211,7 @@ body {
 .banner_text {
 	font-weight: 100;
 	letter-spacing: -1px;
-	margin: 1.7em 0 0 0;
+	margin: 1em 0 0 0;
 	font-size: 28px;
 	color: #000;
 	width: 500px;
@@ -603,7 +603,7 @@ tr th {
 	padding: 11% 1% 1% 1%;
 	width: 75%;
 	margin: 0 0 0 1.5%;
-	margin-bottom:5%;
+	padding-bottom:8%;
 	display: inline-block;
 }
 .right-content {

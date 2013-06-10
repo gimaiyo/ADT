@@ -199,8 +199,8 @@ if($menus){
 			if($user_is_pharmacist){
 				?>
 				<li><a href="<?php echo base_url().'patient_management/addpatient_show' ?>">Add Patients</a></li>
-			    <li><a href="<?php echo base_url().'inventory_management/mainstore_show' ?>">Add Main Store Inventory</a></li>
-			    <li><a href="<?php echo base_url().'inventory_management/pharmacy_show' ?>">Add Pharmacy Inventory</a></li>
+			    <li><a href="<?php echo base_url().'inventory_management/stock_transaction/1' ?>">Receive/Issue - Main Store</a></li>
+			    <li><a href="<?php echo base_url().'inventory_management/stock_transaction/2' ?>">Receive/Issue - Pharmacy</a></li>
 			    <li><a href="<?php echo base_url().'user_management/index' ?>">Add Facility Users</a></li>
 
 				<li class="divider"></li>

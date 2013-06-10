@@ -33,17 +33,6 @@ if ($access_level == "facility_administrator") {
 }
 ?>
 
-<style>
-	.dataTables_wrapper{
-		width:100%;
-		
-	}
-	.center-content{
-		width:78%;
-		margin:0px;
-	}
-	
-</style>
 
 <?php 
 //COunt number of patients

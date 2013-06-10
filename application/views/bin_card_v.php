@@ -143,11 +143,11 @@
 										}
 										//If destination is not a facility,get the destination name
 										else if($drug_transaction->Destination < 10000){
-											$transaction_type.=" ".$drug_transaction->Destination_Object->name;
+											$transaction_type.=" ".$drug_transaction->Destination_Object->Name;
 										}
 										//If destination is a facility,get the destination name
 										else if($drug_transaction->Destination >= 10000){
-											$transaction_type.=" ".$drug_transaction->Facility_Object->name;
+											$transaction_type.=" ".$drug_transaction->Facility_Object->Name;
 										}
 									}
 									
@@ -155,15 +155,15 @@
 									else if($drug_transaction->Quantity>0){
 										
 										if($drug_transaction->Source=="" and $drug_transaction->Source!=""){
-											$transaction_type.=" ".$drug_transaction->Facility_Object->name;
+											$transaction_type.=" ".$drug_transaction->Facility_Object->Name;
 										}
 										//Source is not a facility
 										else if($drug_transaction->Source < 10000){
-											$transaction_type.=" ".$drug_transaction->Source_Object->name;
+											$transaction_type.=" ".$drug_transaction->Source_Object->Name;
 										}
 										//Source is a facility
 										else if($drug_transaction->Source >= 10000){
-											$transaction_type.=" ".$drug_transaction->Facility_Object->name;
+											$transaction_type.=" ".$drug_transaction->Facility_Object->Name;
 										}
 									}
 								}	

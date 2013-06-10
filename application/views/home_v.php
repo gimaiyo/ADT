@@ -396,6 +396,13 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 .dataTables_wrapper{
 	width:100%;
 }
+
+#stock_level{
+	font-size:12px;
+}
+.ui-widget-header{
+	display:none;
+}
 </style>
 <div id="environment_variables" title="System Initialization">
 	<h1 class="banner_text" style="width:auto; font-size: 20px;">Environment Variables</h1>
