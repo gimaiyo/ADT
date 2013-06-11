@@ -626,17 +626,7 @@
 					<span style="display: block; font-size: 12px;">ARV Drugs Supply Chain Management Tool</span>
 					<span style="display: block; font-size: 14px;" id="facility_name" ></span>
 				</div>
-				<div id="top_menu">
-					<a href="home_controller" class="top_menu_link  first_link">Home </a>
-					<a href="patient_management.html" class="top_menu_link">Patients<span class="alert red_alert">off</span></a>
-					<a href="inventory.html" class="top_menu_link top_menu_active">Inventory<span class="alert red_alert">off</span></a>
-					<a href="reports.html" class="top_menu_link">Reports<span class="alert red_alert">off</span></a>
-					<a href="settings_management" class="top_menu_link">Settings<span class="alert green_alert">on</span></a>
-					<a href="order_management" class="top_menu_link">Order<span class="alert green_alert">on</span></a>
-					<div id="my_profile_link_container" style="display: inline">
-						<a ref="#" class="top_menu_link" id="my_profile_link"></a>
-					</div>
-				</div>
+				
 			</div>
 			<div id="inner_wrapper">
 				<div id="main_wrapper">
@@ -651,7 +641,7 @@
   							<div class="row-fluid">
 								<div class="span2">
 									<label> <strong class="label">Transaction Date</strong><br>
-										<input type="text"name="transaction_date" id="transaction_date" class=" input-large required="required" style="color:green;">
+										<input type="text"name="transaction_date" id="transaction_date" class=" input-large required=" required" style="color:green;">
 									</label>
 									<label> <strong class="label">Transaction Type</strong><br>
 										<select type="text" name="transaction_type" id="transaction_type" class="input-large" >

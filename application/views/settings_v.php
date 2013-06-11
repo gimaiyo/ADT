@@ -3,7 +3,7 @@ if(!isset($quick_link)){
 $quick_link = null;
 }  
 ?>
-
+<div class="center-content">
 <div id="sub_menu">
 	<a href="<?php echo site_url("regimen_management");?>" class="top_menu_link sub_menu_link first_link <?php if($quick_link == "regimen"){echo "top_menu_active";}?>">Regimens</a>
 	<a href="<?php echo site_url("pipeline_management");?>" class="top_menu_link sub_menu_link first_link <?php if($quick_link == "pipeline"){echo "top_menu_active";}?>">Pipeline Upload</a>
@@ -35,4 +35,5 @@ if($access_level == "system_administrator"){?>
 <?php
 $this->load->view($settings_view);
 ?>
+</div>
 </div>

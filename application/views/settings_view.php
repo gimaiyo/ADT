@@ -4,6 +4,7 @@ if (!isset($quick_link)) {
 }
 ?>
 
+<div class="center-content"
 <div class="container-fluid">
 
 	<div class="span5 well" >
@@ -146,4 +147,5 @@ if (!isset($quick_link)) {
 
 		</div>
 	</div>
+</div>
 </div>

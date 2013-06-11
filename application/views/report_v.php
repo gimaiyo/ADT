@@ -27,21 +27,7 @@ if ($access_level == "nascop_staff") {
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>My Reports</title>
-		<link rel="SHORTCUT ICON" href="Images/favicon.ico">
-		<link href="<?php echo base_url().'CSS/style.css' ?>" type="text/css" rel="stylesheet"/>
-		<link href="<?php echo base_url().'CSS/offline_css.css' ?>" type="text/css" rel="stylesheet"/>
-		<link href="<?php echo base_url().'CSS/jquery-ui.css' ?>" type="text/css" rel="stylesheet"/>
-		<link href="<?php echo base_url().'CSS/validator.css' ?>" type="text/css" rel="stylesheet"/>
 		
-		<link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap.min.css' ?>" rel="stylesheet" media="screen">
-		<link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap-responsive.min.css' ?>" rel="stylesheet" media="screen">
-		
-		<script type="text/javascript" src="<?php echo base_url().'Scripts/offlineData.js' ?>"></script>
-		<script type="text/javascript" src="<?php echo base_url().'Scripts/jquery.js' ?>"></script>
-		<script type="text/javascript" src="<?php echo base_url().'Scripts/jquery-ui.js' ?>"></script>
-		<script type="text/javascript" src="<?php echo base_url().'Scripts/offline_database.js' ?>"></script>
-		<script type="text/javascript" src="<?php echo base_url().'Scripts/validator.js' ?>"></script>
-		<script type="text/javascript" src="<?php echo base_url().'Scripts/validationEngine-en.js' ?>"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
 				initDatabase();
@@ -184,118 +170,13 @@ if ($access_level == "nascop_staff") {
 
 		</script>
 		<style type="text/css">
-			#reports_container {
-				width: 90%;
-				margin: 0 auto;
-				font-size: 14px;
-			}
-			.report {
-				display: block;
-				height: auto;
-				line-height: 30px;
-				background-color: #F1F1F1;
-				margin: 2px;
-				font-size: 12px;
-				text-decoration: none;
-				font-weight: bold;
-				letter-spacing: 1px;
-				color: #036;
-				padding: 2px;
-			}
-			.report:hover {
-				background-color: #E5E5E5;
-			}
-			.report_category {
-				border: 2px solid #F1F1F1;
-				width: 45%;
-				float: left;
-				margin: 5px;
-				min-height: 200px;
-				padding: 5px;
-			}
-			.category_title {
-				letter-spacing: 2px;
-				font-weight: bold;
-				padding: 2px;
-			}
-			.active_report {
-				color: green;
-				font-size: 14px;
-			}
-			.reports_panel {
-				overflow: hidden;
-			}
-			#facility_name {
-				color: green;
-				margin-top: 5px;
-				font-weight: bold;
-			}
-			a:hover{
-				text-decoration:none;
-			}
-			legend{
-				font-size:20px;
-				margin-top:20px;
-			}
-			.title{
-				font-size:22px;
-				color:rgb(0, 197, 0);
-			}
+			
 		</style>
 	</head>
 	<body>
 		<div id="wrapperd">
-			<div id="top-panel" style="margin:0px;">
-				<div class="logo"></div>
-				<div class="network">
-					Network Status: <span id="status" class="offline">Offline</span>
-					<p>
-						Out-of-Sync Records: <span id="local-count"></span>
-					</p>
-				</div>
-				<div id="system_title">
-					<span style="display: block; font-weight: bold; font-size: 14px; margin:2px;">Ministry of Health</span>
-					<span style="display: block; font-size: 12px;">ARV Drugs Supply Chain Management Tool</span>
-					<span style="display: block; font-size: 14px;" id="facility_name" ></span>
-				</div>
-				<div class="banner_text" style="font-size: 22px;"><?php echo $banner_text;?></div>
-				<div id="top_menu">
-					<?php
-				//Code to loop through all the menus available to this user!
-				//Fet the current domain
-				$menus = $this -> session -> userdata('menu_items');
-				$current = $this -> router -> class;
-				$counter = 0;
-				?>
-				 	<a href="<?php echo site_url('home_controller');?>" class="top_menu_link  first_link <?php
-					if ($current == "home_controller") {echo " top_menu_active ";
-					}
-				?>">Home </a>
-				<?php
-				foreach($menus as $menu){?>
-					<a href = "<?php echo site_url($menu['url']);?>" class="top_menu_link <?php
-					if ($current == $menu['url'] || $menu['url'] == $link) {echo " top_menu_active ";
-					}
-				?>"><?php echo $menu['text']; if($menu['offline'] == "1"){?>
-					 <span class="alert red_alert">off</span></a>
-					
-				<?php } else{?>
-					 <span class="alert green_alert">on</span></a>
-				<?php }?>
-
-
-
-				<?php
-				$counter++;
-				}
-				?>
-					<div id="my_profile_link_container" style="display: inline">
-						<a ref="#" class="top_menu_link" id="my_profile_link"></a>
-					</div>
-				</div>
-			</div>
-			<div id="inner_wrapperre">
-				<div id="main_wrapperre">
+			
+				<div class="center-content">
 					<div id="reports_containerdfg">
 						<!-- Select report type -->
 						
@@ -316,7 +197,7 @@ if ($access_level == "nascop_staff") {
 						
 						<div class="reports_panel">
 							<div class="report_category">
-								<span class="category_title">Standard Reports</span>
+								<h3>Standard Reports</h3>
 								<a href="#" id="patients_enrolled_in_period" class="report donor_date_range_report active_report">Number of Patients Enrolled in Period</a>
 								<a href="#" id="patients_enrolled_in_art" class="report donor_date_range_report active_report">Number of Patients Started on ART in the Period</a>
 								<a href="#" id="graph_patients_enrolled_in_year" class="report active_report annual_report">Graph of Number of Patients Enrolled Per Month in a Given Year</a>
@@ -326,7 +207,7 @@ if ($access_level == "nascop_staff") {
 
 							</div>
 							<div class="report_category">
-								<span class="category_title">Visiting Patients</span>
+								<h3>Visiting Patients</h3>
 								<a href="#" id="patients_scheduled_to_visit" class="report active_report single_date_report">List of Patients Scheduled to Visit</a>
 								<a href="#" id="patients_started_on_date" class="report active_report single_date_report">List of Patients Started (on a Particular Date)</a>
 								<a href="#" id="patients_visitied_for_refill" class="report active_report single_date_report">List of Patients Visited for Refill</a>
@@ -337,14 +218,14 @@ if ($access_level == "nascop_staff") {
 						</div>
 						<div class="reports_panel">
 							<div class="report_category">
-								<span class="category_title">Early Warning Indicators</span>
+								<h3>Early Warning Indicators</h3>
 								<a href="#" id="patients_who_changed_regimen" class="report active_report date_range_report">Active Patients who Have Changed Regimens</a>
 								<a href="#" id="patients_starting" class="report active_report date_range_report">List of Patients Starting (By Regimen)</a>
 								<a href="#" id="early_warning_indicators" class="report active_report date_range_report">HIV Early Warning Indicators</a>
 								<a href="#" id="service_statistics" class="report active_report single_date_report">Service Statistics (By Regimen)</a>
 							</div>
 							<div class="report_category">
-								<span class="category_title">Drug Inventory</span>
+								<h3>Drug Inventory</h3>
 								<a href="#" id="drug_consumption" class="report active_report annual_report">Drug Consumption Report</a>
 								<a href="#" id="drug_stock_on_hand" class="report active_report no_filter">Drug Stock on Hand Report</a>
 								<a href="#" id="commodity_summary" class="report active_report date_range_report">Facility Summary Commodity Report</a>
@@ -401,15 +282,9 @@ if ($access_level == "nascop_staff") {
 							Generate Report
 						</button>
 					</div>
-				</div>
+			
 				<!--End Wrapper div-->
 			</div>
-			<div id="bottom_ribbon" style="top:20px; width:90%;">
-				<div id="footer">
-					<div id="footer_text">
-						Government of Kenya &copy; <span id="theyear" ></span>. All Rights Reserved
-					</div>
-				</div>
-			</div>
+			
 	</body>
 </html>
