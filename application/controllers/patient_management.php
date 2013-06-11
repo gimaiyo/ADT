@@ -156,7 +156,7 @@ class Patient_Management extends MY_Controller {
                 $row[] = strtoupper($name);
             }
 			$id=$aRow['id'];
-    		$row[]='<a href="">Detail</a> | <a href="'.base_url().'patient_management/edit/'.$id.'">Edit</a> | <a href="">Disable</a>';
+    		$row[]='<div class="btn-group"><button class="btn"><a href="">Detail</a></button> <button class="btn"> <a href="'.base_url().'patient_management/edit/'.$id.'">Edit</a></button><button class="btn btn-danger"> <a href="">Disable</a></button></div>';
             $output['aaData'][] = $row;
         }
         echo json_encode($output);

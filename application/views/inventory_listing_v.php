@@ -117,7 +117,7 @@ if ($access_level == "facility_administrator") {
 		<table id="store_table" class="table table-bordered table-striped listing_table" style="font-size:0.8em">
 			<thead>
 				<tr>
-					<th style="min-width: 280px">Commodity</th><th>Generic Name</th><th>QTY/SOH</th><th>Unit</th><th>Pack Size</th><th>Supporter</th><th>Dose</th><th style="width: 140px">Action</th>
+					<th style="min-width: 280px">Commodity</th><th>Generic Name</th><th>QTY/SOH</th><th>Unit</th><th>Pack Size</th><th>Supporter</th><th>Dose</th><th style="width: 250px">Action</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -126,7 +126,7 @@ if ($access_level == "facility_administrator") {
 		<table id="pharmacy_table" class="table table-bordered table-striped listing_table" style="font-size:0.8em">
 			<thead>
 				<tr>
-					<th style="min-width: 280px">Commodity</th><th>Generic Name</th><th>QTY/SOH</th><th>Unit</th><th>Pack Size</th><th>Supporter</th><th>Dose</th><th style="width: 140px">Action</th>
+					<th style="min-width: 280px">Commodity</th><th>Generic Name</th><th>QTY/SOH</th><th>Unit</th><th>Pack Size</th><th>Supporter</th><th>Dose</th><th style="width: 250px">Action</th>
 				</tr>
 			</thead>
 			<tbody>

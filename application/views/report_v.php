@@ -175,14 +175,7 @@ if ($access_level == "nascop_staff") {
 	</head>
 	<body>
 		<div id="wrapperd">
-			<div id="top-panel" style="margin:0px;">
-				<div class="logo"></div>
-				
 			
-				<div class="banner_text" style="font-size: 22px;"><?php echo $banner_text;?></div>
-				
-			</div>
-		
 				<div class="center-content">
 					<div id="reports_containerdfg">
 						<!-- Select report type -->

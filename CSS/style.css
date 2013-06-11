@@ -1307,7 +1307,13 @@ legend {
 	font-size: 18px;
 }
 
+/**
+ * 	Customizing Bootstrap
+ */
 .badge{
 	color:white;
 	margin-left:5%;
+}
+.btn-danger a {
+	color:white;
 }
