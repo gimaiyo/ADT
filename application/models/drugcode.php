@@ -93,6 +93,8 @@ class Drugcode extends Doctrine_Record {
 		$drugs = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
 		return $drugs;
 	}
+	
+	
 
 	public function deleteBrand($id){
 		$query = Doctrine_Query::create()->delete('brand b')->where("b.id ='$id'");
