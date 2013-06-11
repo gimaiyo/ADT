@@ -1117,12 +1117,15 @@ class report_management extends MY_Controller {
 		$visited_later = 0;
 		$row_string = "";
 		$status = "";
+		$overall_total = 0;
+		$today = date('Y-m-d');
+		$late_by = "";
 
 		//Get all patients who have apppointments on the selected date range
-		$sql = "select p.patient_number_ccc as patient,UPPER(p.first_name) as first_name,UPPER(p.other_name) as other_name,p.phone,UPPER(p.last_name) as last_name,IF(p.gender=1,'Male','Female') as gender,ROUND(DATEDIFF('$to',p.dob)/360) as age,UPPER(p.physical) as physical,UPPER(p.alternate) as alternate ,pa.appointment from patient_appointment pa, patient p where pa.appointment between '$from' and '$to' and pa.patient = p.patient_number_ccc and p.facility_code='$facility_code' and pa.facility=p.facility_code group by patient";
+		$sql = "select patient,appointment from patient_appointment where appointment between '$from' and '$to' and facility='$facility_code' group by patient,appointment";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		$overall_total = sizeof($results);
+
 		if ($results) {
 			$row_string = "
 			<table id='patient_listing' width='1200px' >
@@ -1141,47 +1144,54 @@ class report_management extends MY_Controller {
 				</thead>";
 
 			foreach ($results as $result) {
-				//Get Last Regimen
-				$patient_id = $result['patient'];
-				$first_name = $result['first_name'];
-				$other_name = $result['other_name'];
-				$last_name = $result['last_name'];
-				$phone = $result['phone'];
-				if (!$phone) {
-					$phone = $result['alternate'];
-				}
-				$address = $result['physical'];
-				$gender = $result['gender'];
-				$age = $result['age'];
-				$appointment = date('d-M-Y', strtotime($result['appointment']));
-
-				$sql = "select pv.patient_id as patient,r.regimen_desc from patient_visit pv,regimen r where pv.regimen=r.id and pv.patient_id='$patient_id' and pv.facility='$facility_code' order by pv.id desc limit 1";
-				$query = $this -> db -> query($sql);
-				$results = $query -> result_array();
-				$last_regimen = $results[0]['regimen_desc'];
-				$sql = "select * from patient_visit pv,patient p where pv.dispensing_date between '$from' and '$to' and p.patient_number_ccc=pv.patient_id and pv.patient_id='$patient_id' and pv.facility='$facility_code' and pv.facility=p.facility_code";
+				$patient = $result['patient'];
+				$appointment = $result['appointment'];
+				//Check if Patient visited on set appointment
+				$sql = "select * from patient_visit where patient_id='$patient' and dispensing_date='$appointment' and facility='$facility_code'";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				if ($results) {
-					//If Patient did Visit on appointment
-					$status = "<span style='color:green'>Yes</span>";
+					//Visited
 					$visited++;
-				} else {
-					//If Patient did not Visit(Check if patient came later)
-					$sql = "select ROUND(DATEDIFF(dispensing_date,'$to')) as Late_Days from patient_visit pv where pv.patient_id = '$patient_id' and pv.dispensing_date >'$to' and pv.facility='$facility_code' order by pv.dispensing_date asc limit 1";
+					$status = "<span style='color:green;'>Yes</span>";
+				} else if (!$results) {
+					//Check if visited later or not
+					$sql = "select DATEDIFF(dispensing_date,'$appointment')as late_by from patient_visit where patient_id='$patient' and dispensing_date>'$appointment' and facility='$facility_code' ORDER BY dispensing_date asc LIMIT 1";
 					$query = $this -> db -> query($sql);
 					$results = $query -> result_array();
 					if ($results) {
+						//Visited Later
 						$visited_later++;
-						$lateby = $results[0]['Late_Days'];
-						$status = "<span style='color:blue'>LateBy($lateby Days)</span>";
+						$late_by = $results[0]['late_by'];
+						$status = "<span style='color:blue;'>Late by $late_by Day(s)</span>";
 					} else {
+						//Not Visited
 						$not_visited++;
-						$status = "<span style='color:red'>Not Visited</span>";
+						$status = "<span style='color:red;'>Not Visited</span>";
 					}
 				}
-				$row_string .= "<tr><td>$patient_id</td><td width='300' style='text-align:left;'>$first_name $other_name $last_name</td><td>$phone</td><td>$address</td><td>$gender</td><td>$age</td><td >$last_regimen</td><td>$appointment</td><td width='100px'>$status</td></tr>";
-
+				$sql = "select patient_number_ccc as art_no,UPPER(first_name)as first_name,UPPER(other_name)as other_name,UPPER(last_name)as last_name, IF(gender=1,'Male','Female')as gender,UPPER(physical) as physical,phone,alternate,ROUND(DATEDIFF('$today',dob)/360) as age,r.regimen_desc as last_regimen from patient,regimen r where patient_number_ccc='$patient' and current_regimen=r.id and facility_code='$facility_code'";
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				if ($results) {
+					foreach ($results as $result) {
+						$patient_id = $result['art_no'];
+						$first_name = $result['first_name'];
+						$other_name = $result['other_name'];
+						$last_name = $result['last_name'];
+						$phone = $result['phone'];
+						if (!$phone) {
+							$phone = $result['alternate'];
+						}
+						$address = $result['physical'];
+						$gender = $result['gender'];
+						$age = $result['age'];
+						$last_regimen = $result['last_regimen'];
+						$appointment = date('d-M-Y', strtotime($appointment));
+					}
+					$row_string .= "<tr><td>$patient_id</td><td width='300' style='text-align:left;'>$first_name $other_name $last_name</td><td>$phone</td><td>$address</td><td>$gender</td><td>$age</td><td >$last_regimen</td><td>$appointment</td><td width='200px'>$status</td></tr>";
+					$overall_total++;
+				}
 			}
 			$row_string .= "</table>";
 			$data['from'] = date('d-M-Y', strtotime($from));
@@ -1196,7 +1206,96 @@ class report_management extends MY_Controller {
 	}
 
 	public function getPatientMissingAppointments($from = "2013-03-01", $to = "2013-03-31", $facility_code = "13050") {
-		$sql="";
+		//Variables
+		$today = date('Y-m-d');
+		$row_string = "";
+		$overall_total = 0;
+
+		$sql = "select patient,appointment from patient_appointment where appointment between '$from' and '$to' and facility='$facility_code' group by patient,appointment";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			$row_string .= "<table id='patient_listing' width='1200px'>
+			<tr>
+				<th> ART ID </th>
+				<th> Patient Name</th>
+				<th> Sex </th>
+				<th> Contacts/Address </th>
+				<th> Appointment Date </th>
+				<th> Late by (days)</th>
+			</tr>";
+			foreach ($results as $result) {
+				$patient = $result['patient'];
+				$appointment = $result['appointment'];
+				//Check if Patient visited on set appointment
+				$sql = "select * from patient_visit where patient_id='$patient' and dispensing_date='$appointment' and facility='$facility_code'";				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				if (!$results) {
+					$sql = "select patient_number_ccc as art_no,UPPER(first_name)as first_name,UPPER(other_name)as other_name,UPPER(last_name)as last_name, IF(gender=1,'Male','Female')as gender,UPPER(physical) as physical,DATEDIFF('$today','$appointment') as days_late from patient where patient_number_ccc='$patient' and facility_code='$facility_code'";
+					$query = $this -> db -> query($sql);
+					$results = $query -> result_array();
+					if ($results) {
+						//select patient info
+						foreach ($results as $result) {
+							$patient_no = $result['art_no'];
+							$patient_name = $result['first_name'] . " " . $result['other_name'] . " " . $result['last_name'];
+							$gender = $result['gender'];
+							$address = $result['physical'];
+							$appointment = date('d-M-Y', strtotime($appointment));
+							$days_late_by = $result['days_late'];
+							$row_string .= "<tr><td>$patient_no</td><td>$patient_name</td><td>$gender</td><td>$address</td><td>$appointment</td><td>$days_late_by</td></tr>";
+						}
+						$overall_total++;
+					}
+				}
+			}
+			$row_string .= "</table>";
+			$data['from'] = date('d-M-Y', strtotime($from));
+			$data['to'] = date('d-M-Y', strtotime($to));
+			$data['dyn_table'] = $row_string;
+			$data['all_count'] = $overall_total;
+			$this -> load -> view('reports/patients_missing_appointments_v', $data);
+		}
+	}
+
+	public function getPatientsStartedonDate($from = "2013-03-01", $to = "2013-03-31", $facility_code = "13050") {
+		//Variables
+		$overall_total = 0;
+
+		$sql = "SELECT p.patient_number_ccc as art_no,UPPER(p.first_name) as first_name,UPPER(p.last_name) as last_name,UPPER(p.other_name)as other_name, p.dob, IF(p.gender=1,'Male','Female') as gender, p.weight, r.regimen_desc,r.regimen_code,p.start_regimen_date, t.name AS service_type, s.name AS supported_by from patient p,regimen r,regimen_service_type t,supporter s where p.start_regimen_date between '$from' and '$to' and p.facility_code='$facility_code' and p.start_regimen =r.id and p.service=t.id and p.supported_by =s.id group by p.patient_number_ccc";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			$row_string = "<table id='patient_listing' width='1200px'>
+				<tr>
+					<th> Patient No </th>
+					<th> Type of Service </th>
+					<th> Client Support </th>
+					<th> Patient Name </th>
+					<th> Sex</th>
+					<th> Start Regimen Date </th>
+					<th> Regimen </th>
+					<th> Current Weight </th>
+				</tr>";
+			foreach ($results as $result) {
+				$patient_no = $result['art_no'];
+				$service_type = $result['service_type'];
+				$supported_by = $result['supported_by'];
+				$patient_name = $result['first_name'] . " " . $result['other_name'] . " " . $result['last_name'];
+				$gender = $result['gender'];
+				$start_regimen_date = date('d-M-Y', strtotime($result['start_regimen_date']));
+				$regiemn_desc = "<b>".$result['regimen_code']."</b>|".$result['regimen_desc'];
+				$weight = number_format($result['weight'], 2);
+				$row_string .= "<tr><td>$patient_no</td><td>$service_type</td><td>$supported_by</td><td>$patient_name</td><td>$gender</td><td>$start_regimen_date</td><td>$regiemn_desc</td><td>$weight</td></tr>";
+				$overall_total++;
+			}
+			$row_string .= "</table>";
+			$data['from'] = date('d-M-Y', strtotime($from));
+			$data['to'] = date('d-M-Y', strtotime($to));
+			$data['dyn_table'] = $row_string;
+			$data['all_count'] = $overall_total;
+			$this -> load -> view('reports/patients_started_on_date_v', $data);
+		}
 
 	}
 
