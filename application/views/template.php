@@ -39,15 +39,11 @@ if ($access_level == "system_administrator") {
 $this -> load -> view('sections/head');
 if ($user_is_pharmacist || $user_is_facility_administrator || $user_is_administrator) {
 	echo "<script src=\"" . base_url() . "Scripts/offline_database.js\" type=\"text/javascript\"></script>";
-	
-	
+
 }
 /**
  * Load View with Head Section
  */
-
-
-
 
 if (isset($script_urls)) {
 	foreach ($script_urls as $script_url) {
@@ -71,29 +67,25 @@ if (isset($styles)) {
 ?> 
 
 <script>
-$(document).ready(function() {
+	$(document).ready(function() {
 	<?php 
 			if($user_is_pharmacist){
 				?>
 				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
-				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
-			
-				
-				
+					$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
+
 				<?php
-			}
-			
-			if($user_is_facility_administrator){
+				}
+
+				if($user_is_facility_administrator){
 				?>
 				
 				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
-				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
-				
+					$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
+
 				<?php
-			}
-				?>
-				});
-</script>
+				}
+				?>});</script>
       
 
 </head>
@@ -110,7 +102,7 @@ $(document).ready(function() {
 				<div id="system_title">
 
 					<?php
-	$this -> load -> view('sections/banner');
+					$this -> load -> view('sections/banner');
 					?>
 				
 						
@@ -228,16 +220,19 @@ if($menus){
 			
 		</ul>
 		<h3>Notifications</h3>
-		<div class="well">
-		<div class="notif" id="notification1"></div>
+		<ul class="nav nav-list well">
+		<li class="notif" id="notification1"></li>
 		<li class="divider"></li>
-		<div class="notif"id="notification2"></div>
-		<div class="notif" id="notification3"></div>
-		<div class="notif" id="notification4"></div>
-		</div>
+		<li class="notif"id="notification2"></li>
+		<li class="notif" id="notification3"></li>
+		<li class="notif" id="notification4"></li>
+		</ul>
+		
+		
+		
 	</div>
-	<?php	
-	}
+	<?php
+		}
 	?>
  	
 	
