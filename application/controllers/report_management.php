@@ -1110,7 +1110,7 @@ class report_management extends MY_Controller {
 		}
 	}
 
-	public function drug_consumption($year){
+	public function drug_consumption($year="2012"){
 		$facility_code = $this -> session -> userdata("facility");
 		$facility_name=$this -> session -> userdata('facility_name');
 		$drugs_sql = "select d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id";
@@ -1118,17 +1118,21 @@ class report_management extends MY_Controller {
 		$drugs_array=$drugs->result_array();
 		$counter=0;
 		foreach ($drugs_array as $parent_row) {
-			$sql = "select '" .$parent_row['drug'] ."' as drug_name,'" .$parent_row['pack_size'] ."' as pack_size,'" .$parent_row['name'] ."' as unit,month(date(dispensing_date)) as month, sum(quantity) as total_consumed from patient_visit where drug_id = '" .$parent_row['id'] ."' and dispensing_date like '%" .year ."%' and facility='".facility."' group by month(date(dispensing_date)) order by month(date(dispensing_date)) asc";
+			
+			$sql = "select '" .$parent_row['drug'] ."' as drug_name,'" .$parent_row['pack_size'] ."' as pack_size,'" .$parent_row['name'] ."' as unit,month(date(dispensing_date)) as month, sum(quantity) as total_consumed from patient_visit where drug_id = '" .$parent_row['id'] ."' and dispensing_date like '%" .$year ."%' and facility='".$facility_code."' group by month(date(dispensing_date)) order by month(date(dispensing_date)) asc";
 			$drug_details_sql=$this->db->query($sql);
 			$sql_array=$drug_details_sql->result_array();
+			$drug_consumption = array();
 			$count=count($sql_array);
 			if($count>0){
 				foreach ($sql_array as $row) {
+					
 					$month = $row['month'];
 					//Replace the preceding 0 in months less than october
 					if($month < 10) {
-						$month = $row['month'].replace('0', '');
+						$month = str_replace('0', '',$row['month']);
 					}
+					$drug_consumption[$month] = $row['total_consumed'];
 				}
 			}
 		}
