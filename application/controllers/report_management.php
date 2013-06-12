@@ -1110,6 +1110,34 @@ class report_management extends MY_Controller {
 		}
 	}
 
+	public function drug_consumption($year){
+		$facility_code = $this -> session -> userdata("facility");
+		$facility_name=$this -> session -> userdata('facility_name');
+		$drugs_sql = "select d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id";
+		$drugs=$this->db->query($drugs_sql);
+		$drugs_array=$drugs->result_array();
+		$counter=0;
+		foreach ($drugs_array as $parent_row) {
+			$sql = "select '" .$parent_row['drug'] ."' as drug_name,'" .$parent_row['pack_size'] ."' as pack_size,'" .$parent_row['name'] ."' as unit,month(date(dispensing_date)) as month, sum(quantity) as total_consumed from patient_visit where drug_id = '" .$parent_row['id'] ."' and dispensing_date like '%" .year ."%' and facility='".facility."' group by month(date(dispensing_date)) order by month(date(dispensing_date)) asc";
+			$drug_details_sql=$this->db->query($sql);
+			$sql_array=$drug_details_sql->result_array();
+			$count=count($sql_array);
+			if($count>0){
+				foreach ($sql_array as $row) {
+					$month = $row['month'];
+					//Replace the preceding 0 in months less than october
+					if($month < 10) {
+						$month = $row['month'].replace('0', '');
+					}
+				}
+			}
+		}
+		
+		$data['title'] = "Reports";
+		$data['content_view']='drugconsumption_v';
+		$this -> load -> view('template_report', $data);
+	}
+
 	public function base_params($data) {
 		$data['title'] = "Reports";
 		$data['banner_text'] = "Facility Reports";
