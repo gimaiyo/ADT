@@ -1,10 +1,29 @@
+@font-face {
+    font-family: 'ProcionoRegular';
+    src: url('Prociono-Regular-webfont.eot');
+    src: url('Prociono-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('Prociono-Regular-webfont.woff') format('woff'),
+         url('Prociono-Regular-webfont.ttf') format('truetype'),
+         url('Prociono-Regular-webfont.svg#ProcionoRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'AllerRegular';
+    src: url('fonts/Aller_Rg.ttf');
+    font-weight: normal;
+    font-style: normal;
+
+}
 body {
-	font-family: "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif;
+	
 	margin: 0;
 	padding: 0;
-	font: 13px     /1.231 arial, helvetica, clean, sans-serif;
+	font-family:"AllerRegular";
 	line-height: 1;
-	font-size: 80%;
+	font-size: 1em;
 	vertical-align: baseline;
 }
 .msginfo {
@@ -164,7 +183,6 @@ body {
 	color: white;
 	text-decoration: none;
 	font-size: 12px;
-	font-family: helvetica, arial;
 	font-weight: bold;
 	display: block;
 	text-align: center;
@@ -282,7 +300,6 @@ input[type =
 	color: white;
 	text-decoration: none;
 	font-size: 12px;
-	font-family: helvetica, arial;
 	font-weight: bolder;
 	display: block;
 	text-align: center;
@@ -572,13 +589,13 @@ tr th {
  */
 .center-content h3, .main-content h3, .left-content h3 {
 	-webkit-margin-before: 0.5em;
-	font-family: "Helvetica";
 	color: #fff;
 	font-size: 1.2em;
 	padding: 0 0 0 0.3em;
 	background: #2B597E;
 	box-shadow: 0 1.2px 3px 1px #000;
 	-webkit-box-shadow: 0 1.2px 3px 1px #000;
+	text-shadow: 1px 1px 4px #000;
 }
 .left-content, .right-content, .center-content {
 	position: relative;
@@ -1099,7 +1116,6 @@ html > body #main_manualcontent li a {
 
 #weekly_summary {
 	font-size: 10px;
-	font-family: Verdana;
 	background: rgb(222, 245, 247);
 }
 #weekly_summary th {
