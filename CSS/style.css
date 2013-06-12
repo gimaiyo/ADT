@@ -865,7 +865,7 @@ table.dataTable tr.odd td sorting_1 {
 	font-size: 1.6em;
 	margin: auto;
 	margin-bottom: 2em;
-	padding: 4%;
+	padding: 1%;
 }
 .login-form input[type="submit"] {
 	width: 40%;
@@ -1196,11 +1196,14 @@ html > body #main_manualcontent li a {
 	background-color: #E5E5E5;
 }
 .report_category {
-	width: 45%;
+	width: 48%;
 	float: left;
 	margin: 5px;
 	min-height: 200px;
 	padding: 5px;
+}
+.report_category:nth-child(even){
+	float:right;
 }
 .category_title {
 	letter-spacing: 2px;
