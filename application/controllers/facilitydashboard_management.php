@@ -531,5 +531,187 @@ class Facilitydashboard_Management extends MY_Controller {
 		$data['quick_link'] = "client_sources";
 		$this -> load -> view("template_admin", $data);
 	}
+	
+	/**
+ * Highchart Test Charts
+ */
+ //Get patients enrolled
+	public function getPatHC($startdate = "", $enddate = "") {
+		$facility_code = $this -> session -> userdata('facility');
+		$timestamp = time();
+		$edate = date('Y-m-d', $timestamp);
+		$dates = array();
+		$x = 7;
+		$y = 0;
+
+		//If no parameters are passed, get enrolled patients for the past 7 days
+		if ($startdate == "" || $enddate == "") {
+			for ($i = 0; $i < $x; $i++) {
+				if (date("D", $timestamp) != "Sun") {
+					$sdate = date('Y-m-d', $timestamp);
+					//Store the days in an array
+					$dates[$y] = $sdate;
+					$y++;
+				}
+				//If sunday is included, add one more day
+				else {$x = 8;
+				}
+				$timestamp -= 24 * 3600;
+			}
+			$start_date = $sdate;
+			$end_date = $edate;
+		} else {
+			$start_date = $startdate;
+			$end_date = $enddate;
+		}
+		$get_patient_sql = "SELECT p.gender, dob , date_enrolled FROM patient p WHERE p.date_enrolled
+							BETWEEN  '" . $start_date . "' AND  '" . $end_date . "' AND p.facility_code='" . $facility_code . "' ORDER BY p.date_enrolled  ";
+		$res = $this -> db -> query($get_patient_sql);
+		$x = 0;
+		$y = 0;
+		$count_patient_date = 0;
+		$date_enrolled = "";
+		$counter = 0;
+		$total_male_adult = 0;
+		$total_female_adult = 0;
+		$total_male_child = 0;
+		$total_female_child = 0;
+		$patients_array = array();
+
+		$results = $res -> result_array();
+		
+		$adult = array();
+		$child = array();
+		//Split Gender
+		foreach ($results as $key=>$value){
+			$age = $value['dob'];
+			$age = $this->age_from_dob($age);
+			if($value['gender']==1){
+				if($age>15){
+					$total_male_adult+=1;
+				}
+				elseif($age<15){
+					$total_male_child+=1;
+				}
+				
+			}
+			
+			elseif($value['gender']==2){
+				if($age>15){
+					$total_female_adult+=1;
+				}
+				elseif($age<15){
+					$total_female_child+=1;
+				}
+			}
+			
+			
+		}
+/*
+		//Loop through the array to get totals for each category
+		foreach ($results as $key => $value) {
+			$count_patient_date++;
+			if ($x == 0) {
+				$x = 1;
+				$date_enrolled = $value['date_enrolled'];
+			}
+			//If enrollement date changes
+			if ($value['date_enrolled'] != $date_enrolled) {
+				$count_patient_date = 1;
+				$y = 0;
+				$total_male_adult = 0;
+				$total_female_adult = 0;
+				$total_male_child = 0;
+				$total_female_child = 0;
+				$counter++;
+				$patients_array[$counter]['date_enrolled'] = $value['date_enrolled'];
+				$patients_array[$counter]['total_day'] = $count_patient_date;
+				$date_enrolled = $value['date_enrolled'];
+
+			} else if ($value['date_enrolled'] == $date_enrolled) {
+
+				if ($y != 1) {
+					//Initialise totals
+					$patients_array[$counter]['date_enrolled'] = $value['date_enrolled'];
+					$patients_array[$counter]['total_male_adult'] = 0;
+					$patients_array[$counter]['total_female_adult'] = 0;
+					$patients_array[$counter]['total_male_child'] = 0;
+					$patients_array[$counter]['total_female_child'] = 0;
+				}
+				$patients_array[$counter]['total_day'] = $count_patient_date;
+				$y = 1;
+
+			}
+
+			$birthDate = $value['dob'];
+			//get age from date or birthdate
+			$age = $this -> age_from_dob($birthDate);
+			//If patient is male, check if he is an adult or child
+			if ($value['gender'] == 1) {
+				//Check if adult
+				if ($age >= 15) {
+					$total_male_adult++;
+					$patients_array[$counter]['total_male_adult'] = $total_male_adult;
+					$patients_array[$counter]['total_male_child'] = $total_male_child;
+					$patients_array[$counter]['total_female_adult'] = $total_female_adult;
+					$patients_array[$counter]['total_female_child'] = $total_female_child;
+				} else {
+					$total_male_child++;
+					$patients_array[$counter]['total_male_adult'] = $total_male_adult;
+					$patients_array[$counter]['total_male_child'] = $total_male_child;
+					$patients_array[$counter]['total_female_adult'] = $total_female_adult;
+					$patients_array[$counter]['total_female_child'] = $total_female_child;
+				}
+			}
+			//If patient is female, check if he is an adult or child
+			else if ($value['gender'] == 2) {
+				//Check if adult
+				if ($age >= 15) {
+					$total_female_adult++;
+					$patients_array[$counter]['total_male_adult'] = $total_male_adult;
+					$patients_array[$counter]['total_male_child'] = $total_male_child;
+					$patients_array[$counter]['total_female_adult'] = $total_female_adult;
+					$patients_array[$counter]['total_female_child'] = $total_female_child;
+				} else {
+					$total_female_child++;
+					$patients_array[$counter]['total_male_adult'] = $total_male_adult;
+					$patients_array[$counter]['total_male_child'] = $total_male_child;
+					$patients_array[$counter]['total_female_adult'] = $total_female_adult;
+					$patients_array[$counter]['total_female_child'] = $total_female_child;
+				}
+			}
+
+		}
+
+		$strXML = "<chart useroundedges='1' bgcolor='ffffff' showborder='0' yAxisName='Enrollments' showvalues='1' showsum='1' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='9' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1' exportEnabled='1' exportHandler='" . base_url() . "Scripts/FusionCharts/ExportHandlers/PHP/FCExporter.php' exportAtClient='0' exportAction='download'>";
+
+		$stradultmale = "<dataset seriesName='Adult Male' showValues= '0' >";
+		$stradultfemale = "<dataset seriesName='Adult Female' showValues= '0' >";
+		$strchildmale = "<dataset seriesName='Child Male' showValues= '0' >";
+		$strchildfemale = "<dataset seriesName='Child Female' showValues= '0' >";
+		$strCAT = "<categories>";
+		foreach ($patients_array as $patients) {
+
+			$strCAT .= "<category label='" . date('D M d,Y', strtotime($patients['date_enrolled'])) . "'/>";
+
+			$stradultmale .= "<set value='" . $patients['total_male_adult'] . "' />";
+			$stradultfemale .= "<set value='" . $patients['total_female_adult'] . "' />";
+			$strchildmale .= "<set value='" . $patients['total_male_child'] . "' />";
+			$strchildfemale .= "<set value='" . $patients['total_female_child'] . "' />";
+		}
+		$strCAT .= "</categories>";
+		$stradultmale .= "</dataset>";
+		$stradultfemale .= "</dataset>";
+		$strchildmale .= "</dataset>";
+		$strchildfemale .= "</dataset>";
+		$strXML .= $strCAT . $stradultmale . $stradultfemale . $strchildmale . $strchildfemale;
+
+		header('Content-type: text/xml');
+		echo $strXML .= "</chart>";*/
+
+	}
+	
 
 }
+
+
