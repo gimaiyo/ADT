@@ -64,6 +64,14 @@ if ($access_level == "facility_administrator") {
 }
 ?>
 
+<style>
+	.dataTables_wrapper{
+		width:100%;
+		
+	}
+
+</style>
+
 
 <?php 
 //COunt number of patients
@@ -71,6 +79,37 @@ if ($access_level == "facility_administrator") {
 <div class="main-content">
 	
 	<div class="center-content">
+		
+		<div>
+			
+				
+				<?php if($this->session->userdata("msg_save_transaction")){
+					?>
+					
+					<script type="text/javascript">
+						setTimeout(function(){
+							$(".info").fadeOut("2000");
+						},6000)
+					</script>
+					<?php
+					if($this->session->userdata("msg_save_transaction")=="success"){
+						?>
+						<p class="info"><span class="alert-success">Your data were successfully saved !</span></p>
+						<?php
+					}
+					else{
+						?>
+						<p class="info"><span class="alert-error">Your data were not saved ! Try again or contact your system administrator.</span></p>
+						<?php
+					}
+					$this->session->unset_userdata('msg_save_transaction');
+				}
+				?>
+			
+		
+		
+		</div>
+		
 		<ul class="nav nav-tabs">  
 			<li id="store_btn" class="active"><a  href="#">Store Inventory</a> </li>   
 			<li id="pharmacy_btn"><a  href="#">Pharmacy Inventory</a></li>   
@@ -78,7 +117,7 @@ if ($access_level == "facility_administrator") {
 		<table id="store_table" class="table table-bordered table-striped listing_table" style="font-size:0.8em">
 			<thead>
 				<tr>
-					<th style="min-width: 280px">Commodity</th><th>Generic Name</th><th>QTY/SOH</th><th>Unit</th><th>Pack Size</th><th>Supporter</th><th>Dose</th><th style="width: 140px">Action</th>
+					<th style="min-width: 280px">Commodity</th><th>Generic Name</th><th>QTY/SOH</th><th>Unit</th><th>Pack Size</th><th>Supporter</th><th>Dose</th><th style="width: 250px">Action</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -87,7 +126,7 @@ if ($access_level == "facility_administrator") {
 		<table id="pharmacy_table" class="table table-bordered table-striped listing_table" style="font-size:0.8em">
 			<thead>
 				<tr>
-					<th style="min-width: 280px">Commodity</th><th>Generic Name</th><th>QTY/SOH</th><th>Unit</th><th>Pack Size</th><th>Supporter</th><th>Dose</th><th style="width: 140px">Action</th>
+					<th style="min-width: 280px">Commodity</th><th>Generic Name</th><th>QTY/SOH</th><th>Unit</th><th>Pack Size</th><th>Supporter</th><th>Dose</th><th style="width: 250px">Action</th>
 				</tr>
 			</thead>
 			<tbody>

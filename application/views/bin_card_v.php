@@ -137,6 +137,7 @@
 								if($drug_transaction->Source!=$drug_transaction->Destination){
 									//Stock going out
 									if($drug_transaction->Quantity==0){
+										$qty=$drug_transaction->Quantity_Out;
 										//From Main Store to pharmacy
 										if($drug_transaction->Destination==""){
 											$transaction_type.=" Pharmacy";
@@ -147,13 +148,13 @@
 										}
 										//If destination is a facility,get the destination name
 										else if($drug_transaction->Destination >= 10000){
-											$transaction_type.=" ".$drug_transaction->Facility_Object->Name;
+											$transaction_type.=" ".$drug_transaction->Facility_Object->name;
 										}
 									}
 									
 									//Stock coming in, received
 									else if($drug_transaction->Quantity>0){
-										
+										$qty=$drug_transaction->Quantity;
 										if($drug_transaction->Source=="" and $drug_transaction->Source!=""){
 											$transaction_type.=" ".$drug_transaction->Facility_Object->Name;
 										}
@@ -188,7 +189,7 @@
 								<td><?php echo  $drug_transaction->Expiry_date ?></td>
 								<td><?php echo  $drug_transaction->Drug_Object->Pack_Size ?></td>
 								<td><?php echo  $drug_transaction->Packs ?></td>
-								<td><?php echo  $drug_transaction->Quantity ?></td>
+								<td><?php echo  $qty ?></td>
 								<td><?php echo  $drug_transaction->Unit_Cost ?></td>
 								<td><?php echo  $drug_transaction->Amount ?></td>
 							</tr>

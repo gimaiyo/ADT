@@ -1,76 +1,4 @@
 
-<style type="text/css">
-	.actions_panel {
-		width: 200px;
-		margin-top: 5px;
-	}
-	.hovered td {
-		background-color: #E5E5E5 !important;
-	}
-	a{
-		text-decoration: none;
-	}
-	.enable_user{
-		color:green;
-		font-weight:bold;
-	}
-	.disable_user{
-		color:red;
-		font-weight:bold;
-	}
-	.edit_user{
-		color:blue;
-		font-weight:bold;
-	}
-	.passmessage {
-
-		display: none;
-		background: #00CC33;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding:5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
-	.errormessage {
-
-		display: none;
-		background: #FF0000;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding:5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
-
-	#DataTables_Table_0_wrapper{
-		font-size: 14px;
-	}
-	._red{
-		color:red;
-		font-style:italic;
-		font-size: 11px;
-	}
-	input[type='text'],input[type='email'],input[type='tel'],input[type='password']{
-		height:30px;
-	}
-	legend{
-		font-size: 18px;
-	}
-
-</style>
 <script type="text/javascript">
 	$(document).ready(function() {
 		
@@ -329,22 +257,23 @@ foreach($actions as $action){
 	</div>
 </div>
 
-<div id="view_content">
+<div class="center-content">
 	<div class="container-fluid">
 	  <div class="row-fluid row">
 		 <!-- Side bar menus -->
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
 
-	    <div class="span9 span-fixed-sidebar">
+	    <div class=" span-fixed-sidebar">
 	      	<div class="hero-unit">
-	      		<button class="btn btn-large btn-success" type="button" id="new_user"><i class="icon-plus icon-black"></i>New User</button>
+	      		
 	      		<div class="passmessage"></div>
 				<div class="errormessage"></div>
 				<?php
 				echo $users;
 				?>
 	      	</div>
+	      	<button class="btn btn-large" type="button" id="new_user"><i class="icon-plus icon-black"></i>New User</button>
 	    </div>
 	  </div>
 	</div>

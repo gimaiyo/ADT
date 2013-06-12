@@ -644,18 +644,18 @@
 										<input type="text"name="transaction_date" id="transaction_date" class=" input-large required=" required" style="color:green;">
 									</label>
 									<label> <strong class="label">Transaction Type</strong><br>
-										<select type="text"name="transaction_type" id="transaction_type" class="input-large" >
+										<select type="text" name="transaction_type" id="transaction_type" class="input-large" >
 											<option value="0">--Select One--</option>
 										</select> </label>
 									<label> <strong class="label">Ref./Order Number</strong><br>
-										<input   type="text"name="reference_number" id="reference_number" class="input-large" required="required" >
+										<input   type="text" name="reference_number" id="reference_number" class="input-large" required="required" >
 									</label>
 									<label id="source_label"> <strong class="label">Source</strong><br>
-										<select type="text"name="source" id="source" class="input-large"  >
+										<select type="text" name="source" id="source" class="input-large"  >
 											<option></option>
 										</select> </label>
 									<label id="destination_label"> <strong class="label">Destination</strong><br>
-										<select type="text"name="destination" id="destination" class="input-large destination" >
+										<select type="text" name="destination" id="destination" class="input-large destination" >
 											<option></option>
 										</select> </label>
 								</div>

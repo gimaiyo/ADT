@@ -271,7 +271,7 @@ class Inventory_Management extends MY_Controller {
 					$row[]=$aRow['supported_by'];
 					$row[]=$aRow['dose'];
 					$id=$aRow['id'];
-					$row[]="<a href='".base_url()."inventory_management/view_bin_card/".$id."/2'>View Bin Card</a>";
+					$row[]="<button class='btn'><a href='".base_url()."inventory_management/view_bin_card/".$id."/2'>View Bin Card</a></button>";
 				}
             	
 			}
@@ -360,6 +360,12 @@ class Inventory_Management extends MY_Controller {
 		$data['transaction_types']=$transaction_type;
 		$data['drug_sources']=$drug_source;
 		$data['drug_destinations']=$drug_destination;
+		if($stock_type==1){
+			$data['store']='Main Store Transaction';
+		}
+		else if($stock_type==2){
+			$data['store']='Pharmacy Transaction';
+		}
 		$data['content_view'] = "stock_transaction_v";
 		$this -> base_params($data);
 		
@@ -430,24 +436,20 @@ class Inventory_Management extends MY_Controller {
 		}
 		
 		if($count==$c){
-			$data['msg']="success";
+			$this -> session -> set_userdata('msg_save_transaction', 'success');
 		}
 		else if($c==0){
-			$data['msg']="all_failure";
+			$this -> session -> set_userdata('msg_save_transaction', 'all_failure');
 		}
 		else{
-			$data['msg']="some_failure";
+			$this -> session -> set_userdata('msg_save_transaction', 'some_failure');
 		}
-		echo json_encode($data);
+		
+		redirect("inventory_management");
+		
 		
 	}
 	
-	public function test(){
-		$data['msg1']="success";
-		$data['msg2']="all_failure";
-		$data['msg3']="some_failure";
-		echo json_encode($data);
-	}
 	public function save_edit() {
 		$this->load->database();
 		$sql = $this->input->post("sql");

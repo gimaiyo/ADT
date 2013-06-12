@@ -37,7 +37,7 @@
 						</legend>
 						<div class="max-row">
 							<div class="mid-row">
-								<label> Medical Record Number </label>
+								<label> Medical Record No.</label>
 								<input type="text" name="medical_record_number" id="medical_record_number" value="">
 							</div>
 							<div class="mid-row">

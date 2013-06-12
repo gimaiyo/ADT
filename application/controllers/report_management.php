@@ -14,7 +14,7 @@ class report_management extends MY_Controller {
 		$this -> base_params($data);
 	}
 
-	public function patient_enrolled($supported_by = 0, $from = "2013-03-01", $to = "2013-03-31") {
+	public function patient_enrolled($from = "", $to = "",$supported_by = 0) {
 		//Variables
 		$facility_code = $this -> session -> userdata("facility");
 		//art
@@ -210,7 +210,7 @@ class report_management extends MY_Controller {
 								$adult_male_pep_casualty++;
 							} else if ($result['source'] == 5) {
 								//Check if Transit
-								$adult_male_pep_tarnsit++;
+								$adult_male_pep_transit++;
 							} else if ($result['source'] == 6) {
 								//Check if HTC
 								$adult_male_pep_htc++;
@@ -774,7 +774,7 @@ class report_management extends MY_Controller {
 		$this -> load -> view('reports/no_of_patients_enrolled_v', $data);
 	}
 
-	public function patient_active_byregimen($from = "2013-06-06") {
+	public function patient_active_byregimen($from = "") {
 		//Variables
 		$facility_code = $this -> session -> userdata("facility");
 		$regimen_totals = array();
@@ -786,17 +786,16 @@ class report_management extends MY_Controller {
 		$overall_child_female = 0;
 
 		//Get Total of all patients
-		$sql = "SELECT count(*) as total, r.regimen_desc,p.current_regimen FROM patient p,regimen r WHERE p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.current_regimen !=0 AND p.current_regimen !='' AND p.current_status !='' AND p.current_status !=0";
+		$sql = "select count(*) as total, r.regimen_desc,p.current_regimen from patient p,patient_status ps,gender g,regimen_service_type rs,regimen r where p.date_enrolled <='$from' and p.current_status=ps.id and p.gender=g.id and p.service=rs.id and p.current_regimen=r.id and p.current_status='1' and p.facility_code='$facility_code'";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$patient_total = $results[0]['total'];
 
 		//Get Totals for each regimen
-		$sql = "SELECT count(*) as total, r.regimen_desc,r.regimen_code,p.current_regimen FROM patient p,regimen r WHERE p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.current_regimen !=0 AND p.current_regimen !='' AND p.current_status !='' AND p.current_status !=0 GROUP BY p.current_regimen ORDER BY r.regimen_code ASC";
+		$sql = "select count(*) as total, r.regimen_desc,r.regimen_code,p.current_regimen from patient p,patient_status ps,gender g,regimen_service_type rs,regimen r where p.date_enrolled <='$from' and p.current_status=ps.id and p.gender=g.id and p.service=rs.id and p.current_regimen=r.id and p.current_status='1' and p.facility_code='$facility_code' group by p.current_regimen";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		if ($results) {
-			$row_string .= "<table id='patient_listing' border='1' cellpadding='5'>
+		$row_string .= "<table id='patient_listing' border='1' cellpadding='5'>
 			<tr>
 				<th rowspan='3'>Regimen</th>
 				<th colspan='2'>Total</th>
@@ -819,6 +818,7 @@ class report_management extends MY_Controller {
 				<th>%</th><th>No.</th>
 				<th>%</th>
 			</tr>";
+		if ($results) {
 			foreach ($results as $result) {
 				$regimen_totals[$result['current_regimen']] = $result['total'];
 				$current_regimen = $result['current_regimen'];
@@ -828,7 +828,7 @@ class report_management extends MY_Controller {
 				$regimen_total_percentage = number_format(($regimen_total / $patient_total) * 100, 1);
 				$row_string .= "<tr><td><b>$regimen_code</b> | $regimen_name</td><td>$regimen_total</td><td>$regimen_total_percentage</td>";
 				//SQL for Adult Male Regimens
-				$sql = "SELECT count(*) as total_adult_male, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=1 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)>=15 GROUP BY p.current_regimen";
+				$sql = "select count(*) as total_adult_male, r.regimen_desc,r.regimen_code,p.current_regimen from patient p,patient_status ps,gender g,regimen_service_type rs,regimen r where p.date_enrolled <='$from' and p.current_status=ps.id and p.gender=g.id and p.service=rs.id and p.current_regimen=r.id and round(datediff('$from',p.dob)/360)>=15 and p.gender='1' and p.current_status='1' and p.current_regimen='$current_regimen' and p.facility_code='$facility_code' group by p.current_regimen";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				if ($results) {
@@ -836,7 +836,7 @@ class report_management extends MY_Controller {
 						$total_adult_male = $result['total_adult_male'];
 						$overall_adult_male += $total_adult_male;
 						$total_adult_male_percentage = number_format(($total_adult_male / $regimen_total) * 100, 1);
-						if ($result['regimen_id'] != null) {
+						if ($result['current_regimen'] != null) {
 							$row_string .= "<td>$total_adult_male</td><td>$total_adult_male_percentage</td>";
 						}
 					}
@@ -844,7 +844,7 @@ class report_management extends MY_Controller {
 					$row_string .= "<td>-</td><td>-</td>";
 				}
 				//SQL for Adult Female Regimens
-				$sql = "SELECT count(*) as total_adult_female, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=2 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)>=15 GROUP BY p.current_regimen";
+				$sql = "select count(*) as total_adult_female, r.regimen_desc,r.regimen_code,p.current_regimen from patient p,patient_status ps,gender g,regimen_service_type rs,regimen r where p.date_enrolled <='$from' and p.current_status=ps.id and p.gender=g.id and p.service=rs.id and p.current_regimen=r.id and round(datediff('$from',p.dob)/360)>=15 and p.gender='2' and p.current_status='1' and p.current_regimen='$current_regimen' and p.facility_code='$facility_code' group by p.current_regimen";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				if ($results) {
@@ -852,7 +852,7 @@ class report_management extends MY_Controller {
 						$total_adult_female = $result['total_adult_female'];
 						$overall_adult_female += $total_adult_female;
 						$total_adult_female_percentage = number_format(($total_adult_female / $regimen_total) * 100, 1);
-						if ($result['regimen_id'] != null) {
+						if ($result['current_regimen'] != null) {
 							$row_string .= "<td>$total_adult_female</td><td>$total_adult_female_percentage</td>";
 						}
 					}
@@ -860,7 +860,7 @@ class report_management extends MY_Controller {
 					$row_string .= "<td>-</td><td>-</td>";
 				}
 				//SQL for Child Male Regimens
-				$sql = "SELECT count(*) as total_child_male, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=1 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)<15 GROUP BY p.current_regimen";
+				$sql = "select count(*) as total_child_male, r.regimen_desc,r.regimen_code,p.current_regimen from patient p,patient_status ps,gender g,regimen_service_type rs,regimen r where p.date_enrolled <='$from' and p.current_status=ps.id and p.gender=g.id and p.service=rs.id and p.current_regimen=r.id and round(datediff('$from',p.dob)/360)<15 and p.gender='1' and p.current_status='1' and p.current_regimen='$current_regimen' and p.facility_code='$facility_code' group by p.current_regimen";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				if ($results) {
@@ -868,7 +868,7 @@ class report_management extends MY_Controller {
 						$total_child_male = $result['total_child_male'];
 						$overall_child_male += $total_child_male;
 						$total_child_male_percentage = number_format(($total_child_male / $regimen_total) * 100, 1);
-						if ($result['regimen_id'] != null) {
+						if ($result['current_regimen'] != null) {
 							$row_string .= "<td>$total_child_male</td><td>$total_child_male_percentage</td>";
 						}
 					}
@@ -876,7 +876,7 @@ class report_management extends MY_Controller {
 					$row_string .= "<td>-</td><td>-</td>";
 				}
 				//SQL for Child Female Regimens
-				$sql = "SELECT count(*) as total_child_female, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=2 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)<15 GROUP BY p.current_regimen";
+				$sql = "select count(*) as total_child_female, r.regimen_desc,r.regimen_code,p.current_regimen from patient p,patient_status ps,gender g,regimen_service_type rs,regimen r where p.date_enrolled <='$from' and p.current_status=ps.id and p.gender=g.id and p.service=rs.id and p.current_regimen=r.id and round(datediff('$from',p.dob)/360)<15 and p.gender='2' and p.current_status='1' and p.current_regimen='$current_regimen' and p.facility_code='$facility_code' group by p.current_regimen";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				if ($results) {
@@ -884,7 +884,7 @@ class report_management extends MY_Controller {
 						$total_child_female = $result['total_child_female'];
 						$overall_child_female += $total_child_female;
 						$total_child_female_percentage = number_format(($total_child_female / $regimen_total) * 100, 1);
-						if ($result['regimen_id'] != null) {
+						if ($result['current_regimen'] != null) {
 							$row_string .= "<td>$total_child_female</td><td>$total_child_female_percentage</td>";
 						}
 					}
@@ -894,14 +894,16 @@ class report_management extends MY_Controller {
 				$row_string .= "</tr>";
 			}
 			$row_string .= "<tr class='tfoot'><td><b>Totals:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $patient_total) * 100, 1) . "</b></td></tr>";
-			$row_string .= "</table>";
-			$data['from'] = date('d-M-Y', strtotime($from));
-			$data['dyn_table'] = $row_string;
-			$this -> load -> view('reports/no_of_patients_receiving_art_byregimen_v', $data);
+		} else {
+			$row_string .= "<tr><td colspan='6'>No Data Available</td></tr>";
 		}
+		$row_string .= "</table>";
+		$data['from'] = date('d-M-Y', strtotime($from));
+		$data['dyn_table'] = $row_string;
+		$this -> load -> view('reports/no_of_patients_receiving_art_byregimen_v', $data);
 	}
 
-	public function cumulative_patients($from = "2013-06-06") {
+	public function cumulative_patients($from = "") {
 		//Variables
 		$facility_code = $this -> session -> userdata("facility");
 		$status_totals = array();
@@ -923,7 +925,7 @@ class report_management extends MY_Controller {
 		$total_child_female_oi = 0;
 
 		//Get Total Count of all patients
-		$sql = "select count(*) as total from patient,patient_status ps where(date_enrolled <= '$from' or date_enrolled='') and ps.id=current_status and current_status!='' and service!='' and gender !='' and facility_code='$facility_code'";
+		$sql = "select count(*) as total from patient p,patient_status ps,gender g,regimen_service_type rs where p.date_enrolled <= '$from' and p.current_status=ps.id and p.gender=g.id and p.service=rs.id and p.facility_code='$facility_code'";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$patient_total = $results[0]['total'];
@@ -962,7 +964,7 @@ class report_management extends MY_Controller {
 			</tr>";
 
 		//Get Totals for each Status
-		$sql = "select count(p.id) as total,current_status,ps.name from patient p,patient_status ps where(date_enrolled <= '$from' or date_enrolled='') and facility_code='$facility_code' and ps.id = current_status and current_status!='' and service!='' and gender !='' group by p.current_status";
+		$sql = "select count(*) as total,p.current_status,ps.name from patient p,patient_status ps,gender g,regimen_service_type rs where date_enrolled <= '$from' and p.current_status=ps.id and p.gender=g.id and p.service=rs.id and p.facility_code='$facility_code' group by p.current_status";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
@@ -975,7 +977,7 @@ class report_management extends MY_Controller {
 				$row_string .= "<tr><td>$status_name</td><td>$status_totals[$current_status]</td><td>$patient_percentage</td>";
 				//SQL for Adult Male Status
 				$service_list = array('ART', 'PEP', 'OI Only');
-				$sql = "SELECT count(*) as total_adult_male, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=1 AND p.service !=3 AND round(datediff('$from',p.dob)/360)>=15 GROUP BY service";
+				$sql = "SELECT count(*) as total_adult_male, ps.Name,ps.id as current_status,rs.name AS Service FROM patient p,patient_status ps,regimen_service_type rs,gender g WHERE date_enrolled <= '$from' AND p.current_status=ps.id AND p.gender=g.id AND p.service=rs.id AND p.service !='3' AND p.current_status='$current_status' AND p.gender='1' AND round(datediff('$from',p.dob)/360)>=15 AND p.facility_code='$facility_code' GROUP BY service";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				$i = 0;
@@ -1006,7 +1008,7 @@ class report_management extends MY_Controller {
 				}
 				//SQL for Adult Female Status
 				$service_list = array('ART', 'PEP', 'PMTCT', 'OI Only');
-				$sql = "SELECT count(*) as total_adult_female, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=2  AND round(datediff('$from',p.dob)/360)>=15 GROUP BY service";
+				$sql = "SELECT count(*) as total_adult_female, ps.Name,ps.id as current_status,rs.name AS Service FROM patient p,patient_status ps,regimen_service_type rs,gender g WHERE date_enrolled <= '$from' AND p.current_status=ps.id AND p.gender=g.id AND p.service=rs.id AND p.current_status='$current_status' AND p.gender='2' AND round(datediff('$from',p.dob)/360)>=15 AND p.facility_code='$facility_code' GROUP BY service";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				$i = 0;
@@ -1038,7 +1040,7 @@ class report_management extends MY_Controller {
 				}
 				//SQL for Child Male Status
 				$service_list = array('ART', 'PEP', 'PMTCT', 'OI Only');
-				$sql = "SELECT count(*) as total_child_male, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=1  AND round(datediff('$from',p.dob)/360)<15 GROUP BY service";
+				$sql = "SELECT count(*) as total_child_male, ps.Name,ps.id as current_status,rs.name AS Service FROM patient p,patient_status ps,regimen_service_type rs,gender g WHERE date_enrolled <= '$from' AND p.current_status=ps.id AND p.gender=g.id AND p.service=rs.id AND p.current_status='$current_status' AND p.gender='1' AND round(datediff('$from',p.dob)/360)<15 AND p.facility_code='$facility_code' GROUP BY service";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				$i = 0;
@@ -1070,7 +1072,7 @@ class report_management extends MY_Controller {
 				}
 				//SQL for Child Female Status
 				$service_list = array('ART', 'PEP', 'PMTCT', 'OI Only');
-				$sql = "SELECT count(*) as total_child_female, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=2  AND round(datediff('$from',p.dob)/360)<15 GROUP BY service";
+				$sql = "SELECT count(*) as total_child_female, ps.Name,ps.id as current_status,rs.name AS Service FROM patient p,patient_status ps,regimen_service_type rs,gender g WHERE date_enrolled <= '$from' AND p.current_status=ps.id AND p.gender=g.id AND p.service=rs.id AND p.current_status='$current_status' AND p.gender='2'AND round(datediff('$from',p.dob)/360)<15 AND p.facility_code='$facility_code' GROUP BY service";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				$i = 0;
@@ -1110,7 +1112,7 @@ class report_management extends MY_Controller {
 		}
 	}
 
-	public function getScheduledPatients($from = "2013-03-01", $to = "2013-03-31", $facility_code = "13050") {
+	public function getScheduledPatients($from = "", $to = "") {
 		//Variables
 		$visited = 0;
 		$not_visited = 0;
@@ -1120,14 +1122,13 @@ class report_management extends MY_Controller {
 		$overall_total = 0;
 		$today = date('Y-m-d');
 		$late_by = "";
+		$facility_code = $this -> session -> userdata("facility");
 
 		//Get all patients who have apppointments on the selected date range
 		$sql = "select patient,appointment from patient_appointment where appointment between '$from' and '$to' and facility='$facility_code' group by patient,appointment";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-
-		if ($results) {
-			$row_string = "
+		$row_string = "
 			<table id='patient_listing' width='1200px' >
 				<thead >
 					<tr>
@@ -1142,7 +1143,7 @@ class report_management extends MY_Controller {
 						<th> Visit Status</th>
 					</tr>
 				</thead>";
-
+		if ($results) {
 			foreach ($results as $result) {
 				$patient = $result['patient'];
 				$appointment = $result['appointment'];
@@ -1193,29 +1194,32 @@ class report_management extends MY_Controller {
 					$overall_total++;
 				}
 			}
-			$row_string .= "</table>";
-			$data['from'] = date('d-M-Y', strtotime($from));
-			$data['to'] = date('d-M-Y', strtotime($to));
-			$data['dyn_table'] = $row_string;
-			$data['visited_later'] = $visited_later;
-			$data['not_visited'] = $not_visited;
-			$data['visited'] = $visited;
-			$data['all_count'] = $overall_total;
-			$this -> load -> view('reports/patients_scheduled_v', $data);
+
+		} else {
+			$row_string .= "<tr><td colspan='6'>No Data Available</td></tr>";
 		}
+		$row_string .= "</table>";
+		$data['from'] = date('d-M-Y', strtotime($from));
+		$data['to'] = date('d-M-Y', strtotime($to));
+		$data['dyn_table'] = $row_string;
+		$data['visited_later'] = $visited_later;
+		$data['not_visited'] = $not_visited;
+		$data['visited'] = $visited;
+		$data['all_count'] = $overall_total;
+		$this -> load -> view('reports/patients_scheduled_v', $data);
 	}
 
-	public function getPatientMissingAppointments($from = "2013-03-01", $to = "2013-03-31", $facility_code = "13050") {
+	public function getPatientMissingAppointments($from = "", $to = "") {
 		//Variables
 		$today = date('Y-m-d');
 		$row_string = "";
 		$overall_total = 0;
+		$facility_code = $this -> session -> userdata("facility");
 
 		$sql = "select patient,appointment from patient_appointment where appointment between '$from' and '$to' and facility='$facility_code' group by patient,appointment";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		if ($results) {
-			$row_string .= "<table id='patient_listing' width='1200px'>
+		$row_string .= "<table id='patient_listing' width='1200px'>
 			<tr>
 				<th> ART ID </th>
 				<th> Patient Name</th>
@@ -1224,6 +1228,7 @@ class report_management extends MY_Controller {
 				<th> Appointment Date </th>
 				<th> Late by (days)</th>
 			</tr>";
+		if ($results) {
 			foreach ($results as $result) {
 				$patient = $result['patient'];
 				$appointment = $result['appointment'];
@@ -1249,24 +1254,27 @@ class report_management extends MY_Controller {
 					}
 				}
 			}
-			$row_string .= "</table>";
-			$data['from'] = date('d-M-Y', strtotime($from));
-			$data['to'] = date('d-M-Y', strtotime($to));
-			$data['dyn_table'] = $row_string;
-			$data['all_count'] = $overall_total;
-			$this -> load -> view('reports/patients_missing_appointments_v', $data);
+
+		} else {
+			$row_string .= "<tr><td colspan='6'>No Data Available</td></tr>";
 		}
+		$row_string .= "</table>";
+		$data['from'] = date('d-M-Y', strtotime($from));
+		$data['to'] = date('d-M-Y', strtotime($to));
+		$data['dyn_table'] = $row_string;
+		$data['all_count'] = $overall_total;
+		$this -> load -> view('reports/patients_missing_appointments_v', $data);
 	}
 
-	public function getPatientsStartedonDate($from = "2013-03-01", $to = "2013-03-31", $facility_code = "13050") {
+	public function getPatientsStartedonDate($from = "", $to = "") {
 		//Variables
 		$overall_total = 0;
+		$facility_code = $this -> session -> userdata("facility");
 
 		$sql = "SELECT p.patient_number_ccc as art_no,UPPER(p.first_name) as first_name,UPPER(p.last_name) as last_name,UPPER(p.other_name)as other_name, p.dob, IF(p.gender=1,'Male','Female') as gender, p.weight, r.regimen_desc,r.regimen_code,p.start_regimen_date, t.name AS service_type, s.name AS supported_by from patient p,regimen r,regimen_service_type t,supporter s where p.start_regimen_date between '$from' and '$to' and p.facility_code='$facility_code' and p.start_regimen =r.id and p.service=t.id and p.supported_by =s.id group by p.patient_number_ccc";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		if ($results) {
-			$row_string = "<table id='patient_listing' width='1200px'>
+		$row_string = "<table id='patient_listing' width='1200px'>
 				<tr>
 					<th> Patient No </th>
 					<th> Type of Service </th>
@@ -1277,6 +1285,7 @@ class report_management extends MY_Controller {
 					<th> Regimen </th>
 					<th> Current Weight </th>
 				</tr>";
+		if ($results) {
 			foreach ($results as $result) {
 				$patient_no = $result['art_no'];
 				$service_type = $result['service_type'];
@@ -1284,19 +1293,210 @@ class report_management extends MY_Controller {
 				$patient_name = $result['first_name'] . " " . $result['other_name'] . " " . $result['last_name'];
 				$gender = $result['gender'];
 				$start_regimen_date = date('d-M-Y', strtotime($result['start_regimen_date']));
-				$regiemn_desc = "<b>".$result['regimen_code']."</b>|".$result['regimen_desc'];
+				$regimen_desc = "<b>" . $result['regimen_code'] . "</b>|" . $result['regimen_desc'];
 				$weight = number_format($result['weight'], 2);
-				$row_string .= "<tr><td>$patient_no</td><td>$service_type</td><td>$supported_by</td><td>$patient_name</td><td>$gender</td><td>$start_regimen_date</td><td>$regiemn_desc</td><td>$weight</td></tr>";
+				$row_string .= "<tr><td>$patient_no</td><td>$service_type</td><td>$supported_by</td><td>$patient_name</td><td>$gender</td><td>$start_regimen_date</td><td>$regimen_desc</td><td>$weight</td></tr>";
 				$overall_total++;
 			}
-			$row_string .= "</table>";
-			$data['from'] = date('d-M-Y', strtotime($from));
-			$data['to'] = date('d-M-Y', strtotime($to));
-			$data['dyn_table'] = $row_string;
-			$data['all_count'] = $overall_total;
-			$this -> load -> view('reports/patients_started_on_date_v', $data);
+
+		} else {
+			$row_string .= "<tr><td colspan='6'>No Data Available</td></tr>";
+		}
+		$row_string .= "</table>";
+		$data['from'] = date('d-M-Y', strtotime($from));
+		$data['to'] = date('d-M-Y', strtotime($to));
+		$data['dyn_table'] = $row_string;
+		$data['all_count'] = $overall_total;
+		$this -> load -> view('reports/patients_started_on_date_v', $data);
+
+	}
+
+	public function getPatientsforRefill($from = "", $to = "") {
+		//Variables
+		$overall_total = 0;
+		$today = date('Y-m-d');
+		$facility_code = $this -> session -> userdata("facility");
+
+		$sql = "SELECT pv.patient_id as art_no,pv.dispensing_date, t.name AS service_type, s.name AS supported_by,UPPER(p.first_name) as first_name ,UPPER(p.other_name) as other_name ,UPPER(p.last_name)as last_name,ROUND(DATEDIFF('$today',p.dob)/360) as age, pv.current_weight as weight, IF(p.gender=1,'Male','Female')as gender, r.regimen_desc,r.regimen_code from patient_visit pv,patient p,supporter s,regimen_service_type t,regimen r where pv.dispensing_date between '$from' and '$to' and pv.patient_id=p.patient_number_ccc and s.id = p.supported_by and t.id = p.service and r.id = pv.regimen and pv.visit_purpose =  '2' and p.current_status =  '1' and pv.facility =  '$facility_code' and p.facility_code = pv.facility group by pv.patient_id,pv.dispensing_date";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$row_string = "<table   id='patient_listing' width='1200px'>
+			<tr>
+				<th> Patient No </th>
+				<th> Type of Service </th>
+				<th> Client Support </th>
+				<th> Patient Name </th>
+				<th> Current Age </th>
+				<th> Sex</th>
+				<th> Regimen </th>
+				<th> Visit Date</th>
+				<th> Current Weight </th>
+			</tr>";
+		if ($results) {
+			foreach ($results as $result) {
+				$patient_no = $result['art_no'];
+				$service_type = $result['service_type'];
+				$supported_by = $result['supported_by'];
+				$patient_name = $result['first_name'] . " " . $result['other_name'] . " " . $result['last_name'];
+				$age = $result['age'];
+				$gender = $result['gender'];
+				$dispensing_date = date('d-M-Y', strtotime($result['dispensing_date']));
+				$regimen_desc = "<b>" . $result['regimen_code'] . "</b>|" . $result['regimen_desc'];
+				$weight = number_format($result['weight'], 2);
+				$row_string .= "<tr><td>$patient_no</td><td>$service_type</td><td>$supported_by</td><td>$patient_name</td><td>$age</td><td>$gender</td><td>$regimen_desc</td><td>$dispensing_date</td><td>$weight</td></tr>";
+				$overall_total++;
+			}
+
+		} else {
+			$row_string .= "<tr><td colspan='6'>No Data Available</td></tr>";
+		}
+		$row_string .= "</table>";
+		$data['from'] = date('d-M-Y', strtotime($from));
+		$data['to'] = date('d-M-Y', strtotime($to));
+		$data['dyn_table'] = $row_string;
+		$data['all_count'] = $overall_total;
+		$this -> load -> view('reports/patients_for_refill_v', $data);
+	}
+
+	public function getStartedonART($from = "", $to = "", $supported_by = 0) {
+		//Variables
+		$patient_total = 0;
+		$facility_code = $this -> session -> userdata("facility");
+		$supported_query = "and facility_code='$facility_code'";
+		$regimen_totals = array();
+
+		$total_adult_male = 0;
+		$total_adult_female= 0;
+		$total_child_male = 0;
+		$total_child_female= 0;
+		
+		$overall_adult_male=0;
+		$overall_adult_female=0;
+		$overall_child_male=0;
+		$overall_child_female=0;
+
+		if ($supported_by == 1) {
+			$supported_query = "and supported_by=1 and facility_code='$facility_code'";
+		} else if ($supported_by == 2) {
+			$supported_query = "and supported_by=2 and facility_code='$facility_code'";
 		}
 
+		//Get Patient Totals
+		$sql = "select count(*) as total from patient p,gender g,regimen_service_type rs,regimen r where start_regimen_date between '$from' and '$to' and p.gender=g.id and p.service=rs.id and p.start_regimen=r.id and p.service='1' and p.facility_code='$facility_code'";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$patient_total = $results[0]['total'];
+		//Get Totals for each regimen
+		$sql = "select count(*) as total, r.regimen_desc,r.regimen_code,p.start_regimen from patient p,gender g,regimen_service_type rs,regimen r where start_regimen_date between '$from' and '$to' and p.gender=g.id and p.service=rs.id and p.start_regimen=r.id and p.service='1' and p.facility_code='$facility_code' group by p.start_regimen";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$row_string ="<table   id='patient_listing' border='1' cellpadding='5'>
+			<tr class='table_title'>
+				<th rowspan='3'>Regimen</th>
+				<th colspan='2'>Total</th>
+				<th colspan='4'> Adult</th>
+				<th colspan='4'> Children </th>
+			</tr>
+			<tr class='table_subtitle'>
+				<th rowspan='2'>No.</th>
+				<th rowspan='2'>%</th>
+				<th colspan='2'>Male</th>
+				<th colspan='2'>Female</th>
+				<th colspan='2'>Male</th>
+				<th colspan='2'>Female</th>
+			</tr>
+			<tr class='table_subsubtitle'>
+				<th>No.</th>
+				<th>%</th>
+				<th>No.</th>
+				<th>%</th><th>No.</th>
+				<th>%</th><th>No.</th>
+				<th>%</th>
+			</tr>";
+		if ($results) {
+			foreach ($results as $result) {
+				$regimen_totals[$result['start_regimen']] = $result['total'];
+				$start_regimen = $result['start_regimen'];
+				$regimen_name = $result['regimen_desc'];
+				$regimen_code = $result['regimen_code'];
+				$regimen_total = $result['total'];
+				$regimen_total_percentage = number_format(($regimen_total / $patient_total) * 100, 1);
+				$row_string .= "<tr><td><b>$regimen_code</b> | $regimen_name</td><td>$regimen_total</td><td>$regimen_total_percentage</td>";
+				//SQL for Adult Male Regimens
+				$sql = "select count(*) as total_adult_male, r.regimen_desc,r.regimen_code,p.start_regimen from patient p,gender g,regimen_service_type rs,regimen r where start_regimen_date between '$from' and '$to' and p.gender=g.id and p.service=rs.id and p.start_regimen=r.id and round(datediff('$to',p.dob)/360)>=15 and p.gender='1' and start_regimen='$start_regimen' and p.service='1' and p.facility_code='$facility_code' group by p.start_regimen";
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				if ($results) {
+					foreach ($results as $result) {
+						$total_adult_male = $result['total_adult_male'];
+						$overall_adult_male += $total_adult_male;
+						$total_adult_male_percentage = number_format(($total_adult_male / $regimen_total) * 100, 1);
+						if ($result['start_regimen'] != null) {
+							$row_string .= "<td>$total_adult_male</td><td>$total_adult_male_percentage</td>";
+						}
+					}
+				} else {
+					$row_string .= "<td>-</td><td>-</td>";
+				}
+				//SQL for Adult Female Regimens
+				$sql = "select count(*) as total_adult_female, r.regimen_desc,r.regimen_code,p.start_regimen from patient p,gender g,regimen_service_type rs,regimen r where start_regimen_date between '$from' and '$to' and p.gender=g.id and p.service=rs.id and p.start_regimen=r.id and round(datediff('$to',p.dob)/360)>=15 and p.gender='2' and p.service='1' and start_regimen='$start_regimen' and p.facility_code='$facility_code' group by p.start_regimen";
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				if ($results) {
+					foreach ($results as $result) {
+						$total_adult_female = $result['total_adult_female'];
+						$overall_adult_female += $total_adult_female;
+						$total_adult_female_percentage = number_format(($total_adult_female / $regimen_total) * 100, 1);
+						if ($result['start_regimen'] != null) {
+							$row_string .= "<td>$total_adult_female</td><td>$total_adult_female_percentage</td>";
+						}
+					}
+				} else {
+					$row_string .= "<td>-</td><td>-</td>";
+				}
+				//SQL for Child Male Regimens
+				$sql = "select count(*) as total_child_male, r.regimen_desc,r.regimen_code,p.start_regimen from patient p,gender g,regimen_service_type rs,regimen r where start_regimen_date between '$from' and '$to' and p.gender=g.id and p.service=rs.id and p.start_regimen=r.id and round(datediff('$to',p.dob)/360)<15 and p.gender='1' and p.service='1' and start_regimen='$start_regimen' and p.facility_code='$facility_code' group by p.start_regimen";
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				if ($results) {
+					foreach ($results as $result) {
+						$total_child_male = $result['total_child_male'];
+						$overall_child_male += $total_child_male;
+						$total_child_male_percentage = number_format(($total_child_male / $regimen_total) * 100, 1);
+						if ($result['start_regimen'] != null) {
+							$row_string .= "<td>$total_child_male</td><td>$total_child_male_percentage</td>";
+						}
+					}
+				} else {
+					$row_string .= "<td>-</td><td>-</td>";
+				}
+				//SQL for Child Female Regimens
+				$sql = "select count(*) as total_child_female, r.regimen_desc,r.regimen_code,p.start_regimen from patient p,gender g,regimen_service_type rs,regimen r where start_regimen_date between '$from' and '$to' and p.gender=g.id and p.service=rs.id and p.start_regimen=r.id and round(datediff('$to',p.dob)/360)<15 and p.gender='2' and p.service='1' and start_regimen='$start_regimen' and p.facility_code='$facility_code' group by p.start_regimen";
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				if ($results) {
+					foreach ($results as $result) {
+						$total_child_female = $result['total_child_female'];
+						$overall_child_female += $total_child_female;
+						$total_child_female_percentage = number_format(($total_child_female / $regimen_total) * 100, 1);
+						if ($result['start_regimen'] != null) {
+							$row_string .= "<td>$total_child_female</td><td>$total_child_female_percentage</td>";
+						}
+					}
+				} else {
+					$row_string .= "<td>-</td><td>-</td>";
+				}
+				$row_string .= "</tr>";
+			}
+			$row_string .= "<tr class='tfoot'><td><b>Totals:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $patient_total) * 100, 1) . "</b></td></tr>";
+		} else {
+			$row_string .= "<tr><td colspan='6'>No Data Available</td></tr>";
+		}
+		$row_string .= "</table>";
+		$data['from'] = date('d-M-Y', strtotime($from));
+		$data['to'] = date('d-M-Y', strtotime($to));
+		$data['dyn_table'] = $row_string;
+		$this -> load -> view('reports/patients_started_on_art_v', $data);
 	}
 
 	public function base_params($data) {
