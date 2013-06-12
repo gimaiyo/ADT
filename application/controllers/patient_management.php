@@ -170,6 +170,13 @@ class Patient_Management extends MY_Controller {
 		 */
 	}
 
+	public function viewDetails($patient_id){
+		$data['content_view']='patient_details_v';
+		//Hide side menus
+		$data['hide_side_menu']='1';
+		$this -> base_params($data);
+	}
+
 	public function edit($record_no) {
 		$sql = "select * from patient where id='$record_no'";
 		$query = $this -> db -> query($sql);
