@@ -30,7 +30,7 @@
 			</div></h3>
 
 			<form id="add_patient_form" method="post">
-				<div class="column">
+				<div class="column" id="columnOne">
 					<fieldset>
 						<legend>
 							Patient Information &amp; Demographics
@@ -131,7 +131,7 @@
 
 				</div>
 
-				<div class="column">
+				<div class="column" id="colmnTwo">
 					<fieldset>
 						<legend>
 							Program History
@@ -258,7 +258,7 @@
 						</div>
 					</fieldset>
 				</div>
-				<div class="column">
+				<div class="column" id="columnThree">
 					<fieldset>
 						<legend>
 							Patient Information
@@ -309,24 +309,16 @@
 						</div>
 					</fieldset>
 				</div>
-		</div>
-		<div class="max-row">
-			<div class="mid-row"></div>
-			<div class="mid-row"></div>
+				<div class="button-bar">
+					<div class="btn-group">
+						<button class="btn" type="submit">Submit</button>
+						<button class="btn">Dispense</button>
+						<button class="btn btn-danger">Reset</button>
+					</div>
+					
+				</div>
 
-		</div>
-
-		<div class="max-row">
-
-		</div>
-		<div class="max-row">
-
-		</div>
-		<div class="max-row">
-
-		</div>
-		</div>
-		</form>
+			</form>
 		</div>
 	</body>
 </html>

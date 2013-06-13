@@ -167,7 +167,7 @@
 				<div class="hero-unit">
 					<div class="passmessage"></div>
 					<div class="errormessage"></div>
-					<div class="pipeline_import">
+					<div class="well">
 						
 						<form name="frm" method="post" enctype="multipart/form-data" id="frm" action="<?php echo base_url()."pipeline_import/upload"?>">
 							<legend>
@@ -192,7 +192,7 @@
 							</p>
 						  </legend>
 							
-							<b><u><h3>Pipeline</h3></u></b>
+							<b><u><h4>Pipeline</h4></u></b>
 							<p>
 								<label class="checkbox">
 									<input type="radio" name="pipeline_name" value="1" required="required"/>
@@ -206,14 +206,14 @@
 
 								</p>
 								-->
-								<b><u><h3>Upload Period</h3></u></b>
+								<b><u><h4>Upload Period</h4></u></b>
 							<p>
 								<input type="text" name="upload_date" id="upload_date" class="input-xlarge" required="required" />
 							</p>
-							<b><u><h3>Select File</h3></u></b>
+							<b><u><h4>Select File</h4></u></b>
 							<p>
 								<input type="file"  name="file" size="30" required="required" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
-								<input name="btn_save" class="btn btn-primary" type="submit"  value="Save" style="padding-left:30px;padding-right: 30px"/>
+								<input name="btn_save" class="btn" type="submit"  value="Save" style="padding-left:30px;padding-right: 30px"/>
 							</p>
 						</form>
 					</div>

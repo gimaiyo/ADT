@@ -147,20 +147,20 @@ h3{
 		    <!-- SIde bar menus end -->
 		    
 		    <div class="span9 span-fixed-sidebar">
-	      		<div class="hero-unit">
+	      	
 		<div class="passmessage"></div>
 		<div class="errormessage"></div>
 		<?php echo $error;?>
 		<?php echo form_open_multipart('upload_management/do_upload');?>
-		<div class="upload_form">
+		<div class="well">
 			<select name="test_type" id="test_type" style="width:200px;float:right;">
 				<option value="1">Test Database</option>
 				<option value="2" >Live Database</option>
 			</select>
-			<h3 class="import_title">Data Migration</h3>
+			<h4 class="import_title">Data Migration</h4>
 			<hr/>
 			<label class="more_info">
-			<u><h3>Instructions</h3></u><ul><li>SELECT FACILITY FOR DATA MIGRATION</li><li>CONVERT FILE TO <strong>CSV</strong></li><li>SELECT FILE TO MIGRATE e.g Patient Transactions</li><li>UPLOAD FILE</li></ul>	
+			<u><h4>Instructions</h4></u><ul><li>SELECT FACILITY FOR DATA MIGRATION</li><li>CONVERT FILE TO <strong>CSV</strong></li><li>SELECT FILE TO MIGRATE e.g Patient Transactions</li><li>UPLOAD FILE</li></ul>	
 			</label>
 			<br/>
 			<strong >Facility</strong> &nbsp;
@@ -188,7 +188,7 @@ h3{
 			<input name="btn_save" class="button" type="submit"  value="Upload" />	
 		</div>
 		</form>
-		</div>
+	
 			</div>	
 		</div>
 	</div>

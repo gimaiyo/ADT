@@ -102,8 +102,9 @@
 		margin:0 auto;
 	}
 </style>
+<div class="full-content">
 <div id="facility_info" class="header section">
-	<table class="table table-bordered" >
+	<table class="table table-bordered table-striped" >
 		<tbody>
 			<tr>
 				<th>Order No</th>
@@ -256,4 +257,4 @@
 		?>
 	</tbody>
 </table>
-
+</div>

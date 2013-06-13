@@ -179,7 +179,6 @@ if ($access_level == "nascop_staff") {
 				<div class="center-content">
 					<div id="reports_containerdfg">
 						<!-- Select report type -->
-					
 						
 						<div class="reports_panel">
 							<div class="report_category">

@@ -103,7 +103,7 @@ class Client_Support extends MY_Controller {
 	public function base_params($data) {
 		$data['content_view'] = "settings_v";
 		$data['quick_link'] = "client_supports";
-		$this -> load -> view("template_admin", $data);
+		$this -> load -> view("template", $data);
 	}
 
 	
