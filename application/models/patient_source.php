@@ -15,6 +15,12 @@ class Patient_Source extends Doctrine_Record {
 		$sources = $query -> execute();
 		return $sources;
 	}
+	
+	public function getSources() {
+		$query = Doctrine_Query::create() -> select("*") -> from("Patient_Source") -> where("Active", "1");
+		$sources = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $sources;
+	}
 
 	public function getTotalNumber() {
 		$query = Doctrine_Query::create() -> select("count(*) as Total_Sources") -> from("Patient_Source");

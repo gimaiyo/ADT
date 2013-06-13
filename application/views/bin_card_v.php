@@ -172,13 +172,15 @@
 								else if($drug_transaction->Source==$drug_transaction->Destination){
 									//Receive from
 									if($drug_transaction->Transaction_Type==1){
+										$qty=$drug_transaction->Quantity;
 										$transaction_type.=" Main Store";
 									}
 									//Dispensed to patients
 									else if($drug_transaction->Transaction_Type==5){
-										
+										$qty=$drug_transaction->Quantity_Out;
 									}
 									else if($drug_transaction->Quantity==0){
+										$qty=$drug_transaction->Quantity_Out;
 										$transaction_type.=" Patients";
 									}
 									

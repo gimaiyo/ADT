@@ -18,6 +18,15 @@ class Patient_Management extends MY_Controller {
 
 	public function addpatient_show() {
 		$data = array();
+		$data['districts']=District::getPOB();
+		$data['genders']=Gender::getAll();
+		$data['statuses']=Patient_Status::getStatus();
+		$data['sources']=Patient_Source::getSources();
+		$data['supporters']=Supporter::getAllActive();
+		$data['service_types']=Regimen_Service_Type::getHydratedAll();
+		$data['facilities']=Facilities::getAll();
+		$data['family_planning']=Family_Planning::getAll();
+		$data['other_illnesses']=Other_Illnesses::getAll();
 		$data['content_view'] = "add_patient_v";
 		$this -> base_params($data);
 	}
@@ -188,99 +197,80 @@ class Patient_Management extends MY_Controller {
 	}
 
 	public function save() {
-		//Patient Information & Demographics
-		$medical_record_number = $_POST['medical_record_number'];
-		$patient_number_ccc = $_POST['patient_number'];
-		$last_name = $_POST['last_name'];
-		$first_name = $_POST['first_name'];
-		$other_name = $_POST['other_name'];
-		$dob = $_POST['dob'];
-		$pob = $_POST['pob'];
-		$gender = $_POST['gender'];
-		$pregnant = $_POST['pregnant'];
-		$start_weight = $_POST['weight'];
-		$start_height = $_POST['height'];
-		$start_bsa = $_POST['surface_area'];
-		$phone = $_POST['phone'];
-		$sms_consent = $_POST['sms_consent'];
-		$physical_address = $_POST['physical'];
-		$alternate_address = $POST['alternate'];
+		
+        $family_planning="";
+		$other_illness_listing="";
 
-		//Patient History
-		$patient_status = $_POST['pstatus'];
-		$disclosure = $_POST['disco'];
-		$family_planning = $_POST['plan_listing'];
-		$other_illness_listing = $_POST['other_illnesses_listing'];
-		$other_chronic = $_POST['other_chronic'];
-		$other_drugs = $_POST['other_drugs'];
-		$other_allergies = $_POST['other_allergies'];
-		$other_allergies_listing = $_POST['other_allergies_listing'];
-		$support_group = $_POST['support_group'];
-		$smoke = $_POST['smoke'];
-		$alcohol = $POST['alcohol'];
-		$tb = $_POST['tb'];
-		$tbphase = $_POST['tbphase'];
-		$fromphase = $_POST['fromphase'];
-		$tophase = $_POST['tophase'];
+		$family_planning =$this->input->post('family_planning',TRUE);
+		if($family_planning==null){
+			$family_planning="";
+		}
+		$other_illness_listing =$this->input->post('other_illnesses',TRUE);
+		if($other_illness_listing==null){
+			$other_illness_listing="";
+		}
+		$other_chronic =$this->input->post('other_chronic',TRUE);
+		if($other_chronic !=""){
+			$other_illness_listing=$other_illness_listing.",".$other_chronic;
+		}
 
-		//Program Information
-		$date_enrolled = $_POST['current_status'];
-		$date_of_status_change = $_POST['status_started'];
-		$patient_source = $_POST['source'];
-		$transfer_from = $_POST['patient_source'];
-		$supported_by = $_POST['support'];
-		$type_of_service = $_POST['service'];
-		$start_regimen = $_POST['regimen'];
-		$start_regimen_date = $_POST['service_started'];
-
-		//Save data
 
 		//Patient Information & Demographics
 		$new_patient = new Patient();
-		$new_patient -> Medical_Record_Number = $medical_record_number;
-		$new_patient -> Patient_Number_CCC = $patient_number_ccc;
-		$new_patient -> First_Name = $first_name;
-		$new_patient -> Last_Name = $last_name;
-		$new_patient -> Other_Name = $other_name;
-		$new_patient -> Dob = $dob;
-		$new_patient -> Pob = $pob;
-		$new_patient -> Gender = $gender;
-		$new_patient -> Dob = $dob;
-		$new_patient -> Pob = $pob;
-		$new_patient -> Gender = $gender;
-		$new_patient -> Pregnant = $pregnant;
-		$new_patient -> Start_Weight = $start_weight;
-		$new_patient -> Start_Height = $start_height;
-		$new_patient -> Start_Bsa = $start_bsa;
-		$new_patient -> Phone = $phone;
-		$new_patient -> SMS_Consent = $sms_consent;
-		$new_patient -> Physical = $physical_address;
-		$new_patient -> Alternate = $alternate_address;
+		$new_patient -> Medical_Record_Number = $this->input->post('medical_record_number',TRUE);
+		$new_patient -> Patient_Number_CCC =$this->input->post('patient_number',TRUE);
+		$new_patient -> First_Name = $this->input->post('first_name',TRUE);
+		$new_patient -> Last_Name =  $this->input->post('last_name',TRUE);
+		$new_patient -> Other_Name = $this->input->post('other_name',TRUE);
+		$new_patient -> Dob =$this->input->post('dob',TRUE);
+		$new_patient -> Pob =$this->input->post('pob',TRUE);
+		$new_patient -> Gender =$this->input->post('gender',TRUE);
+		$new_patient -> Pregnant =$this->input->post('pregnant',TRUE);
+		$new_patient -> Start_Weight = $this->input->post('weight',TRUE);
+		$new_patient -> Start_Height =$this->input->post('height',TRUE);
+		$new_patient -> Start_Bsa =$this->input->post('surface_area',TRUE);
+		$new_patient -> Weight = $this->input->post('weight',TRUE);
+		$new_patient -> Height =$this->input->post('height',TRUE);
+		$new_patient -> Sa =$this->input->post('surface_area',TRUE);
+		$new_patient -> Phone =$this->input->post('phone',TRUE);
+		$new_patient -> SMS_Consent =$this->input->post('sms_consent',TRUE);
+		$new_patient -> Physical = $this->input->post('physical',TRUE);
+		$new_patient -> Alternate =$this->input->post('alternate',TRUE);
 
 		//Patient History
-		$new_patient -> Partner = $patient_status;
-		$new_patient -> Partner_Status = $disclosure;
-		$new_patient -> Fplan = $family_planning;
-		$new_patient -> Other_Illnesses = $other_illness_listing;
-		$new_patient -> Other_Drugs = $other_chronic;
-		$new_patient -> Adr = $other_allergies;
-		$new_patient -> Smoke = $smoke;
-		$new_patient -> Alcohol = $alcohol;
-		$new_patient -> Tb = $tb;
-		$new_patient -> Tbphase = $tbphase;
-		$new_patient -> Startphase = $fromphase;
-		$new_patient -> Endphase = $tophase;
+		$new_patient -> Partner_Status =$this->input->post('partner_status',TRUE);
+		$new_patient -> Disclosure =$this->input->post('disclosure',TRUE);
+		$new_patient -> Fplan =$family_planning;
+		$new_patient -> Other_Illnesses =$other_illness_listing;
+		$new_patient -> Other_Drugs =$this->input->post('other_drugs',TRUE);
+		$new_patient -> Adr =$this->input->post('other_allergies_listing',TRUE);
+		$new_patient -> Support_Group =$this->input->post('support_group_listing',TRUE);
+		$new_patient -> Smoke =$this->input->post('smoke',TRUE);
+		$new_patient -> Alcohol =$this->input->post('alcohol',TRUE);
+		$new_patient -> Tb =$this->input->post('tb',TRUE);
+		$new_patient -> Tbphase =$this->input->post('tbphase',TRUE);
+		$new_patient -> Startphase =$this->input->post('fromphase',TRUE);
+		$new_patient -> Endphase =$this->input->post('tophase',TRUE);
 
 		//Program Information
-		$new_patient -> Date_Enrolled = $date_enrolled;
-		$new_patient -> Status_Change_Date = $date_of_status_change;
-		$new_patient -> Source = $patient_source;
-		$new_patient -> Supported_By = $supported_by;
+		$new_patient -> Date_Enrolled =$this->input->post('enrolled',TRUE);
+		$new_patient -> Current_Status =$this->input->post('current_status',TRUE);
+		$new_patient -> Status_Change_Date =$this->input->post('status_started',TRUE);
+		$new_patient -> Source =$this->input->post('source',TRUE);
+		$new_patient -> Transfer_From =$this->input->post('transfer_source',TRUE);
+		$new_patient -> Supported_By = $this->input->post('support',TRUE);
 		$new_patient -> Facility_Code = $this -> session -> userdata('facility');
-		$new_patient -> Service = $type_of_service;
-		$new_patient -> Start_Regimen = $start_regimen;
-		$new_patient -> Start_Regimen_Date = $start_regimen_date;
+		$new_patient -> Service =$this->input->post('service',TRUE);
+		$new_patient -> Start_Regimen =$this->input->post('regimen',TRUE);
+		$new_patient -> Current_Regimen =$this->input->post('regimen',TRUE);
+		$new_patient -> Start_Regimen_Date =$this->input->post('service_started',TRUE);;
 		$new_patient -> save();
+		
+		if($_POST['save']=="Submit"){
+			redirect("patient_management");
+		}else if($_POST['save']=="Dispense"){
+			redirect("home_controller/home");
+		}
 	}
 
 	public function update($record_id) {

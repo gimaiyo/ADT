@@ -1,4 +1,4 @@
-@font-face {
+font-face {
     font-family: 'ProcionoRegular';
     src: url('Prociono-Regular-webfont.eot');
     src: url('Prociono-Regular-webfont.eot?#iefix') format('embedded-opentype'),
@@ -10,7 +10,7 @@
 
 }
 
-@font-face {
+font-face {
     font-family: 'AllerRegular';
     src: url('fonts/Aller_Rg.ttf');
     font-weight: normal;
@@ -288,9 +288,7 @@ input[type =
 	background-image: -webkit-gradient(linear,left top,left bottom,from(#46EB59),to(#36D148));
 	background-image: -webkit-linear-gradient(top,#46EB59,#36D148);
 	background-image: -moz-linear-gradient(top,#46EB59,#36D148);
-	background-image: -ms-linear-gradient(top,#46EB59,#36D148);
-	background-image: -o-linear-gradient(top,#46EB59,#36D148);
-	background-image: linear-gradient(top,#46EB59,#36D148);
+
 }
 .action_button {
 
@@ -331,15 +329,12 @@ input[type =
 	-ms-transition: all 0.218s;
 	-o-transition: all 0.218s;
 	transition: all 0.218s;
-	border: 1px solid gainsboro;
+	border: 1px solid #666;
 	border: 1px solid rgba(0, 0, 0, 0.1);
-	background-color: whiteSmoke;
+	background-color: #999;
 	background-image: -webkit-gradient(linear,left top,left bottom,from(#f5f5f5),to(#f1f1f1));
 	background-image: -webkit-linear-gradient(top,#f5f5f5,#f1f1f1);
 	background-image: -moz-linear-gradient(top,#f5f5f5,#f1f1f1);
-	background-image: -ms-linear-gradient(top,#f5f5f5,#f1f1f1);
-	background-image: -o-linear-gradient(top,#f5f5f5,#f1f1f1);
-	background-image: linear-gradient(top,#f5f5f5,#f1f1f1);
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	user-select: none;
@@ -363,9 +358,9 @@ input[type =
 	border-radius: 2px;
 	margin: 20px;
 	float: right;
-	border: 1px solid gainsboro;
+	border: 1px solid #DDD;
 	border: 1px solid rgba(0, 0, 0, 0.1);
-	background-color: whiteSmoke;
+	background-color: #999;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	user-select: none;
@@ -708,7 +703,7 @@ ul li.last {
 
 table.setting_table {
 	border: solid;
-	border-color: grey;
+	border-color: #666;
 	border-width: 1px;
 }
 .setting_table td {
@@ -818,12 +813,7 @@ table.dataTable tr.odd td sorting_1 {
 #my_profile_link_container .generated_link {
 	display: none;
 }
-#my_profile_link_containe {
-	vertical-align: center;
-	min-width: 200px !important;
-	background-color: red;
-	height: 100px;
-}
+
 .temp_link {
 	font-size: 10px;
 	width: 100px !important;
@@ -837,7 +827,7 @@ table.dataTable tr.odd td sorting_1 {
 
 table.setting_table {
 	border: solid;
-	border-color: grey;
+	border-color: #666;
 	border-width: 1px;
 }
 .setting_table td {
@@ -868,7 +858,7 @@ table.dataTable tr.odd td sorting_1 {
  * 	Login Forms
  */
 #signup_form {
-	background-color: whiteSmoke;
+	background-color: #999;
 	border: 1px solid #E5E5E5;
 	padding: 3%;
 	width: 35%;
@@ -1166,7 +1156,7 @@ form{
 }
 .column .max-row {
 	margin-top: 0.5em;
-	clear: all;
+	clear: both;
 	width: 100%;
 	display: block;
 }
@@ -1350,4 +1340,13 @@ legend {
 
 .report_category a{
 	font-size:12px;
+}
+.astericks{
+	color:red;
+	font-size:18px;
+	font-weight:bold;
+}
+.start_regimen{
+	color:red;
+	font-weight:bold;
 }
