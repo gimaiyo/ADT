@@ -101,7 +101,7 @@ class Drugdestination_Management extends MY_Controller {
 	public function base_params($data) {
 		$data['content_view'] = "settings_v";
 		$data['quick_link'] = "drug_destination";
-		$this -> load -> view("template_admin", $data);
+		$this -> load -> view("template", $data);
 	}
 
 	

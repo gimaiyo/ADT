@@ -128,15 +128,15 @@
 				<td><?php echo date('d-M-Y',strtotime($period_begin));?></td>
 				<td><?php echo date('d-M-Y',strtotime($period_end));?></td>
 				<td align="center"><?php echo $numberDays; ?> Day (s)</td>
-				<td style="text-align: center"><div class="btn-group"><button class="btn "><a href="<?php echo base_url()."order_management/view_order/".$order->id;?>" >View</a></button>
+				<td style="text-align: center"><div class='btn-group'><button class="btn"><a href="<?php echo base_url()."order_management/view_order/".$order->id;?>" >View</a></button>
 					<?php if(($quick_link != 1 && $quick_link != 3) ||$quick_link == 2 ){?>
-					 <button class="btn "><a href="<?php echo base_url()."order_management/edit_order/".$order->id;?>">Edit</a></button>
+					 <button class="btn"><a href="<?php echo base_url()."order_management/edit_order/".$order->id;?>">Edit</a></button>
 					<?php }?>
 					<?php if($quick_link == 0){?>
 					 <button class="btn btn-danger"><a order="<?php echo $order->id;?>" class="delete">Delete</a></button></div></td>
 					<?php }?>
 					
-			</tr>S
+			</tr>
 		<?php }
 		?>
 	</tbody>

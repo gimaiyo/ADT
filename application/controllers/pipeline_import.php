@@ -1269,7 +1269,7 @@ class Pipeline_Import extends MY_Controller {
 		$data['banner_text'] = "Pipeline Monthly Stock Data Upload";
 		$data['content_view'] = "settings_v";
 		$data['quick_link'] = "pipeline";
-		$this -> load -> view('template_admin', $data);
+		$this -> load -> view('template', $data);
 	}
 
 }

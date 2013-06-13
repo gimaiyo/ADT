@@ -90,7 +90,7 @@ if (isset($invalid)) {
 <strong >Password</strong><br>
 <input type="password" name="password" class="input-xlarge" id="password" placeholder="e.g kenyatta">
 </label>
- <input type="submit" class="btn" name="register" id="register" value="Sign in" style=" padding-left:30px; padding-right:30px;margin-right:40px ">
+ <input type="submit" class="btn" name="register" id="register" value="Sign in" >
 
 <div style="margin-top:20px;display:inline">
 	<strong><a href="<?php echo base_url().'user_management/resetPassword' ?>">Forgot Password?</a></strong>

@@ -181,16 +181,10 @@ if ($access_level == "nascop_staff") {
 						<!-- Select report type -->
 						
 						<div class="btn-group">
-							<a style="color:#FFF" href="<?php echo base_url().'reports.html'?>"> <button class="btn btn-info"> Main Site Report </button></a>
-						</div>
-						<div class="btn-group">
-						  <button class="btn btn-info active" id="satellite_dropdown">Satellite Reports</button>
-						  <button class="btn dropdown-toggle btn-info" id="arrow_satellite" data-toggle="dropdown">
-						    <span class="caret" ></span>
-						  </button>
-						  <ul class="dropdown-menu" id="satellite_menus" >
-						    <!-- dropdown menu links -->
-						  </ul>
+							<button class="btn"> <a  href="<?php echo base_url().'reports.html'?>"> Main Site Report </a></button>
+						
+						  <button class="btn active" id="satellite_dropdown">Satellite Reports</button>
+						  
 						</div>
 						
 						<legend>Satellite Report - <span class="title"><?php echo @$facility_name ?></span></legend>

@@ -244,7 +244,7 @@
 
 </style>
 
-
+<div class="full-content">
 <form method="post" id="fmEditOrder" action="<?php echo site_url('order_management/save')?>">
 	<input type="hidden" name="order_number" value="<?php echo $order_details->id;?>" />
 	<input type="hidden" name="facility_id" value="<?php echo $order_details->Facility_Object->facilitycode;?>" />
@@ -454,3 +454,4 @@
 	</table>
 	
 </form>
+</div>

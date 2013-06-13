@@ -255,7 +255,7 @@
 	      <div class="hero-unit">
 	      	<div class="passmessage"></div>
     		<div class="errormessage"></div>
-	      	<button class="btn btn-large btn-success" type="button" id="new_regimen"><i class="icon-plus icon-black"></i>New Regimen</button>
+	      	
 	        <?php echo $regimens;?>
 	      </div>
 
@@ -333,6 +333,7 @@
 		</table>
 		<?php echo form_close(); ?>
 	</div>
+	<button class="btn btn-large" type="button" id="new_regimen"><i class="icon-plus icon-black"></i>New Regimen</button>
 	
 	<div id="edit_form" title="Edit Regimen">
 		<?php

@@ -20,6 +20,7 @@ class Order_Management extends MY_Controller {
 		$data['regimens'] = Maps_Item::getOrderItems($order);
 		$data['comments'] = Order_Comment::getOrderComments($order);
 		$data['content_view'] = "view_order_v";
+		$data['hide_side_menu']=1;
 		$data['banner_text'] = "Order Particulars";
 		//get all submitted orders that have not been rationalized (fresh orders)
 		$this -> base_params($data);
@@ -31,7 +32,7 @@ class Order_Management extends MY_Controller {
 		$data['order_details_page']='edit_order';
 		$data['order_no']=$order;
 		$data['order_details'] = Facility_Order::getOrder($order);
-		
+		$data['hide_side_menu']=1;
 		$this -> load -> database();
 		//Get all drugs, ordered or not
 		$sql = "select d.drug,d.id as did,d.pack_size,c.* from drugcode d left join cdrr_item c on d.id = c.drug_id and c.cdrr_id = '$order' where d.supplied = '1' order by d.id";
