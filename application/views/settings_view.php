@@ -7,7 +7,7 @@ if (!isset($quick_link)) {
 
 <div class="container-fluid">
 
-	<div class="span5 well" >
+	<div class="span4 well" >
 		<div class="btn-toolbar ">
 			<div class="btn-group">
 				<button  class="btn dropdown-toggle btn-xlarge " data-toggle="dropdown" style="font-size:1.3em" >
@@ -105,7 +105,7 @@ if (!isset($quick_link)) {
 
 	</div>
 
-	<div class="span5 well" style="margin-right:0px">
+	<div class="span4 well" style="margin-right:0px">
 		<div class="btn-toolbar">
 			<a href="<?php echo site_url('genericname_management'); ?>" class="<?php
 			if ($quick_link == "generic") {echo "top_menu_active";
