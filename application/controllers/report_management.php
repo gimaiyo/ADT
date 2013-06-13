@@ -1,8 +1,12 @@
 <?php
 class report_management extends MY_Controller {
+	
+	var $counter = 0;
+	
 	function __construct() {
 		parent::__construct();
 		$this -> load -> database();
+		ini_set("max_execution_time", "1000000");
 	}
 
 	public function index() {
@@ -774,341 +778,9 @@ class report_management extends MY_Controller {
 		$this -> load -> view('reports/no_of_patients_enrolled_v', $data);
 	}
 
-	public function patient_active_byregimen($from = "2013-06-06") {
-		//Variables
-		$facility_code = $this -> session -> userdata("facility");
-		$regimen_totals = array();
-		$data = array();
-		$row_string = "";
-		$overall_adult_male = 0;
-		$overall_adult_female = 0;
-		$overall_child_male = 0;
-		$overall_child_female = 0;
+	
 
-		//Get Total of all patients
-		$sql = "SELECT count(*) as total, r.regimen_desc,p.current_regimen FROM patient p,regimen r WHERE p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.current_regimen !=0 AND p.current_regimen !='' AND p.current_status !='' AND p.current_status !=0";
-		$query = $this -> db -> query($sql);
-		$results = $query -> result_array();
-		$patient_total = $results[0]['total'];
-
-		//Get Totals for each regimen
-		$sql = "SELECT count(*) as total, r.regimen_desc,r.regimen_code,p.current_regimen FROM patient p,regimen r WHERE p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.current_regimen !=0 AND p.current_regimen !='' AND p.current_status !='' AND p.current_status !=0 GROUP BY p.current_regimen ORDER BY r.regimen_code ASC";
-		$query = $this -> db -> query($sql);
-		$results = $query -> result_array();
-		if ($results) {
-			$row_string .= "<table id='patient_listing' border='1' cellpadding='5'>
-			<tr>
-				<th rowspan='3'>Regimen</th>
-				<th colspan='2'>Total</th>
-				<th colspan='4'> Adult</th>
-				<th colspan='4'> Children </th>
-			</tr>
-			<tr>
-				<th rowspan='2'>No.</th>
-				<th rowspan='2'>%</th>
-				<th colspan='2'>Male</th>
-				<th colspan='2'>Female</th>
-				<th colspan='2'>Male</th>
-				<th colspan='2'>Female</th>
-			</tr>
-			<tr>
-				<th>No.</th>
-				<th>%</th>
-				<th>No.</th>
-				<th>%</th><th>No.</th>
-				<th>%</th><th>No.</th>
-				<th>%</th>
-			</tr>";
-			foreach ($results as $result) {
-				$regimen_totals[$result['current_regimen']] = $result['total'];
-				$current_regimen = $result['current_regimen'];
-				$regimen_name = $result['regimen_desc'];
-				$regimen_code = $result['regimen_code'];
-				$regimen_total = $result['total'];
-				$regimen_total_percentage = number_format(($regimen_total / $patient_total) * 100, 1);
-				$row_string .= "<tr><td><b>$regimen_code</b> | $regimen_name</td><td>$regimen_total</td><td>$regimen_total_percentage</td>";
-				//SQL for Adult Male Regimens
-				$sql = "SELECT count(*) as total_adult_male, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=1 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)>=15 GROUP BY p.current_regimen";
-				$query = $this -> db -> query($sql);
-				$results = $query -> result_array();
-				if ($results) {
-					foreach ($results as $result) {
-						$total_adult_male = $result['total_adult_male'];
-						$overall_adult_male += $total_adult_male;
-						$total_adult_male_percentage = number_format(($total_adult_male / $regimen_total) * 100, 1);
-						if ($result['regimen_id'] != null) {
-							$row_string .= "<td>$total_adult_male</td><td>$total_adult_male_percentage</td>";
-						}
-					}
-				} else {
-					$row_string .= "<td>-</td><td>-</td>";
-				}
-				//SQL for Adult Female Regimens
-				$sql = "SELECT count(*) as total_adult_female, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=2 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)>=15 GROUP BY p.current_regimen";
-				$query = $this -> db -> query($sql);
-				$results = $query -> result_array();
-				if ($results) {
-					foreach ($results as $result) {
-						$total_adult_female = $result['total_adult_female'];
-						$overall_adult_female += $total_adult_female;
-						$total_adult_female_percentage = number_format(($total_adult_female / $regimen_total) * 100, 1);
-						if ($result['regimen_id'] != null) {
-							$row_string .= "<td>$total_adult_female</td><td>$total_adult_female_percentage</td>";
-						}
-					}
-				} else {
-					$row_string .= "<td>-</td><td>-</td>";
-				}
-				//SQL for Child Male Regimens
-				$sql = "SELECT count(*) as total_child_male, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=1 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)<15 GROUP BY p.current_regimen";
-				$query = $this -> db -> query($sql);
-				$results = $query -> result_array();
-				if ($results) {
-					foreach ($results as $result) {
-						$total_child_male = $result['total_child_male'];
-						$overall_child_male += $total_child_male;
-						$total_child_male_percentage = number_format(($total_child_male / $regimen_total) * 100, 1);
-						if ($result['regimen_id'] != null) {
-							$row_string .= "<td>$total_child_male</td><td>$total_child_male_percentage</td>";
-						}
-					}
-				} else {
-					$row_string .= "<td>-</td><td>-</td>";
-				}
-				//SQL for Child Female Regimens
-				$sql = "SELECT count(*) as total_child_female, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=2 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)<15 GROUP BY p.current_regimen";
-				$query = $this -> db -> query($sql);
-				$results = $query -> result_array();
-				if ($results) {
-					foreach ($results as $result) {
-						$total_child_female = $result['total_child_female'];
-						$overall_child_female += $total_child_female;
-						$total_child_female_percentage = number_format(($total_child_female / $regimen_total) * 100, 1);
-						if ($result['regimen_id'] != null) {
-							$row_string .= "<td>$total_child_female</td><td>$total_child_female_percentage</td>";
-						}
-					}
-				} else {
-					$row_string .= "<td>-</td><td>-</td>";
-				}
-				$row_string .= "</tr>";
-			}
-			$row_string .= "<tr class='tfoot'><td><b>Totals:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $patient_total) * 100, 1) . "</b></td></tr>";
-			$row_string .= "</table>";
-			$data['from'] = date('d-M-Y', strtotime($from));
-			$data['dyn_table'] = $row_string;
-			$this -> load -> view('reports/no_of_patients_receiving_art_byregimen_v', $data);
-		}
-	}
-
-	public function cumulative_patients($from = "2013-06-06") {
-		//Variables
-		$facility_code = $this -> session -> userdata("facility");
-		$status_totals = array();
-		$row_string = "";
-		$total_adult_male_art = 0;
-		$total_adult_male_pep = 0;
-		$total_adult_male_oi = 0;
-		$total_adult_female_art = 0;
-		$total_adult_female_pep = 0;
-		$total_adult_female_pmtct = 0;
-		$total_adult_female_oi = 0;
-		$total_child_male_art = 0;
-		$total_child_male_pep = 0;
-		$total_child_male_pmtct = 0;
-		$total_child_male_oi = 0;
-		$total_child_female_art = 0;
-		$total_child_female_pep = 0;
-		$total_child_female_pmtct = 0;
-		$total_child_female_oi = 0;
-
-		//Get Total Count of all patients
-		$sql = "select count(*) as total from patient,patient_status ps where(date_enrolled <= '$from' or date_enrolled='') and ps.id=current_status and current_status!='' and service!='' and gender !='' and facility_code='$facility_code'";
-		$query = $this -> db -> query($sql);
-		$results = $query -> result_array();
-		$patient_total = $results[0]['total'];
-
-		$row_string = "<table id='patient_listing' border='1' cellpadding='5'>
-			<tr>
-				<th rowspan='3'>Current Status</th>
-				<th colspan='2'>Total</th>
-				<th colspan='7'> Adult</th>
-				<th colspan='8'> Children </th>
-			</tr>
-			<tr>
-				<th rowspan='2'>No.</th>
-				<th rowspan='2'>%</th>
-				<th colspan='3'>Male</th>
-				<th colspan='4'>Female</th>
-				<th colspan='4'>Male</th>
-				<th colspan='4'>Female</th>
-			</tr>
-			<tr>
-				<th>ART</th>
-				<th>PEP</th>
-				<th>OI</th>
-				<th>ART</th>
-				<th>PEP</th>
-				<th>PMTCT</th>
-				<th>OI</th>
-				<th>ART</th>
-				<th>PEP</th>
-				<th>PMTCT</th>
-				<th>OI</th>
-				<th>ART</th>
-				<th>PEP</th>
-				<th>PMTCT</th>
-				<th>OI</th>
-			</tr>";
-
-		//Get Totals for each Status
-		$sql = "select count(p.id) as total,current_status,ps.name from patient p,patient_status ps where(date_enrolled <= '$from' or date_enrolled='') and facility_code='$facility_code' and ps.id = current_status and current_status!='' and service!='' and gender !='' group by p.current_status";
-		$query = $this -> db -> query($sql);
-		$results = $query -> result_array();
-		if ($results) {
-
-			foreach ($results as $result) {
-				$status_totals[$result['current_status']] = $result['total'];
-				$current_status = $result['current_status'];
-				$status_name = $result['name'];
-				$patient_percentage = number_format(($status_totals[$current_status] / $patient_total) * 100, 1);
-				$row_string .= "<tr><td>$status_name</td><td>$status_totals[$current_status]</td><td>$patient_percentage</td>";
-				//SQL for Adult Male Status
-				$service_list = array('ART', 'PEP', 'OI Only');
-				$sql = "SELECT count(*) as total_adult_male, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=1 AND p.service !=3 AND round(datediff('$from',p.dob)/360)>=15 GROUP BY service";
-				$query = $this -> db -> query($sql);
-				$results = $query -> result_array();
-				$i = 0;
-				$j = 0;
-				if ($results) {
-					while ($j < 3) {
-						$patient_current_total = @$results[$i]['total_adult_male'];
-						$service = @$results[$i]['Service'];
-						if ($service == @$service_list[$j]) {
-							$row_string .= "<td>$patient_current_total</td>";
-							if ($service == "ART") {
-								$total_adult_male_art += $patient_current_total;
-							} else if ($service == "PEP") {
-								$total_adult_male_pep += $patient_current_total;
-							} else if ($service == "OI Only") {
-								$total_adult_male_oi += $patient_current_total;
-							}
-							$i++;
-							$j++;
-						} else {
-							$row_string .= "<td>-</td>";
-							$j++;
-						}
-					}
-
-				} else {
-					$row_string .= "<td>-</td><td>-</td><td>-</td>";
-				}
-				//SQL for Adult Female Status
-				$service_list = array('ART', 'PEP', 'PMTCT', 'OI Only');
-				$sql = "SELECT count(*) as total_adult_female, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=2  AND round(datediff('$from',p.dob)/360)>=15 GROUP BY service";
-				$query = $this -> db -> query($sql);
-				$results = $query -> result_array();
-				$i = 0;
-				$j = 0;
-				if ($results) {
-					while ($j < 4) {
-						$patient_current_total = @$results[$i]['total_adult_female'];
-						$service = @$results[$i]['Service'];
-						if ($service == @$service_list[$j]) {
-							$row_string .= "<td>$patient_current_total</td>";
-							if ($service == "ART") {
-								$total_adult_female_art += $patient_current_total;
-							} else if ($service == "PEP") {
-								$total_adult_female_pep += $patient_current_total;
-							} else if ($service == "PMTCT") {
-								$total_adult_female_pmtct += $patient_current_total;
-							} else if ($service == "OI Only") {
-								$total_adult_female_oi += $patient_current_total;
-							}
-							$i++;
-							$j++;
-						} else {
-							$row_string .= "<td>-</td>";
-							$j++;
-						}
-					}
-				} else {
-					$row_string .= "<td>-</td><td>-</td><td>-</td><td>-</td>";
-				}
-				//SQL for Child Male Status
-				$service_list = array('ART', 'PEP', 'PMTCT', 'OI Only');
-				$sql = "SELECT count(*) as total_child_male, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=1  AND round(datediff('$from',p.dob)/360)<15 GROUP BY service";
-				$query = $this -> db -> query($sql);
-				$results = $query -> result_array();
-				$i = 0;
-				$j = 0;
-				if ($results) {
-					while ($j < 4) {
-						$patient_current_total = @$results[$i]['total_child_male'];
-						$service = @$results[$i]['Service'];
-						if ($service == @$service_list[$j]) {
-							$row_string .= "<td>$patient_current_total</td>";
-							if ($service == "ART") {
-								$total_child_male_art += $patient_current_total;
-							} else if ($service == "PEP") {
-								$total_child_male_pep += $patient_current_total;
-							} else if ($service == "PMTCT") {
-								$total_child_male_pmtct += $patient_current_total;
-							} else if ($service == "OI Only") {
-								$total_child_male_oi += $patient_current_total;
-							}
-							$i++;
-							$j++;
-						} else {
-							$row_string .= "<td>-</td>";
-							$j++;
-						}
-					}
-				} else {
-					$row_string .= "<td>-</td><td>-</td><td>-</td><td>-</td>";
-				}
-				//SQL for Child Female Status
-				$service_list = array('ART', 'PEP', 'PMTCT', 'OI Only');
-				$sql = "SELECT count(*) as total_child_female, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=2  AND round(datediff('$from',p.dob)/360)<15 GROUP BY service";
-				$query = $this -> db -> query($sql);
-				$results = $query -> result_array();
-				$i = 0;
-				$j = 0;
-				if ($results) {
-					while ($j < 4) {
-						$patient_current_total = @$results[$i]['total_child_female'];
-						$service = @$results[$i]['Service'];
-						if ($service == @$service_list[$j]) {
-							$row_string .= "<td>$patient_current_total</td>";
-							if ($service == "ART") {
-								$total_child_female_art += $patient_current_total;
-							} else if ($service == "PEP") {
-								$total_child_female_pep += $patient_current_total;
-							} else if ($service == "PMTCT") {
-								$total_child_female_pmtct += $patient_current_total;
-							} else if ($service == "OI Only") {
-								$total_child_female_oi += $patient_current_total;
-							}
-							$i++;
-							$j++;
-						} else {
-							$row_string .= "<td>-</td>";
-							$j++;
-						}
-					}
-				} else {
-					$row_string .= "<td>-</td><td>-</td><td>-</td><td>-</td>";
-				}
-				$row_string .= "</tr>";
-			}
-			$row_string .= "<tr class='tfoot'><td><b>Total:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$total_adult_male_art</b></td><td><b>$total_adult_male_pep</b></td><td><b>$total_adult_male_oi</b></td><td><b>$total_adult_female_art</b></td><td><b>$total_adult_female_pep</b></td><td><b>$total_adult_female_pmtct</b></td><td><b>$total_adult_female_oi</b></td><td><b>$total_child_male_art</b></td><td><b>$total_child_male_pep</b></td><td><b>$total_child_male_pmtct</b></td><td><b>$total_child_male_oi</b></td><td><b>$total_child_female_art</b></td><td><b>$total_child_female_pep</b></td><td><b>$total_child_female_pmtct</b></td><td><b>$total_child_female_oi</b></td></tr>";
-			$row_string .= "</table>";
-			$data['from'] = date('d-M-Y', strtotime($from));
-			$data['dyn_table'] = $row_string;
-			$this -> load -> view('reports/cumulative_patients_v', $data);
-		}
-	}
+	
 
 	public function getScheduledPatients($from = "2013-03-01", $to = "2013-03-31", $facility_code = "13050") {
 		//Variables
@@ -1791,9 +1463,17 @@ class report_management extends MY_Controller {
 	}
 
 	public function drug_consumption($year="2012"){
+		$data['year']=$year;
+		//Create table to store data
+		$tmpl = array(
+					'table_open' => '<table class="table table-bordered"  id="drug_listing">'
+					);
+		$this -> table -> set_template($tmpl);
+		$this -> table -> set_heading('','Drug', 'Unit', 'Jan', 'Feb', 'Mar', 'Apr','May',"Jun",'Jul','Aug','Sep','Oct','Nov','Dec');
+		
 		$facility_code = $this -> session -> userdata("facility");
 		$facility_name=$this -> session -> userdata('facility_name');
-		$drugs_sql = "select d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id";
+		$drugs_sql = "select d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id LIMIT 5";
 		$drugs=$this->db->query($drugs_sql);
 		$drugs_array=$drugs->result_array();
 		$counter=0;
@@ -1804,9 +1484,16 @@ class report_management extends MY_Controller {
 			$sql_array=$drug_details_sql->result_array();
 			$drug_consumption = array();
 			$count=count($sql_array);
+			$drug_name="";
+			$unit="";
+			$pack_size="";
+			$y=0;
 			if($count>0){
 				foreach ($sql_array as $row) {
-					
+					$drug_name=$row['drug_name'];
+					$unit=$row['unit'];
+					$pack_size=$row['pack_size'];
+				
 					$month = $row['month'];
 					//Replace the preceding 0 in months less than october
 					if($month < 10) {
@@ -1814,12 +1501,364 @@ class report_management extends MY_Controller {
 					}
 					$drug_consumption[$month] = $row['total_consumed'];
 				}
+				
+				
+				//$row_string = "<tr><td>" .$drug_name . "</td><td>" . $unit . "</td>";
+				$columns[]=$drug_name;
+				$columns[]=$drug_name;
+				$columns[]=$unit;
+				//Loop untill 12; check if there is a result for each month
+				for ($i=1; $i <=12 ; $i++) { 
+					if(isset($drug_consumption[$i]) and isset($pack_size) and $pack_size!=0) {
+						//$row_string += "<td>" + ceil($drug_consumption[$i] / $pack_size) + "</td>";
+						$columns[]=ceil($drug_consumption[$i] / $pack_size);
+					} else {
+						//$row_string += "<td>-</td>";
+						$columns[]='-';
+					}
+				}
+				
+				//$row_string += "</tr>";
+				$this -> table -> add_row($columns);
+				
 			}
-		}
 		
+			
+		}
+		$drug_display = $this -> table -> generate();
+		$data['drug_listing']=$drug_display;
 		$data['title'] = "Reports";
 		$data['content_view']='drugconsumption_v';
 		$this -> load -> view('template_report', $data);
+	}
+
+	public function stock_report($report_type,$stock_type){
+		$data['facility_name']=$this -> session -> userdata('facility_name');
+		$data['base_url']=base_url();
+		$data['stock_type']=$stock_type;
+		if($report_type=="stock_on_hand"){
+			$data['content_view']='drugstock_on_hand_v';
+		}
+		else if($report_type=="expiring_drug"){
+			$data['content_view']='expiring_drugs_v';
+		}
+		
+		$data['title'] = "Reports";
+		$this -> load -> view('template_report', $data);
+	}
+	public function drug_stock_on_hand($stock_type){
+		$facility_code = $this -> session -> userdata('facility');
+		
+		//Store
+		if ($stock_type == '1') {
+			$stock_param = " AND (source='" . $facility_code . "' OR destination='" . $facility_code . "') AND source!=destination ";
+		}
+		//Pharmacy
+		else if ($stock_type == '2') {
+			$stock_param = " AND (source=destination) AND(source='" . $facility_code . "') ";
+		}
+		$data = array();
+		/* Array of database columns which should be read and sent back to DataTables. Use a space where
+         * you want to insert a non-database field (for example a counter or static image)
+         */
+		$aColumns = array('drug','pack_size');
+		
+		$iDisplayStart = $this->input->get_post('iDisplayStart', true);
+        $iDisplayLength = $this->input->get_post('iDisplayLength', true);
+        $iSortCol_0 = $this->input->get_post('iSortCol_0', false);
+        $iSortingCols = $this->input->get_post('iSortingCols', true);
+        $sSearch = $this->input->get_post('sSearch', true);
+        $sEcho = $this->input->get_post('sEcho', true);
+		
+		// Paging
+        if(isset($iDisplayStart) && $iDisplayLength != '-1')
+        {
+            $this->db->limit($this->db->escape_str($iDisplayLength), $this->db->escape_str($iDisplayStart));
+        }
+		
+		 // Ordering
+        if(isset($iSortCol_0))
+        {
+            for($i=0; $i<intval($iSortingCols); $i++)
+            {
+                $iSortCol = $this->input->get_post('iSortCol_'.$i, true);
+                $bSortable = $this->input->get_post('bSortable_'.intval($iSortCol), true);
+                $sSortDir = $this->input->get_post('sSortDir_'.$i, true);
+    
+                if($bSortable == 'true')
+                {
+                    $this->db->order_by($aColumns[intval($this->db->escape_str($iSortCol))], $this->db->escape_str($sSortDir));
+                }
+            }
+        }
+		
+		/* 
+         * Filtering
+         * NOTE this does not match the built-in DataTables filtering which does it
+         * word by word on any field. It's possible to do here, but concerned about efficiency
+         * on very large tables, and MySQL's regex functionality is very limited
+         */
+        if(isset($sSearch) && !empty($sSearch))
+        {
+            for($i=0; $i<count($aColumns); $i++)
+            {
+                $bSearchable = $this->input->get_post('bSearchable_'.$i, true);
+                
+                // Individual column filtering
+                if(isset($bSearchable) && $bSearchable == 'true')
+                {
+                    $this->db->or_like($aColumns[$i], $this->db->escape_like_str($sSearch));
+                }
+            }
+        }
+		
+		 // Select Data
+        $this->db->select('SQL_CALC_FOUND_ROWS '.str_replace(' , ', ' ', implode(', ', $aColumns)), false);
+		$this->db->select("dc.id,u.Name,SUM(dsb.balance) as stock_level");
+		$today = date('Y-m-d'); 
+        $this->db->from("drugcode dc");
+		$this->db->where('dc.enabled','1');
+		$this->db->where('dsb.facility_code',$facility_code);
+		$this->db->where('dsb.expiry_date > ',$today);
+		$this->db->where('dsb.stock_type ',$stock_type);
+		$this->db->join("drug_stock_balance dsb","dsb.drug_id=dc.id");
+		$this->db->join("drug_unit u","u.id=dc.unit");
+		$this->db->group_by("dsb.drug_id"); 
+		
+		$rResult = $this->db->get();
+		
+		// Data set length after filtering
+        $this->db->select('FOUND_ROWS() AS found_rows');
+        $iFilteredTotal = $this->db->get()->row()->found_rows;
+		
+		// Total data set length
+        $this->db->select("dsb.*");
+		$where ="dc.enabled='1' AND dsb.facility='$facility_code' AND dsb.expiry_date > CURDATE() AND dsb.stock_type='$stock_type'";
+		$this->db->from("drugcode dc");
+		$this->db->where('dc.enabled','1');
+		$this->db->where('dsb.facility_code',$facility_code);
+		$this->db->where('dsb.expiry_date > ',$today);
+		$this->db->where('dsb.stock_type ',$stock_type);
+		$this->db->join("drug_stock_balance dsb","dsb.drug_id=dc.id");
+		$this->db->join("drug_unit u","u.id=dc.unit");
+		$this->db->group_by("dsb.drug_id"); 
+		$tot_drugs=$this->db->get();
+		$iTotal = count($tot_drugs->result_array());
+		
+		// Output
+        $output = array(
+            'sEcho' => intval($sEcho),
+            'iTotalRecords' => $iTotal,
+            'iTotalDisplayRecords' => $iFilteredTotal,
+            'aaData' => array()
+        );
+		
+		 foreach($rResult->result_array() as $aRow)
+        {
+        	
+			//Get consumption for the past three months
+			$drug=$aRow['id'];
+			$stock_level=$aRow['stock_level'];
+			$safetystock_query = "SELECT SUM(d.quantity_out) AS TOTAL FROM drug_stock_movement d WHERE d.drug ='$drug' AND DATEDIFF(CURDATE(),d.transaction_date)<= 90 and facility='$facility_code' $stock_param";
+			$safetystocks = $this -> db -> query($safetystock_query);
+			$safetystocks_results = $safetystocks -> result_array();
+			$three_monthly_consumption = 0;
+			$stock_status="";
+			foreach ($safetystocks_results as $safetystocks_result) {
+				$three_monthly_consumption = $safetystocks_result['TOTAL'];
+				//Calculating Monthly Consumption hence Max-Min Inventory
+				$monthly_consumption = ($three_monthly_consumption) / 3;
+				$monthly_consumption = number_format($monthly_consumption, 2);
+
+				//Therefore Maximum Consumption
+				$maximum_consumption = $monthly_consumption * 3;
+				$maximum_consumption = number_format($maximum_consumption, 2);
+
+				//Therefore Minimum Consumption
+				$minimum_consumption = $monthly_consumption * 1.5;
+				//$minimum_consumption = number_format($monthly_consumption, 2);
+
+
+				//If current stock balance is less than minimum consumption
+				if ($stock_level < $minimum_consumption) {
+					$stock_status="LOW";
+					if ($minimum_consumption < 0) {
+						$minimum_consumption = 0;
+					}
+				}
+			}
+			
+        	$row = array();
+			$x=0;
+			
+			foreach($aColumns as $col)
+            {
+            	$x++;
+            	$row[] = strtoupper($aRow[$col]);
+            	if($x==1){
+            		$row[]=$aRow['Name'];
+            	}
+				else if($x==2){
+		            	
+            		//SOH IN Units
+					//$row[]='<b style="color:green">'.number_format($aRow['stock_level']).'</b>';
+					$row[]=number_format($aRow['stock_level']);
+					//SOH IN Packs
+					if(is_numeric($aRow['pack_size']) and $aRow['pack_size']>0 ){
+						$row[]=ceil($aRow['stock_level'] / $aRow['pack_size']);
+					}
+					else{
+						$row[]=" - ";
+					}
+					
+					//Safety Stock
+					$row[]=ceil($minimum_consumption);
+					$row[]=$stock_status;
+					
+				}
+            	
+			}
+			$output['aaData'][] = $row;
+		}
+		echo json_encode($output);
+	}
+
+	public function expiring_drugs($stock_type){
+		$count = 0;
+		$facility_code = $this -> session -> userdata('facility');
+		$data['facility_name']=$this -> session -> userdata('facility_name');
+		$drugs_sql = "SELECT s.id AS id,s.drug AS Drug_Id,d.drug AS Drug_Name,d.pack_size AS pack_size, u.name AS Unit, s.batch_number AS Batch,s.expiry_date AS Date_Expired,DATEDIFF(s.expiry_date,CURDATE()) AS Days_Since_Expiry FROM drugcode d LEFT JOIN drug_unit u ON d.unit = u.id LEFT JOIN drug_stock_movement s ON d.id = s.drug LEFT JOIN transaction_type t ON t.id=s.transaction_type WHERE t.effect=1 AND DATEDIFF(s.expiry_date,CURDATE()) <=180 AND DATEDIFF(s.expiry_date,CURDATE())>=0 AND d.enabled=1 AND s.facility ='" . $facility_code . "' GROUP BY Batch ORDER BY Days_Since_Expiry asc";
+		$drugs = $this -> db -> query($drugs_sql);
+		$results = $drugs -> result_array();
+		//Get all expiring drugs
+		foreach ($results as $result => $value) {
+			$count = 1;
+			$this -> getBatchInfo($value['Drug_Id'], $value['Batch'], $value['Unit'], $value['Drug_Name'], $value['Date_Expired'], $value['Days_Since_Expiry'], $value['id'], $value['pack_size'], $stock_type, $facility_code);
+		}
+		//If no drugs if found, return null
+		if ($count == 0) {
+			$data['drug_details'] = "null";
+		}
+		$d = 0;
+		$drugs_array = $this -> drug_array;
+		$data['drug_details']=$drugs_array;
+		$data['title'] = "Reports";
+		$data['content_view']='expiring_drugs_v';
+		$this -> load -> view('template_report', $data);
+		
+	}
+	
+	public function expired_drugs($stock_type){
+		$count = 0;
+		$facility_code = $this -> session -> userdata('facility');
+		$data['facility_name']=$this -> session -> userdata('facility_name');
+		$drugs_sql = "SELECT s.id AS id,s.drug AS Drug_Id,d.drug AS Drug_Name,d.pack_size AS pack_size, u.name AS Unit, s.batch_number AS Batch,s.expiry_date AS Date_Expired,DATEDIFF(CURDATE(),DATE(s.expiry_date)) AS Days_Since_Expiry FROM drugcode d LEFT JOIN drug_unit u ON d.unit = u.id LEFT JOIN drug_stock_movement s ON d.id = s.drug LEFT JOIN transaction_type t ON t.id=s.transaction_type WHERE t.effect=1 AND DATEDIFF(CURDATE(),DATE(s.expiry_date)) >0  AND d.enabled=1 AND s.facility ='" . $facility_code . "' GROUP BY Batch ORDER BY Days_Since_Expiry asc";
+		$drugs = $this -> db -> query($drugs_sql);
+		$results = $drugs -> result_array();
+		//Get all expiring drugs
+		foreach ($results as $result => $value) {
+			$count = 1;
+			$this -> getBatchInfo($value['Drug_Id'], $value['Batch'], $value['Unit'], $value['Drug_Name'], $value['Date_Expired'], $value['Days_Since_Expiry'], $value['id'], $value['pack_size'], $stock_type, $facility_code);
+		}
+;
+		//If no drugs if found, return null
+		if ($count == 0) {
+			$data['drug_details'] = "null";
+		}
+		$d = 0;
+		$drugs_array = $this -> drug_array;
+		$data['drug_details']=$drugs_array;
+		$data['title'] = "Reports";
+		$data['content_view']='expired_drugs_v';
+		$this -> load -> view('template_report', $data);
+	}
+	
+	public function getBatchInfo($drug, $batch, $drug_unit, $drug_name, $expiry_date, $expired_days, $drug_id, $pack_size, $stock_type, $facility_code) {
+		$stock_status = 0;
+		$stock_param = "";
+
+		//Store
+		if ($stock_type == '1') {
+			$stock_param = " AND (source='" . $facility_code . "' OR destination='" . $facility_code . "') AND source!=destination ";
+		}
+		//Pharmacy
+		else if ($stock_type == '2') {
+			$stock_param = " AND (source=destination) AND(source='" . $facility_code . "') ";
+		}
+		$initial_stock_sql = "SELECT SUM( d.quantity ) AS Initial_stock, d.transaction_date AS transaction_date, '" . $batch . "' AS batch FROM drug_stock_movement d WHERE d.drug =  '" . $drug . "' AND facility='" . $facility_code . "' " . $stock_param . " AND transaction_type =  '11' AND d.batch_number =  '" . $batch . "'";
+		$batches = $this -> db -> query($initial_stock_sql);
+		$batch_results = $batches -> result_array();
+		foreach ($batch_results as $batch_result => $value) {
+			$initial_stock = $value['Initial_stock'];
+			//Check if initial stock is present meaning physical count done
+			if ($initial_stock != null) {
+				$batch_stock_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out )) AS stock_levels, ds.batch_number,ds.expiry_date FROM drug_stock_movement ds WHERE ds.transaction_date BETWEEN  '" . $value['transaction_date'] . "' AND curdate() AND facility='" . $facility_code . "' " . $stock_param . " AND ds.drug ='" . $drug . "'  AND ds.batch_number ='" . $value['batch'] . "'";
+				$second_row = $this -> db -> query($batch_stock_sql);
+				$second_rows = $second_row -> result_array();
+
+				foreach ($second_rows as $second_row => $value) {
+					if ($value['stock_levels'] > 0) {
+						$batch_balance = $value['stock_levels'];
+						$batch_expiry=$expiry_date;
+						$ed = substr($expired_days, 0, 1);
+						if ($ed == "-") {
+							$expired_days = $expired_days;
+						}
+
+						$batch_stock = $batch_balance / $pack_size;
+						$expired_days_display = number_format($expired_days);
+						$stocks_display = ceil(number_format($batch_stock, 1));
+
+						$this -> drug_array[$this -> counter]['drug_name'] = $drug_name;
+						$this -> drug_array[$this -> counter]['drug_unit'] = $drug_unit;
+						$this -> drug_array[$this -> counter]['batch'] = $batch;
+						$this -> drug_array[$this -> counter]['expiry_date'] = $batch_expiry;
+						$this -> drug_array[$this -> counter]['stocks_display'] = $stocks_display;
+						$this -> drug_array[$this -> counter]['expired_days_display'] = $expired_days_display;
+						$this -> counter++;
+					}
+				}
+
+			} else {
+
+				$batch_stock_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out ) ) AS stock_levels, ds.batch_number,ds.expiry_date FROM drug_stock_movement ds WHERE ds.drug =  '" . $drug . "' AND facility='" . $facility_code . "' " . $stock_param . " AND ds.expiry_date > curdate() AND ds.batch_number='" . $value['batch'] . "'";
+				$second_row = $this -> db -> query($batch_stock_sql);
+				$second_rows = $second_row -> result_array();
+
+				foreach ($second_rows as $second_row => $value) {
+
+					if ($value['stock_levels'] > 0) {
+						$batch_balance = $value['stock_levels'];
+						$batch_expiry=$expiry_date;
+						$ed = substr($expired_days, 0, 1);
+						if ($ed == "-") {
+
+							$expired_days = $expired_days;
+						}
+						$batch_stock = $batch_balance / $pack_size;
+						$expired_days_display = number_format($expired_days);
+
+						$stocks_display = number_format($batch_stock, 1);
+
+						$this -> drug_array[$this -> counter]['drug_name'] = $drug_name;
+						$this -> drug_array[$this -> counter]['drug_unit'] = $drug_unit;
+						$this -> drug_array[$this -> counter]['batch'] = $batch;
+						$this -> drug_array[$this -> counter]['expiry_date'] = $batch_expiry;
+						$this -> drug_array[$this -> counter]['stocks_display'] = $stocks_display;
+						$this -> drug_array[$this -> counter]['expired_days_display'] = $expired_days_display;
+						$this -> counter++;
+					}
+				}
+			}
+
+		}
+	}
+
+	public function commodity_summary($start_date,$end_date,$stock_type){
+		$facility_code = $this -> session -> userdata('facility');
+		$data['facility_name']=$this -> session -> userdata('facility_name');
+		$get_facility_sql=$this->db->query("SELECT '$facility_code' as facility,d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id where d.Enabled=1");
+		
 	}
 
 	public function base_params($data) {

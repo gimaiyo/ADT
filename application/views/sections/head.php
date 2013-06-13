@@ -6,22 +6,24 @@
 	   
     <!-- CSS  Section ----------------------------------------------------->
     <!-- Bootstrap -->
-    <link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap.min.css'?>" rel="stylesheet" media="screen">
-    <link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap-responsive.min.css'?>" rel="stylesheet" media="screen">
+    <link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap.min.css'?>" rel="stylesheet" media="all">
+    <link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap-responsive.min.css'?>" rel="stylesheet" media="all">
     
     <!-- Datatables -->
-    <link href="<?php echo base_url().'CSS/datatable/jquery.dataTables.css'?>" type="text/css" rel="stylesheet"/>
-	<link href="<?php echo base_url().'CSS/datatable/jquery.dataTables_themeroller.css'?>" type="text/css" rel="stylesheet"/>
-	<link href="<?php echo base_url().'CSS/datatable/demo_table.css" type="text/css'?>" rel="stylesheet"/>
-        
+    <link href="<?php echo base_url().'CSS/datatable/jquery.dataTables.css'?>" type="text/css" rel="stylesheet" media="all"/>
+	<link href="<?php echo base_url().'CSS/datatable/jquery.dataTables_themeroller.css'?>" type="text/css" rel="stylesheet" media="all"/>
+	<link href="<?php echo base_url().'CSS/datatable/demo_table.css" type="text/css'?>" rel="stylesheet" media="all"/>
+    
+    <!-- Table Filter -->
+    <link href="<?php echo base_url().'TableFilter/filtergrid.css' ?>" type="text/css" rel="stylesheet"/>
+    
     <!-- JQuery UI -->
     <link href="<?php echo base_url().'CSS/jquery-ui.css'?>" type="text/css" rel="stylesheet"/>
     
     <!-- Merged CSS
 		** Has the separate customized styles  -->
-    <link href="<?php echo base_url().'CSS/style.css'?>" type="text/css" rel="stylesheet"/>
+    <link href="<?php echo base_url().'CSS/style.css'?>" type="text/css" rel="stylesheet" media="all"/>
 	<!-- End of CSS  Section ---------------------------------------------->
-    
     
     
     
@@ -46,6 +48,9 @@
 	
 	<!-- Datatables -->
 	<script src="<?php echo base_url().'Scripts/datatable/jquery.dataTables.min.js'?>"></script>
+	
+	<!-- Table Filter -->
+	<script type="text/javascript" src="<?php echo base_url().'TableFilter/tablefilter_all.js' ?>"></script>
 	
 	<!-- Merged JS
 		** Has the separate customized functions  -->

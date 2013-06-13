@@ -534,17 +534,25 @@ hr {
 	margin: 0 auto;
 }
 .navbar {
-	width: 900px;
+	width: 1000px;
 	position: static;
 	top: 5px;
 	margin: 0 auto;
+	margin-bottom:20px;
+	
 }
 @media print {
 	#inf_patient_listing, #inf_drug_listing, #inf_drug_summary {
 		display: none;
 	}
-	.fltrow, .navbar {
+	.fltrow, .navbar,.ui-widget-header {
 		display: none;
+	}
+	.table-bordered th, .table-bordered td {
+		border-left: 1px solid #ddd;
+	}
+	table.dataTable tr.odd {
+		background-color: rgb(235, 236, 238);
 	}
 
 }

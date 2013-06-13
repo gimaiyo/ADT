@@ -27,22 +27,15 @@ if ($access_level == "system_administrator") {
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<head>
-		<title><?php echo $title; ?></title>
-		<link rel="SHORTCUT ICON" href="<?php echo base_url().'Images/favicon.ico'?>">
-		<link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap.min.css' ?>" type="text/css" rel="stylesheet" media="screen"/>
-		<link href="<?php echo base_url().'CSS/offline_css.css" type="text/css' ?>" rel="stylesheet"/>
-		<link href="<?php echo base_url().'CSS/jquery-ui.css" type="text/css' ?>" rel="stylesheet"/>
 		
-		<script type="text/javascript" src="<?php echo base_url().'Scripts/jquery.js' ?>"></script>
-		<script type="text/javascript" src="<?php echo base_url().'Scripts/jquery-ui.js' ?>"></script>
-		<script type="text/javascript" src="<?php echo base_url().'Scripts/offline_database.js' ?>"></script>
-		<script type="text/javascript" src="<?php echo base_url().'Scripts/offlineData.js' ?>"></script>
+		<?php
+			$this -> load -> view('sections/head');
+		?>
 		
 		<style>
 			#wrapper{
-				width:1200px;
+				width:1050px;
 				margin:0 auto;
 			}
 			table#drug_listing{
@@ -50,9 +43,7 @@ if ($access_level == "system_administrator") {
 				border-collapse:collapse;
 				margin: :0 auto;
 			}
-			.nav{
-				
-			}
+			
 		</style>
 		
 		
@@ -64,6 +55,8 @@ if ($access_level == "system_administrator") {
 				});
 			})
 		</script>
+		
+		
 	</head>
 	<body>
 		<div id="wrapper">
@@ -75,7 +68,7 @@ if ($access_level == "system_administrator") {
 			      <!-- Everything you want hidden at 940px or less, place within here -->
 			      <div class="nav-collapse collapse" id="acdmenu">
 			        <ul class="nav">
-			          <a class="brand" href="../reports.html"/><img src="../Images/home-icon.png"> | </a>
+			          <a class="brand" href="<?php echo base_url().'report_management' ?>"/><img src="<?php echo base_url().'Images/home-icon.png' ?>"> | </a>
 					  <li class="dropdown">
 					    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="standard_report">
 					     Standard Reports
@@ -129,7 +122,7 @@ if ($access_level == "system_administrator") {
 					    </ul>
 					  </li>
 					</ul>
-			        <a onClick="window.print()" class="brand" title="Print this page"/> | <img src="../Images/printing_icon.png"> </a>
+			        <a onClick="window.print()" class="brand" title="Print this page"/> | <img src="<?php echo base_url().'Images/printing_icon.png' ?>"> </a>
 			      </div>
 			 
 			    </div>
@@ -137,45 +130,8 @@ if ($access_level == "system_administrator") {
 			</div>
 			<!-- Menus end -->
 			
-			<h2 id="facility_name" style="text-align: center"></h2>
-			<h4 style="text-align: center;">Listing of Drug Consumption Report for <input type="text" class="_date" id="_year"> (in Packs)</h4>
-			<hr size="1" style="width:80%">
+			<?php $this->load->view($content_view) ?>
 			
-			
-			<table class="table table-bordered"  id="drug_listing" >
-				<thead>
-					<tr>
-						<th width="300px"> Drug </th>
-						<th width="90px"> Unit </th>
-						<th> Jan </th>
-						<th> Feb </th>
-						<th> Mar </th>
-						<th> Apr </th>
-						<th> May </th>
-						<th> Jun </th>
-						<th> Jul </th>
-						<th> Aug </th>
-						<th> Sep </th>
-						<th> Oct </th>
-						<th> Nov </th>
-						<th> Dec </th>
-					</tr>
-				</thead>
-				<tbody></tbody>
-				
-			</table>
-			
-			<!-- Pop up Window -->
-			<div id="edit_year">
-				<label> <strong class="label">Report Year: </strong>
-					<input type="text"name="filter_year" id="edit_single_year_filter">
-				</label>
-				<button id="edit_generate_single_year_report" class="action_button" style="height:30px; font-size: 13px; width: 200px;">
-					Generate Report
-				</button>
-			</div>
-			<div class="result"></div>
-			<!-- Pop up Window end-->
 		</div>
 		
 	</body>
