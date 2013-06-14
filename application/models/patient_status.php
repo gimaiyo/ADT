@@ -27,6 +27,12 @@ class Patient_Status extends Doctrine_Record {
 		$statuses = $query -> execute();
 		return $statuses;
 	}
+	
+	public function getStatus() {
+		$query = Doctrine_Query::create() -> select("*") -> from("Patient_Status") -> where("Active", "1");
+		$statuses = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $statuses;
+	}
 
 }
 ?>

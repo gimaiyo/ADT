@@ -25,6 +25,13 @@ class District extends Doctrine_Record {
 		$districts = $query -> execute();
 		return $districts;
 	}
+	
+	public function getPOB(){
+		$query = Doctrine_Query::create() -> select("*") -> from("District")->orderby("Name asc");
+		$districts = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $districts;
+		
+	}
 
 }//end class
 ?>

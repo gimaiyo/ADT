@@ -200,6 +200,11 @@ class Regimen_management extends MY_Controller {
 		redirect('regimen_management');
 
 	}
+	
+	public function getRegimenLine($service){
+		$regimens=Regimen::getLineRegimens($service);
+		echo json_encode($regimens);
+	}
 
 	public function base_params($data) {
 		$data['quick_link'] = "regimen";

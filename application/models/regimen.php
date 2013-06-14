@@ -82,6 +82,17 @@ class Regimen extends Doctrine_Record {
 		return $regimens;
 		
 	}
+	
+	public function getRegimens(){
+		$query = Doctrine_Query::create() -> select("*") -> from("Regimen") -> where("Enabled = '1'")->orderBy("Regimen_Code asc");
+		$regimens = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $regimens;
+	}
+	public function getLineRegimens($service){
+		$query = Doctrine_Query::create() -> select("*") -> from("Regimen") -> where("Enabled = '1' and Type_Of_Service='$service'")->orderBy("Regimen_Code asc");
+		$regimens = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $regimens;
+	}
 
 }
 ?>

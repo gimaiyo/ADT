@@ -178,9 +178,10 @@
 									//Dispensed to patients
 									else if($drug_transaction->Transaction_Type==5){
 										$qty=$drug_transaction->Quantity_Out;
-										
+
 									}
 									else if($drug_transaction->Quantity==0){
+										$qty=$drug_transaction->Quantity_Out;
 										$transaction_type.=" Patients";
 										$qty=$drug_transaction->Quantity_Out;
 									}
