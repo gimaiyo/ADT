@@ -1,3 +1,8 @@
+<Style>
+	.nav{
+		margin-top:1.5%;
+	}
+</Style>
 <script type="text/javascript">
 	
 	$(document).ready( function () {
@@ -63,6 +68,8 @@ if ($access_level == "facility_administrator") {
 	$user_is_facilityadmin = true;
 }
 ?>
+
+
 
 
 

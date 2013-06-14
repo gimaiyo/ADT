@@ -103,7 +103,7 @@ class Indication_Management extends MY_Controller {
 	public function base_params($data) {
 		$data['quick_link'] = "indications";
 		$data['content_view'] = "settings_v";
-		$this -> load -> view('template_admin', $data);
+		$this -> load -> view('template', $data);
 	}
 
 	

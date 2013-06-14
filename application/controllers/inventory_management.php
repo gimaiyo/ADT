@@ -271,7 +271,7 @@ class Inventory_Management extends MY_Controller {
 					$row[]=$aRow['supported_by'];
 					$row[]=$aRow['dose'];
 					$id=$aRow['id'];
-					$row[]="<button class='btn'><a href='".base_url()."inventory_management/view_bin_card/".$id."/2'>View Bin Card</a></button>";
+					$row[]="<a href='".base_url()."inventory_management/view_bin_card/".$id."/2'>View Bin Card</a>";
 				}
             	
 			}

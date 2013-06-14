@@ -263,7 +263,7 @@ class Drugcode_management extends MY_Controller {
 		$data['content_view'] = "settings_v";
 		$data['banner_text'] = "Drug Code Management";
 		$data['link'] = "settings_management";
-		$this -> load -> view('template_admin', $data);
+		$this -> load -> view('template', $data);
 	}
 
 }

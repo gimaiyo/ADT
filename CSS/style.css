@@ -1,10 +1,29 @@
+@font-face {
+    font-family: 'ProcionoRegular';
+    src: url('Prociono-Regular-webfont.eot');
+    src: url('Prociono-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('Prociono-Regular-webfont.woff') format('woff'),
+         url('Prociono-Regular-webfont.ttf') format('truetype'),
+         url('Prociono-Regular-webfont.svg#ProcionoRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'AllerRegular';
+    src: url('fonts/Aller_Rg.ttf');
+    font-weight: normal;
+    font-style: normal;
+
+}
 body {
-	font-family: "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif;
+	
 	margin: 0;
 	padding: 0;
-	font: 13px     /1.231 arial, helvetica, clean, sans-serif;
+	font-family:"Helvetica";
 	line-height: 1;
-	font-size: 80%;
+	font-size: 1em;
 	vertical-align: baseline;
 }
 .msginfo {
@@ -164,7 +183,6 @@ body {
 	color: white;
 	text-decoration: none;
 	font-size: 12px;
-	font-family: helvetica, arial;
 	font-weight: bold;
 	display: block;
 	text-align: center;
@@ -210,7 +228,7 @@ body {
 .banner_text {
 	font-weight: 100;
 	letter-spacing: -1px;
-	margin: 0.5em 0 0 0;
+	margin: .2% 0 0 1%;
 	font-size: 28px;
 	color: #000;
 	width: 500px;
@@ -282,7 +300,6 @@ input[type =
 	color: white;
 	text-decoration: none;
 	font-size: 12px;
-	font-family: helvetica, arial;
 	font-weight: bolder;
 	display: block;
 	text-align: center;
@@ -517,6 +534,12 @@ fieldset {
 .green_alert {
 	background: green;
 }
+.green{
+	color:green;
+}
+.red{
+	color:red;
+}
 #start_date, #end_date, #date_of_appointment, #display_year {
 	color: rgb(45, 173, 13);
 	font-size: 14px;
@@ -580,7 +603,6 @@ tr th {
  */
 .center-content h3, .main-content h3, .left-content h3 {
 	-webkit-margin-before: 0.5em;
-	font-family: "Helvetica";
 	color: #fff;
 	font-size: 1.2em;
 	padding: 0 0 0 0.3em;
@@ -608,11 +630,15 @@ tr th {
 }
 .center-content {
 	float: right;
-	padding: 11% 1% 1% 1%;
-	width: 72%;
+	padding: 10% 1% 1% 1%;
+	width: 76%;
 	margin: 0 0 0 1.5%;
 	padding-bottom: 8%;
 	display: inline-block;
+}
+.full-content{
+	width: 98%;
+	padding: 11% 1% 10% 1%;
 }
 .right-content {
 	width: 19%;
@@ -1107,7 +1133,6 @@ html > body #main_manualcontent li a {
 
 #weekly_summary {
 	font-size: 10px;
-	font-family: Verdana;
 	background: rgb(222, 245, 247);
 }
 #weekly_summary th {
@@ -1130,10 +1155,14 @@ html > body #main_manualcontent li a {
 
 .column {
 	background: #80f26d;
-	width: 32%;
-	float: left;
+	display:table-cell;
+	width: 33%;
 	margin-left: 1%;
 	height: inherit;
+}
+
+form{
+	display:table;
 }
 .column fieldset {
 	padding: 5%;
@@ -1304,7 +1333,8 @@ a {
 }
 
 #DataTables_Table_0_wrapper {
-	font-size: 14px;
+	font-size: 15px;
+	margin-top:1.5%;
 }
 ._red {
 	color: red;
@@ -1317,14 +1347,29 @@ input[type='text'], input[type='email'], input[type='tel'], input[type='password
 legend {
 	font-size: 18px;
 }
+.button-bar{
+	display:table-row;
+	width:100%;
+}
 
 /**
  * 	Customizing Bootstrap
  */
 .badge{
 	color:white;
-	margin-left:5%;
+	margin-left:3%;
 }
 .btn-danger a {
 	color:white;
+}
+
+.report_category a{
+	font-size:12px;
+}
+#patient_listing {
+	margin: 0 auto;
+	width:100%;
+	border-top: 1px solid #B9B9B9;
+	font-size: 13px;
+	letter-spacing: 0.8px;
 }

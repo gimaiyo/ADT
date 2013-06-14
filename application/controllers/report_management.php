@@ -18,7 +18,7 @@ class report_management extends MY_Controller {
 		$this -> base_params($data);
 	}
 
-	public function patient_enrolled($supported_by = 0, $from = "2013-03-01", $to = "2013-03-31") {
+	public function patient_enrolled($from = "", $to = "",$supported_by = 0) {
 		//Variables
 		$facility_code = $this -> session -> userdata("facility");
 		//art
@@ -214,7 +214,7 @@ class report_management extends MY_Controller {
 								$adult_male_pep_casualty++;
 							} else if ($result['source'] == 5) {
 								//Check if Transit
-								$adult_male_pep_tarnsit++;
+								$adult_male_pep_transit++;
 							} else if ($result['source'] == 6) {
 								//Check if HTC
 								$adult_male_pep_htc++;
@@ -775,14 +775,14 @@ class report_management extends MY_Controller {
 		$data['overall_total'] = $data['overall_line_adult_female'] + $data['overall_line_adult_male'] + $data['overall_line_child_female'] + $data['overall_line_child_male'];
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['to'] = date('d-M-Y', strtotime($to));
-		$this -> load -> view('reports/no_of_patients_enrolled_v', $data);
+		$data['title'] = "Reports";
+		$data['content_view']='reports/no_of_patients_enrolled_v';
+		$this -> load -> view('template_report', $data);
+
 	}
 
-	
 
-	
-
-	public function getScheduledPatients($from = "2013-03-01", $to = "2013-03-31", $facility_code = "13050") {
+	public function getScheduledPatients($from = "", $to = "") {
 		//Variables
 		$visited = 0;
 		$not_visited = 0;
@@ -792,15 +792,14 @@ class report_management extends MY_Controller {
 		$overall_total = 0;
 		$today = date('Y-m-d');
 		$late_by = "";
+		$facility_code = $this -> session -> userdata("facility");
 
 		//Get all patients who have apppointments on the selected date range
 		$sql = "select patient,appointment from patient_appointment where appointment between '$from' and '$to' and facility='$facility_code' group by patient,appointment";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-
-		if ($results) {
-			$row_string = "
-			<table id='patient_listing' width='1200px' >
+		$row_string = "
+			<table id='patient_listing' >
 				<thead >
 					<tr>
 						<th> Patient No </th>
@@ -814,7 +813,7 @@ class report_management extends MY_Controller {
 						<th> Visit Status</th>
 					</tr>
 				</thead>";
-
+		if ($results) {
 			foreach ($results as $result) {
 				$patient = $result['patient'];
 				$appointment = $result['appointment'];
@@ -865,29 +864,34 @@ class report_management extends MY_Controller {
 					$overall_total++;
 				}
 			}
-			$row_string .= "</table>";
-			$data['from'] = date('d-M-Y', strtotime($from));
-			$data['to'] = date('d-M-Y', strtotime($to));
-			$data['dyn_table'] = $row_string;
-			$data['visited_later'] = $visited_later;
-			$data['not_visited'] = $not_visited;
-			$data['visited'] = $visited;
-			$data['all_count'] = $overall_total;
-			$this -> load -> view('reports/patients_scheduled_v', $data);
+
+		} else {
+			$row_string .= "<tr><td colspan='6'>No Data Available</td></tr>";
 		}
+		$row_string .= "</table>";
+		$data['from'] = date('d-M-Y', strtotime($from));
+		$data['to'] = date('d-M-Y', strtotime($to));
+		$data['dyn_table'] = $row_string;
+		$data['visited_later'] = $visited_later;
+		$data['not_visited'] = $not_visited;
+		$data['visited'] = $visited;
+		$data['all_count'] = $overall_total;
+		$data['title'] = "Reports";
+		$data['content_view']='reports/patients_scheduled_v';
+		$this -> load -> view('template_report', $data);
 	}
 
-	public function getPatientMissingAppointments($from = "2013-03-01", $to = "2013-03-31", $facility_code = "13050") {
+	public function getPatientMissingAppointments($from = "", $to = "") {
 		//Variables
 		$today = date('Y-m-d');
 		$row_string = "";
 		$overall_total = 0;
+		$facility_code = $this -> session -> userdata("facility");
 
 		$sql = "select patient,appointment from patient_appointment where appointment between '$from' and '$to' and facility='$facility_code' group by patient,appointment";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		if ($results) {
-			$row_string .= "<table id='patient_listing' width='1200px'>
+		$row_string .= "<table id='patient_listing' width='1200px'>
 			<tr>
 				<th> ART ID </th>
 				<th> Patient Name</th>
@@ -896,6 +900,7 @@ class report_management extends MY_Controller {
 				<th> Appointment Date </th>
 				<th> Late by (days)</th>
 			</tr>";
+		if ($results) {
 			foreach ($results as $result) {
 				$patient = $result['patient'];
 				$appointment = $result['appointment'];
@@ -920,6 +925,7 @@ class report_management extends MY_Controller {
 						$overall_total++;
 					}
 				}
+
 
 
 			}
@@ -1123,7 +1129,9 @@ class report_management extends MY_Controller {
 		$data['overall_total'] = $data['overall_line_adult_female'] + $data['overall_line_adult_male'] + $data['overall_line_child_female'] + $data['overall_line_child_male'];
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['to'] = date('d-M-Y', strtotime($to));
-		$this -> load -> view('reports/no_of_patients_enrolled_v', $data);
+		$data['title'] = "Reports";
+		$data['content_view']='reports/patients_missing_appointments_v';
+		$this -> load -> view('template_report', $data);
 	}
 
 	public function patient_active_byregimen($from = "2013-06-06") {
@@ -1247,10 +1255,13 @@ class report_management extends MY_Controller {
 			}
 			$row_string .= "<tr class='tfoot'><td><b>Totals:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $patient_total) * 100, 1) . "</b></td></tr>";
 			$row_string .= "</table>";
-			$data['from'] = date('d-M-Y', strtotime($from));
-			$data['dyn_table'] = $row_string;
-			$this -> load -> view('reports/no_of_patients_receiving_art_byregimen_v', $data);
+			
 		}
+		$data['from'] = date('d-M-Y', strtotime($from));
+		$data['dyn_table'] = $row_string;
+		$data['title'] = "Reports";
+		$data['content_view']='reports/no_of_patients_receiving_art_byregimen_v';
+		$this -> load -> view('template_report', $data);
 	}
 
 	public function cumulative_patients($from = "2013-06-06") {
@@ -1456,10 +1467,13 @@ class report_management extends MY_Controller {
 			}
 			$row_string .= "<tr class='tfoot'><td><b>Total:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$total_adult_male_art</b></td><td><b>$total_adult_male_pep</b></td><td><b>$total_adult_male_oi</b></td><td><b>$total_adult_female_art</b></td><td><b>$total_adult_female_pep</b></td><td><b>$total_adult_female_pmtct</b></td><td><b>$total_adult_female_oi</b></td><td><b>$total_child_male_art</b></td><td><b>$total_child_male_pep</b></td><td><b>$total_child_male_pmtct</b></td><td><b>$total_child_male_oi</b></td><td><b>$total_child_female_art</b></td><td><b>$total_child_female_pep</b></td><td><b>$total_child_female_pmtct</b></td><td><b>$total_child_female_oi</b></td></tr>";
 			$row_string .= "</table>";
-			$data['from'] = date('d-M-Y', strtotime($from));
-			$data['dyn_table'] = $row_string;
-			$this -> load -> view('reports/cumulative_patients_v', $data);
+			
 		}
+		$data['from'] = date('d-M-Y', strtotime($from));
+		$data['dyn_table'] = $row_string;
+		$data['title'] = "Reports";
+		$data['content_view']='reports/cumulative_patients_v';
+		$this -> load -> view('template_report', $data);
 	}
 
 	public function drug_consumption($year="2012"){
@@ -1536,7 +1550,7 @@ class report_management extends MY_Controller {
 		$data['facility_name']=$this -> session -> userdata('facility_name');
 		$data['base_url']=base_url();
 		$data['stock_type']=$stock_type;
-		if($report_type=="stock_on_hand"){
+		if($report_type=="drug_stock_on_hand"){
 			$data['content_view']='drugstock_on_hand_v';
 		}
 		else if($report_type=="expiring_drug"){
@@ -1724,6 +1738,12 @@ class report_management extends MY_Controller {
 	}
 
 	public function expiring_drugs($stock_type){
+		if($stock_type==1){
+			$data['stock_type']='Main Store';
+		}
+		else if($stock_type==2){
+			$data['stock_type']='Pharmacy';
+		}
 		$count = 0;
 		$facility_code = $this -> session -> userdata('facility');
 		$data['facility_name']=$this -> session -> userdata('facility_name');
@@ -1868,3 +1888,4 @@ class report_management extends MY_Controller {
 	}
 
 }
+

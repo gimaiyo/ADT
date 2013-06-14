@@ -111,25 +111,26 @@ var count='<?php echo @$this -> session -> userdata['upload_counter']?>';
 </style>
 </head>
 <body>
+	<div class="center-content">
     <div class="passmessage"></div>
 	<div class="errormessage"></div>
     
     
-<div class="data_import">
+<div class="data_import well">
 	<h2 class="import_title">Data Upload</h2>	
 	<hr/>
 	<br/>
 <form name="frm" method="post" enctype="multipart/form-data" id="frm" action="<?php echo base_url()."fcdrr_management/data_upload"?>">
 	      
-			<b><h3>File Chooser</h3></b>
+			<b><h4>File Chooser</h4></b>
 			<p>
 			<input type="file"  name="file" size="30" />
-			<input name="btn_save" class="button" type="submit"  value="Save" />
+			<input name="btn_save" class="btn" type="submit"  value="Save" />
 			</p>
 </form>	
 </div>	
 
-
+</div>
 	
 </body>
 

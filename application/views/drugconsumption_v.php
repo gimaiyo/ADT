@@ -1,5 +1,4 @@
 
-<h2 id="facility_name" style="text-align: center"></h2>
 <h4 style="text-align: center;">Listing of Drug Consumption Report for <span class="_date" id="_year"><?php echo $year ?></span> </h4>
 <hr size="1" style="width:80%">
 

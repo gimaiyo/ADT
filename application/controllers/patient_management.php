@@ -139,24 +139,50 @@ class Patient_Management extends MY_Controller {
             	if($col=="First_Name" or $col=="Last_Name" or $col=="Other_Name"){
             		if($col=="First_Name"){
             			$name=$aRow[$col]." ";
+						$name=strtoupper($name);
 						continue;
             		}
 					else{
 						if($col=="Last_Name"){
 							$name.=$aRow[$col]." ";
+							$name=strtoupper($name);
 							continue;
+						}
+						else if($col=="Other_Name"){
+							$name.=$aRow[$col];
+							$name="<span style='white-space:nowrap;'>".$name."</span>";
 						}
 						
 					}
             	}
+            	
+				else if($col=="Date_Enrolled"){
+					$name=date('d-M-Y',strtotime($aRow[$col]));
+				}
+				else if($col=="NextAppointment"){
+					$name=date('d-M-Y',strtotime($aRow[$col]));
+				}
+				//Check if phone No does not exist
+				else if($col=="Phone"){
+					if($aRow[$col]==""){
+						$name=str_replace(" ","",$aRow['Physical']);
+					}
+				}
+				else if($col=="Regimen_Desc"){
+					$name="<b style='white-space:nowrap;'>".$aRow[$col]."</b>";
+				}
+				else if($col=="Name"){
+					$name="<b>".$aRow[$col]."</b>";
+				}
 				else{
 					$name=$aRow[$col];
+					$name=strtoupper($name);
 				}
             	
-                $row[] = strtoupper($name);
+                $row[] = $name;
             }
 			$id=$aRow['id'];
-    		$row[]='<div class="btn-group"><button class="btn"><a href="">Detail</a></button> <button class="btn"> <a href="'.base_url().'patient_management/edit/'.$id.'">Edit</a></button><button class="btn btn-danger"> <a href="">Disable</a></button></div>';
+    		$row[]='<a href="">Detail</a> | <a href="'.base_url().'patient_management/edit/'.$id.'">Edit</a> | <a href="" class="red">Disable</a>';
             $output['aaData'][] = $row;
         }
         echo json_encode($output);

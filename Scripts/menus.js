@@ -117,7 +117,7 @@ $(document).ready(function() {
 				alert("Please select a report type ! ");
 			}
 			else{
-				var report = $("#selected_report").attr("value") + ".html#";
+				var report ="'"+<?php echo base_url() ?>+"report_management/"+$("#selected_report").attr("value")+"'";
 				var from = $("#date_range_from").attr("value");
 				var to = $("#date_range_to").attr("value");
 				var report_url = report + "?start_date=" + from + "&end_date=" + to+"&stock_type="+stock_type;;
@@ -212,52 +212,3 @@ $(document).ready(function() {
 			
 });
 
-function tableFilter() {
-
-		var props = {
-			sort : true,
-			//remember_grid_values : true,
-			remember_page_number : true,
-			//remember_page_length : true,
-			//filters_row_index : 1,
-			alternate_rows : true,
-			rows_counter : true,
-			rows_counter_text : "Displayed rows: ",
-			btn_reset : true,
-			btn_reset_text : "Clear",
-			loader : true,
-			//status_bar : true,
-			//btn_reset_text : "Clear",
-			fixed_headers: true,
-			//mark_active_columns : true,
-			col_0 : "select",
-			col_1 : "select",
-			col_2 : "select",
-			col_3 : "select",
-			col_4 : "select",
-			col_5 : "select",
-			col_6 : "select",
-			col_7 : "select",
-			paging:true,
-			results_per_page : ['Results per page', [10, 25, 50, 100, 500,1000]],
-
-			display_all_text : "< Show All >",
-
-			col_width : ["80px", "150px", "180px", "120px", "70px", "80px", "150px", "80px"],
-
-			//Column resize feature
-			extensions : {
-				name : ['ColumnsResizer'],
-				src : ['TableFilter/TFExt_ColsResizer/TFExt_ColsResizer.js'],
-				description : ['Columns Resizing'],
-				initialize : [
-				function(o) {
-					o.SetColsResizer();
-				}]
-
-			},
-			col_resizer_all_cells : true
-		}
-		var tf = setFilterGrid("patient_listing", props);
-	}
-	

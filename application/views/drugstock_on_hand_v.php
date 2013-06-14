@@ -23,8 +23,6 @@
 	} );
 
 </script>
-
-<h2 id="facility_name" style="text-align: center"><?php echo $facility_name ?></h2>
 <h4 style="text-align: center">Report on Inventory Status as of <span><?php echo date('d-M-Y') ?></span></h4>
 <hr size="1" style="width:80%">
 

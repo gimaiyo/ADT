@@ -5,6 +5,8 @@
 	
 	   
     <!-- CSS  Section ----------------------------------------------------->
+    <!-- Google Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
     <!-- Bootstrap -->
     <link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap.min.css'?>" rel="stylesheet" media="all">
     <link href="<?php echo base_url().'Scripts/bootstrap/css/bootstrap-responsive.min.css'?>" rel="stylesheet" media="all">
@@ -58,8 +60,10 @@
 	
     <!-- End of JS  Section ------------------------------------------------>
 
-<!-- Multiselect -->
-<script type='text/javascript' src='<?php echo base_url()."Scripts/jquery.multiselect.filter.js";?>'></script>
-<script type='text/javascript' src='<?php echo base_url()."Scripts/jquery.multiselect.js"?>'></script>
+	<!-- Multiselect -->
+	<script type='text/javascript' src='<?php echo base_url()."Scripts/jquery.multiselect.filter.js";?>'></script>
+	<script type='text/javascript' src='<?php echo base_url()."Scripts/jquery.multiselect.js"?>'></script>
+	
+	
 
 <!-- End of JS  Section ------------------------------------------------>

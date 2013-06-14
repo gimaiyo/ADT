@@ -121,36 +121,36 @@ if ($access_level == "nascop_staff") {
 					
 				});
 				$("#generate_date_range_report").click(function() {
-					var report = $("#selected_report").attr("value") + ".html#";
+					var report = $("#selected_report").attr("value");
 					var from = $("#date_range_from").attr("value");
 					var to = $("#date_range_to").attr("value");
-					var report_url = "reports/" + report + "?start_date=" + from + "&end_date=" + to;
+					var report_url = "report_management/" + report + "/" + from + "/" + to;
 					window.location = report_url;
 				});
 				$("#generate_single_date_report").click(function() {
-					var report = $("#selected_report").attr("value") + ".html#";
+					var report = $("#selected_report").attr("value");
 					var selected_date = $("#single_date_filter").attr("value");
-					var report_url = "reports/" + report + "?date=" + selected_date;
+					var report_url = "report_management/" + report + "/" + selected_date;
 					window.location = report_url;
 				});
 				$("#generate_single_year_report").click(function() {
-					var report = $("#selected_report").attr("value") + ".html#";
+					var report = $("#selected_report").attr("value");
 					var selected_year = $("#single_year_filter").attr("value");
-					var report_url = "reports/" + report + "?year=" + selected_year;
+					var report_url = "report_management/" + report + "/" + selected_year;
 					window.location = report_url;
 				});
 				$("#generate_no_filter_report").click(function() {
-					var report = $("#selected_report").attr("value") + ".html#"; 
-					var report_url = "reports/" + report;
+					var report = $("#selected_report").attr("value"); 
+					var report_url = "report_management/" + report;
 					window.location = report_url;
 				});
 
 				$("#donor_generate_date_range_report").click(function() {
-					var report = $("#selected_report").attr("value") + ".html#";
+					var report = $("#selected_report").attr("value");
 					var from = $("#donor_date_range_from").attr("value");
 					var to = $("#donor_date_range_to").attr("value");
 					var donor = $("#donor").attr("value");
-					var report_url = "reports/" + report + "?start_date=" + from + "&end_date=" + to + "&donor=" + donor;
+					var report_url = "report_management/" + report + "/"+ from + "/" + to + "/" + donor;
 					window.location = report_url;
 				});
 				
@@ -180,38 +180,22 @@ if ($access_level == "nascop_staff") {
 					<div id="reports_containerdfg">
 						<!-- Select report type -->
 						
-						<div class="btn-group">
-							<a style="color:#FFF" href="<?php echo base_url().'reports.html'?>"> <button class="btn btn-info"> Main Site Report </button></a>
-						</div>
-						<div class="btn-group">
-						  <button class="btn btn-info active" id="satellite_dropdown">Satellite Reports</button>
-						  <button class="btn dropdown-toggle btn-info" id="arrow_satellite" data-toggle="dropdown">
-						    <span class="caret" ></span>
-						  </button>
-						  <ul class="dropdown-menu" id="satellite_menus" >
-						    <!-- dropdown menu links -->
-						  </ul>
-						</div>
-						
-						<legend>Satellite Report - <span class="title"><?php echo @$facility_name ?></span></legend>
-						
 						<div class="reports_panel">
 							<div class="report_category">
 								<h3>Standard Reports</h3>
-								<a href="#" id="patients_enrolled_in_period" class="report donor_date_range_report active_report">Number of Patients Enrolled in Period</a>
-								<a href="#" id="patients_enrolled_in_art" class="report donor_date_range_report active_report">Number of Patients Started on ART in the Period</a>
+								<a href="#" id="patient_enrolled" class="report donor_date_range_report active_report">Number of Patients Enrolled in Period</a>
+								<a href="#" id="getStartedonART" class="report donor_date_range_report active_report">Number of Patients Started on ART in the Period</a>
 								<a href="#" id="graph_patients_enrolled_in_year" class="report active_report annual_report">Graph of Number of Patients Enrolled Per Month in a Given Year</a>
 								<a href="#" id="cumulative_patients" class="report active_report single_date_report">Cumulative Number of Patients to Date</a>
-								<!--<a href="#" id="patients_on_ART_Last_three_months" class="report active_report no_filter">Number of Patients Receiving ART in the Last 3 Months (by Regimen)</a>-->
-							    <a href="#" id="patients_on_ART_active" class="report active_report single_date_report">Number of Active Patients Receiving ART (by Regimen)</a>
+							    <a href="#" id="patient_active_byregimen" class="report active_report single_date_report">Number of Active Patients Receiving ART (by Regimen)</a>
 
 							</div>
 							<div class="report_category">
 								<h3>Visiting Patients</h3>
-								<a href="#" id="patients_scheduled_to_visit" class="report active_report single_date_report">List of Patients Scheduled to Visit</a>
-								<a href="#" id="patients_started_on_date" class="report active_report single_date_report">List of Patients Started (on a Particular Date)</a>
-								<a href="#" id="patients_visitied_for_refill" class="report active_report single_date_report">List of Patients Visited for Refill</a>
-								<a href="#" id="patients_missing_appointments" class="report active_report date_range_report">Patients Missing Appointments</a>
+								<a href="#" id="getScheduledPatients" class="report active_report date_range_report">List of Patients Scheduled to Visit</a>
+								<a href="#" id="getPatientsStartedonDate" class="report active_report date_range_report">List of Patients Started (on a Particular Date)</a>
+								<a href="#" id="getPatientsforRefill" class="report active_report date_range_report">List of Patients Visited for Refill</a>
+								<a href="#" id="getPatientMissingAppointments" class="report active_report date_range_report">Patients Missing Appointments</a>
 							    <a href="#" id="patients_adherence" class="report active_report date_range_report">Patients Adherence Report</a>
 
 							</div>

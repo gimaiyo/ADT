@@ -33,8 +33,6 @@ if ($access_level == "facility_administrator") {
 }
 ?>
 
-
-
 <style>
 	.dataTables_wrapper{
 		width:100%;
@@ -42,7 +40,6 @@ if ($access_level == "facility_administrator") {
 	}
 	
 </style>
-
 
 
 <?php 
@@ -54,7 +51,7 @@ if ($access_level == "facility_administrator") {
 		<table class="table table-bordered table-striped listing_table" style="font-size:0.8em">
 			<thead>
 				<tr>
-					<th style="width: 45px">CCC No</th><th>Patient Name</th><th>Phone No</th><th style="width: 100px">Date Enrolled</th><th style="width: 100px">Next Appointment</th><th>Current Regimen</th><th style="width:150px">Status</th><th style="width: 140px">Action</th>
+					<th style="width: 45px">CCC No</th><th>Patient Name</th><th>Contact</th><th style="width: 100px">Date Enrolled</th><th style="width: 100px">Next Appointment</th><th>Current Regimen</th><th style="width:150px">Status</th><th style="width: 140px">Action</th>
 				</tr>
 			</thead>
 			<tbody>
