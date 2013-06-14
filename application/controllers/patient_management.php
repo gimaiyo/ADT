@@ -219,6 +219,7 @@ class Patient_Management extends MY_Controller {
 		$new_patient = new Patient();
 		$new_patient -> Medical_Record_Number = $this->input->post('medical_record_number',TRUE);
 		$new_patient -> Patient_Number_CCC =$this->input->post('patient_number',TRUE);
+		$new_patient -> Unique_Id=md5($this->input->post('patient_number',TRUE).$this -> session -> userdata('facility'));
 		$new_patient -> First_Name = $this->input->post('first_name',TRUE);
 		$new_patient -> Last_Name =  $this->input->post('last_name',TRUE);
 		$new_patient -> Other_Name = $this->input->post('other_name',TRUE);

@@ -4,6 +4,7 @@ class Patient extends Doctrine_Record {
 	public function setTableDefinition() {
 		$this -> hasColumn('Medical_Record_Number', 'varchar', 10);
 		$this -> hasColumn('Patient_Number_CCC', 'varchar', 10);
+		$this -> hasColumn('Unique_Id', 'varchar',150);
 		$this -> hasColumn('First_Name', 'varchar', 50);
 		$this -> hasColumn('Last_Name', 'varchar', 50);
 		$this -> hasColumn('Other_Name', 'varchar', 50);
