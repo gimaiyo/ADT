@@ -19,7 +19,11 @@
 <script type="text/javascript">
 	
 	$(document).ready(function(){
-		tableFilterDrugListing();
+		$('#drug_listing').dataTable( {
+	        "bJQueryUI": true,
+	        "sPaginationType": "full_numbers"
+		} );
+		//tableFilterDrugListing();
 	});
 	
 	function tableFilterDrugListing() {

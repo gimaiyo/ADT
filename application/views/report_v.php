@@ -47,23 +47,28 @@ if ($access_level == "nascop_staff") {
 				
 				$("#date_range_report").dialog({
 					autoOpen : false,
-					modal : true
+					modal : true,
+					width:450
 				});
 				$("#donor_date_range_report").dialog({
 					autoOpen : false,
-					modal : true
+					modal : true,
+					width:450
 				});
 				$("#single_date").dialog({
 					autoOpen : false,
-					modal : true
+					modal : true,
+					width:450
 				});
 				$("#year").dialog({
 					autoOpen : false,
-					modal : true
+					modal : true,
+					width:450
 				});
 				$("#no_filter").dialog({
 					autoOpen : false,
-					modal : true
+					modal : true,
+					width:450
 				});
 
 				//Add datepicker
@@ -111,6 +116,13 @@ if ($access_level == "nascop_staff") {
 				$(".no_filter").click(function() {
 					$("#selected_report").attr("value", $(this).attr("id"));
 					$("#no_filter").dialog("open");
+					//If report is drug_consumption report, display select report type
+					if($(this).attr("id")=='drug_stock_on_hand' || $(this).attr("id")=='expiring_drugs' || $(this).attr("id")=='expired_drugs'){
+						$(".show_report_type").show();
+					}
+					else{
+						$(".show_report_type").hide();
+					}
 				});
 				
 				$(".annual_report").click(function() {
@@ -141,7 +153,11 @@ if ($access_level == "nascop_staff") {
 				});
 				$("#generate_no_filter_report").click(function() {
 					var report = $("#selected_report").attr("value"); 
-					var report_url = "report_management/" + report;
+					var stock_type="";
+					if($("#commodity_summary_report_type_1")){
+						stock_type=$("#commodity_summary_report_type_1").attr("value");
+					}
+					var report_url = "report_management/" + report+"/"+stock_type;
 					window.location = report_url;
 				});
 
@@ -211,61 +227,14 @@ if ($access_level == "nascop_staff") {
 							<div class="report_category">
 								<h3>Drug Inventory</h3>
 								<a href="#" id="drug_consumption" class="report active_report annual_report">Drug Consumption Report</a>
-								<a href="#" id="drug_stock_on_hand" class="report active_report no_filter">Drug Stock on Hand Report</a>
+								<a href="#" id="stock_report/drug_stock_on_hand" class="report active_report no_filter">Drug Stock on Hand Report</a>
 								<a href="#" id="commodity_summary" class="report active_report date_range_report">Facility Summary Commodity Report</a>
 								<a href="#" id="expiring_drugs" class="report active_report no_filter">Short Dated Stocks &lt;6 Months to Expiry</a>
 								<a href="#" id="expired_drugs" class="report active_report no_filter">List of Expired Drugs</a>
 							</div>
 						</div>
 					</div>
-					<input type="hidden" id="selected_report" />
-					<div id="date_range_report" title="Select Date Range">
-						<label> <strong class="label">From: </strong>
-							<input type="text"name="date_range_from" id="date_range_from">
-						</label>
-						<label> <strong class="label">To: </strong>
-							<input type="text"name="date_range_to" id="date_range_to">
-						</label>
-						<button id="generate_date_range_report" class="action_button" style="height:30px; font-size: 13px; width: 200px;">
-							Generate Report
-						</button>
-					</div>
-					<div id="donor_date_range_report" title="Select Date Range and Donor">
-						<label> <strong class="label">Select Donor: </strong>
-							<select name="donor" id="donor">
-								<option value="0">All Donors</option><option value="1">GOK</option><option value="2">PEPFAR</option>
-							</select> </label>
-						<label> <strong class="label">From: </strong>
-							<input type="text"name="donor_date_range_from" id="donor_date_range_from">
-						</label>
-						<label> <strong class="label">To: </strong>
-							<input type="text"name="donor_date_range_to" id="donor_date_range_to">
-						</label>
-						<button id="donor_generate_date_range_report" class="action_button" style="height:30px; font-size: 13px; width: 200px;">
-							Generate Report
-						</button>
-					</div>
-					<div id="single_date">
-						<label> <strong class="label">Select Date </strong>
-							<input type="text"name="filter_date" id="single_date_filter">
-						</label>
-						<button id="generate_single_date_report" class="action_button" style="height:30px; font-size: 13px; width: 200px;">
-							Generate Report
-						</button>
-					</div>
-					<div id="year">
-						<label> <strong class="label">Report Year: </strong>
-							<input type="text"name="filter_year" id="single_year_filter">
-						</label>
-						<button id="generate_single_year_report" class="action_button" style="height:30px; font-size: 13px; width: 200px;">
-							Generate Report
-						</button>
-					</div>
-					<div id="no_filter">
-						<button id="generate_no_filter_report" class="action_button" style="height:30px; font-size: 13px; width: 200px;">
-							Generate Report
-						</button>
-					</div>
+					<?php $this->load->view('reports/menus'); ?>
 			
 				<!--End Wrapper div-->
 			</div>
