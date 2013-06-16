@@ -1,27 +1,22 @@
 font-face {
-    font-family: 'ProcionoRegular';
-    src: url('Prociono-Regular-webfont.eot');
-    src: url('Prociono-Regular-webfont.eot?#iefix') format('embedded-opentype'),
-         url('Prociono-Regular-webfont.woff') format('woff'),
-         url('Prociono-Regular-webfont.ttf') format('truetype'),
-         url('Prociono-Regular-webfont.svg#ProcionoRegular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-
+	font-family: 'ProcionoRegular';
+	src: url('Prociono-Regular-webfont.eot');
+	src: url('Prociono-Regular-webfont.eot?#iefix') format('embedded-opentype'), url('Prociono-Regular-webfont.woff') format('woff'), url('Prociono-Regular-webfont.ttf') format('truetype'), url('Prociono-Regular-webfont.svg#ProcionoRegular') format('svg');
+	font-weight: normal;
+	font-style: normal;
 }
 
 font-face {
-    font-family: 'AllerRegular';
-    src: url('fonts/Aller_Rg.ttf');
-    font-weight: normal;
-    font-style: normal;
-
+	font-family: 'AllerRegular';
+	src: url('fonts/Aller_Rg.ttf');
+	font-weight: normal;
+	font-style: normal;
 }
 body {
-	
+
 	margin: 0;
 	padding: 0;
-	font-family:"Helvetica";
+	font-family: "Helvetica";
 	line-height: 1;
 	font-size: 1em;
 	vertical-align: baseline;
@@ -35,7 +30,7 @@ body {
 	width: 14px;
 	height: 14px;
 	top: 5px;
-	right: 5px;
+	right: 5px;/
 	background-image: url(../Images/close.png);
 	background-repeat: no-repeat;
 }
@@ -288,7 +283,6 @@ input[type =
 	background-image: -webkit-gradient(linear,left top,left bottom,from(#46EB59),to(#36D148));
 	background-image: -webkit-linear-gradient(top,#46EB59,#36D148);
 	background-image: -moz-linear-gradient(top,#46EB59,#36D148);
-
 }
 .action_button {
 
@@ -529,11 +523,11 @@ fieldset {
 .green_alert {
 	background: green;
 }
-.green{
-	color:green;
+.green {
+	color: green;
 }
-.red{
-	color:red;
+.red {
+	color: red;
 }
 #start_date, #end_date, #date_of_appointment, #display_year {
 	color: rgb(45, 173, 13);
@@ -556,14 +550,13 @@ hr {
 	position: static;
 	top: 5px;
 	margin: 0 auto;
-	margin-bottom:20px;
-	
+	margin-bottom: 20px;
 }
 @media print {
 	#inf_patient_listing, #inf_drug_listing, #inf_drug_summary {
 		display: none;
 	}
-	.fltrow, .navbar,.ui-widget-header {
+	.fltrow, .navbar, .ui-widget-header {
 		display: none;
 	}
 	.table-bordered th, .table-bordered td {
@@ -596,11 +589,11 @@ tr th {
  * Facility Dashboard
  *
  */
-.center-content h3, .main-content h3, .left-content h3 {
+.center-content h3, .full-content h3, .main-content h3, .left-content h3 {
 	-webkit-margin-before: 0.5em;
 	color: #fff;
 	font-size: 1.2em;
-	padding: 0 0 0 0.3em;
+	padding: 0 0 0 1em;
 	background: #2B597E;
 	box-shadow: 0 1.2px 3px 1px #000;
 	-webkit-box-shadow: 0 1.2px 3px 1px #000;
@@ -614,7 +607,7 @@ tr th {
 }
 
 .left-content {
-	padding: 10.5% 0.5% 0.5% 1%;
+	padding: 9.5% 0.5% 0.5% 1%;
 	width: 19%;
 	float: left;
 	margin-bottom: 2%;
@@ -631,9 +624,12 @@ tr th {
 	padding-bottom: 8%;
 	display: inline-block;
 }
-.full-content{
+.full-content {
 	width: 98%;
 	padding: 11% 1% 10% 1%;
+}
+.full-content form {
+	width: 100%;
 }
 .right-content {
 	width: 19%;
@@ -872,7 +868,7 @@ table.dataTable tr.odd td sorting_1 {
  * 	Login Forms
  */
 #signup_form {
-	background-color: #999;
+	background-color: #DDD;
 	border: 1px solid #E5E5E5;
 	padding: 3%;
 	width: 35%;
@@ -1143,43 +1139,54 @@ html > body #main_manualcontent li a {
  * 	Form Formatting
  */
 
+.content-row {
+	display: table-row;
+}
+.full-content form{
+	border-radius:5px;}
 .column {
 	background: #80f26d;
-	display:table-cell;
-	width: 33%;
+	display: table-cell;
+	width: 1111;
 	margin-left: 1%;
 	height: inherit;
 }
-
-form{
-	display:table;
+.column-2 {
+	width: 1111;
+	background: #f9f;
+	display: table-cell;
 }
-.column fieldset {
+
+.column-3 {
+	width: 30%;
+	margin: auto;
+}
+.column fieldset, .column-2 fieldset, .column-3 fieldset{
 	padding: 5%;
 	width: 90%
 }
-.column input {
+.column input, .column-2 input, .column-3 input {
 	width: 100%;
 }
 .column input[type=checkbox] {
 	width: 45%;
 }
 
-.column select {
-	width: 45%;
+.column select, .column-2 select,.column-3 select {
+	width: 100%;
 }
-.column .max-row {
+.max-row {
 	margin-top: 0.5em;
 	clear: both;
 	width: 100%;
 	display: block;
 }
-.column .mid-row {
+.mid-row {
 	width: 45%;
 	display: inline-block;
 }
 
-.column .mid-row input, .mid-row textarea {
+.mid-row input, .mid-row textarea {
 	width: 100%;
 }
 
@@ -1188,13 +1195,17 @@ form{
 	height: 6em;
 }
 
-.column .mid-row input[type=radio] {
+input[readonly] {
+	background: #aac8e0;
+	border: 1px solid #D9D9D9;
+}
+.mid-row input[type=radio] {
 	width: auto;
 }
-.column .mid-row select {
+.mid-row select {
 	width: 100%;
 }
-.column .mid-row:nth-child(even) {
+.mid-row:nth-child(even) {
 	float: right;
 }
 
@@ -1229,8 +1240,8 @@ form{
 	min-height: 200px;
 	padding: 5px;
 }
-.report_category:nth-child(even){
-	float:right;
+.report_category:nth-child(even) {
+	float: right;
 }
 .category_title {
 	letter-spacing: 2px;
@@ -1323,10 +1334,7 @@ a {
 }
 
 #DataTables_Table_0_wrapper {
-	font-size: 15px;
-	margin-top:1.5%;
-}
-._red {
+	font-size: 15px;._red {
 	color: red;
 	font-style: italic;
 	font-size: 11px;
@@ -1337,37 +1345,56 @@ input[type='text'], input[type='email'], input[type='tel'], input[type='password
 legend {
 	font-size: 18px;
 }
-.button-bar{
-	display:table-row;
-	width:100%;
+.button-bar {
+	display: table-row;
+	width: 100%;
 }
 
 /**
  * 	Customizing Bootstrap
  */
-.badge{
-	color:white;
-	margin-left:3%;
+.badge {
+	color: white;
+	margin-left: 3%;
 }
 .btn-danger a {
-	color:white;
+	color: white;
 }
 
-.report_category a{
-	font-size:12px;
+.report_category a {
+	font-size: 12px;
 }
+
 #patient_listing {
 	margin: 0 auto;
-	width:100%;
+	width: 100%;
 	border-top: 1px solid #B9B9B9;
 	font-size: 13px;
-	letter-spacing: 0.8px;
-.astericks{
-	color:red;
-	font-size:18px;
-	font-weight:bold;
+	letter-spacing: 0.8px;.astericks{
+	color: red;
+	font-size: 18px;
+	font-weight: bold;
 }
-.start_regimen{
-	color:red;
-	font-weight:bold;
+.start_regimen {
+	color: red;
+	font-weight: bold;
+}
+.icondose {
+	background: #FFFFFF url(Images/dropdown.png) no-repeat 55px 4px;
+	padding: 4px 4px 4px 22px;
+	height: 5px;
+}
+#current_regimen {
+	color: red;
+	font-weight: bold;
+}
+#last_regimen_disp {
+	color: blue;
+	font-weight: bold;
+}
+.expiry small_text {
+	width: 400px;
+}
+#drugs_section {
+	width: 100px;
 }
