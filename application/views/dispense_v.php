@@ -2,18 +2,6 @@
 <html lang="en" >
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>Dispense Drugs</title>
-		<link rel="SHORTCUT ICON" href="Images/favicon.ico">
-		<link href="CSS/style.css" type="text/css" rel="stylesheet"/>
-		<link href="CSS/offline_css.css" type="text/css" rel="stylesheet"/>
-		<link href="CSS/jquery-ui.css" type="text/css" rel="stylesheet"/>
-		<link href="CSS/validator.css" type="text/css" rel="stylesheet"/>
-		<script type="text/javascript" src="Scripts/offlineData.js"></script>
-		<script type="text/javascript" src="Scripts/jquery.js"></script>
-		<script type="text/javascript" src="Scripts/jquery-ui.js"></script>
-		<script type="text/javascript" src="Scripts/offline_database.js"></script>
-		<script type="text/javascript" src="Scripts/validator.js"></script>
-		<script type="text/javascript" src="Scripts/validationEngine-en.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
 				var $_GET = getQueryParams(document.location.hash);
@@ -37,7 +25,7 @@
 					var selected_value = $(this).attr("value");
 					var stock_at_hand = $(".soh").attr("value");
 					var stock_validity = stock_at_hand - selected_value;
-					if(stock_validity < 0) {
+					if (stock_validity < 0) {
 						//alert("Quantity Cannot Be larger Than Stock at Hand");
 
 					}
@@ -96,15 +84,15 @@
 					$("#adherence").removeAttr("disabled");
 					var selected_value = $(this).val();
 					var day_percentage = 0;
-					if(selected_value == 2 || selected_value == 5) {
+					if (selected_value == 2 || selected_value == 5) {
 						var days_count = $("#days_count").val();
-						if(days_count <= 0) {
+						if (days_count <= 0) {
 							day_percentage = "100%";
-						} else if(days_count > 0 && days_count <= 2) {
+						} else if (days_count > 0 && days_count <= 2) {
 							day_percentage = ">=95%";
-						} else if(days_count > 2 && days_count < 14) {
+						} else if (days_count > 2 && days_count < 14) {
 							day_percentage = "84-94%";
-						} else if(days_count >= 14) {
+						} else if (days_count >= 14) {
 							day_percentage = "<85%";
 						}
 						$("#adherence").attr("value", day_percentage);
@@ -120,10 +108,10 @@
 					//Get basic getails of the selected patient
 					getBatchExpiry(drug, $(this).attr("value"), function(transaction, results) {
 						// Handle the results
-						if(results.rows.length > 0) {
+						if (results.rows.length > 0) {
 							var row = results.rows.item(0);
 							expiry_date.attr("value", row['expiry_date']);
-							if(row['expiry_date'] != row['LEAST']) {
+							if (row['expiry_date'] != row['LEAST']) {
 								alert("THIS IS NOT THE FIRST EXPIRING BATCH")
 							}
 						}
@@ -133,7 +121,7 @@
 				//Dynamically load the list of doses
 				selectDoses(function(transaction, results) {
 					// Handle the results
-					for(var i = 0; i < results.rows.length; i++) {
+					for (var i = 0; i < results.rows.length; i++) {
 						var row = results.rows.item(i);
 						$("#dose").append($("<option/>").attr("value", row['name']));
 					}
@@ -142,7 +130,7 @@
 				//Dynamically load the list of purposes of visit
 				selectAll("visit_purpose", function(transaction, results) {
 					// Handle the results
-					for(var i = 0; i < results.rows.length; i++) {
+					for (var i = 0; i < results.rows.length; i++) {
 						var row = results.rows.item(i);
 						$("#purpose").append($("<option></option>").attr("value", row['id']).text(row['name']));
 					}
@@ -150,7 +138,7 @@
 				//Dynamically load the list of non_adhrence reasons
 				selectAll("non_adherence_reasons", function(transaction, results) {
 					// Handle the results
-					for(var i = 0; i < results.rows.length; i++) {
+					for (var i = 0; i < results.rows.length; i++) {
 						var row = results.rows.item(i);
 						$("#non_adherence_reasons").append($("<option></option>").attr("value", row['id']).text(row['name']));
 					}
@@ -158,7 +146,7 @@
 				//Dynamically load the list of opportunistic infections
 				selectAll("opportunistic_infections", function(transaction, results) {
 					// Handle the results
-					for(var i = 0; i < results.rows.length; i++) {
+					for (var i = 0; i < results.rows.length; i++) {
 						var row = results.rows.item(i);
 						$.each($(".indication"), function(i, v) {
 							$(this).append($("<option></option>").attr("value", row['id']).text(row['name']));
@@ -170,7 +158,7 @@
 				$("#current_regimen").append($("<option selected></option>").attr("value", "0").text("Select One"));
 				selectRegimen(function(transaction, results) {
 					// Handle the results
-					for(var i = 0; i < results.rows.length; i++) {
+					for (var i = 0; i < results.rows.length; i++) {
 						var row = results.rows.item(i);
 						$("#current_regimen").append($("<option></option>").attr("value", row['id']).text(row['regimen_desc']));
 					}
@@ -189,15 +177,15 @@
 				$("#current_regimen").change(function() {
 					var regimen = $("#current_regimen option:selected").attr("value");
 					var last_regimen = $("#last_regimen_disp").attr("regimen_id");
-					if(last_regimen != 0) {
+					if (last_regimen != 0) {
 						//If the previous regimen and the one currently chosen are different, display the regimen change reason dropdown list
-						if(regimen != last_regimen) {
+						if (regimen != last_regimen) {
 							//Retrieve all the regimen change reasons
 							$("#regimen_change_reason").children('option').remove();
 							$("#regimen_change_reason").append($("<option></option>").attr("value", "").text("Choose One"));
 							selectAll("regimen_change_purpose", function(transaction, results) {
 								// Handle the results
-								for(var i = 0; i < results.rows.length; i++) {
+								for (var i = 0; i < results.rows.length; i++) {
 									var row = results.rows.item(i);
 									$("#regimen_change_reason").append($("<option></option>").attr("value", row['id']).text(row['name']));
 								}
@@ -216,9 +204,9 @@
 					selectRegimenDrugs(regimen, function(transaction, results) {
 						// Handle the results
 
-						for(var i = 0; i < results.rows.length; i++) {
+						for (var i = 0; i < results.rows.length; i++) {
 							var row = results.rows.item(i);
-							if(i == 0) {
+							if (i == 0) {
 								$.each($(".drug"), function(i, v) {
 									$(this).append($("<option></option>").attr("value", row['id']).text(row['drug']));
 
@@ -289,7 +277,7 @@
 				//Retrieve details of the last regimen taken by a patient
 				selectPatientRegimen("patient", patient_number, function(transaction, results) {
 					// Handle the results
-					if(results.rows.length > 0) {
+					if (results.rows.length > 0) {
 						var row = results.rows.item(0);
 						//Display the Last Regimen Taken
 						$("#last_regimen_disp").attr("value", row['regimen_desc']);
@@ -300,7 +288,7 @@
 						$("#height").attr("value", row['current_height']);
 						//Retrieve drugs dispensed during the last visit
 						selectLastVisitDetails(patient_number, last_visit_date, function(transaction, results) {
-							for(var i = 0; i < results.rows.length; i++) {
+							for (var i = 0; i < results.rows.length; i++) {
 								var row = results.rows.item(i);
 								var append_html = "<tr><td>" + row['drug'] + "</td><td>" + row['quantity'] + "</td></tr>";
 								$("#last_visit_data").append($(append_html));
@@ -313,7 +301,7 @@
 							var appointment_date = $.datepicker.parseDate('yy-mm-dd', row['appointment']);
 							var timeDiff = today.getTime() - appointment_date.getTime();
 							var diffDays = Math.floor(timeDiff / (1000 * 3600 * 24));
-							if(diffDays > 0) {
+							if (diffDays > 0) {
 								var html = "<span style='color:#ED5D3B;'>Late by <b>" + diffDays + "</b> days.</span>";
 							} else {
 								var html = "<span style='color:#009905'>Not Due for <b>" + Math.abs(diffDays) + "</b> days.</span>";
@@ -343,14 +331,14 @@
 				var missed_pills = row_element.find(".missed_pills");
 
 				var pill_count = row_element.find(".pill_count");
-				if(drug.attr("value") > 0) {
+				if (drug.attr("value") > 0) {
 					//Retrieve details about the selected drug from the database
 					selectSingleFilteredQuery("drugcode", "id", drug.attr("value"), function(transaction, results) {
 
 						// Handle the results
 						var row = results.rows.item(0);
 						getUnitName(row['unit'], function(transaction, res) {
-							if(res.rows.length > 0) {
+							if (res.rows.length > 0) {
 								var r = res.rows.item(0);
 								unit.attr("value", r['name']);
 							}
@@ -387,24 +375,24 @@
 				//console.log(starting_stock_sql);
 				batch.append($("<option></option>").attr("value", "").text("Select"));
 				SQLExecuteAbstraction(starting_stock_sql, function(transaction, results) {
-					for(var i = 0; i < results.rows.length; i++) {
+					for (var i = 0; i < results.rows.length; i++) {
 						var first_row = results.rows.item(i);
 						var batch_value = first_row["batch"];
 						var initial_stock_sql = "SELECT SUM( d.quantity ) AS Initial_stock, d.transaction_date AS transaction_date, '" + batch_value + "' AS batch FROM drug_stock_movement d WHERE d.drug =  '" + drug + "' AND facility='" + facility + "' AND transaction_type =  '11' AND d.batch_number =  '" + batch_value + "'";
 						//console.log(initial_stock_sql);
 						SQLExecuteAbstraction(initial_stock_sql, function(transaction, results) {
-							for(var m = 0; m < results.rows.length; m++) {
+							for (var m = 0; m < results.rows.length; m++) {
 								var physical_row = results.rows.item(m);
 								initial_stock = physical_row['Initial_stock'];
 								//Check if initial stock is present meaning physical count done
-								if(initial_stock != null) {
+								if (initial_stock != null) {
 									batch_stock_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out )) AS stock_levels, ds.batch_number FROM drug_stock_movement ds WHERE ds.transaction_date BETWEEN  '" + physical_row['transaction_date'] + "' AND date() AND facility='" + facility + "' AND ds.drug ='" + drug + "'  AND ds.batch_number ='" + physical_row['batch'] + "'";
 									//console.log(batch_stock_sql);
 									SQLExecuteAbstraction(batch_stock_sql, function(transaction, results) {
-										for(var j = 0; j < results.rows.length; j++) {
+										for (var j = 0; j < results.rows.length; j++) {
 											var second_row = results.rows.item(j);
 											//console.log(second_row)
-											if(second_row['stock_levels'] > 0) {
+											if (second_row['stock_levels'] > 0) {
 												var batch_id = second_row['batch_number'];
 												batch.append($("<option></option>").attr("value", batch_id).text(batch_id));
 											}
@@ -414,10 +402,10 @@
 									batch_stock_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out ) ) AS stock_levels, ds.batch_number FROM drug_stock_movement ds WHERE ds.drug =  '" + drug + "' AND facility='" + facility + "' AND ds.expiry_date > date() AND ds.batch_number='" + physical_row['batch'] + "'";
 									//console.log(batch_stock_sql);
 									SQLExecuteAbstraction(batch_stock_sql, function(transaction, results) {
-										for(var j = 0; j < results.rows.length; j++) {
+										for (var j = 0; j < results.rows.length; j++) {
 											var second_row = results.rows.item(j);
 
-											if(second_row['stock_levels'] > 0) {
+											if (second_row['stock_levels'] > 0) {
 												var batch_id = second_row['batch_number'];
 												batch.append($("<option></option>").attr("value", batch_id).text(batch_id));
 											}
@@ -445,17 +433,17 @@
 					var initial_stock_sql = "SELECT SUM( d.quantity ) AS Initial_stock, d.transaction_date AS transaction_date, '" + batch + "' AS batch FROM drug_stock_movement d WHERE d.drug =  '" + drug + "' AND facility='" + facility + "' AND transaction_type =  '11' AND d.batch_number =  '" + batch + "'";
 					//console.log(initial_stock_sql)
 					SQLExecuteAbstraction(initial_stock_sql, function(transaction, results) {
-						for(var m = 0; m < results.rows.length; m++) {
+						for (var m = 0; m < results.rows.length; m++) {
 							var physical_row = results.rows.item(m);
 							initial_stock = physical_row['Initial_stock'];
 							//Check if initial stock is present meaning physical count done
-							if(initial_stock != null) {
+							if (initial_stock != null) {
 								batch_stock_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out )) AS stock_levels, ds.batch_number FROM drug_stock_movement ds WHERE ds.transaction_date BETWEEN  '" + physical_row['transaction_date'] + "' AND date() AND facility='" + facility + "' AND ds.drug ='" + drug + "'  AND ds.batch_number ='" + physical_row['batch'] + "'";
 								SQLExecuteAbstraction(batch_stock_sql, function(transaction, results) {
-									for(var j = 0; j < results.rows.length; j++) {
+									for (var j = 0; j < results.rows.length; j++) {
 										var second_row = results.rows.item(j);
 										//console.log(second_row)
-										if(second_row['stock_levels'] > 0) {
+										if (second_row['stock_levels'] > 0) {
 											batch_stock = second_row['stock_levels'];
 											row_element.find(".soh").attr("value", batch_stock);
 										}
@@ -465,10 +453,10 @@
 								batch_stock_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out ) ) AS stock_levels, ds.batch_number FROM drug_stock_movement ds WHERE ds.drug =  '" + drug + "' AND facility='" + facility + "' AND ds.expiry_date > date() AND ds.batch_number='" + physical_row['batch'] + "'";
 								//console.log(batch_stock_sql)
 								SQLExecuteAbstraction(batch_stock_sql, function(transaction, results) {
-									for(var j = 0; j < results.rows.length; j++) {
+									for (var j = 0; j < results.rows.length; j++) {
 										var second_row = results.rows.item(j);
 
-										if(second_row['stock_levels'] > 0) {
+										if (second_row['stock_levels'] > 0) {
 											batch_stock = second_row['stock_levels'];
 											row_element.find(".soh").attr("value", batch_stock);
 										}
@@ -488,7 +476,7 @@
 				selectOIMedicines(function(transaction, results) {
 
 					// Handle the results
-					for(var i = 0; i < results.rows.length; i++) {
+					for (var i = 0; i < results.rows.length; i++) {
 						var row = results.rows.item(i);
 						$.each($(".drug"), function(i, v) {
 
@@ -532,15 +520,15 @@
 					var new_date = new Date(formatted_date);
 					var formatted_date_day = new_date.getDay();
 					var days_of_week = ["Sunday", "Monday", "Tuseday", "Wednesday", "Thursday", "Friday", "Saturday"];
-					if(formatted_date_day == 6 || formatted_date_day == 0) {
+					if (formatted_date_day == 6 || formatted_date_day == 0) {
 						alert("It will be on " + days_of_week[formatted_date_day] + " During the Weekend");
-						if(row['total_appointments'] > row['weekend_max']) {
+						if (row['total_appointments'] > row['weekend_max']) {
 							alert("Maximum Appointments for Weekend Reached");
 						}
 
 					} else {
 
-						if(row['total_appointments'] > row['weekday_max']) {
+						if (row['total_appointments'] > row['weekday_max']) {
 							alert("Maximum Appointments for Weekday Reached");
 						}
 
@@ -563,349 +551,207 @@
 				return date_string;
 			}
 		</script>
-		<style type="text/css">
-			.data-holder {
-				height: 20px;
-				line-height: 20px;
-				width: 120px !important;
-			}
-			.data-holder-2 {
-				height: 15px;
-				line-height: 15px;
-				width: 70px !important;
-				overflow: hidden;
-			}
-			.data-table {
-				width: 100%;
-			}
-			.data-table tr {
-				width: 99%;
-			}
-			table.data-table td {
-				height: 20px !important;
-				width: 45%;
-			}
-			label {
-				margin: 0 !important;
-				display: inline;
-			}
-			#patient_demographics {
-				margin: 5px;
-			}
-			select {
-				height: 30px !important;
-			}
-			.column_right {
-				width: 40%;
-				font-family: Arial;
-				padding: 2px;
-				float: right;
-				margin-right: 10%;
-			}
-			.column_left {
-				width: 40%;
-				font-family: Arial;
-				padding: 2px;
-				float: left;
-				margin-left: 5%;
-			}
-			strong {
-				width: 100%;
-				padding-right: 0;
-			}
-			.inner-table strong {
-				width: 50px;
-			}
-			#dispensing_history {
-				min-width: 980px !important;
-				max-height: 500px !important;
-				overflow: scroll;
-				margin: 0 auto;
-			}
-			#drugs_table td {
-				min-width: 60px;
-			}
-			.banner_text {
-				height: auto;
-				margin: 0px;
-			}
-			#submit_section {
-				margin: 0 20% 0 20%;
-			}
-			.short_title {
-				height: 35px;
-				background: #036;
-				color: #FFF;
-				font-weight: bold;
-				width: 100%;
-			}
-			.banner_text {
-				color: #FFF;
-				font-weight: bold;
-				font-family: Book Antiqua;
-			}
-			#main_wrapper {
-				background: #FF99FF;
-				font-weight: bold;
-				color: #000;
-				width: 100%;
-			}
-			input {
-				height: 30px !important;
-			}
-			fieldset {
-				padding: 20px;
-			}
-			.two_comlumns {
-				width: 500px;
-				height: 70px;
-			}
-			#drugs_section {
-				clear: both;
-				margin: 0 0 0 20px;
-				padding: 20px;
-				zoom: 110%;
-				width: 80%;
-				font-weight: bold;
-				color: #000;
-			}
-			#dispensing_info tr {
-				height: 25px;
-			}
-			.icondose {
-				background: #FFFFFF url(Images/dropdown.png) no-repeat 55px 4px;
-				padding: 4px 4px 4px 22px;
-				height: 5px;
-			}
-			#current_regimen {
-				color: red;
-				font-weight: bold;
-			}
-			#last_regimen_disp {
-				color: blue;
-				font-weight: bold;
-			}
-			.expiry small_text {
-				width: 400px;
-			}
-			#facility_name {
-				color: green;
-				margin-top: 5px;
-				font-weight: bold;
-			}
 
-		</style>
 	</head>
 	<body>
-		<div id="wrapper">
-			<div id="top-panel" style="margin:0px;">
-				<div class="logo"></div>
-				<div class="network">
-					Network Status: <span id="status" class="offline">Offline</span>
-					<p>
-						Out-of-Sync Records: <span id="local-count"></span>
-					</p>
-				</div>
-				<div id="system_title">
-					<span style="display: block; font-weight: bold; font-size: 14px; margin:2px;">Ministry of Health</span>
-					<span style="display: block; font-size: 12px;">ARV Drugs Supply Chain Management Tool</span>
-					<span style="display: block; font-size: 14px;" id="facility_name" ></span>
-				</div>
-				<div id="top_menu">
-					<a href="home_controller" class="top_menu_link  first_link">Home </a>
-					<a href="patient_management.html" class="top_menu_link top_menu_active">Patients<span class="alert red_alert">off</span></a>
-					<a href="inventory.html" class="top_menu_link">Inventory<span class="alert red_alert">off</span></a>
-					<a href="reports.html" class="top_menu_link">Reports<span class="alert red_alert">off</span></a>
-					<a href="settings_management" class="top_menu_link">Settings<span class="alert green_alert">on</span></a>
-					<a href="order_management" class="top_menu_link">Order<span class="alert green_alert">on</span></a>
-					<div id="my_profile_link_container" style="display: inline">
-						<a ref="#" class="top_menu_link" id="my_profile_link"></a>
-					</div>
-				</div>
-			</div>
-			<div id="inner_wrapper">
-				<div id="main_wrapper">
-					<div id="signup">
-						<div class="short_title" >
-							<h3 class="banner_text">Dispense Drugs</h3>
+		<div class="full-content">
+
+			<h3>Dispense Drugs</h3>
+
+			<form id="dispense_form" class="dispense_form" method="post" >
+				<input type="hidden" id="hidden_stock" name="hidden_stock"/>
+				<input type="hidden" id="days_count" name="days_count"/>
+				<div class="column-2">
+					<fieldset>
+						<legend>
+							Dispensing Information
+						</legend>
+
+						<div class="max-row">
+							<div class="mid-row">
+								<label>Patient Number CCC</label>
+
+								<input readonly="" id="patient" name="patient" class="validate[required]"/>
+							</div>
+							<div class="mid-row">
+								<label>Patient Name</label>
+								<span id="patient_details"></span>
+							</div>
 						</div>
-						<hr/>
-						<form id="dispense_form" method="post" >
-							<input type="hidden" id="hidden_stock" name="hidden_stock"/>
-							<input type="hidden" id="days_count" name="days_count"/>
-							<div class="column_left">
-								<fieldset>
-									<legend>
-										Dispensing Information
-									</legend>
-									<table border='0' id="dispensing_info" cellpadding="2">
-										<tr>
-											<td><strong class="label">Patient Number CCC</strong></td>
-											<td>
-											<input readonly="" id="patient" name="patient" class="validate[required]"/>
-											</td>
-											<td><strong class="label">Patient Name</strong></td>
-											<td><span id="patient_details" style="padding:5px;"></span></td>
-										</tr>
-										<tr>
-											<td><strong class="label">Dispensing Date</strong></td>
-											<td>
-											<input style="width:140px" type="text"name="dispensing_date" id="dispensing_date" class="validate[required]">
-											</td>
-											<td><strong class="label" >Purpose of Visit</strong></td>
-											<td>
-											<select style="width:140px;" type="text"name="purpose" id="purpose" class="validate[required]">
-												<option></option>
-											</select> </label> </td>
-										</tr>
-										<tr>
-											<td><strong class="label" >Current Height(cm)</strong></td>
-											<td>
-											<input style="width:140px;" type="text"name="height" id="height" class="validate[required]">
-											</td>
-											<td><strong class="label" >Current Weight(kg)</strong></td>
-											<td>
-											<input style="width:140px" type="text"name="weight" id="weight" class="validate[required]">
-											</td>
-										</tr>
-										<tr>
-											<td><strong class="label" >Days to Next Appointment</strong></td>
-											<td>
-											<input style="width:140px;" type="text"name="days_to_next" id="days_to_next" class="validate[required]">
-											</td>
-											<td><strong class="label">Date of Next Appointment</strong></td>
-											<td>
-											<input style="width:140px" type="text"name="next_appointment_date" id="next_appointment_date" class="validate[required]">
-											</td>
-										</tr>
-										<tr>
-											<td colspan='6'><label id="scheduled_patients" class="message information close" style="display:none"></label></td>
-										</tr>
-										<tr>
-											<td><strong class="label">Last Regimen Dispensed</strong></td>
-											<td>
-											<input type="text"name="last_regimen_disp" regimen_id="0" id="last_regimen_disp" readonly="">
-											<input type="hidden" name="last_regimen" regimen_id="0" id="last_regimen">
-											</td>
-											<td><strong class="label">Current Regimen</strong></td>
-											<td>
-											<select type="text"name="current_regimen" id="current_regimen" style="width:300px;font-size:12px;" class="validate[required]">
-												<option></option>
-											</select></td>
-										</tr>
-										<tr>
-											<td colspan="6"><label style="display:none" id="regimen_change_reason_container"> <strong class="label">Regimen Change Reason</strong>
-												<select type="text"name="regimen_change_reason" id="regimen_change_reason" style="width:300px">
-													<option></option>
-												</select> </label></td>
-										</tr>
-										<tr>
-											<td><strong class="label">Appointment Adherence (%)</strong></td>
-											<td>
-											<input type="text"name="adherence" id="adherence" style="font-weight:bold;">
-											</td>
-											<td><strong class="label"> Poor/Fair Adherence Reasons </strong></td>
-											<td>
-											<select type="text"name="non_adherence_reasons" id="non_adherence_reasons" style="width:300px;height:20px;">
-												<option></option>
-											</select></td>
-										</tr>
-									</table>
-								</fieldset>
+
+						<div class="max-row">
+							<div class="mid-row">
+								<label>Dispensing Date</label>
+
+								<input  type="text"name="dispensing_date" id="dispensing_date" class="validate[required]">
 							</div>
-							<div class="column_right">
-								<fieldset>
-									<legend>
-										Previous Patient Information
-									</legend>
-									<label> <strong class="label">Appointment Date</strong>
-										<input readonly="" id="last_appointment_date" name="last_appointment_date"/>
-									</label><label id="days_late"> </label>
-									<label> <strong class="label">Previous Visit Date</strong>
-										<input readonly="" id="last_visit_date" name="last_visit_date"/>
-									</label>
-									<table class="data-table" id="last_visit_data">
-										<th>Drug Dispensed</th>
-										<th>Quantity Dispensed</th>
-									</table>
-								</fieldset>
+							<div class="mid-row">
+								<label>Purpose of Visit</label>
+
+								<select  type="text"name="purpose" id="purpose" class="validate[required]">
+									<option></option>
+								</select>
+								</label>
 							</div>
-							<div id="drugs_section">
-								<table border="0" class="data-table" id="drugs_table" style="font-size:12px;">
-									<th class="subsection-title" colspan="14">Select Drugs</th>
-									<tr>
-										<th>Drug</th>
-										<th>Unit</th>
-										<th >Batch No.&nbsp;</th>
-										<th>Expiry&nbsp;Date</th>
-										<th>Dose</th>
-										<th>Duration</th>
-										<th>Qty. disp</th>
-										<th>Brand Name</th>
-										<th>Stock on Hand</th>
-										<th>Indication</th>
-										<th>Pill Count</th>
-										<th>Comment</th>
-										<th>Missed Pills</th>
-										<th style="min-width: 50px;">Action</th>
-									</tr>
-									<tr drug_row="0">
-										<td><select name="drug" class="drug"  style=" font-size: 12px;font-weight:bold; "></select></td>
-										<td>
-										<input type="text" name="unit" class="unit small_text" style="width: 150px;" />
-										</td>
-										<td><select name="batch" class="batch" style="width:200px;"></select></td>
-										<td>
-										<input type="text" name="expiry" name="expiry" class="expiry" id="expiry_date"  size="15"/>
-										</td>
-										<td>
-										<input list="dose" name="dose" style="max-width:70px;height:30px;" class="dose small_text icondose">
-										<datalist id="dose" ></datalist></td>
-										<td>
-										<input type="text" name="duration" class="duration small_text" />
-										</td>
-										<td>
-										<input type="text" name="qty_disp" class="qty_disp small_text" />
-										</td>
-										<td><select name="brand" class="brand small_text"></select></td>
-										<td>
-										<input type="text" name="soh" class="soh small_text" disabled="disabled"/>
-										</td>
-										<td>
-										<select name="indication" class="indication" style="max-width: 70px;">
-											<option value="0">None</option>
-										</select></td>
-										<td>
-										<input type="text" name="pill_count" class="pill_count small_text" />
-										</td>
-										<td>
-										<input type="text" name="comment" class="comment small_text" />
-										</td>
-										<td>
-										<input type="text" name="missed_pills" class="missed_pills small_text" />
-										</td>
-										<td>
-										<input type="button" class="add button" value="+" style="width: 20px; min-width:0"/>
-										<input type="button" class="remove button" value="-" style="width: 20px; min-width:0"/>
-										</td>
-									</tr>
-								</table>
+						</div>
+						<div class="max-row">
+							<div class="mid-row">
+								<label>Current Height(cm)</label>
+
+								<input  type="text"name="height" id="height" class="validate[required]">
 							</div>
-							<div id="submit_section">
-								<input type="reset" class="submit-button" id="reset" value="Reset Fields" style="width:200px;"/>
-								<input form="dispense_form" class="submit-button" id="submit" value="Dispense Drugs" style="width:200px;"/>
+							<div class="mid-row">
+								<label>Current Weight(kg)</label>
+
+								<input  type="text"name="weight" id="weight" class="validate[required]">
 							</div>
-						</form>
-					</div>
+						</div>
+						<div class="max-row">
+							<div class="mid-row">
+								<label>Days to Next Appointment</label>
+
+								<input  type="text"name="days_to_next" id="days_to_next" class="validate[required]">
+							</div>
+							<div class="mid-row">
+								<label>Date of Next Appointment</label>
+
+								<input  type="text"name="next_appointment_date" id="next_appointment_date" class="validate[required]">
+							</div>
+						</div>
+						<div class="max-row">
+							<div class="mid-row">
+								<label id="scheduled_patients" class="message information close" style="display:none"></label><label>Last Regimen Dispensed</label>
+								<input type="text"name="last_regimen_disp" regimen_id="0" id="last_regimen_disp" readonly="">
+								<input type="hidden" name="last_regimen" regimen_id="0" id="last_regimen">
+							</div>
+
+							<div class="mid-row">
+								<label>Current Regimen</label>
+								<select type="text"name="current_regimen" id="current_regimen"  class="validate[required]">
+									<option></option>
+								</select>
+							</div>
+						</div>
+						<div class="max-row">
+							<div class="mid-row">
+								<div style="display:none" id="regimen_change_reason_container">
+									<label>Regimen Change Reason</label>
+									<select type="text"name="regimen_change_reason" id="regimen_change_reason" s>
+										<option></option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="max-row">
+							<div class="mid-row">
+								<label>Appointment Adherence (%)</label>
+								<input type="text"name="adherence" id="adherence">
+							</div>
+							<div class="mid-row">
+								<label> Poor/Fair Adherence Reasons </label>
+								<select type="text"name="non_adherence_reasons" id="non_adherence_reasons" >
+									<option></option>
+								</select>
+							</div>
+						</div>
+
+					</fieldset>
 				</div>
-				<!--End Wrapper div-->
-			</div>
-			<div id="bottom_ribbon" style="top:70px; width:90%;">
-				<div id="footer">
-					<div id="footer_text">
-						Government of Kenya &copy; <span id="year" ></span>. All Rights Reserved
-					</div>
+				<div class="column-2">
+					<fieldset>
+						<legend>
+							Previous Patient Information
+						</legend>
+						<div class="max-row">
+							<div class="mid-row">
+								<label> Appointment Date</label>
+								<input readonly="" id="last_appointment_date" name="last_appointment_date"/>
+							</div>
+						</div>
+						<div class="max-row">
+							<div class="mid-row">
+								<label>Previous Visit Date</label>
+								<input readonly="" id="last_visit_date" name="last_visit_date"/>
+							</div>
+						</div>
+
+						<table class="data-table" id="last_visit_data">
+							<th>Drug Dispensed</th>
+							<th>Quantity Dispensed</th>
+						</table>
+					</fieldset>
 				</div>
-			</div>
+
+				<div class="content-row">
+					<!--div id="drugs_section">
+					<table border="0" class="data-table" id="drugs_table" style="font-size:12px;">
+					<th class="subsection-title" colspan="14">Select Drugs</th>
+					<tr>
+					<th>Drug</th>
+					<th>Unit</th>
+					<th >Batch No.&nbsp;</th>
+					<th>Expiry&nbsp;Date</th>
+					<th>Dose</th>
+					<th>Duration</th>
+					<th>Qty. disp</th>
+					<th>Brand Name</th>
+					<th>Stock on Hand</th>
+					<th>Indication</th>
+					<th>Pill Count</th>
+					<th>Comment</th>
+					<th>Missed Pills</th>
+					<th style="min-width: 50px;">Action</th>
+					</tr>
+					<tr drug_row="0">
+					<td><select name="drug" class="drug"  style=" font-size: 12px;font-weight:bold; "></select></td>
+					<td>
+					<input type="text" name="unit" class="unit small_text" style="width: 150px;" />
+					</td>
+					<td><select name="batch" class="batch" style="width:200px;"></select></td>
+					<td>
+					<input type="text" name="expiry" name="expiry" class="expiry" id="expiry_date"  size="15"/>
+					</td>
+					<td>
+					<input list="dose" name="dose" style="max-width:70px;height:30px;" class="dose small_text icondose">
+					<datalist id="dose" ></datalist></td>
+					<td>
+					<input type="text" name="duration" class="duration small_text" />
+					</td>
+					<td>
+					<input type="text" name="qty_disp" class="qty_disp small_text" />
+					</td>
+					<td><select name="brand" class="brand small_text"></select></td>
+					<td>
+					<input type="text" name="soh" class="soh small_text" disabled="disabled"/>
+					</td>
+					<td>
+					<select name="indication" class="indication" style="max-width: 70px;">
+					<option value="0">None</option>
+					</select></td>
+					<td>
+					<input type="text" name="pill_count" class="pill_count small_text" />
+					</td>
+					<td>
+					<input type="text" name="comment" class="comment small_text" />
+					</td>
+					<td>
+					<input type="text" name="missed_pills" class="missed_pills small_text" />
+					</td>
+					<td>
+					<input type="button" class="add button" value="+" style="width: 20px; min-width:0"/>
+					<input type="button" class="remove button" value="-" style="width: 20px; min-width:0"/>
+					</td>
+					</tr>
+					</table>
+					</div-->
+				</div>
+				<div class="btn-group">
+					<input type="reset" class="btn" id="reset" value="Reset Fields" />
+					<input form="dispense_form" class="btn" id="submit" value="Dispense Drugs"/>
+				</div>
+			</form>
+
+		</div>
+
 	</body>
 </html>

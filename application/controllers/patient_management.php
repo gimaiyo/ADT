@@ -15,6 +15,12 @@ class Patient_Management extends MY_Controller {
 		//$this -> listing();
 	}
 	
+	public function dispense() {
+		$data['content_view'] = "dispense_v";
+		$data['hide_side_menu']=1;
+		$this -> base_params($data);
+		//$this -> listing();
+	}
 
 	public function addpatient_show() {
 		$data = array();
@@ -212,15 +218,21 @@ class Patient_Management extends MY_Controller {
 		$this -> base_params($data);
 	}
 
-	public function edit($record_no) {
-		$sql = "select * from patient where id='$record_no'";
+	public function edit(/*$record_no*/) {
+		/*$sql = "select * from patient where id='$record_no'";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
 			return $results;
 
-		}
+		}*/
+		$data['content_view']='edit_patients_v';
+		//Hide side menus
+		$data['hide_side_menu']='1';
+		$this -> base_params($data);
+		
 	}
+	
 
 	public function save() {
 		

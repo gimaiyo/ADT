@@ -23,8 +23,10 @@ class Dispensement_Management extends MY_Controller {
 		$this -> base_params($data);
 	}
 	
-	public function edit_dispense($record_no){
-		
+	public function edit(/*$record_no*/){
+		$data['content_view']='edit_dispensing_v';
+		$data['hide_side_menu']=1;
+		$this->base_params($data);
 	}
 
 	public function save() {
