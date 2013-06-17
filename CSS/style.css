@@ -1147,12 +1147,12 @@ html > body #main_manualcontent li a {
 .column {
 	background: #80f26d;
 	display: table-cell;
-	width: 1111;
+	width: 1111px;
 	margin-left: 1%;
 	height: inherit;
 }
 .column-2 {
-	width: 1111;
+	width: 1111px;
 	background: #f9f;
 	display: table-cell;
 }
@@ -1398,3 +1398,5 @@ legend {
 #drugs_section {
 	width: 100px;
 }
+.astericks{
+	color:red;

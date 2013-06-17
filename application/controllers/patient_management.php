@@ -14,25 +14,26 @@ class Patient_Management extends MY_Controller {
 		$this -> base_params($data);
 		//$this -> listing();
 	}
-	
+
 	public function dispense() {
 		$data['content_view'] = "dispense_v";
-		$data['hide_side_menu']=1;
+		$data['hide_side_menu'] = 1;
 		$this -> base_params($data);
 		//$this -> listing();
 	}
 
 	public function addpatient_show() {
 		$data = array();
-		$data['districts']=District::getPOB();
-		$data['genders']=Gender::getAll();
-		$data['statuses']=Patient_Status::getStatus();
-		$data['sources']=Patient_Source::getSources();
-		$data['supporters']=Supporter::getAllActive();
-		$data['service_types']=Regimen_Service_Type::getHydratedAll();
-		$data['facilities']=Facilities::getAll();
-		$data['family_planning']=Family_Planning::getAll();
-		$data['other_illnesses']=Other_Illnesses::getAll();
+		$data['districts'] = District::getPOB();
+		$data['genders'] = Gender::getAll();
+		$data['statuses'] = Patient_Status::getStatus();
+		$data['sources'] = Patient_Source::getSources();
+		$data['supporters'] = Supporter::getAllActive();
+		$data['service_types'] = Regimen_Service_Type::getHydratedAll();
+		$data['facilities'] = Facilities::getAll();
+		$data['family_planning'] = Family_Planning::getAll();
+		$data['other_illnesses'] = Other_Illnesses::getAll();
+		$data['hide_side_menu'] = '1';
 		$data['content_view'] = "add_patient_v";
 		$this -> base_params($data);
 	}
@@ -53,317 +54,308 @@ class Patient_Management extends MY_Controller {
 
 	public function listing() {
 		$facility_code = $this -> session -> userdata('facility');
-
+		$link = "";
 		//Testing, don't judge
 		$data = array();
 		/* Array of database columns which should be read and sent back to DataTables. Use a space where
-         * you want to insert a non-database field (for example a counter or static image)
-         */
-		$aColumns = array('Patient_Number_CCC','First_Name','Last_Name','Other_Name','Phone','Date_Enrolled','NextAppointment','Regimen_Desc','Name');
-		
-		$iDisplayStart = $this->input->get_post('iDisplayStart', true);
-        $iDisplayLength = $this->input->get_post('iDisplayLength', true);
-        $iSortCol_0 = $this->input->get_post('iSortCol_0', true);
-        $iSortingCols = $this->input->get_post('iSortingCols', true);
-        $sSearch = $this->input->get_post('sSearch', true);
-        $sEcho = $this->input->get_post('sEcho', true);
-        
-        // Paging
-        if(isset($iDisplayStart) && $iDisplayLength != '-1')
-        {
-            $this->db->limit($this->db->escape_str($iDisplayLength), $this->db->escape_str($iDisplayStart));
-        }
-		
-		 // Ordering
-        if(isset($iSortCol_0))
-        {
-            for($i=0; $i<intval($iSortingCols); $i++)
-            {
-                $iSortCol = $this->input->get_post('iSortCol_'.$i, true);
-                $bSortable = $this->input->get_post('bSortable_'.intval($iSortCol), true);
-                $sSortDir = $this->input->get_post('sSortDir_'.$i, true);
-    
-                if($bSortable == 'true')
-                {
-                    $this->db->order_by($aColumns[intval($this->db->escape_str($iSortCol))], $this->db->escape_str($sSortDir));
-                }
-            }
-        }
-		
-		/* 
-         * Filtering
-         * NOTE this does not match the built-in DataTables filtering which does it
-         * word by word on any field. It's possible to do here, but concerned about efficiency
-         * on very large tables, and MySQL's regex functionality is very limited
-         */
-        if(isset($sSearch) && !empty($sSearch))
-        {
-            for($i=0; $i<count($aColumns); $i++)
-            {
-                $bSearchable = $this->input->get_post('bSearchable_'.$i, true);
-                
-                // Individual column filtering
-                if(isset($bSearchable) && $bSearchable == 'true')
-                {
-                    $this->db->or_like($aColumns[$i], $this->db->escape_like_str($sSearch));
-                }
-            }
-        }
-		
-		 // Select Data
-        $this->db->select('SQL_CALC_FOUND_ROWS '.str_replace(' , ', ' ', implode(', ', $aColumns)), false);
-        
-        $this->db->select("p.id,p.Patient_Number_CCC,p.First_Name,p.Last_Name,p.Other_Name,p.Phone,p.Physical,p.Date_Enrolled,p.NextAppointment,r.Regimen_Desc,s.Name");
-		$this->db->from("patient p");
-		$this->db->where("p.Facility_Code",$facility_code);
-		$this->db->join("regimen r","r.id=p.Current_Regimen");
-		$this->db->join("patient_status s","s.id=p.current_status");
-		
-		$rResult = $this->db->get();
-		
-    
-        // Data set length after filtering
-        $this->db->select('FOUND_ROWS() AS found_rows');
-        $iFilteredTotal = $this->db->get()->row()->found_rows;
-    
-        // Total data set length
-        $this->db->select("p.*");
-		$this->db->from("patient p");
-		$this->db->where("p.Facility_Code",$facility_code);
-		$this->db->join("regimen r","r.id=p.Current_Regimen");
-		$this->db->join("patient_status s","s.id=p.current_status");
-		$tot_patients=$this->db->get();
-        $iTotal = count($tot_patients->result_array());
-    
-        // Output
-        $output = array(
-            'sEcho' => intval($sEcho),
-            'iTotalRecords' => $iTotal,
-            'iTotalDisplayRecords' => $iFilteredTotal,
-            'aaData' => array()
-        );
-        
-        foreach($rResult->result_array() as $aRow)
-        {
-            $row = array();
-            $col=0;
-			$name="";
-			$id="";
-            foreach($aColumns as $col)
-            {
-            	if($col=="First_Name" or $col=="Last_Name" or $col=="Other_Name"){
-            		if($col=="First_Name"){
-            			$name=$aRow[$col]." ";
-						$name=strtoupper($name);
-						continue;
-            		}
-					else{
-						if($col=="Last_Name"){
-							$name.=$aRow[$col]." ";
-							$name=strtoupper($name);
-							continue;
-						}
-						else if($col=="Other_Name"){
-							$name.=$aRow[$col];
-							$name="<span style='white-space:nowrap;'>".$name."</span>";
-						}
-						
-					}
-            	}
-            	
-				else if($col=="Date_Enrolled"){
-					$name=date('d-M-Y',strtotime($aRow[$col]));
+		 * you want to insert a non-database field (for example a counter or static image)
+		 */
+		$aColumns = array('Patient_Number_CCC', 'First_Name', 'Last_Name', 'Other_Name', 'Phone', 'Date_Enrolled', 'NextAppointment', 'Regimen_Desc', 'Name');
+
+		$iDisplayStart = $this -> input -> get_post('iDisplayStart', true);
+		$iDisplayLength = $this -> input -> get_post('iDisplayLength', true);
+		$iSortCol_0 = $this -> input -> get_post('iSortCol_0', true);
+		$iSortingCols = $this -> input -> get_post('iSortingCols', true);
+		$sSearch = $this -> input -> get_post('sSearch', true);
+		$sEcho = $this -> input -> get_post('sEcho', true);
+
+		// Paging
+		if (isset($iDisplayStart) && $iDisplayLength != '-1') {
+			$this -> db -> limit($this -> db -> escape_str($iDisplayLength), $this -> db -> escape_str($iDisplayStart));
+		}
+
+		// Ordering
+		if (isset($iSortCol_0)) {
+			for ($i = 0; $i < intval($iSortingCols); $i++) {
+				$iSortCol = $this -> input -> get_post('iSortCol_' . $i, true);
+				$bSortable = $this -> input -> get_post('bSortable_' . intval($iSortCol), true);
+				$sSortDir = $this -> input -> get_post('sSortDir_' . $i, true);
+
+				if ($bSortable == 'true') {
+					$this -> db -> order_by($aColumns[intval($this -> db -> escape_str($iSortCol))], $this -> db -> escape_str($sSortDir));
 				}
-				else if($col=="NextAppointment"){
-					$name=date('d-M-Y',strtotime($aRow[$col]));
+			}
+		}
+
+		/*
+		 * Filtering
+		 * NOTE this does not match the built-in DataTables filtering which does it
+		 * word by word on any field. It's possible to do here, but concerned about efficiency
+		 * on very large tables, and MySQL's regex functionality is very limited
+		 */
+		if (isset($sSearch) && !empty($sSearch)) {
+			for ($i = 0; $i < count($aColumns); $i++) {
+				$bSearchable = $this -> input -> get_post('bSearchable_' . $i, true);
+
+				// Individual column filtering
+				if (isset($bSearchable) && $bSearchable == 'true') {
+					$this -> db -> or_like($aColumns[$i], $this -> db -> escape_like_str($sSearch));
+				}
+			}
+		}
+
+		// Select Data
+		$this -> db -> select('SQL_CALC_FOUND_ROWS ' . str_replace(' , ', ' ', implode(', ', $aColumns)), false);
+
+		$this -> db -> select("p.id,p.Patient_Number_CCC,p.First_Name,p.Last_Name,p.Other_Name,p.Phone,p.Physical,p.Date_Enrolled,p.NextAppointment,r.Regimen_Desc,s.Name,p.Active");
+		$this -> db -> from("patient p");
+		$this -> db -> where("p.Facility_Code", $facility_code);
+		$this -> db -> join("regimen r", "r.id=p.Current_Regimen");
+		$this -> db -> join("patient_status s", "s.id=p.current_status");
+
+		$rResult = $this -> db -> get();
+
+		// Data set length after filtering
+		$this -> db -> select('FOUND_ROWS() AS found_rows');
+		$iFilteredTotal = $this -> db -> get() -> row() -> found_rows;
+
+		// Total data set length
+		$this -> db -> select("p.*");
+		$this -> db -> from("patient p");
+		$this -> db -> where("p.Facility_Code", $facility_code);
+		$this -> db -> join("regimen r", "r.id=p.Current_Regimen");
+		$this -> db -> join("patient_status s", "s.id=p.current_status");
+		$tot_patients = $this -> db -> get();
+		$iTotal = count($tot_patients -> result_array());
+
+		// Output
+		$output = array('sEcho' => intval($sEcho), 'iTotalRecords' => $iTotal, 'iTotalDisplayRecords' => $iFilteredTotal, 'aaData' => array());
+
+		foreach ($rResult->result_array() as $aRow) {
+			$row = array();
+			$col = 0;
+			$name = "";
+			$id = "";
+			foreach ($aColumns as $col) {
+				if ($col == "First_Name" or $col == "Last_Name" or $col == "Other_Name") {
+					if ($col == "First_Name") {
+						$name = $aRow[$col] . " ";
+						$name = strtoupper($name);
+						continue;
+					} else {
+						if ($col == "Last_Name") {
+							$name .= $aRow[$col] . " ";
+							$name = strtoupper($name);
+							continue;
+						} else if ($col == "Other_Name") {
+							$name .= $aRow[$col];
+							$name = strtoupper($name);
+							$name = "<span style='white-space:nowrap;'>" . $name . "</span>";
+						}
+
+					}
+				} else if ($col == "Date_Enrolled") {
+					$name = date('d-M-Y', strtotime($aRow[$col]));
+				} else if ($col == "NextAppointment") {
+					$name = date('d-M-Y', strtotime($aRow[$col]));
 				}
 				//Check if phone No does not exist
-				else if($col=="Phone"){
-					if($aRow[$col]==""){
-						$name=str_replace(" ","",$aRow['Physical']);
+				else if ($col == "Phone") {
+					if ($aRow[$col] == "") {
+						$name = str_replace(" ", "", $aRow['Physical']);
 					}
+				} else if ($col == "Regimen_Desc") {
+					$name = "<b style='white-space:nowrap;'>" . $aRow[$col] . "</b>";
+				} else if ($col == "Name") {
+					$name = "<b>" . $aRow[$col] . "</b>";
+				} else {
+					$name = $aRow[$col];
+					$name = strtoupper($name);
 				}
-				else if($col=="Regimen_Desc"){
-					$name="<b style='white-space:nowrap;'>".$aRow[$col]."</b>";
-				}
-				else if($col=="Name"){
-					$name="<b>".$aRow[$col]."</b>";
-				}
-				else{
-					$name=$aRow[$col];
-					$name=strtoupper($name);
-				}
-            	
-                $row[] = $name;
-            }
-			$id=$aRow['id'];
-    		$row[]='<a href="">Detail</a> | <a href="'.base_url().'patient_management/edit/'.$id.'">Edit</a> | <a href="" class="red">Disable</a>';
-            $output['aaData'][] = $row;
-        }
-        echo json_encode($output);
-		
-		/*
-		$patients=patient::getAllPatients($facility_code);
-		$data['patients']=$patients;
 
-		$data['content_view'] = "patient_listing_v";
-		$this -> base_params($data);
+				$row[] = $name;
+			}
+			$id = $aRow['id'];
+			if ($aRow['Active'] == 1) {
+				$link = '<a href="' . base_url() . 'patient_management/disable/' . $id . '" class="red">Disable</a>';
+
+			} else {
+				$link = '<a href="' . base_url() . 'patient_management/enable/' . $id . '" class="green">Enable</a>';
+			}
+			$row[] = '<a href="' . base_url() . 'patient_management/viewDetails/' . $id . '">Detail</a> | <a href="' . base_url() . 'patient_management/edit/' . $id . '">Edit</a> | ' . $link;
+			$output['aaData'][] = $row;
+		}
+		echo json_encode($output);
+
+		/*
+		 $patients=patient::getAllPatients($facility_code);
+		 $data['patients']=$patients;
+
+		 $data['content_view'] = "patient_listing_v";
+		 $this -> base_params($data);
 		 */
 	}
 
-	public function viewDetails($patient_id){
-		$data['content_view']='patient_details_v';
+	public function viewDetails($patient_id) {
+		$data['content_view'] = 'patient_details_v';
 		//Hide side menus
-		$data['hide_side_menu']='1';
+		$data['hide_side_menu'] = '1';
 		$this -> base_params($data);
 	}
 
-	public function edit(/*$record_no*/) {
-		/*$sql = "select * from patient where id='$record_no'";
+	public function edit($record_no) {
+		$sql = "select * from patient where id='$record_no'";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
-			return $results;
-
-		}*/
-		$data['content_view']='edit_patients_v';
+			$data['results'] = $results;
+		}
+		$data['districts'] = District::getPOB();
+		$data['genders'] = Gender::getAll();
+		$data['statuses'] = Patient_Status::getStatus();
+		$data['sources'] = Patient_Source::getSources();
+		$data['supporters'] = Supporter::getAllActive();
+		$data['service_types'] = Regimen_Service_Type::getHydratedAll();
+		$data['facilities'] = Facilities::getAll();
+		$data['family_planning'] = Family_Planning::getAll();
+		$data['other_illnesses'] = Other_Illnesses::getAll();
+		$data['regimens'] = Regimen::getRegimens();
+		$data['content_view'] = 'edit_patients_v';
 		//Hide side menus
-		$data['hide_side_menu']='1';
+		$data['hide_side_menu'] = '1';
 		$this -> base_params($data);
-		
+
 	}
-	
 
 	public function save() {
-		
-        $family_planning="";
-		$other_illness_listing="";
 
-		$family_planning =$this->input->post('family_planning',TRUE);
-		if($family_planning==null){
-			$family_planning="";
-		}
-		$other_illness_listing =$this->input->post('other_illnesses',TRUE);
-		if($other_illness_listing==null){
-			$other_illness_listing="";
-		}
-		$other_chronic =$this->input->post('other_chronic',TRUE);
-		if($other_chronic !=""){
-			$other_illness_listing=$other_illness_listing.",".$other_chronic;
-		}
+		$family_planning = "";
+		$other_illness_listing = "";
 
+		$family_planning = $this -> input -> post('family_planning', TRUE);
+		if ($family_planning == null) {
+			$family_planning = "";
+		}
+		$other_illness_listing = $this -> input -> post('other_illnesses', TRUE);
+		if ($other_illness_listing == null) {
+			$other_illness_listing = "";
+		}
+		$other_chronic = $this -> input -> post('other_chronic', TRUE);
+		if ($other_chronic != "") {
+			if($other_illness_listing){
+			$other_illness_listing = $other_illness_listing . "," . $other_chronic;
+		    }else{
+		    $other_illness_listing = $other_chronic;	
+			}
+		}
 
 		//Patient Information & Demographics
 		$new_patient = new Patient();
-		$new_patient -> Medical_Record_Number = $this->input->post('medical_record_number',TRUE);
-		$new_patient -> Patient_Number_CCC =$this->input->post('patient_number',TRUE);
-		$new_patient -> Unique_Id=md5($this->input->post('patient_number',TRUE).$this -> session -> userdata('facility'));
-		$new_patient -> First_Name = $this->input->post('first_name',TRUE);
-		$new_patient -> Last_Name =  $this->input->post('last_name',TRUE);
-		$new_patient -> Other_Name = $this->input->post('other_name',TRUE);
-		$new_patient -> Dob =$this->input->post('dob',TRUE);
-		$new_patient -> Pob =$this->input->post('pob',TRUE);
-		$new_patient -> Gender =$this->input->post('gender',TRUE);
-		$new_patient -> Pregnant =$this->input->post('pregnant',TRUE);
-		$new_patient -> Start_Weight = $this->input->post('weight',TRUE);
-		$new_patient -> Start_Height =$this->input->post('height',TRUE);
-		$new_patient -> Start_Bsa =$this->input->post('surface_area',TRUE);
-		$new_patient -> Weight = $this->input->post('weight',TRUE);
-		$new_patient -> Height =$this->input->post('height',TRUE);
-		$new_patient -> Sa =$this->input->post('surface_area',TRUE);
-		$new_patient -> Phone =$this->input->post('phone',TRUE);
-		$new_patient -> SMS_Consent =$this->input->post('sms_consent',TRUE);
-		$new_patient -> Physical = $this->input->post('physical',TRUE);
-		$new_patient -> Alternate =$this->input->post('alternate',TRUE);
+		$new_patient -> Medical_Record_Number = $this -> input -> post('medical_record_number', TRUE);
+		$new_patient -> Patient_Number_CCC = $this -> input -> post('patient_number', TRUE);
+		$new_patient -> Unique_Id = md5($this -> input -> post('patient_number', TRUE) . $this -> session -> userdata('facility'));
+		$new_patient -> First_Name = $this -> input -> post('first_name', TRUE);
+		$new_patient -> Last_Name = $this -> input -> post('last_name', TRUE);
+		$new_patient -> Other_Name = $this -> input -> post('other_name', TRUE);
+		$new_patient -> Dob = $this -> input -> post('dob', TRUE);
+		$new_patient -> Pob = $this -> input -> post('pob', TRUE);
+		$new_patient -> Gender = $this -> input -> post('gender', TRUE);
+		$new_patient -> Pregnant = $this -> input -> post('pregnant', TRUE);
+		$new_patient -> Start_Weight = $this -> input -> post('weight', TRUE);
+		$new_patient -> Start_Height = $this -> input -> post('height', TRUE);
+		$new_patient -> Start_Bsa = $this -> input -> post('surface_area', TRUE);
+		$new_patient -> Weight = $this -> input -> post('weight', TRUE);
+		$new_patient -> Height = $this -> input -> post('height', TRUE);
+		$new_patient -> Sa = $this -> input -> post('surface_area', TRUE);
+		$new_patient -> Phone = $this -> input -> post('phone', TRUE);
+		$new_patient -> SMS_Consent = $this -> input -> post('sms_consent', TRUE);
+		$new_patient -> Physical = $this -> input -> post('physical', TRUE);
+		$new_patient -> Alternate = $this -> input -> post('alternate', TRUE);
 
 		//Patient History
-		$new_patient -> Partner_Status =$this->input->post('partner_status',TRUE);
-		$new_patient -> Disclosure =$this->input->post('disclosure',TRUE);
-		$new_patient -> Fplan =$family_planning;
-		$new_patient -> Other_Illnesses =$other_illness_listing;
-		$new_patient -> Other_Drugs =$this->input->post('other_drugs',TRUE);
-		$new_patient -> Adr =$this->input->post('other_allergies_listing',TRUE);
-		$new_patient -> Support_Group =$this->input->post('support_group_listing',TRUE);
-		$new_patient -> Smoke =$this->input->post('smoke',TRUE);
-		$new_patient -> Alcohol =$this->input->post('alcohol',TRUE);
-		$new_patient -> Tb =$this->input->post('tb',TRUE);
-		$new_patient -> Tbphase =$this->input->post('tbphase',TRUE);
-		$new_patient -> Startphase =$this->input->post('fromphase',TRUE);
-		$new_patient -> Endphase =$this->input->post('tophase',TRUE);
+		$new_patient -> Partner_Status = $this -> input -> post('partner_status', TRUE);
+		$new_patient -> Disclosure = $this -> input -> post('disclosure', TRUE);
+		$new_patient -> Fplan = $family_planning;
+		$new_patient -> Other_Illnesses = $other_illness_listing;
+		$new_patient -> Other_Drugs = $this -> input -> post('other_drugs', TRUE);
+		$new_patient -> Adr = $this -> input -> post('other_allergies_listing', TRUE);
+		$new_patient -> Support_Group = $this -> input -> post('support_group_listing', TRUE);
+		$new_patient -> Smoke = $this -> input -> post('smoke', TRUE);
+		$new_patient -> Alcohol = $this -> input -> post('alcohol', TRUE);
+		$new_patient -> Tb = $this -> input -> post('tb', TRUE);
+		$new_patient -> Tbphase = $this -> input -> post('tbphase', TRUE);
+		$new_patient -> Startphase = $this -> input -> post('fromphase', TRUE);
+		$new_patient -> Endphase = $this -> input -> post('tophase', TRUE);
 
 		//Program Information
-		$new_patient -> Date_Enrolled =$this->input->post('enrolled',TRUE);
-		$new_patient -> Current_Status =$this->input->post('current_status',TRUE);
-		$new_patient -> Status_Change_Date =$this->input->post('status_started',TRUE);
-		$new_patient -> Source =$this->input->post('source',TRUE);
-		$new_patient -> Transfer_From =$this->input->post('transfer_source',TRUE);
-		$new_patient -> Supported_By = $this->input->post('support',TRUE);
+		$new_patient -> Date_Enrolled = $this -> input -> post('enrolled', TRUE);
+		$new_patient -> Current_Status = $this -> input -> post('current_status', TRUE);
+		$new_patient -> Status_Change_Date = $this -> input -> post('status_started', TRUE);
+		$new_patient -> Source = $this -> input -> post('source', TRUE);
+		$new_patient -> Transfer_From = $this -> input -> post('transfer_source', TRUE);
+		$new_patient -> Supported_By = $this -> input -> post('support', TRUE);
 		$new_patient -> Facility_Code = $this -> session -> userdata('facility');
-		$new_patient -> Service =$this->input->post('service',TRUE);
-		$new_patient -> Start_Regimen =$this->input->post('regimen',TRUE);
-		$new_patient -> Current_Regimen =$this->input->post('regimen',TRUE);
-		$new_patient -> Start_Regimen_Date =$this->input->post('service_started',TRUE);;
+		$new_patient -> Service = $this -> input -> post('service', TRUE);
+		$new_patient -> Start_Regimen = $this -> input -> post('regimen', TRUE);
+		$new_patient -> Current_Regimen = $this -> input -> post('regimen', TRUE);
+		$new_patient -> Start_Regimen_Date = $this -> input -> post('service_started', TRUE);
+		;
 		$new_patient -> save();
-		
-		if($_POST['save']=="Submit"){
+
+		if ($_POST['save'] == "Submit") {
 			redirect("patient_management");
-		}else if($_POST['save']=="Dispense"){
+		} else if ($_POST['save'] == "Dispense") {
 			redirect("home_controller/home");
 		}
 	}
 
 	public function update($record_id) {
-
-		//Patient Information & Demographics
-		$medical_record_number = $_POST['medical_record_number'];
-		$patient_number_ccc = $_POST['patient_number'];
-		$last_name = $_POST['last_name'];
-		$first_name = $_POST['first_name'];
-		$other_name = $_POST['other_name'];
-		$dob = $_POST['dob'];
-		$pob = $_POST['pob'];
-		$gender = $_POST['gender'];
-		$pregnant = $_POST['pregnant'];
-		$start_weight = $_POST['weight'];
-		$start_height = $_POST['height'];
-		$start_bsa = $_POST['surface_area'];
-		$phone = $_POST['phone'];
-		$sms_consent = $_POST['sms_consent'];
-		$physical_address = $_POST['physical'];
-		$alternate_address = $POST['alternate'];
-
-		//Patient History
-		$patient_status = $_POST['pstatus'];
-		$disclosure = $_POST['disco'];
-		$family_planning = $_POST['plan_listing'];
-		$other_illness_listing = $_POST['other_illnesses_listing'];
-		$other_chronic = $_POST['other_chronic'];
-		$other_drugs = $_POST['other_drugs'];
-		$other_allergies = $_POST['other_allergies'];
-		$other_allergies_listing = $_POST['other_allergies_listing'];
-		$support_group = $_POST['support_group'];
-		$smoke = $_POST['smoke'];
-		$alcohol = $POST['alcohol'];
-		$tb = $_POST['tb'];
-		$tbphase = $_POST['tbphase'];
-		$fromphase = $_POST['fromphase'];
-		$tophase = $_POST['tophase'];
-
-		//Program Information
-		$date_enrolled = $_POST['current_status'];
-		$date_of_status_change = $_POST['status_started'];
-		$patient_source = $_POST['source'];
-		$transfer_from = $_POST['patient_source'];
-		$supported_by = $_POST['support'];
-		$type_of_service = $_POST['service'];
-		$start_regimen = $_POST['regimen'];
-		$start_regimen_date = $_POST['service_started'];
-
-		//Update data
-
-		$data = array('Medical_Record_Number' => $medical_record_number, 'Patient_Number_CCC' => $patient_number_ccc, 'First_Name' => $first_name, 'Last_Name' => $last_name, 'Other_Name' => $other_name, 'Dob' => $dob, 'Pob' => $pob, 'Gender' => $gender, 'Pregnant' => $pregnant, 'Start_Weight' => $start_weight, 'Start_Height' => $start_height, 'Start_Bsa' => $start_bsa, 'Phone' => $phone, 'SMS_Consent' => $sms_consent, 'Physical' => $physical_address, 'Alternate' => $alternate_address, 'Partner' => $patient_status, 'Partner_Status' => $disclosure, 'Fplan' => $family_planning, 'Other_Illnesses' => $other_illness_listing, 'Other_Drugs' => $other_chronic, 'Adr' => $other_allergies, 'Smoke' => $smoke, 'Alcohol' => $alcohol, 'Tb' => $tb, 'Tbphase' => $tbphase, 'Startphase' => $fromphase, 'Endphase' => $tophase, 'Date_Enrolled' => $date_enrolled, 'Status_Change_Date' => $date_of_status_change, 'Source' => $patient_source, 'Supported_By' => $supported_by, 'Facility_Code' => $this -> session -> userdata('facility'), 'Service' => $type_of_service, 'Start_Regimen' => $start_regimen, 'Start_Regimen_Date' => $start_regimen_date);
+		$family_planning = "";
+		$other_illness_listing = "";
+		$prev_appointment="";
+		$facility="";
+		$patient="";
+		
+		//Check if appointment exists
+		$prev_appointment=$this -> input -> post('prev_appointment_date', TRUE);
+		$appointment=$this -> input -> post('next_appointment_date', TRUE);
+		$facility=$this->session->userdata('facility');
+		$patient=$this -> input -> post('patient_number', TRUE);
+		$sql="select * from patient_appointment where patient='$patient' and appointment='$prev_appointment' and facility='$facility'";
+		$query=$this->db->query($sql);
+		$results=$query->result_array();
+		if($results){
+			$record_no=$results[0]['id'];
+			//If exisiting appointment(Update new Record)
+			$sql="update patient_appointment set appointment='$appointment',patient='$patient',facility='$facility' where id='$record_no'";
+		}else{
+			//If no appointment(Insert new record)
+			$sql="insert patient_appointment(patient,appointment,facility)VALUES('$patient','$appointment','$facility')";
+		}
+        $this->db->query($sql);
+		
+		$family_planning = $this -> input -> post('family_planning', TRUE);
+		if ($family_planning == null) {
+			$family_planning = "";
+		}
+		$other_illness_listing = $this -> input -> post('other_illnesses', TRUE);
+		if ($other_illness_listing == null) {
+			$other_illness_listing = "";
+		}
+		$other_chronic = $this -> input -> post('other_chronic', TRUE);
+		if ($other_chronic != "") {
+			if($other_illness_listing){
+			$other_illness_listing = $other_illness_listing . "," . $other_chronic;
+		    }else{
+		    $other_illness_listing = $other_chronic;	
+			}
+		}
+		
+		$data = array('Medical_Record_Number' => $this -> input -> post('medical_record_number', TRUE), 'Patient_Number_CCC' => $this -> input -> post('patient_number', TRUE), 'First_Name' => $this -> input -> post('first_name', TRUE), 'Last_Name' => $this -> input -> post('last_name', TRUE), 'Other_Name' => $this -> input -> post('other_name', TRUE), 'Dob' => $this -> input -> post('dob', TRUE), 'Pob' => $this -> input -> post('pob', TRUE), 'Gender' => $this -> input -> post('gender', TRUE), 'Pregnant' => $this -> input -> post('pregnant', TRUE), 'Start_Weight' => $this -> input -> post('start_weight', TRUE), 'Start_Height' => $this -> input -> post('start_height', TRUE), 'Start_Bsa' => $this -> input -> post('start_bsa', TRUE), 'Weight' => $this -> input -> post('current_weight', TRUE), 'Height' => $this -> input -> post('current_height', TRUE), 'Sa' => $this -> input -> post('current_bsa', TRUE), 'Phone' => $this -> input -> post('phone', TRUE), 'SMS_Consent' => $this -> input -> post('sms_consent', TRUE), 'Physical' => $this -> input -> post('physical', TRUE), 'Alternate' => $this -> input -> post('alternate', TRUE), 'Partner_Status' => $this -> input -> post('partner_status', TRUE), 'Disclosure' => $this -> input -> post('disclosure', TRUE), 'Fplan' => $family_planning, 'Other_Illnesses' => $other_illness_listing, 'Other_Drugs' => $this -> input -> post('other_drugs', TRUE), 'Adr' => $this -> input -> post('other_allergies_listing', TRUE), 'Smoke' => $this -> input -> post('smoke', TRUE), 'Alcohol' => $this -> input -> post('alcohol', TRUE), 'Tb' => $this -> input -> post('tb', TRUE), 'Tbphase' => $this -> input -> post('tbphase', TRUE), 'Startphase' => $this -> input -> post('fromphase', TRUE), 'Endphase' => $this -> input -> post('tophase', TRUE), 'Date_Enrolled' => $this -> input -> post('enrolled', TRUE),'Current_Status'=>$this -> input -> post('current_status', TRUE),'Status_Change_Date' => $this -> input -> post('status_started', TRUE), 'Source' => $this -> input -> post('source', TRUE),'Transfer_From'=>$this -> input -> post('transfer_source', TRUE) ,'Supported_By' => $this -> input -> post('support', TRUE), 'Facility_Code' => $this -> session -> userdata('facility'), 'Service' => $this -> input -> post('service', TRUE), 'Start_Regimen' => $this -> input -> post('regimen', TRUE), 'Start_Regimen_Date' => $this -> input -> post('service_started', TRUE),'Current_Regimen'=>$this -> input -> post('current_regimen', TRUE),'Nextappointment'=>$this -> input -> post('next_appointment_date', TRUE));
 		$this -> db -> where('id', $record_id);
 		$this -> db -> update('patient', $data);
+		
+		redirect("patient_management");
 	}
 
 	public function base_params($data) {
@@ -572,6 +564,18 @@ ORDER BY p.patient_number_ccc ASC";
 		$objPHPExcel -> disconnectWorksheets();
 		unset($objPHPExcel);
 
+	}
+
+	public function enable($id) {
+      $sql="update patient set active='1' where id='$id'";
+	  $this->db->query($sql);
+	  redirect("patient_management");
+	}
+
+	public function disable($id) {
+      $sql="update patient set active='0' where id='$id'";
+	  $this->db->query($sql);
+	  redirect("patient_management");
 	}
 
 }
