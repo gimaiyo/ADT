@@ -21,6 +21,12 @@ class Patient_Management extends MY_Controller {
 		$this -> base_params($data);
 		//$this -> listing();
 	}
+public function details() {
+		$data['content_view'] = "patient_details_v";
+		$data['hide_side_menu']=1;
+		$this -> base_params($data);
+		//$this -> listing();
+	}
 
 	public function addpatient_show() {
 		$data = array();

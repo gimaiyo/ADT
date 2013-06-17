@@ -793,7 +793,7 @@ table.dataTable tr.odd td sorting_1 {
 	color: green;
 	margin-top: 5px;
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.1em;
 }
 #synchronize_button {
 	display: none;
@@ -810,12 +810,12 @@ table.dataTable tr.odd td sorting_1 {
  * 	Styling Banner Text
  */
 .banner-title {
-	font-size: 1.4em;
+	font-size: 1.2em;
 	font-weight: bold;
 }
 
 .banner-subtitle {
-	font-size: 1em;
+	font-size: 0.9em;
 }
 /**
  * Styling Template
@@ -1142,10 +1142,10 @@ html > body #main_manualcontent li a {
 .content-row {
 	display: table-row;
 }
-.full-content form{
-	border-radius:5px;}
+.full-content form {
+	border-radius: 5px;
+}
 .column {
-	background: #80f26d;
 	display: table-cell;
 	width: 1111px;
 	margin-left: 1%;
@@ -1154,6 +1154,7 @@ html > body #main_manualcontent li a {
 .column-2 {
 	width: 1111px;
 	background: #f9f;
+
 	display: table-cell;
 }
 
@@ -1161,7 +1162,7 @@ html > body #main_manualcontent li a {
 	width: 30%;
 	margin: auto;
 }
-.column fieldset, .column-2 fieldset, .column-3 fieldset{
+.column fieldset, .column-2 fieldset, .column-3 fieldset {
 	padding: 5%;
 	width: 90%
 }
@@ -1172,7 +1173,7 @@ html > body #main_manualcontent li a {
 	width: 45%;
 }
 
-.column select, .column-2 select,.column-3 select {
+.column select, .column-2 select, .column-3 select {
 	width: 100%;
 }
 .max-row {
@@ -1350,6 +1351,10 @@ legend {
 	width: 100%;
 }
 
+.button-bar input{
+float:right;	
+}
+
 /**
  * 	Customizing Bootstrap
  */
@@ -1370,7 +1375,9 @@ legend {
 	width: 100%;
 	border-top: 1px solid #B9B9B9;
 	font-size: 13px;
-	letter-spacing: 0.8px;.astericks{
+	letter-spacing: 0.8px;
+}
+.astericks {
 	color: red;
 	font-size: 18px;
 	font-weight: bold;
@@ -1398,5 +1405,7 @@ legend {
 #drugs_section {
 	width: 100px;
 }
+
 .astericks{
 	color:red;
+

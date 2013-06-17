@@ -245,7 +245,11 @@
 	</head>
 
 	<body>
+<<<<<<< HEAD
 		<div class="full-content">
+=======
+		<div class="full-content" style="background:#80f26d">
+>>>>>>> 25b9b2ddbc2c54bccba48d3a32d66045e9267d69
 			<h3>Patient Registration
 			<div style="float:right;margin:5px 40px 0 0;">
 				(Fields Marked with <b><span class='astericks'>*</span></b> Asterisks are required)

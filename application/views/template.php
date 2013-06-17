@@ -67,12 +67,15 @@ if (isset($styles)) {
 ?> 
 
 <script>
-	$(document).ready(function() {
+		$(document).ready(function() {
 	<?php 
 			if($user_is_pharmacist){
 				?>
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
-					$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
+				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>
+					');
+					$('#notification2').load('
+<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>
+					');
 
 				<?php
 				}
@@ -80,8 +83,11 @@ if (isset($styles)) {
 				if($user_is_facility_administrator){
 				?>
 				
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
-					$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
+				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>
+					');
+					$('#notification2').load('
+<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>
+					');
 
 				<?php
 				}
@@ -100,21 +106,16 @@ if (isset($styles)) {
 
 
 				<div id="system_title">
-
 					<?php
 					$this -> load -> view('sections/banner');
 					?>
-				
 						
-						<div id="facility_name">
-							
+						<div id="facility_name">							
 							<span><?php echo $this -> session -> userdata('facility_name'); ?></span>
-						</div>
-						<br>
-						<div class="banner_text" style="font-size: 22px;"><?php echo $banner_text; ?></div>
+						</div>										
 					
 				</div>
-				
+				<div class="banner_text" style="font-size: 22px;"><?php echo $banner_text; ?></div>
 				
  <div id="top_menu"> 
 
@@ -232,7 +233,7 @@ if($menus){
 		
 	</div>
 	<?php
-		}
+	}
 	?>
  	
 	
