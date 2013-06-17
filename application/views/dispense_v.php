@@ -554,7 +554,7 @@
 
 	</head>
 	<body>
-		<div class="full-content">
+		<div class="full-content" style="background: #f9f">
 
 			<h3>Dispense Drugs</h3>
 
@@ -570,12 +570,11 @@
 						<div class="max-row">
 							<div class="mid-row">
 								<label>Patient Number CCC</label>
-
 								<input readonly="" id="patient" name="patient" class="validate[required]"/>
 							</div>
 							<div class="mid-row">
 								<label>Patient Name</label>
-								<span id="patient_details"></span>
+								<input readonly="" id="patient_details" name="patient" class="validate[required]"/>
 							</div>
 						</div>
 

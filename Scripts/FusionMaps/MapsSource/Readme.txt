@@ -1,1 +1,0 @@
-.fla files (needed to recompile maps) are present only in Enterprise License.
