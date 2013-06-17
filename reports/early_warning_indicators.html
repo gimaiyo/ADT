@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en" >
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Early Warning Indicators</title>
+		<link href="../CSS/style.css" type="text/css" rel="stylesheet"/>
+		<link rel="SHORTCUT ICON" href="../Images/favicon.ico">
+		<link href="../Scripts/bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet" media="screen"/>
+		<link href="../CSS/offline_css.css" type="text/css" rel="stylesheet"/>
+		<link href="../CSS/jquery-ui.css" type="text/css" rel="stylesheet"/>
+		<link href="TableFilter/filtergrid.css" type="text/css" rel="stylesheet"/>
+		<script type="text/javascript" src="../Scripts/jquery.js"></script>
+		<script type="text/javascript" src="../Scripts/jquery-ui.js"></script>
+		<script type="text/javascript" src="../Scripts/offline_database.js"></script>
+		<script type="text/javascript" src="../Scripts/offlineData.js"></script>
+		<script type="text/javascript" src="TableFilter/tablefilter_all.js"></script>
+		<script>
+			$(document).ready(function(){
+				$.get('reports_include.html', function(data) {
+				  $('.result').html(data);
+				});
+			});
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				initDatabase();
+				var $_GET = getQueryParams(document.location.hash);
+				var start_date = $_GET['start_date'];
+				var end_date = $_GET['end_date'];
+				$("#start_date").val($.datepicker.formatDate('dd-M-yy',new Date(start_date)));
+				$("#end_date").val($.datepicker.formatDate('dd-M-yy',new Date(end_date)));
+				
+				//Setting the future date for retention line
+			    var myDate=new Date(Date.parse(end_date));
+			    var dat = ("0" + myDate.getDate()).slice(-2);
+				var year = myDate.getFullYear()+1;
+				var mon = ('0' + (myDate.getMonth()+1)).slice(-2);
+				var future_date = year + "-" + mon + "-" + dat;
+				
+				
+				//setting previous dates for cohorts
+				var prevFromDate=new Date(Date.parse(start_date));
+				var dat = ("0" + prevFromDate.getDate()).slice(-2);
+				var year = prevFromDate.getFullYear()-1;
+				var mon = ('0' + (prevFromDate.getMonth()+1)).slice(-2);
+				var prevFrom = year + "-" + mon + "-" + dat;
+				
+				
+				
+				var prevToDate=new Date(Date.parse(end_date));
+			    var dat = ("0" + prevToDate.getDate()).slice(-2);
+				var year = prevToDate.getFullYear()-1;
+				var mon = ('0' + (prevToDate.getMonth()+1)).slice(-2);
+				var prevTo = year + "-" + mon + "-" + dat;
+				
+
+				//console.log(future_date)
+            
+				
+				
+				
+				//Get the environmental variables to display the hospital name
+				selectEnvironmentVariables(function(transaction, results) {
+					// Handle the results
+					var row = results.rows.item(0);
+					$("#facility_name").text(row['facility_name']);
+
+				});
+				
+				var x=0;
+				var y=0;
+				
+				$("#start_date").datepicker({
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : 'yy-mm-dd'
+				});
+				$("#start_date").change(function(){
+					if(x==0){
+						x=1;
+					}
+					var _start_date = $("#start_date").attr("value");
+					var _end_date = $("#end_date").attr("value");
+					var report_url = "early_warning_indicators.html#?start_date=" + _start_date+"&end_date="+_end_date;
+					if(y==1){
+						window.location = report_url;
+						location.reload();
+					}
+					
+				});
+				$("#end_date").datepicker({
+					changeMonth : true,
+					changeYear : true,
+					dateFormat : 'yy-mm-dd'
+				});
+				$("#end_date").change(function(){
+					if(y==0){
+						y=1;
+					}
+					var _start_date = $("#start_date").attr("value");
+					var _end_date = $("#end_date").attr("value");
+					var report_url = "early_warning_indicators.html#?start_date=" + _start_date+"&end_date="+_end_date;
+					if(x==1){
+						window.location = report_url;
+						location.reload();
+					}
+					
+				});
+				
+				getTotalPatientsPeriod(start_date, end_date, function(transaction, results) {
+                    var total_patients=0;
+					for(var i = 0; i < results.rows.length; i++) {
+						var parent_row = results.rows.item(i);
+
+						total_patients=parent_row['Total_Patients'];
+                        getFirstLine(start_date, end_date,total_patients);
+					}
+
+				});
+				function getFirstLine(start_date, end_date,total_patients) {
+
+					getFirstLinePatientsPeriod(start_date, end_date, function(transaction, results) {
+                        var first_line=0;
+                        var percentage_firstline=0;
+                        var percentage_onotherline=0;
+						for(var i = 0; i < results.rows.length; i++) {
+							var parent_row = results.rows.item(i);
+
+							first_line=parent_row['First_Line'];
+							if(total_patients==0){
+							percentage_firstline=0;
+							percentage_onotherline=0;	
+							}else{
+							percentage_firstline=(first_line/total_patients)*100;
+							percentage_onotherline=100-percentage_firstline;	
+							}
+							
+                            var first_table="<tr><td align='center'>"+first_line+"</td><td align='center'>"+total_patients+"</td><td align='center'>"+percentage_firstline.toFixed(1)+"</td><td align='center'>"+percentage_onotherline.toFixed(1)+"</td></tr>";
+						    $("#percentage_patients").append($(first_table));
+						
+						}
+
+					});
+				}
+				//Gets patients started 12 months from selected period
+				getTotalPatientsFromPeriod(end_date,future_date, function(transaction, results) {
+                    var total_from_period=0;
+					for(var i = 0; i < results.rows.length; i++) {
+						var parent_row = results.rows.item(i);
+
+						total_from_period=parent_row['Total_Patients'];
+                        getStillinFirstLine(end_date,future_date,total_from_period);
+					}
+
+				});
+				
+				function getStillinFirstLine(end_date,future_date,total_from_period){
+					getStillFirstLinePatientsFromPeriod(end_date,future_date, function(transaction, results) {
+
+					for(var i = 0; i < results.rows.length; i++) {
+						var parent_row = results.rows.item(i);
+
+						var stil_in_first_line=parent_row['Total_Patients'];
+						if(total_from_period==0 || stil_in_first_line==0){
+							percentage_stillfirstline=0;
+							
+						}else{
+						var percentage_stillfirstline=(stil_in_first_line/total_from_period)*100;	
+						}
+						
+						
+						
+						var second_table="<tr><td align='center'>"+stil_in_first_line+"</td><td align='center'>"+total_from_period+"</td><td align='center'>"+percentage_stillfirstline.toFixed(1)+"</td></tr>";
+						$("#percentage_retention").append($(second_table));
+                        
+					}
+
+				});
+					
+				}
+				
+				getTotalPatientsPeriod(prevFrom,prevTo, function(transaction, results) {
+                    var total_before_period=0;
+					for(var i = 0; i < results.rows.length; i++) {
+						var parent_row = results.rows.item(i);
+
+						total_before_period=parent_row['Total_Patients'];
+                        getBeforeinFirstLine(prevFrom,prevTo,total_before_period);
+                       
+					}
+
+				});
+				function getBeforeinFirstLine(prevFrom,prevTo,total_before_period){
+					
+					
+				getLostToFollowPatientsBeforePeriod(prevFrom,prevTo, function(transaction, results) {
+
+					for(var i = 0; i < results.rows.length; i++) {
+						var parent_row = results.rows.item(i);
+
+						var lost_to_follow=parent_row['Total_Patients'];
+						
+						if(lost_to_follow==0 || total_before_period==0 ){
+						var percentage_lost_to_follow=0;	
+						}else{
+						var percentage_lost_to_follow=(lost_to_follow/total_before_period)*100;
+						}
+						
+						var third_table="<tr><td align='center'>"+lost_to_follow+"</td><td align='center'>"+total_before_period+"</td><td align='center'>"+percentage_lost_to_follow.toFixed(1)+"</td></tr>";
+						$("#percentage_lost_to_follow_up").append($(third_table));
+                        
+					}
+
+				});	
+					
+					
+					
+					
+					
+				}
+				
+				
+				
+				
+				
+
+			}); 
+		</script>
+	</head>
+	<body>
+		<style>
+		#percentage_patients,#percentage_retention,#percentage_lost_to_follow_up{
+			border: 1px solid #000;
+			border-collapse:collapse;
+			
+			
+		}
+			#percentage_patients {
+				margin: 0 auto;
+				font-size: 14px;
+				
+			}
+			
+			#percentage_retention {
+				margin: 0 auto;
+				font-size: 14px;
+				
+			}
+			
+			#percentage_lost_to_follow_up {
+				margin: 0 auto;
+				font-size: 14px;
+			}
+			
+			.report_title {
+				color:rgb(34, 86, 253);
+				letter-spacing: 1px;
+			}
+			h3 {
+				text-align: center;
+				color:#0000FF;
+			}
+			td{
+				border:1px solid #000;	
+				padding:4px;
+				font-weight:800;
+			}
+			th{
+				background-color:#CCCCFF;
+				border:1px solid #000;
+			}
+			.patient_percentage,.retention_percentage,.lost_to_follow_up_percentage{
+				width: 1050px;
+				font-size:14px;
+				height: 160px;
+				border: 1px solid #000;
+				margin:0 auto;
+			}
+			.patient_percentage {
+				border-radius: 5px 5px 0px 0px;
+			}
+		
+			.lost_to_follow_up_percentage {
+				border-radius: 0px 0px 5px 5px;
+			}
+			.report_title{
+				font-size:14px;
+			}
+			#date_range_report table td,#single_date table td,#donor_date_range_report table td,#year table td{
+				border:none;
+			}
+		</style>
+		
+		<!-- Menus -->
+		<div class="navbar ">
+		  <div class="navbar-inner">
+		    <div class="container">
+		 
+		      <!-- Everything you want hidden at 940px or less, place within here -->
+		      <div class="nav-collapse collapse" id="acdmenu">
+		      	<a class="brand" href="../reports.html"/><img src="../Images/home-icon.png"> | </a>
+		        <ul class="nav">
+				  <li class="dropdown">
+				    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="standard_report">
+				     Standard Reports
+				    <b class="caret"></b>
+				    </a>
+				    <ul class="dropdown-menu" id="standard_report_sub">
+				      <li><a href="#" id="patients_enrolled_in_period" class="report donor_date_range_report active_report">Number of Patients Enrolled in Period</a></li>
+				      <li><a href="#" id="patients_enrolled_in_art" class="report donor_date_range_report active_report">Number of Patients Started on ART in the Period</a></li>
+				      <li><a href="#" id="graph_patients_enrolled_in_year" class="report active_report annual_report">Graph of Number of Patients Enrolled Per Month in a Given Year</a></li>
+				      <li><a href="#" id="cumulative_patients" class="report active_report single_date_report">Cumulative Number of Patients to Date</a></li>
+				      <li><a href="#" id="patients_on_ART_active" class="report active_report single_date_report">Number of Active Patients Receiving ART (by Regimen)</a></li>
+				    </ul>
+				  </li>
+				  <li class="dropdown divider-vertical" id="visiting_patient">
+				    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+				     Visiting Patients
+				    <b class="caret"></b>
+				    </a>
+				     <ul class="dropdown-menu" id="visiting_patient_sub">
+				      <li><a href="#" id="patients_scheduled_to_visit" class="report active_report date_range_report">List of Patients Scheduled to Visit</a></li>
+				      <li><a href="#" id="patients_started_on_date" class="report active_report date_range_report">List of Patients Started (on a Particular Date)</a></li>
+				      <li><a href="#" id="patients_visitied_for_refill" class="report active_report date_range_report">List of Patients Visited for Refill</a></li>
+				      <li><a href="#" id="patients_missing_appointments" class="report active_report date_range_report">Patients Missing Appointments</a></li>
+				      <li><a href="#" id="patients_adherence" class="report active_report date_range_report">Patients Adherence Report</a></li>
+				    </ul>
+				  </li>
+				  <li class="dropdown divider-vertical">
+				    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="early_warning">
+				     Early Warning Indicators
+				    <b class="caret"></b>
+				    </a>
+				    <ul class="dropdown-menu " id="early_warning_sub">
+				      <li><a href="#" id="patients_who_changed_regimen" class="report active_report date_range_report">Active Patients who Have Changed Regimens</a></li>
+				      <li><a href="#" id="patients_starting" class="report active_report date_range_report">List of Patients Starting (By Regimen)</a></li>
+				      <li><a href="#" id="early_warning_indicators" class="report active_report date_range_report">HIV Early Warning Indicators</a></li>
+				      <li><a href="#" id="service_statistics" class="report active_report single_date_report">Service Statistics (By Regimen)</a></li>
+				     
+				    </ul>
+				  </li>
+				  <li class="dropdown divider-vertical">
+				    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="drug_inventory">
+				     Drug Inventory
+				    <b class="caret"></b>
+				    </a>
+				    <ul class="dropdown-menu" id="drug_inventory_sub">
+				      <li><a href="#" id="drug_consumption" class="report active_report annual_report">Drug Consumption Report</a></li>
+				      <li><a href="#" id="drug_stock_on_hand" class="report active_report no_filter">Drug Stock on Hand Report</a></li>
+				      <li><a href="#" id="commodity_summary" class="report active_report date_range_report">Facility Summary Commodity Report</a></li>
+				      <li><a href="#" id="expiring_drugs" class="report active_report no_filter">Short Dated Stocks &lt;6 Months to Expiry</a></li>
+				      <li><a href="#" id="expired_drugs" class="report active_report no_filter">List of Expired Drugs</a></li>
+				    </ul>
+				  </li>
+				</ul>
+		        <a onClick="window.print()" class="brand" title="Print this page"/> | <img src="../Images/printing_icon.png"> </a>
+		      </div>
+		 
+		    </div>
+		  </div>
+		</div>
+		<!-- Menus end -->
+		
+		<h2 id="facility_name" style="text-align: center"></h2>
+		<h4 style="text-align: center">Listing of HIV Drugs Resistance Early Warning Indicators
+		<br><br>
+		Between <input type="text" id="start_date"> and <input type="text" id="end_date"></h4>
+		<hr size="1" style="width:80%">
+		
+		<div class="patient_percentage">
+			<h3>Percentage of Patients Started on First Line.Suggested Target 100%</h3>
+			<table   id="percentage_patients" cellspacing="5">
+				<tr>
+					<th> Patients Initiated on First Line </th>
+					<th> Total Patients Starting ART </th>
+					<th> Percentage Started on First Line(%)</th>
+					<th> Percentage Started on other Regimens(%)</th>
+				</tr>
+			</table>
+		</div>
+		<div class="retention_percentage">
+			<h3>Patients Retention on First Line ART.Suggested Target >70%</h3>
+			<table id="percentage_retention" cellpadding="5">
+				<tr>
+					<th> Patients Still in First Line </th>
+					<th> Total Patients Starting 12 months from selected period </th>
+					<th> Percentage(%) Patients Retained in First Line</th>
+				</tr>
+			</table>
+		</div>
+		<div class="lost_to_follow_up_percentage" cellpadding="5">
+			<h3>Cohort of Patients Lost to follow up(Same Period Last Year).Suggested Target < 20%</h3>
+			<table id="percentage_lost_to_follow_up">
+				<tr>
+					<th> No. of Patients Lost to Follow Up </th>
+					<th> Total Patients Started on ART in the selected peroid </th>
+					<th> Percentage(%) of Patients Lost to follow Up</th>
+				</tr>
+			</table>
+		</div>
+		
+	
+		<!-- Pop up Window -->
+		<div class="result"></div>
+		<!-- Pop up Window end-->
+	</body>
+</html>

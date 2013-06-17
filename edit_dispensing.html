@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en" >
+	<!--head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Edit Dispensing History</title>
+		<link rel="SHORTCUT ICON" href="Images/favicon.ico">
+		<link href="CSS/style.css" type="text/css" rel="stylesheet"/>
+		<link href="CSS/offline_css.css" type="text/css" rel="stylesheet"/>
+		<link href="CSS/jquery-ui.css" type="text/css" rel="stylesheet"/>
+		<link href="CSS/validator.css" type="text/css" rel="stylesheet"/>
+		<script type="text/javascript" src="Scripts/offlineData.js"></script>
+		<script type="text/javascript" src="Scripts/jquery.js"></script>
+		<script type="text/javascript" src="Scripts/jquery-ui.js"></script>
+		<script type="text/javascript" src="Scripts/offline_database.js"></script>
+		<script type="text/javascript" src="Scripts/validator.js"></script>
+		<script type="text/javascript" src="Scripts/validationEngine-en.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var $_GET = getQueryParams(document.location.hash);
+				dispensing_id = $_GET['dispensing_id'];
+				$("#dispensing_id").attr("value", dispensing_id);
+				var d = new Date();
+				var n = d.getFullYear();
+				$("#year").text(n);
+				initDatabase();
+
+				//Get the environmental variables to display the hospital name
+				selectEnvironmentVariables(function(transaction, results) {
+					// Handle the results
+					var row = results.rows.item(0);
+					$("#facility_name").text(row['facility_name']);
+
+				});
+				//Add datepicker for the dispensing date
+				$("#dispensing_date").datepicker({
+					defaultDate : new Date(),
+					dateFormat : $.datepicker.ATOM,
+					changeMonth : true,
+					changeYear : true
+
+				});
+				//Dynamically load the list of purposes of visit
+				selectAll("visit_purpose", function(transaction, results) {
+					// Handle the results
+					for(var i = 0; i < results.rows.length; i++) {
+						var row = results.rows.item(i);
+						$("#purpose").append($("<option></option>").attr("value", row['id']).text(row['name']));
+					}
+				});
+				//Dynamically load the list of regimens
+				selectRegimen(function(transaction, results) {
+					// Handle the results
+					for(var i = 0; i < results.rows.length; i++) {
+						var row = results.rows.item(i);
+						$("#current_regimen").append($("<option></option>").attr("value", row['id']).text(row['regimen_desc']));
+						$("#last_regimen").append($("<option></option>").attr("value", row['id']).text(row['regimen_desc']));
+					}
+				});
+				//Dynamically load the list of non_adhrence reasons
+				selectAll("non_adherence_reasons", function(transaction, results) {
+					// Handle the results
+					for(var i = 0; i < results.rows.length; i++) {
+						var row = results.rows.item(i);
+						$("#non_adherence_reasons").append($("<option></option>").attr("value", row['id']).text(row['name']));
+					}
+				});
+				//Dynamically load the list of doses
+				selectDoses(function(transaction, results) {
+					// Handle the results
+					for(var i = 0; i < results.rows.length; i++) {
+						var row = results.rows.item(i);
+						$("#dose").append($("<option/>").attr("value", row['name']));
+					}
+
+				});
+				
+				
+				function appendBatches(batch_id){
+					var row_element = $("#drugs_table tbody>tr")
+					var expiry_date = row_element.find(".expiry");
+					var drug = row_element.find(".drug").attr("value");
+					//Get basic getails of the selected patient
+					getBatchExpiry(drug,batch_id, function(transaction, results) {
+						// Handle the results
+						if(results.rows.length > 0) {
+							var row = results.rows.item(0);
+							expiry_date.attr("value", row['expiry_date']);
+							if(row['expiry_date'] != row['LEAST']) {
+								alert("THIS IS NOT THE FIRST EXPIRING BATCH")
+							}
+						}
+					});
+					retrieveBatchesLevels(drug,batch_id, row_element);
+				}
+				
+				
+				function populateDrugRow(drug) {
+					//First things first, retrieve the row where this drug exists
+					var row_element = drug.closest("tr");
+					//Secod thing, retrieve the respective containers in the row where the drug is
+					var unit = row_element.find(".unit");
+					var batch = row_element.find(".batch");
+					var expiry = row_element.find(".expiry");
+					var dose = row_element.find(".dose");
+					var duration = row_element.find(".duration");
+					var qty_disp = row_element.find(".qty_disp");
+					var brand = row_element.find(".brand");
+					var soh = row_element.find(".soh");
+					if(drug.attr("value") > 0) {
+						//Retrieve details about the selected drug from the database
+						selectSingleFilteredQuery("drugcode", "id", drug.attr("value"), function(transaction, results) {
+
+							// Handle the results
+							var row = results.rows.item(0);
+							getUnitName(row['unit'], function(transaction, res) {
+								if(res.rows.length > 0) {
+									var r = res.rows.item(0);
+									unit.attr("value", r['name']);
+								}
+
+							});
+							unit.attr("value", row['unit']);
+							if($("#original_drug_no").attr("value") != drug.attr("value")){
+							dose.attr("value", row['dose']);	
+                            duration.attr("value", row['duration']);
+							qty_disp.attr("value",row['quantity']);	
+							}else{
+							dose.attr("value",$("#original_dose_no").attr("value"));	
+                            duration.attr("value",$("#original_duration_no").attr("value"));
+							qty_disp.attr("value",$("#original_qty_no").attr("value"));		
+							}
+							
+							batch.children('option').remove();
+							expiry.attr("value", "");
+							//Retrieve all the batch numbers for this drug
+							selectEnvironmentVariables(function(transaction, results) {
+								// Handle the results
+								var row = results.rows.item(0);
+								var facility = row['facility'];
+								retrieveBatches(drug.attr("value"), batch, facility);
+							});
+						});
+					}
+				}
+
+				function retrieveBatches(drug, batch, facility) {
+					//Get value of batch_select textfield
+					var batchSelected = $('#batch_select').val();
+					var stock_status = 0;
+					var starting_stock_sql = "SELECT (SUM( d.quantity ) - SUM( d.quantity_out )) AS Initital_stock,d.batch_number AS batch,transaction_date FROM drug_stock_movement d WHERE d.drug ='" + drug + "' AND facility='" + facility + "' AND strftime('%Y%m%d',d.expiry_date)> strftime('%Y%m%d',date()) GROUP BY d.batch_number  having Initital_stock>0 order by d.expiry_date asc";
+					//console.log(starting_stock_sql);
+					batch.append($("<option></option>").attr("value", "").text("Select"));
+					SQLExecuteAbstraction(starting_stock_sql, function(transaction, results) {
+						for(var i = 0; i < results.rows.length; i++) {
+							var first_row = results.rows.item(i);
+							var batch_value = first_row["batch"];
+							var initial_stock_sql = "SELECT SUM( d.quantity ) AS Initial_stock, d.transaction_date AS transaction_date, '" + batch_value + "' AS batch FROM drug_stock_movement d WHERE d.drug =  '" + drug + "' AND facility='" + facility + "' AND transaction_type =  '11' AND d.batch_number =  '" + batch_value + "'";
+							SQLExecuteAbstraction(initial_stock_sql, function(transaction, results) {
+								for(var m = 0; m < results.rows.length; m++) {
+									var physical_row = results.rows.item(m);
+									initial_stock = physical_row['Initial_stock'];
+									//Check if initial stock is present meaning physical count done
+									if(initial_stock != null) {
+										batch_stock_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out )) AS stock_levels, ds.batch_number FROM drug_stock_movement ds WHERE ds.transaction_date BETWEEN  '" + physical_row['transaction_date'] + "' AND date() AND facility='" + facility + "' AND ds.drug ='" + drug + "'  AND ds.batch_number ='" + physical_row['batch'] + "'";
+										SQLExecuteAbstraction(batch_stock_sql, function(transaction, results) {
+											for(var j = 0; j < results.rows.length; j++) {
+												var second_row = results.rows.item(j);
+												//console.log(second_row)
+												if(second_row['stock_levels'] > 0) {
+													var batch_id = second_row['batch_number'];
+
+													if(batchSelected == batch_id) {
+														batch.append($("<option selected='selected'></option>").attr("value", batch_id).text(batch_id));
+														appendBatches(batch_id);
+										
+													} else {
+														batch.append($("<option></option>").attr("value", batch_id).text(batch_id));
+													}
+
+												}
+											}
+										});
+									} else {
+										batch_stock_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out ) ) AS stock_levels, ds.batch_number FROM drug_stock_movement ds WHERE ds.drug =  '" + drug + "' AND facility='" + facility + "' AND ds.expiry_date > date() AND ds.batch_number='" + physical_row['batch'] + "'";
+										//console.log(batch_stock_sql)
+										SQLExecuteAbstraction(batch_stock_sql, function(transaction, results) {
+											for(var j = 0; j < results.rows.length; j++) {
+												var second_row = results.rows.item(j);
+
+												if(second_row['stock_levels'] > 0) {
+													var batch_id = second_row['batch_number'];
+
+													if(batchSelected == batch_id) {
+														batch.append($("<option selected='selected'></option>").attr("value", batch_id).text(batch_id));
+														appendBatches(batch_id);
+													} else {
+														batch.append($("<option></option>").attr("value", batch_id).text(batch_id));
+													}
+												}
+
+											}
+										});
+									}
+
+								}
+
+							});
+						}
+
+					});
+				}
+
+				function retrieveBatchesLevels(drug, batch, row_element) {
+					var stock_status = 0;
+					//Query to check if batch has had a physical count
+					selectEnvironmentVariables(function(transaction, results) {
+						// Handle the results
+						var row = results.rows.item(0);
+						var facility = row['facility'];
+
+						var initial_stock_sql = "SELECT SUM( d.quantity ) AS Initial_stock, d.transaction_date AS transaction_date, '" + batch + "' AS batch FROM drug_stock_movement d WHERE d.drug =  '" + drug + "' AND facility='" + facility + "' AND transaction_type =  '11' AND d.batch_number =  '" + batch + "'";
+
+						SQLExecuteAbstraction(initial_stock_sql, function(transaction, results) {
+							for(var m = 0; m < results.rows.length; m++) {
+								var physical_row = results.rows.item(m);
+								initial_stock = physical_row['Initial_stock'];
+								//Check if initial stock is present meaning physical count done
+								if(initial_stock != null) {
+									batch_stock_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out )) AS stock_levels, ds.batch_number FROM drug_stock_movement ds WHERE ds.transaction_date BETWEEN  '" + physical_row['transaction_date'] + "' AND date() AND facility='" + facility + "' AND ds.drug ='" + drug + "'  AND ds.batch_number ='" + physical_row['batch'] + "'";
+									SQLExecuteAbstraction(batch_stock_sql, function(transaction, results) {
+										for(var j = 0; j < results.rows.length; j++) {
+											var second_row = results.rows.item(j);
+											//console.log(second_row)
+											if(second_row['stock_levels'] > 0) {
+												batch_stock = second_row['stock_levels'];
+												row_element.find(".soh").attr("value", batch_stock);
+											}
+										}
+									});
+								} else {
+									batch_stock_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out ) ) AS stock_levels, ds.batch_number FROM drug_stock_movement ds WHERE ds.drug =  '" + drug + "' AND facility='" + facility + "' AND ds.expiry_date > date() AND ds.batch_number='" + physical_row['batch'] + "'";
+									//console.log(batch_stock_sql)
+									SQLExecuteAbstraction(batch_stock_sql, function(transaction, results) {
+										for(var j = 0; j < results.rows.length; j++) {
+											var second_row = results.rows.item(j);
+
+											if(second_row['stock_levels'] > 0) {
+												batch_stock = second_row['stock_levels'];
+												row_element.find(".soh").attr("value", batch_stock);
+											}
+
+										}
+									});
+								}
+
+							}
+
+						});
+					});
+				}
+
+				//Get basic getails of the selected patient
+				getDispensingDetails(dispensing_id, function(transaction, results) {
+					// Handle the results
+					var row = results.rows.item(0);
+					//console.log(row);
+					//Fill in the dispensing details that are to be edited
+
+					$("#patient").attr("value", row['patient_number_ccc']);
+					$("#patient_details").text(row['first_name'] + " " + row['other_name'] + " " + row["last_name"]);
+					$("#dispensing_date").attr("value", row['dispensing_date']);
+					$("#original_dispensing_date").attr("value", row['dispensing_date']);
+					$("#original_drug").attr("value", row['drug_id']);
+					$("#purpose").attr("value", row['visit_purpose']);
+					$("#current_regimen").attr("value", row['regimen']);
+					$("#last_regimen").attr("value", row['last_regimen']);
+
+					//Get the drugs for that regimen.
+					selectRegimenDrugs(row['regimen'], function(transaction, results) {
+						// Handle the results
+						for(var i = 0; i < results.rows.length; i++) {
+							var drugs_row = results.rows.item(i);
+							if(i == 0) {
+								$.each($(".drug"), function(i, v) {
+									$(this).append($("<option></option>").attr("value", drugs_row['id']).text(drugs_row['drug']));
+
+									populateDrugRow($(this));
+								});
+								continue;
+							}
+							$.each($(".drug"), function(i, v) {
+
+								$(this).append($("<option></option>").attr("value", drugs_row['id']).text(drugs_row['drug']));
+							});
+						}
+						//get the drug that was dispensed and display it
+						$("#drug").attr("value", row['drug_id']);
+						$("#original_drug_no").attr("value", row['drug_id']);
+						$("#original_dose_no").attr("value", row['dose']);
+						$("#original_duration_no").attr("value", row['duration']);
+						$("#original_qty_no").attr("value", row['quantity']);
+						$("#batch_hidden").attr("value", row['batch_number']);
+						$("#qty_hidden").attr("value", row['quantity']);
+						$("#batch_select").attr("value", row['batch_number']);
+						$("#batch").append($("<option></option>").attr("value", row['batch_number']).text(row['batch_number']));
+						$("#weight").attr("value", row['current_weight']);
+						$("#height").attr("value", row['current_height']);
+						$("#adherence").attr("value", row['adherence']);
+						$("#non_adherence_reasons").attr("value", row['non_adherence_reason']);
+						$(".dose").attr("value", row['dose']);
+						$("#duration").attr("value", row['duration']);
+						$("#qty_disp").attr("value", row['quantity']);
+						$("#brand").attr("value", row['brand']);
+						$("#indication").attr("value", row['indication']);
+						$("#pill_count").attr("value", row['pill_count']);
+						$("#comment").attr("value", row['comment']);
+					});
+				});
+				//Dynamically load the list of opportunistic infections
+				selectAll("opportunistic_infections", function(transaction, results) {
+					// Handle the results
+					for(var i = 0; i < results.rows.length; i++) {
+						var row = results.rows.item(i);
+						$.each($(".indication"), function(i, v) {
+							$(this).append($("<option></option>").attr("value", row['id']).text(row['name']));
+						});
+					}
+
+				});
+				//Dynamically change the list of drugs once a current regimen is selected
+				$("#current_regimen").change(function() {
+					var regimen = $("#current_regimen option:selected").attr("value");
+					//Clear the drugs list first
+					$.each($(".drug"), function(i, v) {
+						$(this).children('option').remove();
+						$(this).append($("<option></option>"));
+					});
+					//Dynamically load the list of drugs for this regimen
+					selectRegimenDrugs(regimen, function(transaction, results) {
+						// Handle the results
+
+						for(var i = 0; i < results.rows.length; i++) {
+							var row = results.rows.item(i);
+							if(i == 0) {
+								$.each($(".drug"), function(i, v) {
+									$(this).append($("<option></option>").attr("value", row['id']).text(row['drug']));
+
+									populateDrugRow($(this));
+								});
+								continue;
+							}
+							$.each($(".drug"), function(i, v) {
+
+								$(this).append($("<option></option>").attr("value", row['id']).text(row['drug']));
+							});
+						}
+					});
+					//In addition to the drugs in this regimen, load OI medicines too!
+					//loadOIMedicine();
+				});
+				//Fill the whole drug row with details of the selected drug!
+				$(".drug").change(function() {
+					populateDrugRow($(this));
+				});
+
+				$(".batch").change(function() {
+					var row_element = $(this).closest("tr");
+					var expiry_date = row_element.find(".expiry");
+					var drug = row_element.find(".drug").attr("value");
+					//Get basic getails of the selected patient
+					getBatchExpiry(drug, $(this).attr("value"), function(transaction, results) {
+						// Handle the results
+						if(results.rows.length > 0) {
+							var row = results.rows.item(0);
+							expiry_date.attr("value", row['expiry_date']);
+							if(row['expiry_date'] != row['LEAST']) {
+								alert("THIS IS NOT THE FIRST EXPIRING BATCH")
+							}
+						}
+					});
+					retrieveBatchesLevels(drug, $(this).val(), row_element);
+				});
+
+				$(".add").click(function() {
+					var cloned_object = $('#drugs_table tr:last').clone(true);
+					var drug_row = cloned_object.attr("drug_row");
+					var next_drug_row = parseInt(drug_row) + 1;
+					var row_element = cloned_object;
+					//Secod thing, retrieve the respective containers in the row where the drug is
+					row_element.find(".unit").attr("value", "");
+					row_element.find(".batch").attr("value", "");
+					row_element.find(".expiry").attr("value", "");
+					row_element.find(".dose").attr("value", "");
+					row_element.find(".duration").attr("value", "");
+					row_element.find(".qty_disp").attr("value", "");
+					row_element.find(".brand").attr("value", "");
+					row_element.find(".soh").attr("value", "");
+					row_element.find(".batch").attr("value", "");
+					cloned_object.attr("drug_row", next_drug_row);
+					cloned_object.insertAfter('#drugs_table tr:last');
+					return false;
+				});
+				$("#delete").click(function() {
+					$("#delete_trigger").attr("value", "1");
+					$("#submit").click();
+				});
+			});
+			function loadOIMedicine() {
+				//Dynamically load all opportunistic drugs
+				selectOIMedicines(function(transaction, results) {
+
+					// Handle the results
+					for(var i = 0; i < results.rows.length; i++) {
+						var row = results.rows.item(i);
+						$.each($(".drug"), function(i, v) {
+
+							$(this).append($("<option></option>").attr("value", row['id']).text(row['drug']));
+						});
+					}
+				});
+			}
+		</script>
+		<style type="text/css">
+			.data-holder {
+				height: 20px;
+				line-height: 20px;
+				width: 120px !important;
+			}
+			.data-holder-2 {
+				height: 15px;
+				line-height: 15px;
+				width: 70px !important;
+				overflow: hidden;
+			}
+			.data-table {
+				width: 100%;
+			}
+			.data-table tr {
+				width: 99%;
+			}
+			table.data-table td {
+				height: 20px !important;
+				width: 45%;
+			}
+			label {
+				margin: 0 !important;
+				display: inline;
+			}
+			#patient_demographics {
+				margin: 5px;
+			}
+			select {
+				height: 30px !important;
+			}
+			.column_right {
+				width: 40%;
+				font-family: Arial;
+				padding: 2px;
+				float: right;
+				margin-right: 10%;
+			}
+			.column_center {
+				width: 40%;
+				font-family: Arial;
+				padding: 2px;
+				float: left;
+				margin-left: 30%;
+				margin-left: 30%;
+			}
+			strong {
+				width: 100%;
+				padding-right: 0;
+			}
+			.inner-table strong {
+				width: 50px;
+			}
+			#dispensing_history {
+				min-width: 980px !important;
+				max-height: 500px !important;
+				overflow: scroll;
+				margin: 0 auto;
+			}
+			#drugs_table td {
+				min-width: 60px;
+			}
+			#drugs_table {
+				font-size: 85%;
+			}
+			.banner_text {
+				height: auto;
+				margin: 0px;
+			}
+			#submit_section {
+				margin: 0 20% 0 20%;
+			}
+			.short_title {
+				height: 35px;
+				background: #036;
+				color: #FFF;
+				font-weight: bold;
+				width: 100%;
+			}
+			.banner_text {
+				color: #FFF;
+				font-weight: bold;
+				font-family: Book Antiqua;
+			}
+			#main_wrapper {
+				background: #FFCC99;
+				font-weight: bold;
+				color: #000;
+			}
+			input {
+				height: 30px !important;
+			}
+			fieldset {
+				padding: 20px;
+			}
+			.two_comlumns {
+				width: 500px;
+				height: 70px;
+			}
+			#drugs_section {
+				clear: both;
+				
+				padding: 20px;
+			}
+			
+			#dispensing_info tr {
+				height: 25px;
+			}
+			.icondose {
+				background: #FFFFFF url(Images/dropdown.png) no-repeat 55px 4px;
+				padding: 4px 4px 4px 22px;
+				height: 5px;
+			}
+			#current_regimen {
+				color: red;
+				font-weight: bold;
+			}
+			#last_regimen_disp {
+				color: blue;
+				font-weight: bold;
+			}
+			#facility_name {
+				color: green;
+				margin-top: 5px;
+				font-weight: bold;
+			}
+
+		</style>
+	</head-->
+	<body>
+		<div id="wrapper">
+			<div id="top-panel" style="margin:0px;">
+				<div class="logo"></div>
+				<div class="network">
+					Network Status: <span id="status" class="offline">Offline</span>
+					<p>
+						Out-of-Sync Records: <span id="local-count"></span>
+					</p>
+				</div>
+				<div id="system_title">
+					<span style="display: block; font-weight: bold; font-size: 14px; margin:2px;">Ministry of Health</span>
+					<span style="display: block; font-size: 12px;">ARV Drugs Supply Chain Management Tool</span>
+					<span style="display: block; font-size: 14px;" id="facility_name" ></span>
+				</div>
+				<div id="top_menu">
+					<a href="home_controller" class="top_menu_link  first_link">Home </a>
+					<a href="patient_management.html" class="top_menu_link top_menu_active">Patients<span class="alert red_alert">off</span></a>
+					<a href="inventory.html" class="top_menu_link">Inventory<span class="alert red_alert">off</span></a>
+					<a href="reports.html" class="top_menu_link">Reports<span class="alert red_alert">off</span></a>
+					<a href="settings_management" class="top_menu_link">Settings<span class="alert green_alert">on</span></a>
+					<a href="order_management" class="top_menu_link">Order<span class="alert green_alert">on</span></a>
+					<div id="my_profile_link_container" style="display: inline">
+						<a ref="#" class="top_menu_link" id="my_profile_link"></a>
+					</div>
+				</div>
+			</div>
+			<div id="inner_wrapper">
+				<div id="main_wrapper">
+					<div id="signup">
+						<div class="short_title" >
+							<h3 class="banner_text">Dispensing History Editing</h3>
+						</div>
+						<hr/>
+						<form id="edit_dispense_form" method="post" >
+							<input id="original_dispensing_date" name="original_dispensing_date" type="hidden"/>
+							<input id="original_drug" name="original_drug" type="hidden"/>
+							<input id="delete_trigger" name="delete_trigger" type="hidden"/>
+							<div class="column_center">
+								<fieldset>
+									<legend>
+										Dispensing Information
+									</legend>
+									<table border='0' id="dispensing_info" cellpadding="2">
+										<tr>
+											<td><strong class="label">Patient Number CCC</strong></td>
+											<td>
+											<input readonly="" id="patient" name="patient" class="validate[required]"/>
+											</td>
+											<td><strong class="label">Patient Name</strong></td>
+											<td><span id="patient_details" style="padding:5px;"></span></td>
+										</tr>
+										<tr>
+											<td><strong class="label">Dispensing Date</strong></td>
+											<td>
+											<input style="width:140px" type="text"name="dispensing_date" id="dispensing_date" class="validate[required]">
+											</td>
+											<td><strong class="label" >Purpose of Visit</strong></td>
+											<td>
+											<select style="width:140px;" type="text"name="purpose" id="purpose" class="validate[required]">
+												<option></option>
+											</select> </label> </td>
+										</tr>
+										<tr>
+											<td><strong class="label" >Current Height(cm)</strong></td>
+											<td>
+											<input style="width:140px;" type="text"name="height" id="height" class="validate[required]">
+											</td>
+											<td><strong class="label" >Current Weight(kg)</strong></td>
+											<td>
+											<input style="width:140px" type="text"name="weight" id="weight" class="validate[required]">
+											</td>
+										</tr>
+										<tr>
+											<td colspan='6'><label id="scheduled_patients" class="message information close" style="display:none"></label></td>
+										</tr>
+										<tr>
+											<td><strong class="label">Last Regimen Dispensed</strong></td>
+											<td>
+											<select type="text"name="last_regimen" id="last_regimen" style="width:300px" class="validate[required]">
+												<option></option>
+											</select><!---
+											<input type="text"name="last_regimen_disp" regimen_id="0" id="last_regimen_disp" readonly="">
+											<input type="hidden" name="last_regimen" regimen_id="0" id="last_regimen">
+											--></td>
+											<td><strong class="label">Current Regimen</strong></td>
+											<td colspan='6'>
+											<select type="text"name="current_regimen" id="current_regimen" style="width:300px" class="validate[required]">
+												<option></option>
+											</select></td>
+										</tr>
+										<tr>
+											<td colspan="6"><label style="display:none" id="regimen_change_reason_container"> <strong class="label">Regimen Change Reason</strong>
+												<select type="text"name="regimen_change_reason" id="regimen_change_reason" style="width:300px">
+													<option></option>
+												</select> </label></td>
+										</tr>
+										<tr>
+											<td><strong class="label">Appointment Adherence (%)</strong></td>
+											<td>
+											<input type="text"name="adherence" id="adherence">
+											</td>
+											<td><strong class="label"> Poor/Fair Adherence Reasons </strong></td>
+											<td>
+											<select type="text"name="non_adherence_reasons" id="non_adherence_reasons" style="width:300px;height:20px;">
+												<option></option>
+											</select></td>
+										</tr>
+									</table>
+								</fieldset>
+							</div>
+							<div id="drugs_section" style="margin: 0 auto;">
+								<table border="0" class="data-table" id="drugs_table">
+									<th class="subsection-title" colspan="14">Select Drugs</th>
+									<tr>
+										<th>Drug</th>
+										<th>Unit</th>
+										
+										<th>Batch No.</th>
+										<th>Expiry Date</th>
+										<th>Dose</th>
+										<th>Duration</th>
+										<th>Qty. disp</th>
+										<th>Stock on Hand</th>
+										<th>Brand Name</th>
+										<th>Indication</th>
+										<th>Pill Count</th>
+										<th>Comment</th>
+									</tr>
+									<tr drug_row="0">
+										<td><select name="drug" class="drug" id="drug" style="max-width: 200px; font-size: 11px"></select></td>
+										<td>
+										<input type="text" name="unit" id="unit" class="unit small_text" />
+										</td>
+										
+										<input type="hidden" name="batch_select" id="batch_select" class="batch_select small_text"  disabled="disabled"/>
+										<input type="hidden" name="original_drug_no" id="original_drug_no" class="original_drug_no small_text"  disabled="disabled"/>
+										<input type="hidden" name="original_dose_no" id="original_dose_no" class="original_dose_no small_text"  disabled="disabled"/>
+										<input type="hidden" name="original_duration_no" id="original_duration_no" class="original_duration_no small_text"  disabled="disabled"/>
+										<input type="hidden" name="original_qty_no" id="original_qty_no" class="original_qty_no small_text"  disabled="disabled"/>
+
+										<td><select id="batch" name="batch" class="batch small_text" style="width:400px"></select></td>
+										<td>
+										<input type="text" id="expiry" name="expiry" class="expiry small_text" />
+										</td>
+										<td>
+										<input list="dose" name="dose" style="max-width:70px;height:30px;" class="dose small_text icondose">
+										<datalist id="dose" ></datalist></td>
+										<td>
+										<input type="text" id="duration" name="duration" class="duration small_text" />
+										</td>
+										<td>
+										<input type="text" id="qty_disp" name="qty_disp" class="qty_disp small_text" />
+										</td>
+										<td>
+										<input type="text" id="soh" name="soh" class="soh small_text" disabled="disabled"/>
+										</td>
+										<td><select name="brand" id="brand" class="brand small_text"></select></td>
+										<td>
+										<select name="indication" id="indication" class="indication" style="max-width: 70px;">
+											<option value="0">None</option>
+										</select></td>
+										<td>
+										<input type="text" name="pill_count" id="pill_count" class="pill_count small_text" />
+										</td>
+										<td>
+										<input type="text" name="comment" id="comment" class="comment small_text" />
+										</td>
+									</tr>
+								</table>
+							</div>
+							<input type="hidden" name="dispensing_id" id="dispensing_id" />
+							<input type="hidden" name="batch_hidden" id="batch_hidden" />
+							<input type="hidden" name="qty_hidden" id="qty_hidden" />
+							<div id="submit_section">
+								<input type="button" class="submit-button" id="delete" value="Delete Record" style="width:200px; background-color: #E01B1B; color: white;"/>
+								<input form="edit_dispense_form" class="submit-button" id="submit" value="Save & go Back" style="width:200px;"/>
+							</div>
+						</form>
+					</div>
+				</div>
+				<!--End Wrapper div-->
+			</div>
+			<div id="bottom_ribbon" style="top:80px; width:90%;">
+				<div id="footer">
+					<div id="footer_text">
+						Government of Kenya &copy; <span id="year" ></span>. All Rights Reserved
+					</div>
+				</div>
+			</div>
+	</body>
+</html>
