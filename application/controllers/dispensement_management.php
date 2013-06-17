@@ -15,15 +15,24 @@ class Dispensement_Management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
-			$data['patients']=$results;
+			$data['results']=$results;
 		}
-		$data['regimens']=Regimen::getAllEnabled();
-		$data['non_adherence_reasons']=Non_Adherence_Reasons::getAll();
+		$data['regimens']=Regimen::getRegimens();
+		$data['non_adherence_reasons']=Non_Adherence_Reasons::getAllHydrated();
+		$data['purposes']=Visit_Purpose::getAll();
 		$data['content_view'] = "dispense_v";  
+		$data['hide_side_menu']=1;
 		$this -> base_params($data);
 	}
 	
-	public function edit(/*$record_no*/){
+	public function edit($record_no){
+		$facility_code=$this -> session -> userdata('facility');
+		$sql = "select * from patient_visit where id='$record_no' and facility='$facility_code'";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			$data['results']=$results;
+		}
 		$data['content_view']='edit_dispensing_v';
 		$data['hide_side_menu']=1;
 		$this->base_params($data);

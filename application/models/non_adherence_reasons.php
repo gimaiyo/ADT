@@ -16,6 +16,12 @@ class Non_Adherence_Reasons extends Doctrine_Record {
 		return $purposes;
 	}
 	
+	public function getAllHydrated() {
+		$query = Doctrine_Query::create() -> select("*") -> from("Non_Adherence_Reasons") -> where("Active", "1");
+		$purposes = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $purposes;
+	}
+	
 	public function getThemAll($access_level="") {
 		if($access_level="" || $access_level=="system_administrator"){
 			$query = Doctrine_Query::create() -> select("*") -> from("Non_Adherence_Reasons");

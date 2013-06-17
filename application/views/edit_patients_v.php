@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 foreach($results as $result){
 	
@@ -58,6 +57,17 @@ foreach($results as $result){
 	        $('#current_weight').val("<?php echo $result['weight'];?>");
 	        $('#current_height').val("<?php echo $result['height'];?>");
 	        $('#current_bsa').val("<?php echo $result['sa'];?>");
+	        $('#phone').val("<?php echo $result['phone'];?>");
+	        
+	        //To Check Sms Consent
+			var sms_consent="<?php echo $result['sms_consent'];?>";
+			if(sms_consent==1){
+			$("#sms_yes").attr("checked", "true");	
+			}else if(sms_consent==0){
+			$("#sms_no").attr("checked", "true");	
+			}
+	        
+	        
 	        $('#physical').val("<?php echo $result['physical'];?>");
 	        $('#alternate').val("<?php echo $result['alternate'];?>");
 	        
@@ -365,6 +375,23 @@ foreach($results as $result){
 	       	$("#patient_source_listing").show();
 	       }       
 	       $("#transfer_source").val("<?php echo $result['transfer_from']; ?>");
+	       
+	       //Function to check if female is pregnant
+			$("#gender").change(function() {
+					var selected_value = $(this).attr("value");
+					//if female, display the prengancy selector
+					if(selected_value == 2) {
+						//If female show pregnant container
+						$('#pregnant_view').slideDown('slow', function() {
+
+						});
+					} else {
+						//If male do not show pregnant container
+						$('#pregnant_view').slideUp('slow', function() {
+
+						});
+					}
+			});
 				
 		});
 			function getMSQ() {
@@ -426,6 +453,14 @@ foreach($results as $result){
 	        function processData(form) {
 	          var form_selector = "#" + form;
 	          var validated = $(form_selector).validationEngine('validate');
+	            var family_planning = $("select#family_planning").multiselect("getChecked").map(function() {
+					return this.value;
+				}).get();
+				var other_illnesses = $("select#other_illnesses").multiselect("getChecked").map(function() {
+					return this.value;
+				}).get();
+				$("#family_planning_holder").val(family_planning);
+				$("#other_illnesses_holder").val(other_illnesses);
 	            if(!validated) {
                    return false;
 	            }else{
@@ -435,11 +470,9 @@ foreach($results as $result){
 		</script>
 	</head>
 	<body>
-<div class="full-content">
-=======
 <div class="full-content" style="background:#FF9">
->>>>>>> 25b9b2ddbc2c54bccba48d3a32d66045e9267d69
-	<h3>Patient Registration
+
+	<h3>Edit Patient Details
 	<div style="float:right;margin:5px 40px 0 0;">
 		(Fields Marked with <b><span class='astericks'>*</span></b> Asterisks are required)
 	</div></h3>
@@ -544,7 +577,7 @@ foreach($results as $result){
 			</div>
 			<div class="max-row">
 				<div class="mid-row">
-					<label > Start Body Surface Area (MSQ)</label>
+					<label > Start Body Surface Area  <br/> (MSQ)</label>
 					<input type="text" name="start_bsa" id="start_bsa" value="" >
 				</div>
 				<div class="mid-row">
@@ -554,15 +587,16 @@ foreach($results as $result){
 			</div>
 			<div class="max-row">
 				<div class="mid-row">
-
-				</div>
-				<div class="mid-row"></div>
-			</div>
-			<div class="max-row">
+				<label> Patient's Phone Contact(s)</label>
+				<input  type="text"  name="phone" id="phone" value="" placeholder="e.g 0722123456">
+			    </div>
 				<div class="mid-row">
-
+				<label > Receive SMS Reminders</label>
+				<input  type="radio"  name="sms_consent" value="1" id="sms_yes">
+				    Yes
+				  <input  type="radio"  name="sms_consent" value="0" id="sms_no">
+					No
 				</div>
-				<div class="mid-row"></div>
 			</div>
 
 			<div class="max-row">
@@ -601,6 +635,7 @@ foreach($results as $result){
 			</div>
 			<div class="max-row">
 				<label>Family Planning Method</label>
+				<input type="hidden" id="family_planning_holder" name="family_planning_holder" />
 				<select name="family_planning" id="family_planning" multiple="multiple" style="width:200px;"  >
 					<?php
 					foreach ($family_planning as $fplan) {
@@ -612,6 +647,7 @@ foreach($results as $result){
 			</div>
 			<div class="max-row">
 				<label>Does Patient have other Chronic illnesses</label>
+				<input type="hidden" id="other_illnesses_holder" name="other_illnesses_holder" />
 				<select name="other_illnesses" id="other_illnesses"  multiple="multiple"  style="width:200px;" >
 					<?php
 					foreach ($other_illnesses as $other_illness) {
@@ -707,12 +743,12 @@ foreach($results as $result){
 			<div class="max-row">
 				<div class="mid-row">
 				<label> Date of Next Appointment</label>
-				<input type="text" name="next_appointment_date" id="next_appointment_date" />
+				<input type="text" name="next_appointment_date" id="next_appointment_date"  style="color:red"/>
 				<input type="hidden" name="prev_appointment_date" id="prev_appointment_date" />
 				</div>
 				<div class="mid-row">
 				<label> Days to Next Appointment</label>
-				<input  type="text"name="days_to_next" id="days_to_next">
+				<input  type="text"name="days_to_next" id="days_to_next" style="color:red">
 				</div>								
 			</div>
 		</fieldset>
@@ -728,7 +764,7 @@ foreach($results as $result){
 			</div>
 			<div class="max-row">
 				<label><span class='astericks'>*</span>Current Status</label>
-				<select name="current_status" id="current_status" class="validate[required]">
+				<select name="current_status" id="current_status" class="validate[required] red">
 					<option value="">--Select--</option>
 					<?php
 					foreach ($statuses as $status) {
@@ -803,7 +839,7 @@ foreach($results as $result){
 			</div>
 			<div class="max-row">
 				<label style="color:red;font-weight:bold;">Current Regimen</label>
-				<select type="text"name="current_regimen" id="current_regimen" class="validate[required]">
+				<select type="text"name="current_regimen" id="current_regimen" class="validate[required] red">
 					<option value="">--Select--</option>
 					<?php
 					foreach ($regimens as $regimen) {

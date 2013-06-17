@@ -81,3 +81,7 @@
 		<script type="text/javascript" src="<?php echo base_url().'Scripts/validator.js'?>"></script>
 		<script type="text/javascript" src="<?php echo base_url().'Scripts/validationEngine-en.js'?>"></script>
 <!-- End of JS  Section ------------------------------------------------>
+
+<!-- Fixed Table Head -->
+		<script type="text/javascript" src="<?php echo base_url().'Scripts/jquery.fixedheadertable.js'?>"></script>
+<!-- End of JS  Section ------------------------------------------------>

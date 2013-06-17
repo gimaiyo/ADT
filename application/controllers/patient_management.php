@@ -21,7 +21,7 @@ class Patient_Management extends MY_Controller {
 		$this -> base_params($data);
 		//$this -> listing();
 	}
-public function details() {
+    public function details() {
 		$data['content_view'] = "patient_details_v";
 		$data['hide_side_menu']=1;
 		$this -> base_params($data);
@@ -202,7 +202,37 @@ public function details() {
 		 */
 	}
 
-	public function viewDetails($patient_id) {
+	public function viewDetails($record_no) {
+		$patient="";
+		$facility="";
+		$sql = "select * from patient where id='$record_no'";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			$data['results'] = $results;
+			$patient=$results[0]['patient_number_ccc'];
+			$facility=$this->session->userdata("facility");
+		}
+		//Patient History
+		$sql="SELECT pv.dispensing_date, v.name as visit,d.unit,pv.dose,pv.duration,pv.indication,pv.id as record,d.drug,pv.quantity,pv.current_weight,pv.current_height,r.regimen_desc,pv.batch_number,pv.pill_count,pv.adherence,pv.user,pv.regimen_change_reason FROM patient_visit pv LEFT JOIN drugcode d ON pv.drug_id = d.id LEFT JOIN visit_purpose v ON pv.visit_purpose = v.id LEFT JOIN regimen r ON pv.regimen=r.id WHERE pv.patient_id ='$patient' AND pv.facility ='$facility' ORDER BY dispensing_date DESC";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if($results){
+		$data['history_logs']=$results;	
+		}else{
+		$data['history_logs']="";	
+		}
+		
+		$data['districts'] = District::getPOB();
+		$data['genders'] = Gender::getAll();
+		$data['statuses'] = Patient_Status::getStatus();
+		$data['sources'] = Patient_Source::getSources();
+		$data['supporters'] = Supporter::getAllActive();
+		$data['service_types'] = Regimen_Service_Type::getHydratedAll();
+		$data['facilities'] = Facilities::getAll();
+		$data['family_planning'] = Family_Planning::getAll();
+		$data['other_illnesses'] = Other_Illnesses::getAll();
+		$data['regimens'] = Regimen::getRegimens();
 		$data['content_view'] = 'patient_details_v';
 		//Hide side menus
 		$data['hide_side_menu'] = '1';
@@ -340,11 +370,11 @@ public function details() {
 		}
         $this->db->query($sql);
 		
-		$family_planning = $this -> input -> post('family_planning', TRUE);
+		$family_planning = $this -> input -> post('family_planning_holder', TRUE);
 		if ($family_planning == null) {
 			$family_planning = "";
 		}
-		$other_illness_listing = $this -> input -> post('other_illnesses', TRUE);
+		$other_illness_listing = $this -> input -> post('other_illnesses_holder', TRUE);
 		if ($other_illness_listing == null) {
 			$other_illness_listing = "";
 		}
