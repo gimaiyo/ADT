@@ -291,7 +291,7 @@ foreach($results as $result){
 					changeYear : true
 			});
 			$("#enrolled").val("<?php echo $result['date_enrolled'] ?>");
-			$("#current_status").val("<?php echo $result['current_status'] ?>");
+			$("#current_status").val("<?php echo $result['current_status'] ?>");		
 			$("#status_started").val("<?php echo $result['status_change_date'] ?>");
 			$("#source").val("<?php echo $result['source'] ?>");
 			$("#support").val("<?php echo $result['supported_by'] ?>");
@@ -409,6 +409,13 @@ foreach($results as $result){
 			$("input,select,textarea").attr("disabled", 'disabled');
 		    $(".btn").removeAttr("disabled");
 		    $(".button").removeAttr("disabled");
+		    
+		    var current_status="<?php echo $result['current_status']; ?>";
+			//Disable the dispense button
+			if(current_status != 1) {
+               alert("Cannot Dispense to Patient:Status Not Active");
+			   $("#dispense").attr("disabled", "disabled");
+			}
 		    /*
 		    //Fixed Table Header and footer for dispansing History
 		    $('#history_table').fixedHeaderTable({ 

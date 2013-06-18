@@ -15,6 +15,11 @@ class Regimen_Change_Purpose extends Doctrine_Record {
 		$purposes = $query -> execute();
 		return $purposes;
 	}
+	public function getAllHydrated() {
+		$query = Doctrine_Query::create() -> select("*") -> from("Regimen_Change_Purpose") -> where("Active", "1");
+		$purposes = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $purposes;
+	}
 
 	public function getTotalNumber() {
 		$query = Doctrine_Query::create() -> select("count(*) as Total_Purposes") -> from("Regimen_Change_Purpose");

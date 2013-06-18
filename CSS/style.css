@@ -152,9 +152,8 @@ body {
 .welcome_msg {
 	clear: left;
 	text-align: right;
+	color:#2B597E;
 	padding: 20px;
-	font-size: 16px;
-	color: rgb(8, 172, 47);
 }
 .welcome_msg a {
 	color: rgb(24, 161, 214);
@@ -766,7 +765,7 @@ table.dataTable tr.odd td sorting_1 {
  * 	Styling Facility Information
  */
 #facility_name {
-	color: green;
+	color:#2B597E;
 	margin-top: 5px;
 	font-weight: bold;
 	font-size: 1.1em;
@@ -1209,11 +1208,7 @@ input[readonly] {
 .reports_panel {
 	overflow: hidden;
 }
-#facility_name {
-	color: green;
-	margin-top: 5px;
-	font-weight: bold;
-}
+
 a:hover {
 	text-decoration: none;
 }
@@ -1355,4 +1350,5 @@ legend {
 .astericks {
 	color: red;
 }
+
 
