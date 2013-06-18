@@ -286,6 +286,7 @@ class Inventory_Management extends MY_Controller {
 			$data['store']="Main Store";
 			$data['previous']='inventory_management/1';
 			$this->session->set_userdata("inventory_go_back","store_table");
+			
 		}
 		else if($stock_type==2){
 			$data['store']="Pharmacy";

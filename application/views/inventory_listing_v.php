@@ -4,7 +4,7 @@
 	}
 </Style>
 <?php
-if(isset($this->session->userdata("inventory_go_back"))){
+if($this->session->userdata("inventory_go_back")){
 	
 	if($this->session->userdata("inventory_go_back")=="store_table"){
 		?>
