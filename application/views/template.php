@@ -168,8 +168,9 @@ if($menus){
 </ul>
 </div>
 <div class="welcome_msg">
-	<span>Welcome <b style="font-weight: bolder;font-size: 20px;"><?php echo $this -> session -> userdata('full_name'); ?></b>. <a href="<?php echo base_url().'user_management/logout' ?>">Logout</a></span><br>
-	<br><span><?php echo date('l, jS \of F Y') ?></span>
+	<span>Welcome <b style="font-weight: bolder;font-size: 20px;"><?php echo $this -> session -> userdata('full_name'); ?></b>. <a href="<?php echo base_url().'user_management/logout' ?>">Logout</a></span>
+	<br>
+	<span class="date"><?php echo date('l, jS \of F Y') ?></span>
 </div>
 <?php } ?>
  </div>
@@ -192,9 +193,9 @@ if($menus){
 			if($user_is_pharmacist){
 				?>
 				<li><a href="<?php echo base_url().'patient_management/addpatient_show' ?>"><i class="icon-user"></i>Add Patients</a></li>
-			    <li><a href="<?php echo base_url().'inventory_management/stock_transaction/1' ?>">Receive/Issue - Main Store</a></li>
-			    <li><a href="<?php echo base_url().'inventory_management/stock_transaction/2' ?>">Receive/Issue - Pharmacy</a></li>
-			    <li><a href="<?php echo base_url().'user_management/index' ?>"><i class="icon-plus"></i>Add Facility Users</a></li>
+			    <li><a href="<?php echo base_url().'inventory_management/stock_transaction/1' ?>"><i class="icon-inbox"></i>Receive/Issue - Main Store</a></li>
+			    <li><a href="<?php echo base_url().'inventory_management/stock_transaction/2' ?>"><i class="icon-inbox"></i>Receive/Issue - Pharmacy</a></li>
+			    <li><a href="<?php echo base_url().'user_management/index' ?>"><i class="icon-user"></i>Add Facility Users</a></li>
 
 				<li class="divider"></li>
 				<li><a href="<?php echo base_url().'user_manual.pdf' ?>"><i class="icon-book"></i>User Manual</a></li>		
