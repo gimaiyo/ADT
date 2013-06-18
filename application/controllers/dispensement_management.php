@@ -52,12 +52,18 @@ class Dispensement_Management extends MY_Controller {
 	
 	public function edit($record_no){
 		$facility_code=$this -> session -> userdata('facility');
-		$sql = "select * from patient_visit where id='$record_no' and facility='$facility_code'";
+		$sql = "select * from patient_visit pv,patient p where pv.id='$record_no' and pv.patient_id=p.patient_number_ccc and facility='$facility_code'";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
 			$data['results']=$results;
 		}
+		$data['purposes']=Visit_Purpose::getAll();
+		$data['regimens']=Regimen::getRegimens();
+		$data['non_adherence_reasons']=Non_Adherence_Reasons::getAllHydrated();
+		$data['regimen_changes']=Regimen_Change_Purpose::getAllHydrated();
+		$data['doses']=Dose::getAllActive();
+		$data['indications']=Opportunistic_Infection::getAllHydrated();
 		$data['content_view']='edit_dispensing_v';
 		$data['hide_side_menu']=1;
 		$this->base_params($data);

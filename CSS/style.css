@@ -1115,6 +1115,10 @@ html > body #main_manualcontent li a {
 	width: 30%;
 	margin: auto;
 }
+.column-5 {
+	width: 50%;
+	margin: auto;
+}
 .column fieldset, .column-2 fieldset, .column-3 fieldset {
 	padding: 5%;
 	width: 90%
@@ -1349,5 +1353,7 @@ legend {
 .astericks {
 	color: red;
 }
-
+#submit_section{
+	text-align:right;
+}
 

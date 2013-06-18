@@ -2,6 +2,7 @@
 class Regimen_management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
+		$this -> load -> database();
 	}
 
 	public function index() {
@@ -204,6 +205,15 @@ class Regimen_management extends MY_Controller {
 	public function getRegimenLine($service){
 		$regimens=Regimen::getLineRegimens($service);
 		echo json_encode($regimens);
+	}
+	
+	public function getDrugs($regimen){
+		$sql="select rd.drugcode as drug_id,d.drug as drug_name from drugcode d,regimen_drug rd where rd.regimen='$regimen' and rd.drugcode=d.id and rd.active='1' group by rd.drugcode order by rd.drugcode desc";
+		$query=$this->db->query($sql);
+		$results=$query->result_array();
+		if($results){
+		echo json_encode($results);
+		}
 	}
 
 	public function base_params($data) {

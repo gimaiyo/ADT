@@ -464,6 +464,33 @@ class Inventory_Management extends MY_Controller {
 			
 		}
 	} 
+	public function getDrugsBatches($drug){
+		$today=date('Y-m-d');
+		$sql="select drug_stock_balance.batch_number,drug_unit.Name as unit,dose.Name as dose,drugcode.quantity,drugcode.duration from drug_stock_balance,drugcode,drug_unit,dose where drug_id='$drug' and drugcode.id=drug_stock_balance.drug_id  and drug_unit.id=drugcode.unit and dose.id= drugcode.dose and expiry_date>'$today' and balance>0 group by batch_number order by drug_stock_balance.expiry_date asc";
+		$query=$this->db->query($sql);
+		$results=$query->result_array();
+		if($results){
+		echo json_encode($results);
+		}
+	}
+	
+	public function getBatchInfo($drug,$batch){
+		$sql="select * from drug_stock_balance where drug_id='$drug' and batch_number='$batch'";
+		$query=$this->db->query($sql);
+		$results=$query->result_array();
+		if($results){
+		echo json_encode($results);
+		}
+	}
+	
+	public function getDrugsBrands($drug){
+		$sql="select * from brand where drug_id='$drug' group by brand";
+		$query=$this->db->query($sql);
+		$results=$query->result_array();
+		if($results){
+		echo json_encode($results);
+		}
+	}
 	public function base_params($data) {
 		$data['title'] = "Inventory";
 		$data['banner_text'] = "Inventory Management";
