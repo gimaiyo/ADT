@@ -260,6 +260,7 @@ class Patient_Management extends MY_Controller {
 
 		$family_planning = "";
 		$other_illness_listing = "";
+		$patient="";
 
 		$family_planning = $this -> input -> post('family_planning', TRUE);
 		if ($family_planning == null) {
@@ -328,13 +329,14 @@ class Patient_Management extends MY_Controller {
 		$new_patient -> Start_Regimen = $this -> input -> post('regimen', TRUE);
 		$new_patient -> Current_Regimen = $this -> input -> post('regimen', TRUE);
 		$new_patient -> Start_Regimen_Date = $this -> input -> post('service_started', TRUE);
-		;
 		$new_patient -> save();
-
+		
+		$patient=$this -> input -> post('patient_number', TRUE);
+        
 		if ($_POST['save'] == "Submit") {
 			redirect("patient_management");
 		} else if ($_POST['save'] == "Dispense") {
-			redirect("home_controller/home");
+			redirect("patient_management/dispense/$patient");
 		}
 	}
 
@@ -384,7 +386,7 @@ class Patient_Management extends MY_Controller {
 		$this -> db -> where('id', $record_id);
 		$this -> db -> update('patient', $data);
 		
-		redirect("patient_management");
+		redirect("patient_management/viewDetails/$record_id");
 	}
 
 	public function base_params($data) {

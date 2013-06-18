@@ -80,6 +80,7 @@ class Dispensement_Management extends MY_Controller {
 			$data['results']=$results;
 		}
 		$data['purposes']=Visit_Purpose::getAll();
+		$data['record']=$record_no;
 		$data['regimens']=Regimen::getRegimens();
 		$data['non_adherence_reasons']=Non_Adherence_Reasons::getAllHydrated();
 		$data['regimen_changes']=Regimen_Change_Purpose::getAllHydrated();
@@ -131,15 +132,37 @@ class Dispensement_Management extends MY_Controller {
           
 	}
 	public function save_edit() {
-		$this->load->database();
-		$sql = $this->input->post("sql");
-		$queries = explode(";", $sql);
-		foreach($queries as $query){
-			if(strlen($query)>0){
-				$this->db->query($query);
-			}
-			
+		$timestamp="";
+		$patient="";
+		$facility="";
+		$user="";
+		$record_no="";
+		$facility=$this->session->userdata("facility");
+		$user=$this->session->userdata("full_name");
+		$timestamp=date('Y-m-d H:i:s');
+		$patient=@$_POST['patient'];
+		//If record is to be deleted
+        if(@$_POST['delete_trigger']==1) {
+		  $sql ="delete from patient_visit WHERE id='".@$_POST["dispensing_id"]."';";
+		  $this->db->query($sql);
+		  $sql = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type,source,destination,expiry_date, quantity, facility, machine_code,timestamp) SELECT '".@$_POST["original_drug"]."','".@$_POST["original_dispensing_date"]."', '".@$_POST["batch"]."','4','$facility','$facility',expiry_date,'".@$_POST["qty_disp"]."','$facility','0','$timestamp' from drug_stock_movement WHERE batch_number= '".@$_POST["batch"]."' AND drug='".@$_POST["original_drug"]."' LIMIT 1;";
+	      $this->db->query($sql);		
+		} else {
+		  $sql = "UPDATE patient_visit SET dispensing_date = '".@$_POST["dispensing_date"]."', visit_purpose = '".@$_POST["purpose"]."', current_weight='".@$_POST["weight"]."', current_height='".@$_POST["height"]."', regimen='".@$_POST["current_regimen"]."', drug_id='".@$_POST["drug"]."', batch_number='".@$_POST["batch"]."', dose='".@$_POST["dose"]."', duration='".@$_POST["duration"]."', quantity='".@$_POST["qty_disp"]."', brand='".@$_POST["brand"]."', indication='".@$_POST["indication"]. "', pill_count='".@$_POST["pill_count"]. "', missed_pills='".@$_POST["missed_pills"]. "', comment='".@$_POST["comment"]."',non_adherence_reason='".@$_POST["non_adherence_reasons"]."',adherence='".@$_POST["adherence"]."' WHERE id='".@$_POST["dispensing_id"]."';";
+		  $this->db->query($sql);	 
+			 if(@$_POST["batch"] != @$_POST["batch_hidden"] || @$_POST["qty_disp"] != @$_POST["qty_hidden"]) {
+						$sql = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type,source,destination,expiry_date, quantity, facility, machine_code,timestamp) SELECT '".@$_POST["original_drug"]."','".@$_POST["original_dispensing_date"] . "', '".@$_POST["batch_hidden"]."','4','$facility','$facility',expiry_date,'".@$_POST["qty_hidden"]."','$facility','0','$timestamp' from drug_stock_movement WHERE batch_number= '".@$_POST["batch_hidden"]."' AND drug='".@$_POST["original_drug"]."' LIMIT 1;";
+						$this->db->query($sql);
+						$sql = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type,source,destination,expiry_date, quantity_out, facility, machine_code,timestamp) SELECT '".@$_POST["drug"]."','".@$_POST["original_dispensing_date"] . "', '".@$_POST["batch"]."','5','$facility','$facility',expiry_date,'".@$_POST["qty_disp"]."','$facility','0','$timestamp' from drug_stock_movement WHERE batch_number= '".@$_POST["batch"]. "' AND drug='".@$_POST["drug"]. "' LIMIT 1;";
+			            $this->db->query($sql);
+			  }
 		}
+		$this->db->query($sql);
+		$sql="select * from patient where patient_number_ccc='$patient' and facility_code='$facility'";
+		$query=$this->db->query($sql);
+		$results=$query->result_array();
+		$record_no=$results[0]['id'];
+        redirect("patient_management/viewDetails/$record_no");	
 	}
 	public function base_params($data) { 
 		$data['title'] = "Drug Dispensements"; 

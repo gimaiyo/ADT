@@ -15,18 +15,27 @@ foreach($results as $result){
 				var last_name="<?php echo strtoupper($result['last_name']); ?>";
 				$("#patient_details").val(first_name+" "+other_name+" "+last_name);
 				 
-				$("#dispensing_date").val("<?php echo $result['dispensing_date'];?>"); 
-				$("#original_dispensing_date").val("<?php echo $result['dispensing_date'];?>"); 
-				$("#purpose").val("<?php echo $result['visit_purpose'];?>"); 
-				$("#weight").val("<?php echo $result['current_weight'];?>"); 
-				$("#height").val("<?php echo $result['current_height'];?>"); 
-				$("#last_regimen").val("<?php echo $result['last_regimen'];?>"); 
-				$("#current_regimen").val("<?php echo $result['regimen'];?>"); 
-				$("#adherence").val("<?php echo $result['adherence'];?>"); 
-				$("#non_adherence_reasons").val("<?php echo $result['non_adherence_reason'];?>"); 
-				$("#regimen_change_reason").val("<?php echo $result['regimen_change_reason'];?>"); 
+				$("#dispensing_date").val("<?php echo @$result['dispensing_date'];?>"); 
+				$("#original_dispensing_date").val("<?php echo @$result['dispensing_date'];?>"); 
+				$("#original_drug").val("<?php echo @$result['drug_id']; ?>");
+				$("#dispensing_id").val("<?php echo @$record;?>"); 
+				$("#batch_hidden").val("<?php echo @$result['batch_number']; ?>");
+				$("#qty_hidden").val("<?php echo @$result['quantity']; ?>");
+				$("#purpose").val("<?php echo @$result['visit_purpose'];?>"); 
+				$("#weight").val("<?php echo @$result['current_weight'];?>"); 
+				$("#height").val("<?php echo @$result['current_height'];?>"); 
+				$("#last_regimen").val("<?php echo @$result['last_regimen'];?>"); 
+				$("#current_regimen").val("<?php echo @$result['regimen'];?>"); 
+				$("#adherence").val("<?php echo @$result['adherence'];?>"); 
+				$("#non_adherence_reasons").val("<?php echo @$result['non_adherence_reason'];?>"); 
+				$("#regimen_change_reason").val("<?php echo @$result['regimen_change_reason'];?>"); 
+				$("#brand").val("<?php echo @$result['brand']; ?>");
+				$("#indication").val("<?php echo @$result['indication']; ?>");
+				$("#pill_count").val("<?php echo @$result['pill_count']; ?>");
+				$("#missed_pills").val("<?php echo @$result['missed_pills']; ?>");
+				$("#comment").val("<?php echo @$result['comment']; ?>");
 				
-				
+				$("#original_drug").val("<?php echo $result['drug_id'];?>");
 				
 				if($("#last_regimen").val() !=$("#current_regimen").val()){
 				 $("#regimen_change_reason_container").show();	
@@ -35,6 +44,8 @@ foreach($results as $result){
 				
 				//Get Drugs in current_regimen
 				getRegimenDrugs($("#current_regimen").val());
+				
+				getDrugBatches("<?php echo $result['drug_id']; ?>");
 				
 			//Dynamically change the list of drugs once a current regimen is selected
 			$("#current_regimen").change(function() {
@@ -78,7 +89,7 @@ foreach($results as $result){
 			
 			//Set Delete Trigger
 			$("#delete_btn").click(function(){
-				$("#delete").val("1");
+				$("#delete_trigger").val("1");
 				var message=confirm("Are You Sure You want to Delete?");
 				if(message){
 					return true;
@@ -90,8 +101,8 @@ foreach($results as $result){
 			
 	       //Function to display all Drugs in this regimen
 		   $("#current_regimen").change(function() {
-		   	$("#drug option").remove();
-		   	$("#unit").val("");
+		   	  $("#drug option").remove();
+		   	  $("#unit").val("");
 		   	  var current_regimen = $(this).val();
               getRegimenDrugs(current_regimen);
 		   });
@@ -108,6 +119,13 @@ foreach($results as $result){
 				    	$.each(data, function(i, jsondata){
 				    		$("#drug").append($("<option></option>").attr("value",jsondata.drug_id).text(jsondata.drug_name));
 				    	});
+				    	$("#drug").val("<?php echo $result['drug_id']; ?>");
+				    	$("#duration").val("");
+                        $("#qty_disp").val("");
+                        $("#expiry").val("");
+                        $("#soh").val("");
+                        $("#batch").val("");
+                        $("#dose").val("");
 				    }
 				});
 		   }
@@ -141,8 +159,16 @@ foreach($results as $result){
 				    	    $("#unit").val(jsondata.unit);
 				    	    $("#dose").val(jsondata.dose);
 				    	    $("#duration").val(jsondata.duration);
-				    	    $("#qty_disp").val(jsondata.quantity);
+				    	    $("#qty_disp").val(jsondata.quantity); 
+				    	    if($("#original_drug").val()==drug){
+				    	    $("#batch").val("<?php echo $result['batch_number']; ?>");
+				    	    $("#dose").val("<?php echo $result['dose']; ?>");
+				    	    $("#duration").val("<?php echo $result['duration']; ?>");
+				    	    $("#qty_disp").val("<?php echo $result['quantity']; ?>");
+				    	    }
 				    	});
+				    	    
+				    	getBatchInfo();
 				    }
 				});
 		   }
@@ -158,13 +184,17 @@ foreach($results as $result){
 				    	
 				    	$("#brand").append($("<option></option>").attr("value",'').text('-Select One-'));
 				    	$.each(data, function(i, jsondata){
-				    		$("#brand").append($("<option></option>").attr("value",jsondata.id).text(jsondata.brand));
+				    		$("#brand").append($("<option></option>").attr("value",jsondata.id).text(jsondata.brand));			    		
 				    	});
+				    	
 				    }
 				});
 		   }
 		   
 		   $("#batch").change(function(){
+		   	if($(this).prop("selectedIndex")>1){
+		   		alert("THIS IS NOT THE FIRST EXPIRING BATCH");
+		   	}
 		   	   getBatchInfo();
 		   });
 		   
@@ -184,6 +214,8 @@ foreach($results as $result){
 				    }
 				});
 		   }
+		   
+		   
 		   
 		   		  
 		});
@@ -206,6 +238,9 @@ foreach($results as $result){
 	<form id="edit_dispense_form" method="post"  action="<?php echo base_url().'dispensement_management/save_edit';?>" onsubmit="return processData('edit_dispense_form')" >
 		<input id="original_dispensing_date" name="original_dispensing_date" type="hidden"/>
 		<input id="original_drug" name="original_drug" type="hidden"/>
+		<input id="batch_hidden" name="batch_hidden" type="hidden"/>
+		<input id="dispensing_id" name="dispensing_id" type="hidden"/>
+		<input id="qty_hidden" name="qty_hidden" type="hidden"/>
 		<input id="delete_trigger" name="delete_trigger" type="hidden" value="0"/>
 		<div class="column-5">
 			<fieldset>
@@ -219,7 +254,7 @@ foreach($results as $result){
 					</div>
 					<div class="mid-row">
 						<label>Patient Name</label>
-						<input readonly="" id="patient_details" name="patient" class="validate[required]"/>
+						<input readonly="" id="patient_details" name="patient_details" class="validate[required]"/>
 					</div>
 				</div>
 				<div class="max-row">
@@ -306,7 +341,7 @@ foreach($results as $result){
 			</fieldset>
 		</div>
 		<div id="edit_drugs_section" style="margin: 0 auto;">
-			<table border="0" class="data-table" id="drugs_table" style="width:100%;">
+			<table border="0" class="data-table" id="drugs_table" style="width:80%;">
 			<th class="subsection-title" colspan="14">Select Drugs</th>
 			<tr>
 			<th>Drug</th>
@@ -320,6 +355,7 @@ foreach($results as $result){
 			<th>Brand Name</th>
 			<th>Indication</th>
 			<th>Pill Count</th>
+			<th>Missed Pills</th>
 			<th>Comment</th>
 			</tr>
 			<tr drug_row="0">
@@ -327,14 +363,7 @@ foreach($results as $result){
 			<td>
 			<input type="text" name="unit" id="unit" class="unit input-small"  readonly="readonly"/>
 			</td>
-
-			<input type="hidden" name="batch_select" id="batch_select" class="batch_select input-small"  disabled="disabled"/>
-			<input type="hidden" name="original_drug_no" id="original_drug_no" class="original_drug_no input-small"  disabled="disabled"/>
-			<input type="hidden" name="original_dose_no" id="original_dose_no" class="original_dose_no input-small"  disabled="disabled"/>
-			<input type="hidden" name="original_duration_no" id="original_duration_no" class="original_duration_no input-small"  disabled="disabled"/>
-			<input type="hidden" name="original_qty_no" id="original_qty_no" class="original_qty_no input-small"  disabled="disabled"/>
-
-			<td><select id="batch" name="batch" class="batch input-small" style="width:200px"></select></td>
+			<td><select id="batch" name="batch" class="batch input-small" style="width:120px"></select></td>
 			<td>
 			<input type="text" id="expiry" name="expiry" class="expiry input-small" />
 			</td>
@@ -359,7 +388,7 @@ foreach($results as $result){
 			</td>
 			<td><select name="brand" id="brand" class="brand input-small"></select></td>
 			<td>
-			<select name="indication" id="indication" class="indication input-small" style="max-width: 70px;">
+			<select name="indication" id="indication" class="indication input-small">
 			<option value=" ">None</option>
 			<?php 
 			foreach($indications as $indication){
@@ -371,14 +400,14 @@ foreach($results as $result){
 			<input type="text" name="pill_count" id="pill_count" class="pill_count input-small" />
 			</td>
 			<td>
+			 <input type="text" name="missed_pills" id="missed_pills" class="missed_pills input-small" />
+			</td>
+			<td>
 			<input type="text" name="comment" id="comment" class="comment input-small" />
 			</td>
 			</tr>
 			</table>
 		</div>
-		<input type="hidden" name="dispensing_id" id="dispensing_id" />
-		<input type="hidden" name="batch_hidden" id="batch_hidden" />
-		<input type="hidden" name="qty_hidden" id="qty_hidden" />
 		<div id="submit_section">
 			<div class="btn-group">
 				<input type="submit" form="edit_dispense_form" class="btn" id="submit" name="submit" value="Save & go Back" />
