@@ -14,13 +14,6 @@ class Patient_Management extends MY_Controller {
 		$this -> base_params($data);
 		//$this -> listing();
 	}
-
-	public function dispense() {
-		$data['content_view'] = "dispense_v";
-		$data['hide_side_menu'] = 1;
-		$this -> base_params($data);
-		//$this -> listing();
-	}
     public function details() {
 		$data['content_view'] = "patient_details_v";
 		$data['hide_side_menu']=1;
@@ -612,6 +605,14 @@ ORDER BY p.patient_number_ccc ASC";
       $sql="update patient set active='0' where id='$id'";
 	  $this->db->query($sql);
 	  redirect("patient_management");
+	}
+	
+	public function getAppointments($appointment=""){
+      $results="";
+	  $sql="select count(distinct(patient)) as total_appointments,weekend_max,weekday_max from patient_appointment pa,facilities f  where pa.appointment = '$appointment' and f.facilitycode=pa.facility";
+      $query = $this -> db -> query($sql);
+	  $results = $query -> result_array();
+	  echo json_encode($results);	
 	}
 
 }
