@@ -46,7 +46,7 @@
 </script>
 
 <h4 style="text-align: center">Listing of Patients Expected to Visit Between
-<span id="start_date"><?php echo $from; ?></span> And <span id="end_date"><?php echo $from; ?></span>
+<span id="start_date"><?php echo $from; ?></span> And <span id="end_date"><?php echo $to; ?></span>
 </h4>
 <hr size="1" style="width:80%">
 <table align='center'  width='50%' style="font-size:16px; margin-bottom: 20px">

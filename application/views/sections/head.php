@@ -78,8 +78,11 @@
 <!-- Validator -->
 		<script type="text/javascript" src="<?php echo base_url().'Scripts/validator.js'?>"></script>
 		<script type="text/javascript" src="<?php echo base_url().'Scripts/validationEngine-en.js'?>"></script>
-<!-- End of JS  Section ------------------------------------------------>
+<!-- Menus -->
+		<script type="text/javascript" src="<?php echo base_url().'Scripts/menus.js'?>"></script>
+		
 
 <!-- Fixed Table Head -->
 		<script type="text/javascript" src="<?php echo base_url().'Scripts/jquery.fixedheadertable.js'?>"></script>
 <!-- End of JS  Section ------------------------------------------------>
+

@@ -285,10 +285,12 @@ class Inventory_Management extends MY_Controller {
 		if($stock_type==1){
 			$data['store']="Main Store";
 			$data['previous']='inventory_management/1';
+			$this->session->set_userdata("inventory_go_back","store_table");
 		}
 		else if($stock_type==2){
 			$data['store']="Pharmacy";
 			$data['previous']='inventory_management/2';
+			$this->session->set_userdata("inventory_go_back","pharmcay_table");
 		}
 		
 		$today = date('Y-m-d');
