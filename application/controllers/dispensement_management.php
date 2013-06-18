@@ -64,6 +64,16 @@ class Dispensement_Management extends MY_Controller {
 	}
 
 	public function save() {
+		$dispensing_date="";
+		$last_appointment="";
+		$next_appointment="";
+		$patient="";
+		$$facility="";
+		$next_appointment=$this -> input -> get_post('next_appointment_date', true); 
+		$dispensing_date=$this -> input -> get_post('dispensing_date', true); 
+		$last_appointment=$this -> input -> get_post('last_appointment_date', true); 
+		$patient=$this -> input -> get_post('patient', true);
+		$facility=$this -> session -> userdata('facility');
 		/*
 		$new_patient_visit=new Patient_Visit();
 		$new_patient_visit->Patient_Id=$this -> input -> get_post('patient', true);
@@ -78,6 +88,19 @@ class Dispensement_Management extends MY_Controller {
 		$new_patient_visit->Non_Adherence_Reason=$this -> input -> get_post('non_adherence_reasons', true);
 		$new_patient_visit->save();
 		*/
+		if(strtotime($dispensing_date)<strtotime($last_appointment)){
+			//Dispensing date is less than the appointment(update)
+			$sql="update patient_appointment set appointment='$next_appointment' where patient='$patient' and facility='$facility' and appointment='$last_appointment'";
+		    $this -> db -> query($sql);
+		}else{
+			//Dispensing date is equal to appointment date/Dispensing date is greater than the appointment(insert)
+		$new_appointment=new Patient_Appointment();
+		$new_appointment->Patient=$this -> input -> get_post('patient', true);
+		$new_appointment->Appointment=$this -> input -> get_post('next_appointment_date', true); 
+		$new_appointment->Facility=$this -> session -> userdata('facility');
+		$new_appointment->save();
+		}
+
           
 	}
 	public function save_edit() {

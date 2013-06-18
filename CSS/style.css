@@ -1284,7 +1284,6 @@ a {
 .red {
 	color: red;
 	font-style: italic;
-	font-size: 11px;
 }
 input[type='text'], input[type='email'], input[type='tel'], input[type='password'] {
 	height: 30px;
