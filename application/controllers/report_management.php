@@ -7,6 +7,7 @@ class report_management extends MY_Controller {
 		parent::__construct();
 		$this -> load -> database();
 		ini_set("max_execution_time", "1000000");
+		
 	}
 
 	public function index() {
@@ -21,6 +22,7 @@ class report_management extends MY_Controller {
 	public function patient_enrolled($from = "", $to = "",$supported_by = 0) {
 		//Variables
 		$facility_code = $this -> session -> userdata("facility");
+		
 		//art
 		$adult_male_art_outpatient = 0;
 		$adult_male_art_inpatient = 0;
@@ -776,8 +778,14 @@ class report_management extends MY_Controller {
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['to'] = date('d-M-Y', strtotime($to));
 		$data['title'] = "Reports";
+		$data['hide_side_menu']=1;
+		$data['banner_text']="Facility Reports";
+		$data['selected_report_type_link']="standard_report_row";
+		$data['selected_report_type']="Standard Reports";
+		$data['report_title']="Number of Patients Enrolled in Period";
+		$data['facility_name']=$this -> session -> userdata('facility_name');
 		$data['content_view']='reports/no_of_patients_enrolled_v';
-		$this -> load -> view('template_report', $data);
+		$this -> load -> view('template', $data);
 
 	}
 
@@ -812,7 +820,8 @@ class report_management extends MY_Controller {
 						<th> Appointment Date </th>
 						<th> Visit Status</th>
 					</tr>
-				</thead>";
+				</thead>
+				<tbody>";
 		if ($results) {
 			foreach ($results as $result) {
 				$patient = $result['patient'];
@@ -866,9 +875,9 @@ class report_management extends MY_Controller {
 			}
 
 		} else {
-			$row_string .= "<tr><td colspan='6'>No Data Available</td></tr>";
+			//$row_string .= "<tr><td colspan='8'>No Data Available</td></tr>";
 		}
-		$row_string .= "</table>";
+		$row_string .= "</tbody></table>";
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['to'] = date('d-M-Y', strtotime($to));
 		$data['dyn_table'] = $row_string;
@@ -877,8 +886,14 @@ class report_management extends MY_Controller {
 		$data['visited'] = $visited;
 		$data['all_count'] = $overall_total;
 		$data['title'] = "Reports";
+		$data['hide_side_menu']=1;
+		$data['banner_text']="Facility Reports";
+		$data['selected_report_type_link']="visiting_patient_report_row";
+		$data['selected_report_type']="Visiting Patients";
+		$data['report_title']="List of Patients Scheduled to Visit";
+		$data['facility_name']=$this -> session -> userdata('facility_name');
 		$data['content_view']='reports/patients_scheduled_v';
-		$this -> load -> view('template_report', $data);
+		$this -> load -> view('template', $data);
 	}
 
 	public function getPatientMissingAppointments($from = "", $to = "") {
@@ -891,7 +906,7 @@ class report_management extends MY_Controller {
 		$sql = "select patient,appointment from patient_appointment where appointment between '$from' and '$to' and facility='$facility_code' group by patient,appointment";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		$row_string .= "<table id='patient_listing' width='1200px'>
+		$row_string .= "<table id='patient_listing'>
 			<tr>
 				<th> ART ID </th>
 				<th> Patient Name</th>
@@ -1130,8 +1145,14 @@ class report_management extends MY_Controller {
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['to'] = date('d-M-Y', strtotime($to));
 		$data['title'] = "Reports";
+		$data['hide_side_menu']=1;
+		$data['banner_text']="Facility Reports";
+		$data['selected_report_type_link']="visiting_patient_report_row";
+		$data['selected_report_type']="Visiting Patients";
+		$data['report_title']="List of Patients Visited For Refill";
+		$data['facility_name']=$this -> session -> userdata('facility_name');
 		$data['content_view']='reports/patients_missing_appointments_v';
-		$this -> load -> view('template_report', $data);
+		$this -> load -> view('template', $data);
 	}
 
 	public function getPatientsStartedonDate($from = "", $to = "") {
@@ -1143,6 +1164,7 @@ class report_management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$row_string = "<table id='patient_listing' width='100%'>
+				<thead>
 				<tr>
 					<th> Patient No </th>
 					<th> Type of Service </th>
@@ -1152,7 +1174,9 @@ class report_management extends MY_Controller {
 					<th> Start Regimen Date </th>
 					<th> Regimen </th>
 					<th> Current Weight </th>
-				</tr>";
+				</tr>
+				</thead>
+				<tbody>";
 		if ($results) {
 			foreach ($results as $result) {
 				$patient_no = $result['art_no'];
@@ -1168,16 +1192,22 @@ class report_management extends MY_Controller {
 			}
 
 		} else {
-			$row_string .= "<tr><td colspan='8'>No Data Available</td></tr>";
+			//$row_string .= "<tr><td colspan='8'>No Data Available</td></tr>";
 		}
-		$row_string .= "</table>";
+		$row_string .= "</tbody></table>";
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['to'] = date('d-M-Y', strtotime($to));
 		$data['dyn_table'] = $row_string;
 		$data['all_count'] = $overall_total;
 		$data['title'] = "Reports";
+		$data['hide_side_menu']=1;
+		$data['banner_text']="Facility Reports";
+		$data['selected_report_type_link']="visiting_patient_report_row";
+		$data['selected_report_type']="Visiting Patients";
+		$data['report_title']="List of Patients Scheduled to Visit";
+		$data['facility_name']=$this -> session -> userdata('facility_name');
 		$data['content_view']='reports/patients_started_on_date_v';
-		$this -> load -> view('template_report', $data);
+		$this -> load -> view('template', $data);
 
 	}
 
@@ -1190,7 +1220,8 @@ class report_management extends MY_Controller {
 		$sql = "SELECT pv.patient_id as art_no,pv.dispensing_date, t.name AS service_type, s.name AS supported_by,UPPER(p.first_name) as first_name ,UPPER(p.other_name) as other_name ,UPPER(p.last_name)as last_name,ROUND(DATEDIFF('$today',p.dob)/360) as age, pv.current_weight as weight, IF(p.gender=1,'Male','Female')as gender, r.regimen_desc,r.regimen_code from patient_visit pv,patient p,supporter s,regimen_service_type t,regimen r where pv.dispensing_date between '$from' and '$to' and pv.patient_id=p.patient_number_ccc and s.id = p.supported_by and t.id = p.service and r.id = pv.regimen and pv.visit_purpose =  '2' and p.current_status =  '1' and pv.facility =  '$facility_code' and p.facility_code = pv.facility group by pv.patient_id,pv.dispensing_date";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		$row_string = "<table   id='patient_listing' width='1200px'>
+		$row_string = "<table   id='patient_listing'>
+			<thead>
 			<tr>
 				<th> Patient No </th>
 				<th> Type of Service </th>
@@ -1201,7 +1232,9 @@ class report_management extends MY_Controller {
 				<th> Regimen </th>
 				<th> Visit Date</th>
 				<th> Current Weight </th>
-			</tr>";
+			</tr>
+			</thead>
+			<tbody>";
 		if ($results) {
 			foreach ($results as $result) {
 				$patient_no = $result['art_no'];
@@ -1220,14 +1253,20 @@ class report_management extends MY_Controller {
 		} else {
 			$row_string .= "<tr><td colspan='6'>No Data Available</td></tr>";
 		}
-		$row_string .= "</table>";
+		$row_string .= "</tbody></table>";
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['to'] = date('d-M-Y', strtotime($to));
 		$data['dyn_table'] = $row_string;
 		$data['all_count'] = $overall_total;
 		$data['title'] = "Reports";
+		$data['hide_side_menu']=1;
+		$data['banner_text']="Facility Reports";
+		$data['selected_report_type_link']="visiting_patient_report_row";
+		$data['selected_report_type']="Visiting Patients";
+		$data['report_title']="List of Patients Visited For Refill";
+		$data['facility_name']=$this -> session -> userdata('facility_name');
 		$data['content_view']='reports/patients_for_refill_v';
-		$this -> load -> view('template_report', $data);
+		$this -> load -> view('template', $data);
 	}
 
 	public function getStartedonART($from = "", $to = "", $supported_by = 0) {
@@ -1369,8 +1408,14 @@ class report_management extends MY_Controller {
 		$data['to'] = date('d-M-Y', strtotime($to));
 		$data['dyn_table'] = $row_string;
 		$data['title'] = "Reports";
+		$data['hide_side_menu']=1;
+		$data['banner_text']="Facility Reports";
+		$data['selected_report_type_link']="standard_report_row";
+		$data['selected_report_type']="Standard Reports";
+		$data['report_title']="Number of Patients Started on ART in the Period";
+		$data['facility_name']=$this -> session -> userdata('facility_name');
 		$data['content_view']='reports/patients_started_on_art_v';
-		$this -> load -> view('template_report', $data);
+		$this -> load -> view('template', $data);
 	}
 
 	public function patient_active_byregimen($from = "2013-06-06") {
@@ -1499,9 +1544,14 @@ class report_management extends MY_Controller {
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['dyn_table'] = $row_string;
 		$data['title'] = "Reports";
-		$data['title'] = "Reports";
+		$data['hide_side_menu']=1;
+		$data['banner_text']="Facility Reports";
+		$data['selected_report_type_link']="standard_report_row";
+		$data['selected_report_type']="Standard Reports";
+		$data['report_title']="Number of Active Patients Receiving ART (by Regimen)";
+		$data['facility_name']=$this -> session -> userdata('facility_name');
 		$data['content_view']='reports/no_of_patients_receiving_art_byregimen_v';
-		$this -> load -> view('template_report', $data);
+		$this -> load -> view('template', $data);
 	}
 
 	public function cumulative_patients($from = "2013-06-06") {
@@ -1712,8 +1762,14 @@ class report_management extends MY_Controller {
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['dyn_table'] = $row_string;
 		$data['title'] = "Reports";
+		$data['hide_side_menu']=1;
+		$data['banner_text']="Facility Reports";
+		$data['selected_report_type_link']="standard_report_row";
+		$data['selected_report_type']="Standard Reports";
+		$data['report_title']="Cumulative Number of Patients to Date";
+		$data['facility_name']=$this -> session -> userdata('facility_name');
 		$data['content_view']='reports/cumulative_patients_v';
-		$this -> load -> view('template_report', $data);
+		$this -> load -> view('template', $data);
 	}
 
 	public function drug_consumption($year="2012"){
@@ -2114,14 +2170,150 @@ class report_management extends MY_Controller {
 		}
 	}
 
-	public function commodity_summary($start_date,$end_date){
+	public function commodity_summary($start_date="",$end_date=""){
 		$facility_code = $this -> session -> userdata('facility');
 		$data['facility_name']=$this -> session -> userdata('facility_name');
 		$get_facility_sql=$this->db->query("SELECT '$facility_code' as facility,d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id where d.Enabled=1");
 		
 	}
+	
+	public function patients_who_changed_regimen($start_date="",$end_date=""){
+		$facility_code = $this -> session -> userdata('facility');
+		$patient_sql = $this->db->query("SELECT DISTINCT p.patient_number_ccc,UPPER(p.first_name) as first_name,UPPER(p.other_name) as other_name ,UPPER(p.last_name) as last_name, p.service, pv.dispensing_date, r1.regimen_desc AS current_regimen, r2.regimen_desc AS last_regimen, pv.comment, pv.regimen_change_reason FROM patient p LEFT JOIN patient_visit pv ON pv.patient_id = p.patient_number_ccc LEFT JOIN regimen r1 ON r1.id = pv.regimen LEFT JOIN regimen r2 ON r2.id = pv.last_regimen WHERE pv.last_regimen !=  '' AND pv.regimen != pv.last_regimen AND DATE( pv.dispensing_date ) BETWEEN DATE('" .$start_date. "' ) AND DATE( '" .$end_date. "' ) AND p.current_status =  '1' AND pv.facility =  '" .$facility_code. "' AND pv.facility=p.facility_code ORDER BY last_regimen");
+		$data['patients']=$patient_sql->result_array();
+		$data['total']=count($data['patients']);
+		$data['from']=$start_date;
+		$data['to']=$end_date;
+		$data['title'] = "Reports";
+		$data['hide_side_menu']=1;
+		$data['banner_text']="Facility Reports";
+		$data['selected_report_type_link']="early_warning_report_select";
+		$data['selected_report_type']="Early Warning Indicators";
+		$data['report_title']="Active Patients who Have Changed Regimens";
+		$data['facility_name']=$this -> session -> userdata('facility_name');
+		$data['content_view']='reports/patients_who_changed_regimen_v';
+		$this -> load -> view('template', $data);
+	}
+	
+	public function patients_starting($start_date="",$end_date=""){
+		$facility_code = $this -> session -> userdata('facility');
+		$patient_sql = $this->db->query("SELECT distinct r.regimen_desc AS Regimen,p.first_name As First,p.last_name AS Last,p.patient_number_ccc AS Patient_Id FROM patient p LEFT JOIN regimen r ON r.id = p.start_regimen WHERE DATE(p.start_regimen_date) between DATE('".$start_date."') and DATE('".$end_date."') and p.facility_code='".$facility_code."' ORDER BY Patient_Id DESC");
+		$data['patients']=$patient_sql->result_array();
+		$data['total']=count($data['patients']);
+		$data['from']=$start_date;
+		$data['to']=$end_date;
+		$data['title'] = "Reports";
+		$data['hide_side_menu']=1;
+		$data['banner_text']="Facility Reports";
+		$data['selected_report_type_link']="early_warning_report_select";
+		$data['selected_report_type']="Early Warning Indicators";
+		$data['report_title']="List of Patients Starting (By Regimen)";
+		$data['facility_name']=$this -> session -> userdata('facility_name');
+		$data['content_view']='reports/patients_starting_v';
+		$this -> load -> view('template', $data);
+	}
+
+	public function early_warning_indicators($start_date="",$end_date=""){
+		$facility_code = $this -> session -> userdata('facility');
+		$tot_patients_sql=$this->db->query("SELECT COUNT( * ) AS Total_Patients FROM patient p WHERE DATE(start_regimen_date) between DATE('".$start_date."') and  DATE('".$end_date."') and p.facility_code='".$facility_code."' AND p.service=1");
+		$tot_patients=0;
+		$patients=$tot_patients_sql->result_array();
+		foreach ($patients as $value) {
+			$tot_patients=$value['Total_Patients'];
+		}
+		$first_line_sql=$this->db->query("SELECT COUNT( * ) AS First_Line FROM patient p LEFT JOIN regimen r ON r.id = p.start_regimen WHERE DATE(p.start_regimen_date) between DATE('".$start_date. "') and DATE('".$end_date."') AND r.line=1 AND p.facility_code='".$facility_code."' AND p.service=1");
+		$first_line=0;
+		$first_line_array=$first_line_sql->result_array();
+		foreach ($first_line_array as $value) {
+			$first_line=$value['First_Line'];
+		}
+        $percentage_firstline=0;
+        $percentage_onotherline=0;
+        if($tot_patients==0){
+    		$percentage_firstline=0;
+			$percentage_onotherline=0;	
+		}
+		else{
+			$percentage_firstline=($first_line/$total_patients)*100;
+			$percentage_onotherline=100-$percentage_firstline;	
+		}
+		
+		
+		//Gets patients started 12 months from selected period
+		$to_date="";
+		$future_date="";
+		$patient_from_period_sql=$this->db->query("SELECT COUNT( * ) AS Total_Patients FROM patient p LEFT JOIN regimen r ON r.id = p.start_regimen WHERE DATE(p.start_regimen_date) BETWEEN DATE('".$to_date."') and DATE('".$future_date."') and p.facility_code='".$facility_code."'");
+		$total_from_period_array=$patient_from_period_sql->result_array();
+		$total_from_period=0;
+		foreach ($total_from_period_array as $value) {
+			$total_from_period=$value['Total_Patients'];
+		}
+		
+		$from_date=$start_date;
+		$future_date=$end_date;
+		$stil_in_first_line=0;
+		$first_line_patient_from_period_sql=$this->db->query("SELECT COUNT( * ) AS Total_Patients FROM patient p LEFT JOIN regimen r ON r.id=p.current_regimen WHERE DATE(p.start_regimen_date) between DATE('".$from_date."') and DATE('".$future_date."')and r.line=1 and p.facility_code='".$facility_code."'");
+		$first_line_patient_from_period_array=$first_line_patient_from_period_sql->result_array();
+		foreach ($first_line_patient_from_period_array as $row) {
+			$stil_in_first_line=$row['Total_Patients'];
+		}
+		if($total_from_period==0 || $stil_in_first_line==0){
+			$percentage_stillfirstline=0;
+			
+		}else{
+			$percentage_stillfirstline=($stil_in_first_line/$total_from_period)*100;	
+		}	
+		
+		
+		$prevFrom=$start_date;
+		$prevTo=$end_date;
+		$patients_before_sql=$this->db->query("SELECT COUNT( * ) AS Total_Patients FROM patient p WHERE DATE(p.start_regimen_date) between DATE('".$prevFrom."') and DATE('".$prevTo. "') and p.facility_code='" .$facility_code."' AND p.service=1");
+		$patients_before_array=$patients_before_sql->result_array();
+		$total_before_period=0;
+		foreach ($patients_before_array as $row1) {
+			$total_before_period=$row1['Total_Patients'];
+		}
+		
+		$patient_lost_followup_sql=$this->db->query("SELECT COUNT( * ) AS Total_Patients FROM patient p LEFT JOIN patient_status ps ON ps.id = p.current_status WHERE DATE(p.status_change_date) between DATE('".$prevFrom."') and DATE('".$prevTo."') AND p.current_status=5 AND p.facility_code='".$facility_code."'");
+		$patient_lost_followup_array=$patient_lost_followup_sql->result_array();
+		$lost_to_follow=0;
+		foreach ($patient_lost_followup_array as $row2) {
+			$lost_to_follow=$row2['Total_Patients'];
+		}
+		if($lost_to_follow==0 || $total_before_period==0 ){
+			$percentage_lost_to_follow=0;	
+		}
+		else{
+			$percentage_lost_to_follow=($lost_to_follow/$total_before_period)*100;
+		}
+		$data['from']=$start_date;
+		$data['to']=$end_date;
+		
+		$data['tot_patients']=$tot_patients;
+		$data['first_line']=number_format($first_line,1);
+		$data['percentage_firstline']=$percentage_firstline;
+		$data['percentage_onotherline']=$percentage_onotherline;
+		
+		$data['total_from_period']=$total_from_period;
+		$data['stil_in_first_line']=$stil_in_first_line;
+		$data['percentage_stillfirstline']=number_format($percentage_stillfirstline,1);
+		
+		$data['total_before_period']=$total_before_period;
+		$data['lost_to_follow']=$lost_to_follow;
+		$data['percentage_lost_to_follow']=number_format($percentage_lost_to_follow,1);
+		$data['title'] = "Reports";
+		$data['hide_side_menu']=1;
+		$data['banner_text']="Facility Reports";
+		$data['selected_report_type_link']="early_warning_report_select";
+		$data['selected_report_type']="Early Warning Indicators";
+		$data['report_title']="HIV Early Warning Indicators";
+		$data['facility_name']=$this -> session -> userdata('facility_name');
+		$data['content_view']='reports/early_warning_indicators_v';
+		$this -> load -> view('template', $data);
+	}
 
 	public function base_params($data) {
+		$data['reports']=true;
 		$data['title'] = "Reports";
 		$data['banner_text'] = "Facility Reports";
 		$this -> load -> view('template', $data);
