@@ -117,7 +117,7 @@ $(document).ready(function() {
 				alert("Please select a report type ! ");
 			}
 			else{
-				var report ="'"+<?php echo base_url() ?>+"report_management/"+$("#selected_report").attr("value")+"'";
+				var report =<?php echo "'".base_url() ?>+"report_management/"+$("#selected_report").attr("value")+"'";
 				var from = $("#date_range_from").attr("value");
 				var to = $("#date_range_to").attr("value");
 				var report_url = report + "?start_date=" + from + "&end_date=" + to+"&stock_type="+stock_type;;

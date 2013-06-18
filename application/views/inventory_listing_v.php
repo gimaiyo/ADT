@@ -3,6 +3,41 @@
 		margin-top:1.5%;
 	}
 </Style>
+<?php
+if(isset($this->session->userdata("inventory_go_back"))){
+	
+	if($this->session->userdata("inventory_go_back")=="store_table"){
+		?>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$("#pharmacy_btn").removeClass();
+				$("#store_btn").addClass("active");
+				$("#pharmacy_table").hide();
+				$("#pharmacy_table_wrapper").hide();
+				$("#store_table").show();
+				$("#store_table_wrapper").show();
+			});
+		</script>
+		
+		<?php
+	}
+	else if($this->session->userdata("inventory_go_back")=="store_table"){
+		?>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$("#store_btn").removeClass();
+				$("#pharmacy_btn").addClass("active");
+				$("#store_table").hide();
+				$("#store_table_wrapper").hide();
+				$("#pharmacy_table").show();
+				$("#pharmacy_table_wrapper").show();
+			});
+		</script>
+		
+		<?php
+	}
+}
+?>
 <script type="text/javascript">
 	
 	$(document).ready( function () {

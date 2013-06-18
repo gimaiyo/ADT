@@ -280,7 +280,9 @@ if ($access_level == "system_administrator") {
 					autoOpen : false,
 					modal : true
 				});
+				
 			})
+			
 		</script>
 		
 		
@@ -303,11 +305,11 @@ if ($access_level == "system_administrator") {
 					    <b class="caret"></b>
 					    </a>
 					    <ul class="dropdown-menu" id="standard_report_sub">
-					      <li><a href="#" id="patients_enrolled_in_period" class="report donor_date_range_report active_report">Number of Patients Enrolled in Period</a></li>
-					      <li><a href="#" id="patients_enrolled_in_art" class="report donor_date_range_report active_report">Number of Patients Started on ART in the Period</a></li>
+					      <li><a href="#" id="patient_enrolled" class="report donor_date_range_report active_report">Number of Patients Enrolled in Period</a></li>
+					      <li><a href="#" id="getStartedonART" class="report donor_date_range_report active_report">Number of Patients Started on ART in the Period</a></li>
 					      <li><a href="#" id="graph_patients_enrolled_in_year" class="report active_report annual_report">Graph of Number of Patients Enrolled Per Month in a Given Year</a></li>
 					      <li><a href="#" id="cumulative_patients" class="report active_report single_date_report">Cumulative Number of Patients to Date</a></li>
-					      <li><a href="#" id="patients_on_ART_active" class="report active_report single_date_report">Number of Active Patients Receiving ART (by Regimen)</a></li>
+					      <li><a href="#" id="patient_active_byregimen" class="report active_report single_date_report">Number of Active Patients Receiving ART (by Regimen)</a></li>
 					    </ul>
 					  </li>
 					  <li class="dropdown divider-vertical" id="visiting_patient">
@@ -317,9 +319,9 @@ if ($access_level == "system_administrator") {
 					    </a>
 					     <ul class="dropdown-menu" id="visiting_patient_sub">
 					      <li><a href="#" id="getScheduledPatients" class="report active_report date_range_report">List of Patients Scheduled to Visit</a></li>
-					      <li><a href="#" id="patients_started_on_date" class="report active_report date_range_report">List of Patients Started (on a Particular Date)</a></li>
-					      <li><a href="#" id="patients_visitied_for_refill" class="report active_report date_range_report">List of Patients Visited for Refill</a></li>
-					      <li><a href="#" id="patients_missing_appointments" class="report active_report date_range_report">Patients Missing Appointments</a></li>
+					      <li><a href="#" id="getPatientsStartedonDate" class="report active_report date_range_report">List of Patients Started (on a Particular Date)</a></li>
+					      <li><a href="#" id="getPatientsforRefill" class="report active_report date_range_report">List of Patients Visited for Refill</a></li>
+					      <li><a href="#" id="getPatientMissingAppointments" class="report active_report date_range_report">Patients Missing Appointments</a></li>
 					      <li><a href="#" id="patients_adherence" class="report active_report date_range_report">Patients Adherence Report</a></li>
 					    </ul>
 					  </li>
