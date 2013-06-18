@@ -2,7 +2,6 @@
 class report_management extends MY_Controller {
 	
 	var $counter = 0;
-	
 	function __construct() {
 		parent::__construct();
 		$this -> load -> database();
@@ -887,6 +886,134 @@ class report_management extends MY_Controller {
 		$row_string = "";
 		$overall_total = 0;
 		$facility_code = $this -> session -> userdata("facility");
+		
+		$adult_male_art_outpatient=0;
+		$adult_male_art_inpatient=0;
+		$adult_male_art_transferin=0;
+		$adult_male_art_casualty=0;
+		$adult_male_art_transit=0;
+		$adult_male_art_htc=0;
+		$adult_male_art_other=0;
+		
+		$child_male_art_outpatient=0;
+		$child_male_art_inpatient=0;
+		$child_male_art_transferin=0;
+		$child_male_art_casualty=0;
+		$child_male_art_transit=0;
+		$child_male_art_htc=0;
+		$child_male_art_other=0;
+		
+		$adult_female_art_outpatient=0;
+		$adult_female_art_inpatient=0;
+		$adult_female_art_transferin=0;
+		$adult_female_art_casualty=0;
+		$adult_female_art_transit=0;
+		$adult_female_art_htc=0;
+		$adult_female_art_other=0;
+		
+		$child_female_art_outpatient=0;
+		$child_female_art_inpatient=0;
+		$child_female_art_transferin=0;
+		$child_female_art_casualty=0;
+		$child_female_art_transit=0;
+		$child_female_art_htc=0;
+		$child_female_art_other=0;
+		
+		$adult_male_pep_outpatient=0;
+		$adult_male_pep_inpatient=0;
+		$adult_male_pep_transferin=0;
+		$adult_male_pep_casualty=0;
+		$adult_male_pep_transit=0;
+		$adult_male_pep_htc=0;
+		$adult_male_pep_other=0;
+		
+		$child_male_pep_outpatient=0;
+		$child_male_pep_inpatient=0;
+		$child_male_pep_transferin=0;
+		$child_male_pep_casualty=0;
+		$child_male_pep_transit=0;
+		$child_male_pep_htc=0;
+		$child_male_pep_other=0;
+		
+		$adult_female_pep_outpatient=0;
+		$adult_female_pep_inpatient=0;
+		$adult_female_pep_transferin=0;
+		$adult_female_pep_casualty=0;
+		$adult_female_pep_transit=0;
+		$adult_female_pep_htc=0;
+		$adult_female_pep_other=0;
+		
+		$child_female_pep_outpatient=0;
+		$child_female_pep_inpatient=0;
+		$child_female_pep_transferin=0;
+		$child_female_pep_casualty=0;
+		$child_female_pep_transit=0;
+		$child_female_pep_htc=0;
+		$child_female_pep_other=0;
+		
+		$adult_male_pmtct_outpatient=0;
+		$adult_male_pmtct_inpatient=0;
+		$adult_male_pmtct_transferin=0;
+		$adult_male_pmtct_casualty=0;
+		$adult_male_pmtct_transit=0;
+		$adult_male_pmtct_htc=0;
+		$adult_male_pmtct_other=0;
+		
+		$child_male_pmtct_outpatient=0;
+		$child_male_pmtct_inpatient=0;
+		$child_male_pmtct_transferin=0;
+		$child_male_pmtct_casualty=0;
+		$child_male_pmtct_transit=0;
+		$child_male_pmtct_htc=0;
+		$child_male_pmtct_other=0;
+		
+		$adult_female_pmtct_outpatient=0;
+		$adult_female_pmtct_inpatient=0;
+		$adult_female_pmtct_transferin=0;
+		$adult_female_pmtct_casualty=0;
+		$adult_female_pmtct_transit=0;
+		$adult_female_pmtct_htc=0;
+		$adult_female_pmtct_other=0;
+		
+		$child_female_pmtct_outpatient=0;
+		$child_female_pmtct_inpatient=0;
+		$child_female_pmtct_transferin=0;
+		$child_female_pmtct_casualty=0;
+		$child_female_pmtct_transit=0;
+		$child_female_pmtct_htc=0;
+		$child_female_pmtct_other=0;
+		
+		$adult_male_oi_outpatient=0;
+		$adult_male_oi_inpatient=0;
+		$adult_male_oi_transferin=0;
+		$adult_male_oi_casualty=0;
+		$adult_male_oi_transit=0;
+		$adult_male_oi_htc=0;
+		$adult_male_oi_other=0;
+		
+		$child_male_oi_outpatient=0;
+		$child_male_oi_inpatient=0;
+		$child_male_oi_transferin=0;
+		$child_male_oi_casualty=0;
+		$child_male_oi_transit=0;
+		$child_male_oi_htc=0;
+		$child_male_oi_other=0;
+		
+		$adult_female_oi_outpatient=0;
+		$adult_female_oi_inpatient=0;
+		$adult_female_oi_transferin=0;
+		$adult_female_oi_casualty=0;
+		$adult_female_oi_transit=0;
+		$adult_female_oi_htc=0;
+		$adult_female_oi_other=0;
+		
+		$child_female_oi_outpatient=0;
+		$child_female_oi_inpatient=0;
+		$child_female_oi_transferin=0;
+		$child_female_oi_casualty=0;
+		$child_female_oi_transit=0;
+		$child_female_oi_htc=0;
+		$child_female_oi_other=0;
 
 		$sql = "select patient,appointment from patient_appointment where appointment between '$from' and '$to' and facility='$facility_code' group by patient,appointment";
 		$query = $this -> db -> query($sql);
@@ -1029,37 +1156,37 @@ class report_management extends MY_Controller {
 		$data['child_female_pmtct_htc'] = $child_female_pmtct_htc;
 		$data['child_female_pmtct_other'] = $child_female_pmtct_other;
 
-		$data['adult_male_oi_outpatient'] = $adult_male_oi_outpatient;
-		$data['adult_male_oi_inpatient'] = $adult_male_oi_inpatient;
-		$data['adult_male_oi_transferin'] = $adult_male_oi_transferin;
-		$data['adult_male_oi_casualty'] = $adult_male_oi_casualty;
-		$data['adult_male_oi_transit'] = $adult_male_oi_transit;
-		$data['adult_male_oi_htc'] = $adult_male_oi_htc;
-		$data['adult_male_oi_other'] = $adult_male_oi_other;
+		$data['adult_male_oi_outpatient'] = @$adult_male_oi_outpatient;
+		$data['adult_male_oi_inpatient'] = @$adult_male_oi_inpatient;
+		$data['adult_male_oi_transferin'] = @$adult_male_oi_transferin;
+		$data['adult_male_oi_casualty'] = @$adult_male_oi_casualty;
+		$data['adult_male_oi_transit'] = @$adult_male_oi_transit;
+		$data['adult_male_oi_htc'] = @$adult_male_oi_htc;
+		$data['adult_male_oi_other'] = @$adult_male_oi_other;
 
-		$data['child_male_oi_outpatient'] = $child_male_oi_outpatient;
-		$data['child_male_oi_inpatient'] = $child_male_oi_inpatient;
-		$data['child_male_oi_transferin'] = $child_male_oi_transferin;
-		$data['child_male_oi_casualty'] = $child_male_oi_casualty;
-		$data['child_male_oi_transit'] = $child_male_oi_transit;
-		$data['child_male_oi_htc'] = $child_male_oi_htc;
-		$data['child_male_oi_other'] = $child_male_oi_other;
+		$data['child_male_oi_outpatient'] = @$child_male_oi_outpatient;
+		$data['child_male_oi_inpatient'] = @$child_male_oi_inpatient;
+		$data['child_male_oi_transferin'] = @$child_male_oi_transferin;
+		$data['child_male_oi_casualty'] = @$child_male_oi_casualty;
+		$data['child_male_oi_transit'] = @$child_male_oi_transit;
+		$data['child_male_oi_htc'] = @$child_male_oi_htc;
+		$data['child_male_oi_other'] = @$child_male_oi_other;
 
-		$data['adult_female_oi_outpatient'] = $adult_female_oi_outpatient;
-		$data['adult_female_oi_inpatient'] = $adult_female_oi_inpatient;
-		$data['adult_female_oi_transferin'] = $adult_female_oi_transferin;
-		$data['adult_female_oi_casualty'] = $adult_female_oi_casualty;
-		$data['adult_female_oi_transit'] = $adult_female_oi_transit;
-		$data['adult_female_oi_htc'] = $adult_female_oi_htc;
-		$data['adult_female_oi_other'] = $adult_female_oi_other;
+		$data['adult_female_oi_outpatient'] = @$adult_female_oi_outpatient;
+		$data['adult_female_oi_inpatient'] = @$adult_female_oi_inpatient;
+		$data['adult_female_oi_transferin'] = @$adult_female_oi_transferin;
+		$data['adult_female_oi_casualty'] = @$adult_female_oi_casualty;
+		$data['adult_female_oi_transit'] = @$adult_female_oi_transit;
+		$data['adult_female_oi_htc'] = @$adult_female_oi_htc;
+		$data['adult_female_oi_other'] = @$adult_female_oi_other;
 
-		$data['child_female_oi_outpatient'] = $child_female_oi_outpatient;
-		$data['child_female_oi_inpatient'] = $child_female_oi_inpatient;
-		$data['child_female_oi_transferin'] = $child_female_oi_transferin;
-		$data['child_female_oi_casualty'] = $child_female_oi_casualty;
-		$data['child_female_oi_transit'] = $child_female_oi_transit;
-		$data['child_female_oi_htc'] = $child_female_oi_htc;
-		$data['child_female_oi_other'] = $child_female_oi_other;
+		$data['child_female_oi_outpatient'] = @$child_female_oi_outpatient;
+		$data['child_female_oi_inpatient'] = @$child_female_oi_inpatient;
+		$data['child_female_oi_transferin'] = @$child_female_oi_transferin;
+		$data['child_female_oi_casualty'] = @$child_female_oi_casualty;
+		$data['child_female_oi_transit'] = @$child_female_oi_transit;
+		$data['child_female_oi_htc'] = @$child_female_oi_htc;
+		$data['child_female_oi_other'] = @$child_female_oi_other;
 
 		//Totals for Service Lines(Adult Male)
 		$data['total_adult_male_art'] = $adult_male_art_outpatient + $adult_male_art_inpatient + $adult_male_art_transferin + $adult_male_art_casualty + $adult_male_art_transit + $adult_male_art_htc + $adult_male_art_other;
@@ -1130,6 +1257,7 @@ class report_management extends MY_Controller {
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['to'] = date('d-M-Y', strtotime($to));
 		$data['title'] = "Reports";
+		$data['dyn_table']=$row_string;
 		$data['content_view']='reports/patients_missing_appointments_v';
 		$this -> load -> view('template_report', $data);
 	}
