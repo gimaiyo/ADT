@@ -1357,3 +1357,15 @@ legend {
 	text-align:right;
 }
 
+#dispensing_history{
+	height:300px;
+	overflow: scroll;
+	font-size:0.8em;
+}
+table#history_table{
+	font-size:1.3em;
+}
+table#history_table th{
+	background-color:#CCC;
+}
+

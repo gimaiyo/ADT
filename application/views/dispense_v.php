@@ -8,6 +8,18 @@ foreach($results as $result){
 <html lang="en" >
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<style>
+			table#drugs_table input{
+				font-size:0.8em;
+				height:25px;
+				width:100%;
+			}
+			table#drugs_table select{
+				font-size:0.8em;
+				height:25px;
+			}
+
+		</style>
 		<script type="text/javascript">
 			$(document).ready(function() {
 				$("#patient").val("<?php echo $result['patient_number_ccc'];?>");
@@ -107,6 +119,27 @@ foreach($results as $result){
 			 
 			 //Dynamically change the list of drugs once a current regimen is selected
 			$("#current_regimen").change(function() {
+			   var selected_regimen=$(this).val();
+			   var _url="<?php echo base_url().'dispensement_management/getDrugsRegimens'; ?>";
+			   //Get drugs
+			   var request=$.ajax({
+			     url: _url,
+			     type: 'post',
+			     data: {"selected_regimen":selected_regimen},
+			     dataType: "json"
+			    });
+			    request.done(function(data){
+			    	$(".drug option").remove();
+			    	$(".drug").append($("<option value='0'>-Select Drug-</option>"));
+			    	$.each(data,function(key,value){
+			    		$(".drug").append($("<option value='"+value.id+"'>"+value.drug+"</option>"));
+			    	});
+			    });
+			    request.fail(function(jqXHR, textStatus) {
+				  alert( "Could not retrieve drug details : " + textStatus );
+				});
+			   
+			
 			   var regimen = $("#current_regimen option:selected").attr("value");
 			   var last_regimen = $("#last_regimen").attr("value");
 			   if(last_regimen != 0) {
@@ -126,6 +159,116 @@ foreach($results as $result){
 				}	
 			});
 			
+			//Drug selection change
+			$(".drug").change(function(){
+				$(".batch option").remove();
+				$(".batch").append($("<option value='0'>Loading ...</option>"));
+				var row=$(this);
+				var selected_drug=$(this).val();
+				var stock_type="2";
+				//Get batches that have not yet expired and have stock balance
+				var _url="<?php echo base_url().'inventory_management/getBacthes'; ?>";
+				
+				var request=$.ajax({
+			     url: _url,
+			     type: 'post',
+			     data: {"selected_drug":selected_drug,"stock_type":stock_type},
+			     dataType: "json"
+			    });
+			    request.done(function(data){
+			    	row.closest("tr").find(".batch option").remove();
+			    	$.each(data,function(key,value){
+			    		row.closest("tr").find(".unit").val(value.Name);
+			    		//alert(value.drug);
+			    		row.closest("tr").find(".batch").append("<option value='"+value.batch_number+"'>"+value.batch_number+"</option> ");
+			    		row.closest("tr").find(".dose").val(value.dose);
+			    	});
+			    	var new_url="<?php echo base_url().'dispensement_management/getBrands'; ?>";
+			    	
+			    	var request_brand=$.ajax({
+				     url: new_url,
+				     type: 'post',
+				     data: {"selected_drug":selected_drug},
+				     dataType: "json"
+				    });
+				    
+				    request_brand.done(function(data){
+				    	row.closest("tr").find(".brand option").remove();
+				    	row.closest("tr").find(".brand").append("<option value='0'>None</option> ");
+				    	$.each(data,function(key,value){
+				    		//alert(value.drug);
+				    		row.closest("tr").find(".brand").append("<option value='"+value.id+"'>"+value.brand+"</option> ");
+				   		});
+				    	
+				    });
+				    request_brand.fail(function(jqXHR, textStatus) {
+					  alert( "Could not retrieve the list of brands : " + textStatus );
+					});
+					
+					var url_dose="<?php echo base_url().'dispensement_management/getDoses'; ?>";
+					//Get doses
+					var request_dose=$.ajax({
+				     url: url_dose,
+				     type: 'post',
+				     dataType: "json"
+				    });
+				    request_dose.done(function(data){
+				    	row.closest("tr").find(".dose_1 option").remove();
+				    	row.closest("tr").find(".dose_1").append("<option value='0'>None</option> ");
+				    	$.each(data,function(key,value){
+				    		alert(value.Name);
+				    		row.closest("tr").find(".dose_1").append("<option value='"+value.id+"'>"+value.Name+"</option> ");
+				   		});
+				    	
+				    });
+					
+			    });
+			    request.fail(function(jqXHR, textStatus) {
+				  alert( "Could not retrieve the list of batches : " + textStatus );
+				});
+			});
+			
+			//Batch change
+			$(".batch").change(function(){
+				//resetFields($(this));
+				var row=$(this);
+				
+				//Get batch details(balance,expiry date)
+				if($(this).val()!=0){
+					var batch_selected=$(this).val();
+					var stock_type="2";
+					var selected_drug=row.closest("tr").find(".drug").val();
+					var _url="<?php echo base_url().'inventory_management/getBacthDetails'; ?>";
+					var request=$.ajax({
+				     url: _url,
+				     type: 'post',
+				     data: {"selected_drug":selected_drug,"stock_type":stock_type,"batch_selected":batch_selected},
+				     dataType: "json"
+				    });
+				    
+				    request.done(function(data){
+				    	$.each(data,function(key,value){
+				    		row.closest("tr").find(".expiry").val(value.expiry_date);
+				    		row.closest("tr").find(".soh ").val(value.balance);
+				    		
+				    	});
+				    });
+				    request.fail(function(jqXHR, textStatus) {
+					  alert( "Could not retrieve batch details : " + textStatus );
+					});
+					
+				}
+			});
+			
+		 function resetFields(row){
+			row.closest("tr").find(".pack").val("");
+			row.closest("tr").find(".quantity").val("");
+			row.closest("tr").find(".expiry").val("");
+			row.closest("tr").find(".quantity_available").val("");
+			row.closest("tr").find(".unit_cost").val("");
+			row.closest("tr").find("#total_amount").val("");
+		}
+		
 		 function retrieveAppointedPatients(){
           	$("#scheduled_patients").html("");
 			$('#scheduled_patients').hide();
@@ -343,63 +486,69 @@ foreach($results as $result){
 
 				<div class="content-rowy">
 					<table border="0" class="data-table" id="drugs_table" style="">
-					<th class="subsection-title" colspan="14">Select Drugs</th>
-					<tr>
-					<th>Drug</th>
-					<th>Unit</th>
-					<th >Batch No.&nbsp;</th>
-					<th>Expiry&nbsp;Date</th>
-					<th>Dose</th>
-					<th>Duration</th>
-					<th>Qty. disp</th>
-					<th>Brand Name</th>
-					<th>Stock on Hand</th>
-					<th>Indication</th>
-					<th>Pill Count</th>
-					<th>Comment</th>
-					<th>Missed Pills</th>
-					<th style="">Action</th>
-					</tr>
-					<tr drug_row="0">
-					<td><select name="drug" class="drug"  style=" "></select></td>
-					<td>
-					<input type="text" name="unit" class="unit small_text" style="" />
-					</td>
-					<td><select name="batch" class="batch" style=""></select></td>
-					<td>
-					<input type="text" name="expiry" name="expiry" class="expiry" id="expiry_date"  size="15"/>
-					</td>
-					<td>
-					<input list="dose" name="dose" style="" class="dose small_text icondose">
-					<datalist id="dose" ></datalist></td>
-					<td>
-					<input type="text" name="duration" class="duration small_text" />
-					</td>
-					<td>
-					<input type="text" name="qty_disp" class="qty_disp small_text" />
-					</td>
-					<td><select name="brand" class="brand small_text"></select></td>
-					<td>
-					<input type="text" name="soh" class="soh small_text" disabled="disabled"/>
-					</td>
-					<td>
-					<select name="indication" class="indication" style="">
-					<option value="0">None</option>
-					</select></td>
-					<td>
-					<input type="text" name="pill_count" class="pill_count small_text" />
-					</td>
-					<td>
-					<input type="text" name="comment" class="comment small_text" />
-					</td>
-					<td>
-					<input type="text" name="missed_pills" class="missed_pills small_text" />
-					</td>
-					<td>
-					<input type="button" class="add button" value="+" style=""/>
-					<input type="button" class="remove button" value="-" style=""/>
-					</td>
-					</tr>
+						<thead>
+							<th class="subsection-title" colspan="14">Select Drugs</th>
+							<tr>
+							<th>Drug</th>
+							<th>Unit</th>
+							<th >Batch No.&nbsp;</th>
+							<th>Expiry&nbsp;Date</th>
+							<th>Dose</th>
+							<th>Duration</th>
+							<th>Qty. disp</th>
+							<th>Brand Name</th>
+							<th>Stock on Hand</th>
+							<th>Indication</th>
+							<th>Pill Count</th>
+							<th>Comment</th>
+							<th>Missed Pills</th>
+							<th style="">Action</th>
+							</tr>
+							<tr drug_row="0">
+							<td><select name="drug" class="drug input-small"  style=" "></select></td>
+							<td>
+							<input type="text" name="unit" class="unit input-small" style="" />
+							</td>
+							<td><select name="batch" class="batch input-small" style=""></select></td>
+							<td>
+							<input type="text" name="expiry" name="expiry" class="expiry input-small" id="expiry_date"  size="15"/>
+							</td>
+							<td>
+							<input list="dose" name="dose" style="" class="dose input-small icondose">
+							<datalist id="dose" ></datalist>
+							<select name="dose_1" class="dose_1 input-small"></select>
+							</td>
+							<td>
+							<input type="text" name="duration" class="duration input-small" />
+							</td>
+							<td>
+							<input type="text" name="qty_disp" class="qty_disp input-small" />
+							</td>
+							<td><select name="brand" class="brand input-small"></select></td>
+							<td>
+							<input type="text" name="soh" class="soh input-small" disabled="disabled"/>
+							</td>
+							<td>
+							<select name="indication" class="indication input-small" style="">
+							<option value="0">None</option>
+							</select></td>
+							<td>
+							<input type="text" name="pill_count" class="pill_count input-small" />
+							</td>
+							<td>
+							<input type="text" name="comment" class="comment input-small" />
+							</td>
+							<td>
+							<input type="text" name="missed_pills" class="missed_pills input-small" />
+							</td>
+							<td>
+							
+							<input type="button" class="add btn-small" value="Add" style="padding:1px;"/>
+							<input type="button" class="remove btn-small" value="Remove" style="padding:1px;"/>
+							</td>
+							</tr>
+						</thead>
+					
 					</table>
 				
 				</div>

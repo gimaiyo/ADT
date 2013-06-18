@@ -3,17 +3,32 @@ if (!isset($quick_link)) {
 	$quick_link = null;
 }
 ?>
-
+<script>
+	$(document).ready(function(){
+		$("#regimen_btn").click(function(){
+			$("#regimens").toggle();
+		})
+		$("#drugs_btn").click(function(){
+			$("#drugs").toggle();
+		})
+		$("#clients_btn").click(function(){
+			$("#clients").toggle();
+		})
+		$("#facility_btn").click(function(){
+			$("#facility").toggle();
+		})
+	})
+</script>
 
 <div class="container-fluid">
 
 	<div class="span4 well" >
 		<div class="btn-toolbar ">
 			<div class="btn-group">
-				<button  class="btn dropdown-toggle btn-xlarge " data-toggle="dropdown" style="font-size:1.3em" >
+				<button id="regimen_btn"  class="btn dropdown-toggle btn-xlarge " data-toggle="dropdown" style="font-size:1.3em" >
 					Regimens <span class="caret">
 				</button>
-				<ul class="dropdown-menu" style="width:100%; font-size:1em">
+				<ul id="regimens" class="dropdown-menu" style=" font-size:1em">
 					<li>
 						<a href="<?php echo site_url("regimen_management"); ?>" class="<?php
 						if ($quick_link == "regimen") {echo "top_menu_active";
@@ -38,10 +53,10 @@ if (!isset($quick_link)) {
 
 		<div class="btn-toolbar ">
 			<div class="btn-group">
-				<button  class="btn dropdown-toggle btn-xlarge " data-toggle="dropdown" style="font-size:1.3em" >
+				<button id="drugs_btn"  class="btn dropdown-toggle btn-xlarge " data-toggle="dropdown" style="font-size:1.3em" >
 					Drugs <span class="caret">
 				</button>
-				<ul class="dropdown-menu" style="width:100%; font-size:1em">
+				<ul id="drugs" class="dropdown-menu" style="font-size:1em">
 					<li>
 						<a href="<?php echo site_url("drugcode_management"); ?>">Drug Codes</a>
 					</li>
@@ -76,10 +91,10 @@ if (!isset($quick_link)) {
 
 		<div class="btn-toolbar ">
 			<div class="btn-group">
-				<button  class="btn dropdown-toggle btn-xlarge " data-toggle="dropdown" style="font-size:1.3em" >
+				<button id="clients_btn" class="btn dropdown-toggle btn-xlarge " data-toggle="dropdown" style="font-size:1.3em" >
 					Clients <span class="caret">
 				</button>
-				<ul class="dropdown-menu" style="width:100%; font-size:1em">
+				<ul id="clients" class="dropdown-menu" style="font-size:1em">
 					<li>
 						<a href="<?php echo site_url("client_management"); ?>" class="<?php
 						if ($quick_link == "client_sources") {echo "top_menu_active";
@@ -126,10 +141,10 @@ if (!isset($quick_link)) {
 		</div>
 		<div class="btn-toolbar">
 			<div class="btn-group">
-				<button  class="btn dropdown-toggle btn-xlarge " data-toggle="dropdown" style="font-size:1.3em" >
+				<button id="facility_btn" class="btn dropdown-toggle btn-xlarge " data-toggle="dropdown" style="font-size:1.3em" >
 					Facility <span class="caret">
 				</button>
-				<ul class="dropdown-menu" style="width:100%; font-size:1em">
+				<ul id="facility" class="dropdown-menu" style="font-size:1em">
 					<li>
 						<a href="<?php echo site_url("facility_management"); ?>" class="<?php
 						if ($quick_link == "facility_info") {echo "top_menu_active";

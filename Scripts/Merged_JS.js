@@ -8,8 +8,7 @@ $(document).ready(function() {
 
 	});
 
-});
-
+});  
 /**
  * End of datatables settings
  */
@@ -114,6 +113,8 @@ $(document).ready(function() {
 			  function () {
 			     $("#synchronize_button").hide();
 			  });
+			  
+			  
 		});//End .ready opener
 	function checkSync() {
 		var url = "";
@@ -152,5 +153,6 @@ $(document).ready(function() {
     	});
 	}
 	
-	    	
+	
+  	
 		     

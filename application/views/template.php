@@ -67,6 +67,9 @@ if (isset($styles)) {
 ?> 
 
 <script>
+
+
+
 		$(document).ready(function() {
 	<?php 
 			if($user_is_pharmacist){

@@ -49,6 +49,27 @@ class Dispensement_Management extends MY_Controller {
 		$data['hide_side_menu']=1;
 		$this -> base_params($data);
 	}
+
+	public function getDrugsRegimens(){
+		$regimen_id=$this->input->post('selected_regimen');
+		$get_drugs_sql=$this->db->query("SELECT DISTINCT(d.id),d.drug FROM drugcode d LEFT JOIN regimen_drug rd ON d.id=rd.drugcode LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id  WHERE dsb.balance>0 AND dsb.expiry_date>CURDATE() AND rd.regimen='".$regimen_id."'");
+		$get_drugs_array=$get_drugs_sql->result_array();
+		echo json_encode($get_drugs_array);
+		
+	}
+
+	public function getBrands(){
+		$drug_id=$this->input->post("selected_drug");
+		$get_drugs_sql=$this->db->query("SELECT DISTINCT id,brand FROM brand WHERE drug_id='".$drug_id."' AND brand!=''");
+		$get_drugs_array=$get_drugs_sql->result_array();
+		echo json_encode($get_drugs_array);
+	}
+	
+	public function getDoses(){
+		$get_doses_sql=$this->db->query("SELECT id,Name FROM dose WHERE Active='1'");
+		$get_doses_array=$get_doses_sql->result_array();
+		echo json_encode($get_doses_array);
+	}
 	
 	public function edit($record_no){
 		$facility_code=$this -> session -> userdata('facility');

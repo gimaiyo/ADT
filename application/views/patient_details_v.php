@@ -1,18 +1,22 @@
 <?php
-foreach($results as $result){
-	
+if(isset($results)){
+	foreach($results as $result){
+		
+	}
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+		
 		<script type="text/javascript">
 		$(document).ready(function(){
 			
 			//Function to Check Patient Numner exists
 			var base_url="<?php echo base_url();?>";
-			var patient_identification="<?php echo $result['patient_number_ccc'];?>";
-			var record_id="<?php echo $result['id'];?>";
+			var patient_identification="<?php echo @$result['patient_number_ccc'];?>";
+			var record_id="<?php echo @$result['id'];?>";
 		    $("#patient_number").change(function(){
 				var patient_no=$("#patient_number").val();
 				var link=base_url+"patient_management/checkpatient_no/"+patient_no;
@@ -904,7 +908,7 @@ foreach($results as $result){
 					<legend>
 						Dispensing History
 					</legend>
-					<table border="0" class="data-table sortable" id="history_table" >
+					<table border="1" class="table-bordered table-hover sortable" id="history_table" >
 						<thead>
 							<tr id="table-header">
 								<th>Date</th>
