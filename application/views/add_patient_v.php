@@ -245,7 +245,7 @@
 	</head>
 
 	<body>
-		<div class="center-content">
+		<div class="full-content" style="background:#80f26d">
 			<h3>Patient Registration
 			<div style="float:right;margin:5px 40px 0 0;">
 				(Fields Marked with <b><span class='astericks'>*</span></b> Asterisks are required)
@@ -375,7 +375,7 @@
 						</legend>
 						<div class="max-row">
 							<label  id="tstatus"> Partner Status</label>
-							<select name="partner_status" id="partner_status" style="width:300px">
+							<select name="partner_status" id="partner_status">
 								<option value="0" selected="selected">No Partner</option>
 								<option value="1" > Concordant</option>
 								<option value="2" > Discordant</option>
@@ -393,7 +393,7 @@
 						</div>
 						<div class="max-row">
 							<label>Family Planning Method</label>
-							<select name="family_planning" id="family_planning" multiple="multiple" style="width:350px;" >
+							<select name="family_planning" id="family_planning" multiple="multiple" style="width:200px;" >
 								<?php
 								    foreach($family_planning as $fplan){
 										echo "<option value='".$fplan['indicator']."'>".$fplan['name']."</option>";
@@ -404,7 +404,7 @@
 						</div>
 						<div class="max-row">
 							<label>Does Patient have other Chronic illnesses</label>
-							<select name="other_illnesses" id="other_illnesses"  multiple="multiple" style="width:350px;">
+							<select name="other_illnesses" id="other_illnesses"  multiple="multiple" style="width:200px;">
 								<?php
 								    foreach($other_illnesses as $other_illness){
 										echo "<option value='".$other_illness['indicator']."'>".$other_illness['name']."</option>";
@@ -533,7 +533,7 @@
 						</div>
 						<div id="patient_source_listing" class="max-row" style="display:none;">
 							<label> Transfer From</label>
-							<select name="transfer_source" id="transfer_source" style="width:350px;">
+							<select name="transfer_source" id="transfer_source" style="width:200px;">
 							<option value="">--Select--</option>
 								<?php
 								    foreach($facilities as $facility){
@@ -567,7 +567,7 @@
 						</div>
 						<div class="max-row">
 							<label id="start_of_regimen"><span class='astericks'>*</span>Start Regimen </label>
-							<select name="regimen" id="regimen" class="validate[required] start_regimen" style="width:350px;">
+							<select name="regimen" id="regimen" class="validate[required] start_regimen" >
 								<option value=" ">--Select One--</option>
 								
 							</select>

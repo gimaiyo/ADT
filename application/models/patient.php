@@ -51,6 +51,7 @@ class Patient extends Doctrine_Record {
 		$this -> hasColumn('Start_Weight', 'varchar', 20);
 		$this -> hasColumn('Start_Bsa', 'varchar', 20);
 		$this -> hasColumn('Transfer_From', 'varchar',100);
+		$this -> hasColumn('Active', 'int',5);
 	}
 
 	public function setUp() {

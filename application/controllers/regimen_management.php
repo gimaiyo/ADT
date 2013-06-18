@@ -23,7 +23,7 @@ class Regimen_management extends MY_Controller {
 		$data['scripts'] = array("jquery-ui.js");
 		
 		$regimens = Regimen::getAllHydrated($source,$access_level);
-		$tmpl = array ( 'table_open'  => '<table id="regimen_setting" class="setting_table">' );
+		$tmpl = array ( 'table_open'  => '<table id="regimen_setting" class="table table-bordered setting_table">' );
 		$this -> table ->set_template($tmpl);
 		$this -> table -> set_heading('id', 'Regimen Code', 'Regimen Desc', 'Line', 'Regimen Category', 'Type Of Service', 'Options');
 		
@@ -36,18 +36,19 @@ class Regimen_management extends MY_Controller {
 			if($type_of_service!="ART" && $access_level!="system_administrator"){
 				if($regimen['Enabled'] == 1){
 					$links .= anchor('' . $regimen['id'], 'Edit', array('class' => 'edit_user','id'=>$regimen['id']));
-					$links .= " | ";
+					
 				}
 				
 			}
 			elseif($access_level=="system_administrator"){
 				if($regimen['Enabled'] == 1){
 					$links .= anchor('regimen_management/edit/' . $regimen['id'], 'Edit', array('class' => 'edit_user','id'=>$regimen['id']));
-					$links .= " | ";
+					
 				}
 			}
 			
 			if ($regimen['Enabled'] == 1 && $regimen['Merged_To']) {
+				$links .= " | ";
 				$links .= anchor('regimen_management/disable/' . $regimen['id'], 'Disable', array('class' => 'disable_user'));
 		
 			} 

@@ -76,7 +76,7 @@ class Users extends Doctrine_Record {
 	public static function getUser($id) {
 		$query = Doctrine_Query::create() -> select("*") -> from("Users") -> where("id = '$id'");
 		$user = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
-		return $user;
+		return $user[0];
 	}
 	
 	public static function getUserDetail($id) {

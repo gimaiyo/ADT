@@ -39,7 +39,7 @@
 		<hr size="1" style="width:80%">
 		<table align='center'  width='20%' style="font-size:16px; margin-bottom: 20px">
 			<tr>
-				<td colspan="2"><h5 class="report_title" style="text-align:center;font-size:14px;">Number of patients: <span id="total_count"><?php echo $all_count;?></span></h5></td>
+				<td colspan="2"><h5 class="report_title" style="text-align:center;font-size:14px;">Number of patients: <span id="total_count"><?php echo $overall_total;?></span></h5></td>
 			</tr>
 		</table>
 		<div id="appointment_list">

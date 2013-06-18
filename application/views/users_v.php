@@ -353,7 +353,7 @@ foreach($actions as $action){
 					<td></td>
 				</tr>
 				<tr>
-					<td align="left" colspan="3"><input type="submit" value="Save" id="btn_save_user" class=" btn btn-primary"/></td>
+					<td align="left" colspan="3"><input type="submit" value="Save" id="btn_save_user" class=" btn"/></td>
 				</tr>
 			</table>
 			
@@ -422,7 +422,7 @@ foreach($actions as $action){
 						</select>
 					</td>
 				</tr>
-				<tr><td align="left" colspan="3"><input type="submit" value="Save" id="btn_save_edit_user" class=" btn btn-primary"/></td></tr>
+				<tr><td align="left" colspan="3"><input type="submit" value="Save" id="btn_save_edit_user" class="btn"/></td></tr>
 			</table>
 			</form>
 		</div>
