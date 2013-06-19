@@ -252,6 +252,9 @@ foreach($results as $result){
 			
 			//Batch change
 			$(".batch").change(function(){
+				if($(this).prop("selectedIndex")>1){
+			   		alert("THIS IS NOT THE FIRST EXPIRING BATCH");
+			   	}
 				//resetFields($(this));
 				var row=$(this);
 				
@@ -418,7 +421,7 @@ foreach($results as $result){
 		     
 		     //Function to post data to the server
 		     function saveData(){
-		     	
+		     	$("#btn_submit").attr("disabled","disabled");
 		     	var facility=<?php echo $facility ?>;
 		     	var timestamp = new Date().getTime();
 		     	var user=<?php echo $user?>;
