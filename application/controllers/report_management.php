@@ -1272,6 +1272,7 @@ class report_management extends MY_Controller {
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['to'] = date('d-M-Y', strtotime($to));
 		$data['title'] = "Reports";
+		$data['dyn_table']=$row_string;
 		$data['hide_side_menu']=1;
 		$data['banner_text']="Facility Reports";
 		$data['selected_report_type_link']="visiting_patient_report_row";

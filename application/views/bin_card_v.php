@@ -97,7 +97,7 @@
 								foreach ($batch_info as $batch) {
 									$drug_name=$batch['drug'];
 								?>
-								<tr><td><?php echo $batch['drug'] ?></td><td><?php echo $batch['pack_size'] ?></td><td><?php echo $batch['batch_number'] ?></td><td><?php echo $batch['balance'] ?></td><td><?php echo $batch['expiry_date'] ?></td></tr>	
+								<tr><td><?php echo $batch['drug'] ?></td><td><?php echo $batch['pack_size'] ?></td><td><?php echo $batch['batch_number'] ?></td><td><?php echo $batch['balance'] ?></td><td><?php echo date('d-M-Y',strtotime($batch['expiry_date'])) ?></td></tr>	
 								<?php
 								}
 								?>
@@ -129,7 +129,7 @@
 						?>
 							<tr>
 								<td><?php echo  $drug_transaction->Order_Number ?></td>
-								<td><?php echo  $drug_transaction->Transaction_Date ?></td>
+								<td><?php echo date('d-M-Y',strtotime($drug_transaction->Transaction_Date))  ?></td>
 								<?php
 								$transaction_type=$drug_transaction->Transaction_Object->Name;
 								
@@ -190,7 +190,7 @@
 								?>
 								<td><?php echo $transaction_type;  ?></td>
 								<td><?php echo  $drug_transaction->Batch_Number ?></td>
-								<td><?php echo  $drug_transaction->Expiry_date ?></td>
+								<td><?php echo date('d-M-Y',strtotime($drug_transaction->Expiry_date))  ?></td>
 								<td><?php echo  $drug_transaction->Drug_Object->Pack_Size ?></td>
 								<td><?php echo  $drug_transaction->Packs ?></td>
 								<td><?php echo  $qty ?></td>

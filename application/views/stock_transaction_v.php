@@ -837,7 +837,8 @@
 		</div>
 	
 		<div id="submit_section">
-			<input type="reset " class="btn" value="Reset" /><input type="button" class="btn" id="btn_submit" value="Submit" />
+			<input type="reset" class="btn" id="reset" value="Reset Fields" />
+			<input type="button" class="btn" id="btn_submit" value="Submit" />
 		</div>
 	</form>
 </div>

@@ -10,57 +10,81 @@ if($this->session->userdata("inventory_go_back")){
 		?>
 		<script type="text/javascript">
 			$(document).ready(function(){
+				$('#store_table').dataTable( {
+					"bProcessing": true,
+					"bServerSide": true,
+					"sAjaxSource": "inventory_management/main_store_stock",
+			        "bJQueryUI": true,
+			        "sPaginationType": "full_numbers"
+				} );
+				$('#pharmacy_table').dataTable( {
+					"bProcessing": true,
+					"bServerSide": true,
+					"sAjaxSource": "inventory_management/pharmacy_store_stock",
+			        "bJQueryUI": true,
+			        "sPaginationType": "full_numbers"
+				} );
+				
 				$("#pharmacy_btn").removeClass();
 				$("#store_btn").addClass("active");
 				$("#pharmacy_table").hide();
 				$("#pharmacy_table_wrapper").hide();
 				$("#store_table").show();
 				$("#store_table_wrapper").show();
+				
 			});
 		</script>
 		
 		<?php
 	}
-	else if($this->session->userdata("inventory_go_back")=="store_table"){
+	else if($this->session->userdata("inventory_go_back")=="pharmacy_table"){
 		?>
 		<script type="text/javascript">
-			$(document).ready(function(){
+				$(document).ready(function(){
+					$('#store_table').dataTable( {
+						"bProcessing": true,
+						"bServerSide": true,
+						"sAjaxSource": "inventory_management/main_store_stock",
+				        "bJQueryUI": true,
+				        "sPaginationType": "full_numbers"
+					} );
+					$('#pharmacy_table').dataTable( {
+						"bProcessing": true,
+						"bServerSide": true,
+						"sAjaxSource": "inventory_management/pharmacy_store_stock",
+				        "bJQueryUI": true,
+				        "sPaginationType": "full_numbers"
+					} );
+				
 				$("#store_btn").removeClass();
 				$("#pharmacy_btn").addClass("active");
 				$("#store_table").hide();
-				$("#store_table_wrapper").hide();
+				$("#store_table_wrapper").css("display","none");
 				$("#pharmacy_table").show();
 				$("#pharmacy_table_wrapper").show();
+				
 			});
 		</script>
 		
 		<?php
+	}
+	else{
+		?>
+		<script type="text/javascript">
+		$(document).ready( function () {
+			$("#pharmacy_table_wrapper").css("display","none");
+			$("#pharmacy_table").css("display","none");
+			
+		});
+		</script>
+		<?php
+		
 	}
 }
 ?>
 <script type="text/javascript">
 	
 	$(document).ready( function () {
-		
-		$('#store_table').dataTable( {
-			"bProcessing": true,
-			"bServerSide": true,
-			"sAjaxSource": "inventory_management/main_store_stock",
-	        "bJQueryUI": true,
-	        "sPaginationType": "full_numbers"
-		} );
-		$('#pharmacy_table').dataTable( {
-			"bProcessing": true,
-			"bServerSide": true,
-			"sAjaxSource": "inventory_management/pharmacy_store_stock",
-	        "bJQueryUI": true,
-	        "sPaginationType": "full_numbers"
-		} );
-		
-		$("#pharmacy_table_wrapper").css("display","none");
-		$("#pharmacy_table").css("display","none");
-		
-		
 		$("#store_btn").click(function(){
 			$("#pharmacy_btn").removeClass();
 			$(this).addClass("active");
@@ -158,7 +182,7 @@ if ($access_level == "facility_administrator") {
 			<li id="store_btn" class="active"><a  href="#">Store Inventory</a> </li>   
 			<li id="pharmacy_btn"><a  href="#">Pharmacy Inventory</a></li>   
 		</ul> 
-		<table id="store_table" class="table table-bordered table-striped listing_table" style="font-size:0.8em">
+		<table id="store_table" class="table table-hover table-bordered table-striped listing_table" style="font-size:0.8em">
 			<thead>
 				<tr>
 					<th style="min-width: 280px">Commodity</th><th>Generic Name</th><th>QTY/SOH</th><th>Unit</th><th>Pack Size</th><th>Supporter</th><th>Dose</th><th style="width: 250px">Action</th>
@@ -167,7 +191,7 @@ if ($access_level == "facility_administrator") {
 			<tbody>
 			</tbody>
 		</table>
-		<table id="pharmacy_table" class="table table-bordered table-striped listing_table" style="font-size:0.8em">
+		<table id="pharmacy_table" class="table table-hover table-bordered table-striped listing_table" style="font-size:0.8em">
 			<thead>
 				<tr>
 					<th style="min-width: 280px">Commodity</th><th>Generic Name</th><th>QTY/SOH</th><th>Unit</th><th>Pack Size</th><th>Supporter</th><th>Dose</th><th style="width: 250px">Action</th>

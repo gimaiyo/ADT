@@ -372,7 +372,7 @@ table.data-table caption {
 	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
 	font-size: 14px;
 }
-table.data-table th {
+table.data-table th,table#history_table th {
 	border: none;
 	color: #036;
 	text-align: center;
@@ -1115,6 +1115,10 @@ html > body #main_manualcontent li a {
 	width: 30%;
 	margin: auto;
 }
+.column-5 {
+	width: 50%;
+	margin: auto;
+}
 .column fieldset, .column-2 fieldset, .column-3 fieldset {
 	padding: 5%;
 	width: 90%
@@ -1284,7 +1288,6 @@ a {
 .red {
 	color: red;
 	font-style: italic;
-	font-size: 11px;
 }
 input[type='text'], input[type='email'], input[type='tel'], input[type='password'] {
 	height: 30px;
@@ -1360,5 +1363,14 @@ table#history_table{
 	font-size:1.3em;
 }
 table#history_table th{
-	background-color:#CCC;
+	background-color:#F5F5F5;
+}
+table#history_table td{
+	font-size:0.8em;
+}
+#submit_section{
+	text-align:right;
+}
+.add,.remove{
+	cursor:pointer;
 }
