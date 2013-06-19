@@ -14,11 +14,11 @@ class Patient_Management extends MY_Controller {
 		$this -> base_params($data);
 		//$this -> listing();
 	}
-    public function details() {
+
+	public function details() {
 		$data['content_view'] = "patient_details_v";
-		$data['hide_side_menu']=1;
+		$data['hide_side_menu'] = 1;
 		$this -> base_params($data);
-		//$this -> listing();
 	}
 
 	public function addpatient_show() {
@@ -196,26 +196,26 @@ class Patient_Management extends MY_Controller {
 	}
 
 	public function viewDetails($record_no) {
-		$patient="";
-		$facility="";
+		$patient = "";
+		$facility = "";
 		$sql = "select * from patient where id='$record_no'";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
 			$data['results'] = $results;
-			$patient=$results[0]['patient_number_ccc'];
-			$facility=$this->session->userdata("facility");
+			$patient = $results[0]['patient_number_ccc'];
+			$facility = $this -> session -> userdata("facility");
 		}
 		//Patient History
-		$sql="SELECT pv.dispensing_date, v.name as visit,d.unit,pv.dose,pv.duration,pv.indication,pv.id as record,d.drug,pv.quantity,pv.current_weight,pv.current_height,r.regimen_desc,pv.batch_number,pv.pill_count,pv.adherence,pv.user,pv.regimen_change_reason FROM patient_visit pv LEFT JOIN drugcode d ON pv.drug_id = d.id LEFT JOIN visit_purpose v ON pv.visit_purpose = v.id LEFT JOIN regimen r ON pv.regimen=r.id WHERE pv.patient_id ='$patient' AND pv.facility ='$facility' ORDER BY dispensing_date DESC";
+		$sql = "SELECT pv.dispensing_date, v.name as visit,d.unit,pv.dose,pv.duration,pv.indication,pv.id as record,d.drug,pv.quantity,pv.current_weight,pv.current_height,r.regimen_desc,pv.batch_number,pv.pill_count,pv.adherence,pv.user,pv.regimen_change_reason FROM patient_visit pv LEFT JOIN drugcode d ON pv.drug_id = d.id LEFT JOIN visit_purpose v ON pv.visit_purpose = v.id LEFT JOIN regimen r ON pv.regimen=r.id WHERE pv.patient_id ='$patient' AND pv.facility ='$facility' ORDER BY dispensing_date DESC";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		if($results){
-		$data['history_logs']=$results;	
-		}else{
-		$data['history_logs']="";	
+		if ($results) {
+			$data['history_logs'] = $results;
+		} else {
+			$data['history_logs'] = "";
 		}
-		
+
 		$data['districts'] = District::getPOB();
 		$data['genders'] = Gender::getAll();
 		$data['statuses'] = Patient_Status::getStatus();
@@ -260,7 +260,7 @@ class Patient_Management extends MY_Controller {
 
 		$family_planning = "";
 		$other_illness_listing = "";
-		$patient="";
+		$patient = "";
 
 		$family_planning = $this -> input -> post('family_planning', TRUE);
 		if ($family_planning == null) {
@@ -272,10 +272,10 @@ class Patient_Management extends MY_Controller {
 		}
 		$other_chronic = $this -> input -> post('other_chronic', TRUE);
 		if ($other_chronic != "") {
-			if($other_illness_listing){
-			$other_illness_listing = $other_illness_listing . "," . $other_chronic;
-		    }else{
-		    $other_illness_listing = $other_chronic;	
+			if ($other_illness_listing) {
+				$other_illness_listing = $other_illness_listing . "," . $other_chronic;
+			} else {
+				$other_illness_listing = $other_chronic;
 			}
 		}
 
@@ -330,9 +330,9 @@ class Patient_Management extends MY_Controller {
 		$new_patient -> Current_Regimen = $this -> input -> post('regimen', TRUE);
 		$new_patient -> Start_Regimen_Date = $this -> input -> post('service_started', TRUE);
 		$new_patient -> save();
-		
-		$patient=$this -> input -> post('patient_number', TRUE);
-        
+
+		$patient = $this -> input -> post('patient_number', TRUE);
+
 		if ($_POST['save'] == "Submit") {
 			redirect("patient_management");
 		} else if ($_POST['save'] == "Dispense") {
@@ -343,28 +343,28 @@ class Patient_Management extends MY_Controller {
 	public function update($record_id) {
 		$family_planning = "";
 		$other_illness_listing = "";
-		$prev_appointment="";
-		$facility="";
-		$patient="";
-		
+		$prev_appointment = "";
+		$facility = "";
+		$patient = "";
+
 		//Check if appointment exists
-		$prev_appointment=$this -> input -> post('prev_appointment_date', TRUE);
-		$appointment=$this -> input -> post('next_appointment_date', TRUE);
-		$facility=$this->session->userdata('facility');
-		$patient=$this -> input -> post('patient_number', TRUE);
-		$sql="select * from patient_appointment where patient='$patient' and appointment='$prev_appointment' and facility='$facility'";
-		$query=$this->db->query($sql);
-		$results=$query->result_array();
-		if($results){
-			$record_no=$results[0]['id'];
+		$prev_appointment = $this -> input -> post('prev_appointment_date', TRUE);
+		$appointment = $this -> input -> post('next_appointment_date', TRUE);
+		$facility = $this -> session -> userdata('facility');
+		$patient = $this -> input -> post('patient_number', TRUE);
+		$sql = "select * from patient_appointment where patient='$patient' and appointment='$prev_appointment' and facility='$facility'";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			$record_no = $results[0]['id'];
 			//If exisiting appointment(Update new Record)
-			$sql="update patient_appointment set appointment='$appointment',patient='$patient',facility='$facility' where id='$record_no'";
-		}else{
+			$sql = "update patient_appointment set appointment='$appointment',patient='$patient',facility='$facility' where id='$record_no'";
+		} else {
 			//If no appointment(Insert new record)
-			$sql="insert patient_appointment(patient,appointment,facility)VALUES('$patient','$appointment','$facility')";
+			$sql = "insert patient_appointment(patient,appointment,facility)VALUES('$patient','$appointment','$facility')";
 		}
-        $this->db->query($sql);
-		
+		$this -> db -> query($sql);
+
 		$family_planning = $this -> input -> post('family_planning_holder', TRUE);
 		if ($family_planning == null) {
 			$family_planning = "";
@@ -375,17 +375,17 @@ class Patient_Management extends MY_Controller {
 		}
 		$other_chronic = $this -> input -> post('other_chronic', TRUE);
 		if ($other_chronic != "") {
-			if($other_illness_listing){
-			$other_illness_listing = $other_illness_listing . "," . $other_chronic;
-		    }else{
-		    $other_illness_listing = $other_chronic;	
+			if ($other_illness_listing) {
+				$other_illness_listing = $other_illness_listing . "," . $other_chronic;
+			} else {
+				$other_illness_listing = $other_chronic;
 			}
 		}
-		
-		$data = array('Medical_Record_Number' => $this -> input -> post('medical_record_number', TRUE), 'Patient_Number_CCC' => $this -> input -> post('patient_number', TRUE), 'First_Name' => $this -> input -> post('first_name', TRUE), 'Last_Name' => $this -> input -> post('last_name', TRUE), 'Other_Name' => $this -> input -> post('other_name', TRUE), 'Dob' => $this -> input -> post('dob', TRUE), 'Pob' => $this -> input -> post('pob', TRUE), 'Gender' => $this -> input -> post('gender', TRUE), 'Pregnant' => $this -> input -> post('pregnant', TRUE), 'Start_Weight' => $this -> input -> post('start_weight', TRUE), 'Start_Height' => $this -> input -> post('start_height', TRUE), 'Start_Bsa' => $this -> input -> post('start_bsa', TRUE), 'Weight' => $this -> input -> post('current_weight', TRUE), 'Height' => $this -> input -> post('current_height', TRUE), 'Sa' => $this -> input -> post('current_bsa', TRUE), 'Phone' => $this -> input -> post('phone', TRUE), 'SMS_Consent' => $this -> input -> post('sms_consent', TRUE), 'Physical' => $this -> input -> post('physical', TRUE), 'Alternate' => $this -> input -> post('alternate', TRUE), 'Partner_Status' => $this -> input -> post('partner_status', TRUE), 'Disclosure' => $this -> input -> post('disclosure', TRUE), 'Fplan' => $family_planning, 'Other_Illnesses' => $other_illness_listing, 'Other_Drugs' => $this -> input -> post('other_drugs', TRUE), 'Adr' => $this -> input -> post('other_allergies_listing', TRUE), 'Smoke' => $this -> input -> post('smoke', TRUE), 'Alcohol' => $this -> input -> post('alcohol', TRUE), 'Tb' => $this -> input -> post('tb', TRUE), 'Tbphase' => $this -> input -> post('tbphase', TRUE), 'Startphase' => $this -> input -> post('fromphase', TRUE), 'Endphase' => $this -> input -> post('tophase', TRUE), 'Date_Enrolled' => $this -> input -> post('enrolled', TRUE),'Current_Status'=>$this -> input -> post('current_status', TRUE),'Status_Change_Date' => $this -> input -> post('status_started', TRUE), 'Source' => $this -> input -> post('source', TRUE),'Transfer_From'=>$this -> input -> post('transfer_source', TRUE) ,'Supported_By' => $this -> input -> post('support', TRUE), 'Facility_Code' => $this -> session -> userdata('facility'), 'Service' => $this -> input -> post('service', TRUE), 'Start_Regimen' => $this -> input -> post('regimen', TRUE), 'Start_Regimen_Date' => $this -> input -> post('service_started', TRUE),'Current_Regimen'=>$this -> input -> post('current_regimen', TRUE),'Nextappointment'=>$this -> input -> post('next_appointment_date', TRUE));
+
+		$data = array('Medical_Record_Number' => $this -> input -> post('medical_record_number', TRUE), 'Patient_Number_CCC' => $this -> input -> post('patient_number', TRUE), 'First_Name' => $this -> input -> post('first_name', TRUE), 'Last_Name' => $this -> input -> post('last_name', TRUE), 'Other_Name' => $this -> input -> post('other_name', TRUE), 'Dob' => $this -> input -> post('dob', TRUE), 'Pob' => $this -> input -> post('pob', TRUE), 'Gender' => $this -> input -> post('gender', TRUE), 'Pregnant' => $this -> input -> post('pregnant', TRUE), 'Start_Weight' => $this -> input -> post('start_weight', TRUE), 'Start_Height' => $this -> input -> post('start_height', TRUE), 'Start_Bsa' => $this -> input -> post('start_bsa', TRUE), 'Weight' => $this -> input -> post('current_weight', TRUE), 'Height' => $this -> input -> post('current_height', TRUE), 'Sa' => $this -> input -> post('current_bsa', TRUE), 'Phone' => $this -> input -> post('phone', TRUE), 'SMS_Consent' => $this -> input -> post('sms_consent', TRUE), 'Physical' => $this -> input -> post('physical', TRUE), 'Alternate' => $this -> input -> post('alternate', TRUE), 'Partner_Status' => $this -> input -> post('partner_status', TRUE), 'Disclosure' => $this -> input -> post('disclosure', TRUE), 'Fplan' => $family_planning, 'Other_Illnesses' => $other_illness_listing, 'Other_Drugs' => $this -> input -> post('other_drugs', TRUE), 'Adr' => $this -> input -> post('other_allergies_listing', TRUE), 'Smoke' => $this -> input -> post('smoke', TRUE), 'Alcohol' => $this -> input -> post('alcohol', TRUE), 'Tb' => $this -> input -> post('tb', TRUE), 'Tbphase' => $this -> input -> post('tbphase', TRUE), 'Startphase' => $this -> input -> post('fromphase', TRUE), 'Endphase' => $this -> input -> post('tophase', TRUE), 'Date_Enrolled' => $this -> input -> post('enrolled', TRUE), 'Current_Status' => $this -> input -> post('current_status', TRUE), 'Status_Change_Date' => $this -> input -> post('status_started', TRUE), 'Source' => $this -> input -> post('source', TRUE), 'Transfer_From' => $this -> input -> post('transfer_source', TRUE), 'Supported_By' => $this -> input -> post('support', TRUE), 'Facility_Code' => $this -> session -> userdata('facility'), 'Service' => $this -> input -> post('service', TRUE), 'Start_Regimen' => $this -> input -> post('regimen', TRUE), 'Start_Regimen_Date' => $this -> input -> post('service_started', TRUE), 'Current_Regimen' => $this -> input -> post('current_regimen', TRUE), 'Nextappointment' => $this -> input -> post('next_appointment_date', TRUE));
 		$this -> db -> where('id', $record_id);
 		$this -> db -> update('patient', $data);
-		
+
 		redirect("patient_management/viewDetails/$record_id");
 	}
 
@@ -598,23 +598,115 @@ ORDER BY p.patient_number_ccc ASC";
 	}
 
 	public function enable($id) {
-      $sql="update patient set active='1' where id='$id'";
-	  $this->db->query($sql);
-	  redirect("patient_management");
+		$sql = "update patient set active='1' where id='$id'";
+		$this -> db -> query($sql);
+		redirect("patient_management");
 	}
 
 	public function disable($id) {
-      $sql="update patient set active='0' where id='$id'";
-	  $this->db->query($sql);
-	  redirect("patient_management");
+		$sql = "update patient set active='0' where id='$id'";
+		$this -> db -> query($sql);
+		redirect("patient_management");
 	}
-	
-	public function getAppointments($appointment=""){
-      $results="";
-	  $sql="select count(distinct(patient)) as total_appointments,weekend_max,weekday_max from patient_appointment pa,facilities f  where pa.appointment = '$appointment' and f.facilitycode=pa.facility";
-      $query = $this -> db -> query($sql);
-	  $results = $query -> result_array();
-	  echo json_encode($results);	
+
+	public function getAppointments($appointment = "") {
+		$results = "";
+		$sql = "select count(distinct(patient)) as total_appointments,weekend_max,weekday_max from patient_appointment pa,facilities f  where pa.appointment = '$appointment' and f.facilitycode=pa.facility";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		echo json_encode($results);
+	}
+
+	public function getSixMonthsDispensing($patient_no) {
+		$facility = $this -> session -> userdata("facility");
+		$dyn_table = "";
+		$sql = "select * from patient_visit pv left join drugcode d on d.id=pv.drug_id left join dose ds on ds.Name=pv.dose where patient_id = '$patient_no' and datediff(curdate(),dispensing_date)<=180 and datediff(curdate(),dispensing_date)>0 and pv.facility='$facility' order by pv.dispensing_date desc";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			foreach ($results as $result) {
+				if ($result['pill_count'] == "") {
+					$result['pill_count'] = "-";
+				}
+				if ($result['missed_pills'] == "") {
+					$result['missed_pills'] = "-";
+				}
+				if ($result['missed_pills'] <= 0) {
+					$self_reporting = "100%";
+				} else if ($result['missed_pills'] <= 3 && $result['missed_pills'] > 0) {
+					$self_reporting = "≥95%";
+				} else if ($result['missed_pills'] >= 4 && $result['missed_pills'] <= 8) {
+					$self_reporting = "84-94%";
+				} else if ($result['missed_pills'] >= 9) {
+					$self_reporting = "<85%";
+				}
+				if ($result['adherence'] == "") {
+					$result['adherence'] = "-";
+				}
+
+				$dyn_table .= "<tbody><tr><td>" . date('d-M-Y', strtotime($result['dispensing_date'])) . "</td><td>" . $result['drug'] . "</td><td align='center'>" . $result['quantity'] . "</td><td align='center'>" . $result['pill_count'] . "</td><td align='center'>" . $result['quantity'] . "</td><td align='center'>" . $result['missed_pills'] . "</td><td align='center'>" . $result['adherence'] . "</td><td align='center'>" . $self_reporting . "</td></tr></tbody>";
+			}
+		}
+		echo $dyn_table;
+	}
+
+	public function getRegimenChange($patient_no) {
+		$dyn_table = "";
+		$facility = $this -> session -> userdata("facility");
+		$sql = "select dispensing_date, r1.regimen_desc as current_regimen, r2.regimen_desc as previous_regimen, if(rc.name is null,pv.regimen_change_reason,rc.name) as reason from patient_visit pv left join regimen r1 on pv.regimen = r1.id left join regimen r2 on pv.last_regimen = r2.id left join regimen_change_purpose rc on pv.regimen_change_reason = rc.id where pv.patient_id = '$patient_no' and pv.facility = '$facility' and pv.regimen != pv.last_regimen group by dispensing_date,pv.regimen";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			foreach ($results as $result) {
+				if ($result['current_regimen'] == "") {
+					$result['current_regimen'] = "-";
+				}
+				if ($result['previous_regimen'] == "") {
+					$result['previous_regimen'] = "-";
+				}
+				if ($result['reason'] == "") {
+					$result['reason'] = "-";
+				} elseif ($result['reason'] == "undefined") {
+					$result['reason'] = "-";
+				} elseif ($result['reason'] == "null") {
+					$result['reason'] = "-";
+				}
+
+				$dyn_table .= "<tbody><tr><td>" . date('d-M-Y', strtotime($result['dispensing_date'])) . "</td><td>" . $result['current_regimen'] . "</td><td align='center'>" . $result['previous_regimen'] . "</td><td align='center'>" . $result['reason'] . "</td></tr></tbody>";
+			}
+		}
+		echo $dyn_table;
+	}
+
+	public function getAppointmentHistory($patient_no) {
+		$dyn_table = "";
+		$status="";
+		$facility = $this -> session -> userdata("facility");
+		$sql = "SELECT pa.appointment,IF(pa.appointment=pv.dispensing_date,'Visited',DATEDIFF(pa.appointment,curdate()))as Days_To FROM(SELECT patient,appointment FROM patient_appointment pa WHERE patient='$patient_no' AND facility='$facility') as pa,(SELECT patient_id,dispensing_date FROM patient_visit WHERE patient_id='$patient_no' AND facility='$facility') as pv GROUP BY pa.appointment ORDER BY pa.appointment desc";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			foreach ($results as $result) {
+				
+				if($result['Days_To']>0){
+					$status="<td align='center'>" .$result['Days_To']. " Days To</td>";
+				}else if($result['Days_To']<0){
+					$mysql="select dispensing_date,DATEDIFF(dispensing_date,'".@$result['appointment']."')as days from patient_visit where patient_id='$patient_no' and dispensing_date>'".@$result['appointment']."' and facility='$facility' ORDER BY dispensing_date asc LIMIT 1";
+					$myquery = $this -> db -> query($mysql);
+		            $myresults = $myquery -> result_array();
+					if($myresults){
+						$result['Days_To']=$myresults[0]['days'];
+					}	
+					$result['Days_To']=str_replace("-","", $result['Days_To']);
+					$status="<td align='center'> Late By " .$result['Days_To']. " Days (".date('d-M-Y',strtotime($myresults[0]['dispensing_date'])).")</td>";
+				}else{
+					$status="<td align='center' class='green'>".$result['Days_To']. "</td>";
+				}			
+						
+				$dyn_table .= "<tbody><tr><td>" . date('d-M-Y', strtotime($result['appointment'])) . "</td>$status</tr></tbody>";
+			}
+		}
+		echo $dyn_table;
 	}
 
 }

@@ -165,6 +165,7 @@ foreach($results as $result){
 				    	    $("#dose").val("<?php echo $result['dose']; ?>");
 				    	    $("#duration").val("<?php echo $result['duration']; ?>");
 				    	    $("#qty_disp").val("<?php echo $result['quantity']; ?>");
+				    	    $("#original_expiry_date").val($("#expiry").val());
 				    	    }
 				    	});
 				    	    
@@ -208,7 +209,6 @@ foreach($results as $result){
 				    type: 'POST',
 				    dataType: "json",
 				    success: function(data) {	
-				    	console.log(data)
 				    		$("#expiry").val(data[0].expiry_date);
 				    	    $("#soh").val(data[0].balance);
 				    }
@@ -241,6 +241,7 @@ foreach($results as $result){
 		<input id="batch_hidden" name="batch_hidden" type="hidden"/>
 		<input id="dispensing_id" name="dispensing_id" type="hidden"/>
 		<input id="qty_hidden" name="qty_hidden" type="hidden"/>
+		<input id="original_expiry_date" name="original_expiry_date" type="hidden"/>
 		<input id="delete_trigger" name="delete_trigger" type="hidden" value="0"/>
 		<div class="column-5">
 			<fieldset>
