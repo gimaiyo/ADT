@@ -95,7 +95,7 @@ function processData(button) {
 				var transaction_type = 5;
 				var dispensing_date_timestamp = Date.parse(dump["dispensing_date"]);
 				//Check if there is a date indicated for the next appointment. If there is, schedule it!
-								if($("#next_appointment_date").attr("value").length > 1) {
+					if($("#next_appointment_date").attr("value").length > 1) {
 					var last_date = dump["last_appointment_date"];
 					var todays_date = dump["dispensing_date"];
 					var last_String = last_date.toString();

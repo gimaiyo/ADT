@@ -1279,7 +1279,7 @@ class report_management extends MY_Controller {
 		$data['selected_report_type']="Visiting Patients";
 		$data['report_title']="List of Patients Visited For Refill";
 		$data['facility_name']=$this -> session -> userdata('facility_name');
-
+		$data['dyn_table']=$row_string;
 		$data['content_view']='reports/patients_missing_appointments_v';
 		$this -> load -> view('template', $data);
 	}

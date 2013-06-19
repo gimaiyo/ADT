@@ -48,7 +48,32 @@ if ($access_level == "facility_administrator") {
 <div class="main-content">
 	
 	<div class="center-content">
-		<table class="table table-bordered table-striped listing_table" style="font-size:0.8em">
+		<div>
+			<?php if($this->session->userdata("msg_save_transaction")){
+				?>
+				
+				<script type="text/javascript">
+					setTimeout(function(){
+						$(".info").fadeOut("2000");
+					},6000)
+				</script>
+				<?php
+				if($this->session->userdata("msg_save_transaction")=="success"){
+					?>
+					<p class="info"><span class="alert-success">Your data were successfully saved !</span></p>
+					<?php
+				}
+				else{
+					?>
+					<p class="info"><span class="alert-error">Your data were not saved ! Try again or contact your system administrator.</span></p>
+					<?php
+				}
+				$this->session->unset_userdata('msg_save_transaction');
+			}
+			?>
+		</div>
+		
+		<table class="table table-hover table-bordered table-striped listing_table" style="font-size:0.8em">
 			<thead>
 				<tr>
 					<th style="width: 45px">CCC No</th><th>Patient Name</th><th>Contact</th><th style="width: 100px">Date Enrolled</th><th style="width: 100px">Next Appointment</th><th>Current Regimen</th><th style="width:150px">Status</th><th style="width: 140px">Action</th>

@@ -291,7 +291,7 @@ class Inventory_Management extends MY_Controller {
 		else if($stock_type==2){
 			$data['store']="Pharmacy";
 			$data['previous']='inventory_management/2';
-			$this->session->set_userdata("inventory_go_back","pharmcay_table");
+			$this->session->set_userdata("inventory_go_back","pharmacy_table");
 		}
 		
 		$today = date('Y-m-d');
@@ -405,7 +405,7 @@ class Inventory_Management extends MY_Controller {
 		$stock_type=$this->input ->post("stock_type");
 		$selected_drug=$this->input ->post("selected_drug");
 		$batch_selected=$this->input ->post("batch_selected");
-		$batch_sql=$this->db->query("SELECT dsb.balance,DATE_FORMAT(DATE(dsb.expiry_date),'%d-%b-%Y') as expiry_date FROM drug_stock_balance dsb  WHERE dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' AND dsb.drug_id='$selected_drug' AND dsb.batch_number='$batch_selected' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE() LIMIT 1");
+		$batch_sql=$this->db->query("SELECT dsb.balance, dsb.expiry_date FROM drug_stock_balance dsb  WHERE dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' AND dsb.drug_id='$selected_drug' AND dsb.batch_number='$batch_selected' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE() LIMIT 1");
 		$batches_array=$batch_sql->result_array();
 		echo json_encode($batches_array);
 	}

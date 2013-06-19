@@ -41,6 +41,8 @@ class Dispensement_Management extends MY_Controller {
 			$data['appointments']=$results[0];
 		}
 		
+		$data['facility']=$facility_code;
+		$data['user']=$this -> session -> userdata('user_id');
 		$data['regimens']=Regimen::getRegimens();
 		$data['non_adherence_reasons']=Non_Adherence_Reasons::getAllHydrated();
 		$data['regimen_changes']=Regimen_Change_Purpose::getAllHydrated();
@@ -66,9 +68,15 @@ class Dispensement_Management extends MY_Controller {
 	}
 	
 	public function getDoses(){
-		$get_doses_sql=$this->db->query("SELECT id,Name FROM dose WHERE Active='1'");
+		$get_doses_sql=$this->db->query("SELECT id,Name FROM dose");
 		$get_doses_array=$get_doses_sql->result_array();
 		echo json_encode($get_doses_array);
+	}
+	
+	public function getIndications(){
+		$get_indication_sql=$this->db->query("SELECT id,Name FROM opportunistic_infection");
+		$get_indication_array=$get_indication_sql->result_array();
+		echo json_encode($get_indication_array);
 	}
 	
 	public function edit($record_no){
@@ -92,6 +100,31 @@ class Dispensement_Management extends MY_Controller {
 	}
 
 	public function save() {
+		$sql=$this->input->post("sql");
+		
+		$queries = explode(";", $sql);
+		$count=count($queries);
+		$c=0;
+		foreach($queries as $query){
+			$c++;
+			if(strlen($query)>0){
+				//echo $query."<br>";
+				$this->db->query($query);
+			}
+			
+		}
+		if($count==$c){
+			$this -> session -> set_userdata('msg_save_transaction', 'success');
+		}
+		else if($c==0){
+			$this -> session -> set_userdata('msg_save_transaction', 'all_failure');
+		}
+		else{
+			$this -> session -> set_userdata('msg_save_transaction', 'some_failure');
+		}
+		
+		redirect("patient_management");
+		/*
 		$dispensing_date="";
 		$last_appointment="";
 		$next_appointment="";
@@ -115,7 +148,7 @@ class Dispensement_Management extends MY_Controller {
 		$new_patient_visit->Adherence=$this -> input -> get_post('adherence', true);
 		$new_patient_visit->Non_Adherence_Reason=$this -> input -> get_post('non_adherence_reasons', true);
 		$new_patient_visit->save();
-		*/
+		
 		if(strtotime($dispensing_date)<strtotime($last_appointment)){
 			//Dispensing date is less than the appointment(update)
 			$sql="update patient_appointment set appointment='$next_appointment' where patient='$patient' and facility='$facility' and appointment='$last_appointment'";
@@ -129,7 +162,7 @@ class Dispensement_Management extends MY_Controller {
 		$new_appointment->save();
 		}
 
-          
+          */
 	}
 	public function save_edit() {
 		$timestamp="";
@@ -146,7 +179,10 @@ class Dispensement_Management extends MY_Controller {
 		  $sql ="delete from patient_visit WHERE id='".@$_POST["dispensing_id"]."';";
 		  $this->db->query($sql);
 		  $sql = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type,source,destination,expiry_date, quantity, facility, machine_code,timestamp) SELECT '".@$_POST["original_drug"]."','".@$_POST["original_dispensing_date"]."', '".@$_POST["batch"]."','4','$facility','$facility',expiry_date,'".@$_POST["qty_disp"]."','$facility','0','$timestamp' from drug_stock_movement WHERE batch_number= '".@$_POST["batch"]."' AND drug='".@$_POST["original_drug"]."' LIMIT 1;";
-	      $this->db->query($sql);		
+	      $this->db->query($sql);
+		  //Update drug_stock_balance
+			$sql="UPDATE drug_stock_balance SET balance=balance+".@$_POST["qty_disp"]." WHERE drug_id='".@$_POST["original_drug"]."' AND batch_number='".@$_POST["batch"]."' AND expiry_date='".@$_POST["original_expiry_date"]."' AND stock_type='2' AND facility_code='$facility";
+			$this->db->query($sql);
 		} else {
 		  $sql = "UPDATE patient_visit SET dispensing_date = '".@$_POST["dispensing_date"]."', visit_purpose = '".@$_POST["purpose"]."', current_weight='".@$_POST["weight"]."', current_height='".@$_POST["height"]."', regimen='".@$_POST["current_regimen"]."', drug_id='".@$_POST["drug"]."', batch_number='".@$_POST["batch"]."', dose='".@$_POST["dose"]."', duration='".@$_POST["duration"]."', quantity='".@$_POST["qty_disp"]."', brand='".@$_POST["brand"]."', indication='".@$_POST["indication"]. "', pill_count='".@$_POST["pill_count"]. "', missed_pills='".@$_POST["missed_pills"]. "', comment='".@$_POST["comment"]."',non_adherence_reason='".@$_POST["non_adherence_reasons"]."',adherence='".@$_POST["adherence"]."' WHERE id='".@$_POST["dispensing_id"]."';";
 		  $this->db->query($sql);	 
@@ -155,15 +191,30 @@ class Dispensement_Management extends MY_Controller {
 						$this->db->query($sql);
 						$sql = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type,source,destination,expiry_date, quantity_out, facility, machine_code,timestamp) SELECT '".@$_POST["drug"]."','".@$_POST["original_dispensing_date"] . "', '".@$_POST["batch"]."','5','$facility','$facility',expiry_date,'".@$_POST["qty_disp"]."','$facility','0','$timestamp' from drug_stock_movement WHERE batch_number= '".@$_POST["batch"]. "' AND drug='".@$_POST["drug"]. "' LIMIT 1;";
 			            $this->db->query($sql);
+						//Update drug_stock_balance
+						//Balance=balance+(previous_qty_disp-actual_qty_dispense) 
+						$new_qty_dispensed=@$_POST["qty_hidden"]-@$_POST["qty_disp"];
+						if($new_qty_dispensed>0){
+							$sql="UPDATE drug_stock_balance SET balance=balance+".@$new_qty_dispensed." WHERE drug_id='".@$_POST["original_drug"]."' AND batch_number='".@$_POST["batch"]."' AND expiry_date='".@$_POST["original_expiry_date"]."' AND stock_type='2' AND facility_code='$facility";
+							$this->db->query($sql);
+						}
+						else if($new_qty_dispensed<0){
+							$new_qty_dispensed=abs($new_qty_dispensed);
+							$sql="UPDATE drug_stock_balance SET balance=balance-".@$new_qty_dispensed." WHERE drug_id='".@$_POST["original_drug"]."' AND batch_number='".@$_POST["batch"]."' AND expiry_date='".@$_POST["original_expiry_date"]."' AND stock_type='2' AND facility_code='$facility";
+							$this->db->query($sql);
+						}
+						
+						
+						
 			  }
 		}
-		$this->db->query($sql);
 		$sql="select * from patient where patient_number_ccc='$patient' and facility_code='$facility'";
 		$query=$this->db->query($sql);
 		$results=$query->result_array();
 		$record_no=$results[0]['id'];
         redirect("patient_management/viewDetails/$record_no");	
 	}
+	
 	public function base_params($data) { 
 		$data['title'] = "Drug Dispensements"; 
 		$data['banner_text'] = "Facility Dispensements";

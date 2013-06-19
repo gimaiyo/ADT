@@ -161,11 +161,14 @@ foreach($results as $result){
 			
 			//Drug selection change
 			$(".drug").change(function(){
-				$(".batch option").remove();
-				$(".batch").append($("<option value='0'>Loading ...</option>"));
+				var row=$(this);
+				resetFields(row);
+				row.closest("tr").find(".batch option").remove();
+				row.closest("tr").find(".batch").append($("<option value='0'>Loading ...</option>"));
 				var row=$(this);
 				var selected_drug=$(this).val();
 				var stock_type="2";
+				var dose="";
 				//Get batches that have not yet expired and have stock balance
 				var _url="<?php echo base_url().'inventory_management/getBacthes'; ?>";
 				
@@ -177,11 +180,13 @@ foreach($results as $result){
 			    });
 			    request.done(function(data){
 			    	row.closest("tr").find(".batch option").remove();
+			    	$(".batch").append($("<option value='0'>Select</option>"));
 			    	$.each(data,function(key,value){
 			    		row.closest("tr").find(".unit").val(value.Name);
 			    		//alert(value.drug);
 			    		row.closest("tr").find(".batch").append("<option value='"+value.batch_number+"'>"+value.batch_number+"</option> ");
 			    		row.closest("tr").find(".dose").val(value.dose);
+			    		dose=value.dose;
 			    	});
 			    	var new_url="<?php echo base_url().'dispensement_management/getBrands'; ?>";
 			    	
@@ -213,12 +218,29 @@ foreach($results as $result){
 				     dataType: "json"
 				    });
 				    request_dose.done(function(data){
-				    	row.closest("tr").find(".dose_1 option").remove();
-				    	row.closest("tr").find(".dose_1").append("<option value='0'>None</option> ");
+				    	row.closest("tr").find(".dose option").remove();
+				    	row.closest("tr").find(".dose").append("<option value='0'>None</option> ");
 				    	$.each(data,function(key,value){
-				    		alert(value.Name);
-				    		row.closest("tr").find(".dose_1").append("<option value='"+value.id+"'>"+value.Name+"</option> ");
+				    		row.closest("tr").find(".dose").append("<option value='"+value.Name+"'>"+value.Name+"</option> ");
 				   		});
+				   		$(".dose").val(dose);
+				    	
+				    });
+				    
+				    //Get indications(opportunistic infections)
+				    var url_indication="<?php echo base_url().'dispensement_management/getIndications'; ?>";
+				    var request_dose=$.ajax({
+				     url: url_indication,
+				     type: 'post',
+				     dataType: "json"
+				    });
+				    request_dose.done(function(data){
+				    	row.closest("tr").find(".indication option").remove();
+				    	row.closest("tr").find(".indication").append("<option value='0'>None</option> ");
+				    	$.each(data,function(key,value){
+				    		row.closest("tr").find(".indication").append("<option value='"+value.Name+"'>"+value.Name+"</option> ");
+				   		});
+				   		$(".dose").val(dose);
 				    	
 				    });
 					
@@ -260,13 +282,90 @@ foreach($results as $result){
 				}
 			});
 			
+			$(".qty_disp").keyup(function() {
+				var row=$(this);
+				var selected_value = $(this).attr("value");
+				var stock_at_hand = row.closest("tr").find(".soh ").attr("value");
+				var stock_validity = stock_at_hand - selected_value;
+				if(stock_validity < 0) {
+					alert("Quantity Cannot Be larger Than Stock at Hand");
+					row.closest("tr").find(".qty_disp").css("background-color","red");
+					row.closest("tr").find(".qty_disp").addClass("input_error");
+					
+				}
+				else{
+					row.closest("tr").find(".qty_disp").css("background-color","white");
+					row.closest("tr").find(".qty_disp").removeClass("input_error");
+				}
+				
+				
+
+			});
+			
+			$(".add").click(function() {
+				var last_row=$('#drugs_table tr:last');
+				var drug_selected=last_row.find(".drug").val();
+				var quantity_entered=last_row.find(".qty_disp").val();
+				if(last_row.find(".qty_disp").hasClass("input_error")){
+					alert("Error !Quantity dispensed is greater than qty available!");
+				}
+				
+				else if(drug_selected==0 ){
+					alert("You have not selected a drug!");
+				}
+				else if(quantity_entered=="" || quantity_entered==0){
+					alert("You have not entered any quantity!");
+				}
+				else{
+					var cloned_object = $('#drugs_table tr:last').clone(true);
+					var drug_row = cloned_object.attr("drug_row");
+					var next_drug_row = parseInt(drug_row) + 1;
+					var row_element = cloned_object;
+
+					//Second thing, retrieve the respective containers in the row where the drug is
+					row_element.find(".unit").attr("value", "");
+					row_element.find(".batch").empty();
+					//Fixing the expiry date in dispensing
+					var expiry_id = "expiry_date_" + next_drug_row;
+					var expiry_date = row_element.find(".expiry").attr("value", "");
+					expiry_date.attr("id", expiry_id);
+					var expiry_selector = "#" + expiry_id;
+
+					$(expiry_selector).datepicker({
+						defaultDate : new Date(),
+						changeYear : true,
+						changeMonth : true
+					});
+
+					row_element.find(".dose").attr("value", "");
+					row_element.find(".duration").attr("value", "");
+					row_element.find(".qty_disp").attr("value", "");
+					row_element.find(".brand").attr("value", "");
+					row_element.find(".soh").attr("value", "");
+					row_element.find(".indication").attr("value", "");
+					row_element.find(".pill_count").attr("value", "");
+					row_element.find(".pill_count").removeAttr("disabled");
+					row_element.find(".comment").attr("value", "");
+					row_element.find(".missed_pills").attr("value", "");
+					row_element.find(".missed_pills").removeAttr("disabled");
+					row_element.find(".remove").show();
+					cloned_object.attr("drug_row", next_drug_row);
+					cloned_object.insertAfter('#drugs_table tr:last');
+					return false;
+				}
+				
+			});
+			$(".remove").click(function() {
+				$(this).closest('tr').remove();
+			});
+			
 		 function resetFields(row){
-			row.closest("tr").find(".pack").val("");
-			row.closest("tr").find(".quantity").val("");
+			row.closest("tr").find(".qty_disp").val("");
+			row.closest("tr").find(".soh").val("");
+			row.closest("tr").find(".duration").val("");
 			row.closest("tr").find(".expiry").val("");
-			row.closest("tr").find(".quantity_available").val("");
-			row.closest("tr").find(".unit_cost").val("");
-			row.closest("tr").find("#total_amount").val("");
+			row.closest("tr").find(".pill_count").val("");
+			row.closest("tr").find(".missed_pills").val("");
 		}
 		
 		 function retrieveAppointedPatients(){
@@ -310,11 +409,141 @@ foreach($results as $result){
 		          var form_selector = "#" + form;
 		          var validated = $(form_selector).validationEngine('validate');
 		            if(!validated) {
-	                   return false;
+		            	return false;
 		            }else{
-		            	return true;
+		            	saveData();
+		            	return false;
 		            }
 		     }
+		     
+		     //Function to post data to the server
+		     function saveData(){
+		     	
+		     	var facility=<?php echo $facility ?>;
+		     	var timestamp = new Date().getTime();
+		     	var user=<?php echo $user?>;
+		     	var last_row=$('#drugs_table tr:last');
+				if(last_row.find(".qty_disp").hasClass("input_error")){
+					alert("The quantity of the last commodity being dispensed is greater that the quantity available!");
+					return;
+				}
+				
+				var rowCount = $('#drugs_table tr').length;
+				//Check if details were entered before submiting
+				if(rowCount==2){
+					var drug_selected=last_row.find(".drug").val();
+					var quantity_entered=last_row.find(".qty_disp").val();
+					if(drug_selected==0 ){
+						alert("You have not selected a drug!");
+						return;
+					}
+					else if(quantity_entered=="" || quantity_entered==0){
+						alert("You have not entered the quantity being dispensed for the last commodity entered!");
+						return;
+					}
+				}
+				//Before going any further, first calculate the number of drugs being recorded
+				var drugs_count = 0;
+				$.each($(".drug"), function(i, v) {
+					if($(this).attr("value")) {
+						drugs_count++;
+					}
+				});
+				
+				//If no drugs were selected, exit
+				if(drugs_count == 0) {
+					return;
+				}
+				
+				//Retrieve all form input elements and their values
+				var dump = retrieveFormValues();
+				//Call this function to do a special retrieve function for elements with several values
+				var drugs = retrieveFormValues_Array('drug');
+				var batches = retrieveFormValues_Array('batch');
+				var doses = retrieveFormValues_Array('dose');
+				var brands = retrieveFormValues_Array('brand');
+				var expiry = retrieveFormValues_Array('expiry');
+				var indications = retrieveFormValues_Array('indication');
+				var pill_counts = retrieveFormValues_Array('pill_count');
+				var comments = retrieveFormValues_Array('comment');
+				var missed_pills = retrieveFormValues_Array('missed_pills');
+				var quantities = retrieveFormValues_Array('qty_disp');
+				var durations = retrieveFormValues_Array('duration');
+				var next_appointment_sql = "";
+				var drug_consumption = " ";
+				var balance_sql="";
+				var transaction_type = 5;
+				var dispensing_date_timestamp = Date.parse(dump["dispensing_date"]);
+				//Check if there is a date indicated for the next appointment. If there is, schedule it!
+					if($("#next_appointment_date").attr("value").length > 1) {
+						var last_date = dump["last_appointment_date"];
+						var todays_date = dump["dispensing_date"];
+						var last_String = last_date.toString();
+						var today_string = todays_date.toString();
+						//If there is a last appointment date
+						if(last_String) {
+							//Check if last appointment date is greater than today(Came later than appointment date)
+							if(last_String > today_string) {
+								next_appointment_sql = "update patient_appointment set appointment=DATE(STR_TO_DATE('"+dump["next_appointment_date"]+"','%Y-%m-%d')) where patient='" + dump["patient"] + "' and appointment=DATE(STR_TO_DATE('"+last_date+"','%Y-%m-%d'));";
+							}
+							//check if last apppointment date is equal to today(Came on correct appointment date) or //Check if last appointment date is less than today(Came earlier than appointment date)
+							else {
+								next_appointment_sql = "insert into patient_appointment (patient,appointment,facility) values ('" + dump["patient"] + "',DATE(STR_TO_DATE('"+dump["next_appointment_date"]+"','%Y-%m-%d')),'" + facility + "');";
+	
+							}
+						}
+						//If no appointment date
+						else {
+							next_appointment_sql = "insert into patient_appointment (patient,appointment,facility) values ('" + dump["patient"] + "',DATE(STR_TO_DATE('"+dump["next_appointment_date"]+"','%Y-%m-%d')),'" + facility + "');";
+	
+						}
+					}
+					var sql = next_appointment_sql;
+					sql += "UPDATE patient SET height='" + dump["height"] + "',current_regimen='" + dump["current_regimen"] + "',nextappointment=DATE(STR_TO_DATE('"+dump["next_appointment_date"]+"','%Y-%m-%d')) where patient_number_ccc ='" + dump["patient"] + "';";
+					//After getting the number of drugs issued, create a unique entry (sql statement) for each in the database in this loop
+					for(var i = 0; i < drugs_count; i++) {
+						sql += "INSERT INTO patient_visit (patient_id, visit_purpose, current_height, current_weight, regimen, regimen_change_reason, drug_id, batch_number, brand, indication, pill_count, comment, timestamp, user, facility, dose, dispensing_date, dispensing_date_timestamp,quantity,duration,adherence,missed_pills,non_adherence_reason) VALUES ('" + dump["patient"] + "', '" + dump["purpose"] + "', '" + dump["height"] + "', '" + dump["weight"] + "', '" + dump["current_regimen"] + "', '" + dump["regimen_change_reason"] + "', '" + drugs[i] + "', '" + batches[i] + "', '" + brands[i] + "', '" + indications[i] + "', '" + pill_counts[i] + "', '" + comments[i] + "', '" + timestamp + "', '" + user + "', '" + facility + "', '" + doses[i] + "', DATE(STR_TO_DATE('"+dump["dispensing_date"]+"','%Y-%m-%d')), '" + dispensing_date_timestamp + "','" + quantities[i] + "','" + durations[i] + "','" + dump["adherence"] + "','" + missed_pills[i] + "','" + dump["non_adherence_reasons"] + "');";
+						drug_consumption = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type,source,destination,expiry_date,quantity, quantity_out, facility,timestamp) VALUES ('" + drugs[i] + "', DATE(STR_TO_DATE('"+dump["dispensing_date"]+"','%Y-%m-%d')), '" + batches[i] + "', '" + transaction_type + "','"+facility+"','"+facility+"',DATE(STR_TO_DATE('"+expiry[i]+"','%Y-%m-%d')),0,'" + quantities[i] + "','" + facility + "','" + timestamp + "');";
+						sql += drug_consumption;
+						balance_sql="UPDATE drug_stock_balance SET balance=balance - "+quantities[i]+" WHERE drug_id='"+drugs[i]+"' AND batch_number='"+batches[i]+"' AND expiry_date=DATE(STR_TO_DATE('"+expiry[i]+"','%Y-%m-%d')) AND stock_type='2' AND facility_code='"+facility+"';";
+						sql += balance_sql;
+						
+						if((i+1)==drugs_count){
+							$("#sql").val(sql);
+							$("#dispense_form").submit();
+						}
+						
+		     		}
+		     }
+		     function retrieveFormValues() {
+				//This function loops the whole form and saves all the input, select, e.t.c. elements with their corresponding values in a javascript array for processing
+				var dump = Array;
+				$.each($("input, select, textarea"), function(i, v) {
+					var theTag = v.tagName;
+					var theElement = $(v);
+					var theValue = theElement.val();
+					if(theElement.attr('type') == "radio") {
+						var text = 'input:radio[name=' + theElement.attr('name') + ']:checked';
+						dump[theElement.attr("name")] = $(text).attr("value");
+					} else {
+						dump[theElement.attr("name")] = theElement.attr("value");
+					}
+				});
+				return dump;
+			}
+			
+			function retrieveFormValues_Array(name) {
+				var dump = new Array();
+				var counter = 0;
+				$.each($("input[name=" + name + "], select[name=" + name + "], select[name=" + name + "]"), function(i, v) {
+					var theTag = v.tagName;
+					var theElement = $(v);
+					var theValue = theElement.val();
+					dump[counter] = theElement.attr("value");
+					counter++;
+				});
+				return dump;
+			}
 
 		</script>
 
@@ -325,6 +554,7 @@ foreach($results as $result){
 			<h3>Dispense Drugs</h3>
 
 			<form id="dispense_form" class="dispense_form" method="post"  action="<?php echo base_url().'dispensement_management/save';?>" onsubmit="return processData('dispense_form')" >
+				<textarea name="sql" id="sql" style="display:none"></textarea>
 				<input type="hidden" id="hidden_stock" name="hidden_stock"/>
 				<input type="hidden" id="days_count" name="days_count"/>
 				<div class="column-2">
@@ -340,7 +570,7 @@ foreach($results as $result){
 							</div>
 							<div class="mid-row">
 								<label>Patient Name</label>
-								<input readonly="" id="patient_details" name="patient" class="validate[required]"/>
+								<input readonly="" id="patient_details"  class="validate[required]"/>
 							</div>
 						</div>
 
@@ -484,11 +714,11 @@ foreach($results as $result){
 					</fieldset>
 				</div>
 
-				<div class="content-rowy">
+				<div class="content-rowy" style="height:250px;overflow: scroll">
 					<table border="0" class="data-table" id="drugs_table" style="">
 						<thead>
 							<th class="subsection-title" colspan="14">Select Drugs</th>
-							<tr>
+							<tr style="font-size:0.8em">
 							<th>Drug</th>
 							<th>Unit</th>
 							<th >Batch No.&nbsp;</th>
@@ -507,16 +737,14 @@ foreach($results as $result){
 							<tr drug_row="0">
 							<td><select name="drug" class="drug input-small"  style=" "></select></td>
 							<td>
-							<input type="text" name="unit" class="unit input-small" style="" />
+							<input type="text" name="unit" class="unit input-small" style="" readonly="" />
 							</td>
 							<td><select name="batch" class="batch input-small" style=""></select></td>
 							<td>
-							<input type="text" name="expiry" name="expiry" class="expiry input-small" id="expiry_date"  size="15"/>
+							<input type="text" name="expiry" name="expiry" class="expiry input-small" id="expiry_date" readonly="" size="15"/>
 							</td>
 							<td>
-							<input list="dose" name="dose" style="" class="dose input-small icondose">
-							<datalist id="dose" ></datalist>
-							<select name="dose_1" class="dose_1 input-small"></select>
+							<select name="dose" class="dose input-small"></select>
 							</td>
 							<td>
 							<input type="text" name="duration" class="duration input-small" />
@@ -542,9 +770,7 @@ foreach($results as $result){
 							<input type="text" name="missed_pills" class="missed_pills input-small" />
 							</td>
 							<td>
-							
-							<input type="button" class="add btn-small" value="Add" style="padding:1px;"/>
-							<input type="button" class="remove btn-small" value="Remove" style="padding:1px;"/>
+							<a class="add btn-small">Add</a>|<a style="display: none" class="remove btn-small">Remove</a>
 							</td>
 							</tr>
 						</thead>
@@ -552,9 +778,9 @@ foreach($results as $result){
 					</table>
 				
 				</div>
-				<div class="btn-group">
+				<div id="submit_section">
 					<input type="reset" class="btn" id="reset" value="Reset Fields" />
-					<input form="dispense_form" class="btn" id="submit" type="submit" value="Dispense Drugs"/>
+					<input form="dispense_form" id="btn_submit" class="btn" id="submit" type="submit" value="Dispense Drugs"/>
 				</div>
 			</form>
 
