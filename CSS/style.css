@@ -1393,4 +1393,8 @@ text-align: center;
 #patient_information td  {
 text-align: center;
 }
+#sub_title{
+	margin-bottom:15px;
+	font-size:16px;
+}
 

@@ -3,88 +3,23 @@
 		margin-top:1.5%;
 	}
 </Style>
-<?php
-if($this->session->userdata("inventory_go_back")){
-	
-	if($this->session->userdata("inventory_go_back")=="store_table"){
-		?>
-		<script type="text/javascript">
-			$(document).ready(function(){
-				$('#store_table').dataTable( {
-					"bProcessing": true,
-					"bServerSide": true,
-					"sAjaxSource": "inventory_management/main_store_stock",
-			        "bJQueryUI": true,
-			        "sPaginationType": "full_numbers"
-				} );
-				$('#pharmacy_table').dataTable( {
-					"bProcessing": true,
-					"bServerSide": true,
-					"sAjaxSource": "inventory_management/pharmacy_store_stock",
-			        "bJQueryUI": true,
-			        "sPaginationType": "full_numbers"
-				} );
-				
-				$("#pharmacy_btn").removeClass();
-				$("#store_btn").addClass("active");
-				$("#pharmacy_table").hide();
-				$("#pharmacy_table_wrapper").hide();
-				$("#store_table").show();
-				$("#store_table_wrapper").show();
-				
-			});
-		</script>
-		
-		<?php
-	}
-	else if($this->session->userdata("inventory_go_back")=="pharmacy_table"){
-		?>
-		<script type="text/javascript">
-				$(document).ready(function(){
-					$('#store_table').dataTable( {
-						"bProcessing": true,
-						"bServerSide": true,
-						"sAjaxSource": "inventory_management/main_store_stock",
-				        "bJQueryUI": true,
-				        "sPaginationType": "full_numbers"
-					} );
-					$('#pharmacy_table').dataTable( {
-						"bProcessing": true,
-						"bServerSide": true,
-						"sAjaxSource": "inventory_management/pharmacy_store_stock",
-				        "bJQueryUI": true,
-				        "sPaginationType": "full_numbers"
-					} );
-				
-				$("#store_btn").removeClass();
-				$("#pharmacy_btn").addClass("active");
-				$("#store_table").hide();
-				$("#store_table_wrapper").css("display","none");
-				$("#pharmacy_table").show();
-				$("#pharmacy_table_wrapper").show();
-				
-			});
-		</script>
-		
-		<?php
-	}
-	else{
-		?>
-		<script type="text/javascript">
-		$(document).ready( function () {
-			$("#pharmacy_table_wrapper").css("display","none");
-			$("#pharmacy_table").css("display","none");
-			
-		});
-		</script>
-		<?php
-		
-	}
-}
-?>
 <script type="text/javascript">
 	
 	$(document).ready( function () {
+		$('#store_table').dataTable( {
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "inventory_management/main_store_stock",
+	        "bJQueryUI": true,
+	        "sPaginationType": "full_numbers"
+		} );
+		$('#pharmacy_table').dataTable( {
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "inventory_management/pharmacy_store_stock",
+	        "bJQueryUI": true,
+	        "sPaginationType": "full_numbers"
+		} );
 		$("#store_btn").click(function(){
 			$("#pharmacy_btn").removeClass();
 			$(this).addClass("active");
@@ -107,6 +42,66 @@ if($this->session->userdata("inventory_go_back")){
 
 </script>
 <?php
+if($this->session->userdata("inventory_go_back")){
+	
+	if($this->session->userdata("inventory_go_back")=="store_table"){
+		?>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				
+				
+				$("#pharmacy_btn").removeClass();
+				$(this).addClass("active");
+				$("#pharmacy_table").hide();
+				$("#pharmacy_table_wrapper").hide();
+				$("#store_table").show();
+				$("#store_table_wrapper").show();
+				
+			});
+		</script>
+		
+		<?php
+	}
+	else if($this->session->userdata("inventory_go_back")=="pharmacy_table"){
+		?>
+		<script type="text/javascript">
+				$(document).ready(function(){
+					
+				
+				$("#store_btn").removeClass();
+				$("#pharmacy_btn").addClass("active");
+				$("#store_table").hide();
+				$("#store_table_wrapper").css("display","none");
+				$("#pharmacy_table").show();
+				$("#pharmacy_table_wrapper").show();
+				
+			});
+		</script>
+		
+		<?php
+	}
+	
+}
+else{
+	?>
+	<script type="text/javascript">
+	$(document).ready( function () {
+		$("#pharmacy_btn").removeClass();
+		$(this).addClass("active");
+		$("#pharmacy_table").hide();
+		$("#pharmacy_table_wrapper").hide();
+		$("#store_table").show();
+		$("#store_table_wrapper").show();
+		
+	});
+	</script>
+	<?php
+	
+}
+?>
+
+<?php
+$this->session->unset_userdata("inventory_go_back");
 $access_level = $this -> session -> userdata('user_indicator');
 $user_is_administrator = false;
 $user_is_nascop = false;
@@ -149,8 +144,6 @@ if ($access_level == "facility_administrator") {
 	<div class="center-content">
 		
 		<div>
-			
-				
 				<?php if($this->session->userdata("msg_save_transaction")){
 					?>
 					
@@ -173,9 +166,6 @@ if ($access_level == "facility_administrator") {
 					$this->session->unset_userdata('msg_save_transaction');
 				}
 				?>
-			
-		
-		
 		</div>
 		
 		<ul class="nav nav-tabs">  
