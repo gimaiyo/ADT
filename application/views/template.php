@@ -98,6 +98,9 @@ if (isset($styles)) {
 
 <body>
 <div id="wrapper">
+	<?php 
+	if(!isset($hide_header)){
+	?>
 	<div id="top-panel" style="margin:0px;">
 
 		<div class="logo">
@@ -176,7 +179,9 @@ if($menus){
  </div>
 
 </div>
-
+<?php
+}
+?>
 
 
 <div id="main_wrapper"> 

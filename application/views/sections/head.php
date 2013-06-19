@@ -26,14 +26,14 @@
 	<!-- End of CSS  Section ---------------------------------------------->
     
     <!--Multiselect CSS-->
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url().'CSS/assets/jquery.multiselect.css';?>" />
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url().'CSS/assets/jquery.multiselect.filter.css';?>" />
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url().'CSS/assets/prettify.css';?>" />
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url() . 'CSS/assets/jquery.multiselect.css'; ?>" />
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url() . 'CSS/assets/jquery.multiselect.filter.css'; ?>" />
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url() . 'CSS/assets/prettify.css'; ?>" />
     <!-- End of CSS  Section ---------------------------------------------->
     
 
     <!--Validator CSS-->
-    		<link href="<?php echo base_url().'CSS/validator.css';?>" type="text/css" rel="stylesheet"/>
+    		<link href="<?php echo base_url() . 'CSS/validator.css'; ?>" type="text/css" rel="stylesheet"/>
     <!-- End of CSS  Section ---------------------------------------------->
 
     
@@ -71,7 +71,7 @@
 
 <!-- Multiselect -->
 <script type='text/javascript' src='<?php echo base_url()."Scripts/jquery.multiselect.js"?>'></script>
-<script type='text/javascript' src='<?php echo base_url()."Scripts/jquery.multiselect.filter.js";?>'></script>
+<script type='text/javascript' src='<?php echo base_url() . "Scripts/jquery.multiselect.filter.js"; ?>'></script>
 <!-- End of JS  Section ------------------------------------------------>
 
 

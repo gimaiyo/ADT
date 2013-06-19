@@ -12,53 +12,14 @@
 
 $this -> load -> view('sections/head');
 
-if (isset($script_urls)) {
-	foreach ($script_urls as $script_url) {
-		echo "<script src=\"" . $script_url . "\" type=\"text/javascript\"></script>";
-	}
-}
-?>
-
-<?php
-if (isset($scripts)) {
-	foreach ($scripts as $script) {
-		echo "<script src=\"" . base_url() . "Scripts/" . $script . "\" type=\"text/javascript\"></script>";
-	}
-}
-?>
-
-
- 
-<?php
-if (isset($styles)) {
-	foreach ($styles as $style) {
-		echo "<link href=\"" . base_url() . "CSS/" . $style . "\" type=\"text/css\" rel=\"stylesheet\"></link>";
-	}
-}
 ?> 
 
 </head>
 
 <body>
-<div id="wrapper">
-	<div id="top-panel" style="margin:0px;">
-
-		<div class="logo">
-<a class="logo" href="<?php echo base_url(); ?>" ></a> 
-
+<div class="page-divider">
+	
 </div>
-<div id="system_title">
-<?php $this->load->view('sections/banner')?>
-</div>
- 
-</div>
-
-<div id="inner_wrapper"> 
-
-
-<div id="main_wrapper"> 
-
- 
  
 
 <div id="signup_form">
@@ -84,11 +45,11 @@ if (isset($invalid)) {
 <form class="login-form" action="<?php echo base_url().'user_management/authenticate'?>" method="post" style="margin:0 auto " >
 <label>
 <strong >Please Enter Your Email/Username</strong><br>
-<input type="text" name="username" class="input-xlarge" id="username" value="" placeholder="e.g Kenyatta National Hospital">
+<input type="text" name="username" class="input-xlarge" id="username" value="" placeholder="user@example.com">
 </label>
 <label>
 <strong >Password</strong><br>
-<input type="password" name="password" class="input-xlarge" id="password" placeholder="e.g kenyatta">
+<input type="password" name="password" class="input-xlarge" id="password" placeholder="**********">
 </label>
  <input type="submit" class="btn" name="register" id="register" value="Sign in" >
 
@@ -97,15 +58,7 @@ if (isset($invalid)) {
 </div>
 
 </form>
-</div>
 
-</div>  
- 
-  <!--End Wrapper div--></div>
-    <div id="bottom_ribbon">
-        <div id="footer">
- <?php $this -> load -> view("footer_v"); ?>
-    </div>
-    </div>
+   
 </body>
 </html>

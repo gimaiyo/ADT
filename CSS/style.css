@@ -838,11 +838,18 @@ table.dataTable tr.odd td sorting_1 {
  * 	Login Forms
  */
 #signup_form {
-	background-color: #DDD;
-	border: 1px solid #E5E5E5;
-	padding: 3%;
+	padding-top:30%;
+	border-radius:5px;
+	background-color: white;
+	padding: 1%;
 	width: 35%;
 	margin: 0 auto;
+	box-shadow: 0 1.2px 3px 1px #000;
+	-webkit-box-shadow: 0 1.2px 3px 1px #000;
+	color:white;
+}
+#signup_form a{
+	color:black;
 }
 .login-form {
 	margin: auto;
@@ -864,6 +871,7 @@ table.dataTable tr.odd td sorting_1 {
 .login-form input[type="checkbox"] {
 	width: 5%;
 }
+
 #login-other {
 
 	display: block;
@@ -1350,5 +1358,4 @@ legend {
 .astericks {
 	color: red;
 }
-
 
