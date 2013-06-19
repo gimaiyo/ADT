@@ -2,6 +2,7 @@
 class Regimen_management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
+		$this -> load -> database();
 	}
 
 	public function index() {
@@ -23,7 +24,7 @@ class Regimen_management extends MY_Controller {
 		$data['scripts'] = array("jquery-ui.js");
 		
 		$regimens = Regimen::getAllHydrated($source,$access_level);
-		$tmpl = array ( 'table_open'  => '<table id="regimen_setting" class="setting_table">' );
+		$tmpl = array ( 'table_open'  => '<table id="regimen_setting" class="table table-bordered setting_table">' );
 		$this -> table ->set_template($tmpl);
 		$this -> table -> set_heading('id', 'Regimen Code', 'Regimen Desc', 'Line', 'Regimen Category', 'Type Of Service', 'Options');
 		
@@ -36,18 +37,19 @@ class Regimen_management extends MY_Controller {
 			if($type_of_service!="ART" && $access_level!="system_administrator"){
 				if($regimen['Enabled'] == 1){
 					$links .= anchor('' . $regimen['id'], 'Edit', array('class' => 'edit_user','id'=>$regimen['id']));
-					$links .= " | ";
+					
 				}
 				
 			}
 			elseif($access_level=="system_administrator"){
 				if($regimen['Enabled'] == 1){
 					$links .= anchor('regimen_management/edit/' . $regimen['id'], 'Edit', array('class' => 'edit_user','id'=>$regimen['id']));
-					$links .= " | ";
+					
 				}
 			}
 			
 			if ($regimen['Enabled'] == 1 && $regimen['Merged_To']) {
+				$links .= " | ";
 				$links .= anchor('regimen_management/disable/' . $regimen['id'], 'Disable', array('class' => 'disable_user'));
 		
 			} 
@@ -204,6 +206,15 @@ class Regimen_management extends MY_Controller {
 	public function getRegimenLine($service){
 		$regimens=Regimen::getLineRegimens($service);
 		echo json_encode($regimens);
+	}
+	
+	public function getDrugs($regimen){
+		$sql="select rd.drugcode as drug_id,d.drug as drug_name from drugcode d,regimen_drug rd where rd.regimen='$regimen' and rd.drugcode=d.id and rd.active='1' group by rd.drugcode order by rd.drugcode desc";
+		$query=$this->db->query($sql);
+		$results=$query->result_array();
+		if($results){
+		echo json_encode($results);
+		}
 	}
 
 	public function base_params($data) {

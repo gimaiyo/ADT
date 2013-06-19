@@ -1,18 +1,22 @@
 <?php
-foreach($results as $result){
-	
+if(isset($results)){
+	foreach($results as $result){
+		
+	}
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+		
 		<script type="text/javascript">
 		$(document).ready(function(){
 			
 			//Function to Check Patient Numner exists
 			var base_url="<?php echo base_url();?>";
-			var patient_identification="<?php echo $result['patient_number_ccc'];?>";
-			var record_id="<?php echo $result['id'];?>";
+			var patient_identification="<?php echo @$result['patient_number_ccc'];?>";
+			var record_id="<?php echo @$result['id'];?>";
 		    $("#patient_number").change(function(){
 				var patient_no=$("#patient_number").val();
 				var link=base_url+"patient_management/checkpatient_no/"+patient_no;
@@ -53,6 +57,7 @@ foreach($results as $result){
 			
 			$('#start_age').val(getStartAge("<?php echo $result['dob'];?>","<?php echo $result['date_enrolled'];?>"));
 			$('#age').val(getAge("<?php echo $result['dob'];?>"));
+			$("#info_age").text($('#age').val());
 	        $('#start_weight').val("<?php echo $result['start_weight'];?>");
 	        $('#start_height').val("<?php echo $result['start_height'];?>");
 	        $('#start_bsa').val("<?php echo $result['start_bsa'];?>");
@@ -291,7 +296,8 @@ foreach($results as $result){
 					changeYear : true
 			});
 			$("#enrolled").val("<?php echo $result['date_enrolled'] ?>");
-			$("#current_status").val("<?php echo $result['current_status'] ?>");		
+			$("#current_status").val("<?php echo $result['current_status'] ?>");	
+			$("#info_status").text($('#current_status option:selected').text());	
 			$("#status_started").val("<?php echo $result['status_change_date'] ?>");
 			$("#source").val("<?php echo $result['source'] ?>");
 			$("#support").val("<?php echo $result['supported_by'] ?>");
@@ -439,9 +445,64 @@ foreach($results as $result){
 						window.location.href = url;
 					});
 					$("#patient_info").click(function() {
-						var url = base_url+"patient_management/details/" + patient_identification;
-						window.location.href = url;
+						getDispensing();
+						getRegimenChange();
+						getAppointmentHistory();
+						$("#patient_details").dialog("open");
 					});
+					
+					$("#patient_details").dialog({
+			           width : 1200,
+			           modal : true,
+			           height: 'auto',
+			           autoOpen : false,
+			           show: 'fold'
+		             });
+		             
+		             function getDispensing(){
+		             	 var patient_no=$("#patient_number").val();
+		             	 var link=base_url+"patient_management/getSixMonthsDispensing/"+patient_no;
+							$.ajax({
+							    url: link,
+							    type: 'POST',
+							    success: function(data) {	
+							    	$("#patient_pill_count>tbody").empty();
+							    	$("#patient_pill_count").append(data);
+							    	
+							    }
+							});
+		             }
+		             
+		              function getRegimenChange(){
+		             	 var patient_no=$("#patient_number").val();
+		             	 var link=base_url+"patient_management/getRegimenChange/"+patient_no;
+							$.ajax({
+							    url: link,
+							    type: 'POST',
+							    success: function(data) {	
+							    	$("#patient_regimen_history>tbody").empty();
+							    	$("#patient_regimen_history").append(data);
+							    	
+							    }
+							});
+		             }
+		             
+		             function getAppointmentHistory(){
+		             	 var patient_no=$("#patient_number").val();
+		             	 var link=base_url+"patient_management/getAppointmentHistory/"+patient_no;
+							$.ajax({
+							    url: link,
+							    type: 'POST',
+							    success: function(data) {	
+							    	$("#patient_appointment_history>tbody").empty();
+							    	$("#patient_appointment_history").append(data);
+							    	
+							    }
+							});
+		             }
+		             
+		             
+		             
 				
 		    });
 			function getMSQ() {
@@ -904,7 +965,7 @@ foreach($results as $result){
 					<legend>
 						Dispensing History
 					</legend>
-					<table border="0" class="data-table sortable" id="history_table" >
+					<table border="1" class="table-bordered table-hover sortable" id="history_table" >
 						<thead>
 							<tr id="table-header">
 								<th>Date</th>
@@ -941,6 +1002,65 @@ foreach($results as $result){
 						</tbody>
 					</table>
 				</fieldset>
+			</div>
+			</div>
+			<div id="patient_details" title="Patient Summary">
+						<h3 id="facility_name" style="text-align: center"></h3>
+		<h4 style="text-align: center">Patient Information</h4>
+		<table  id="patient_information" class="data-table">
+			<tr>
+				<th>Art Number</th>
+				<th>First Name</th>
+				<th>Surname</th>
+				<th>Sex</th>
+				<th>Age</th>
+				<th>Date Therapy Started</th>
+				<th>Current Status</th>
+			</tr>
+			<tr>
+				<td><?php echo $result['patient_number_ccc']; ?></td>
+				<td><?php echo strtoupper($result['first_name']); ?></td>
+				<td><?php echo strtoupper($result['last_name']); ?></td>
+				<td><?php if($result['gender']==1){echo "Male";}else{echo "Female";}; ?></td>
+				<td id="info_age"></td>
+				<td><?php echo date('d-M-Y',strtotime($result['date_enrolled'])); ?></td>
+				<td id="info_status"></td>
+			</tr>
+		</table>
+		<h4 style="text-align: center">Patient Pill Count History (Last 6 Months)</h4>
+		<table id="patient_pill_count"  class="data-table sortable">
+			<thead>
+				<th>Date of Visit</th>
+				<th>Drug Name</th>
+				<th>Qty. Dispensed</th>
+				<th>Pill Count</th>
+				<th>Pills Taken</th>
+				<th>Missed Pills</th>
+				<th>Adherence</th>
+				<th>Self-Reported Adherence</th>
+			</thead>
+		</table>
+		<h4 style="text-align: center">Patient Regimen Change History</h4>
+		<table   id="patient_regimen_history" class="sortable data-table">
+			<thead>
+			<tr>
+				<th>Date of Visit</th>
+				<th>Last Regimen Dispensed</th>
+				<th>Current Regimen</th>
+				<th>Reason for Change</th> 
+			</tr>
+			</thead>
+		</table>
+		<h4 style="text-align: center">Patient Appointment History</h4>
+		<table id="patient_appointment_history" class="sortable data-table">
+			<thead>
+			<tr>
+				<th>Date of Next Appointment</th>
+				<th>Days To Appointment</th> 
+			</tr>
+			</thead>
+		</table>
+				
 			</div>
 
 

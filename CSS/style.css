@@ -152,7 +152,7 @@ body {
 .welcome_msg {
 	clear: left;
 	text-align: right;
-	color:#2B597E;
+	color: #2B597E;
 	padding: 20px;
 }
 .welcome_msg a {
@@ -372,7 +372,7 @@ table.data-table caption {
 	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
 	font-size: 14px;
 }
-table.data-table th {
+table.data-table th, table#history_table th {
 	border: none;
 	color: #036;
 	text-align: center;
@@ -765,7 +765,7 @@ table.dataTable tr.odd td sorting_1 {
  * 	Styling Facility Information
  */
 #facility_name {
-	color:#2B597E;
+	color: #2B597E;
 	margin-top: 5px;
 	font-weight: bold;
 	font-size: 1.1em;
@@ -1123,6 +1123,10 @@ html > body #main_manualcontent li a {
 	width: 30%;
 	margin: auto;
 }
+.column-5 {
+	width: 50%;
+	margin: auto;
+}
 .column fieldset, .column-2 fieldset, .column-3 fieldset {
 	padding: 5%;
 	width: 90%
@@ -1216,7 +1220,6 @@ input[readonly] {
 .reports_panel {
 	overflow: hidden;
 }
-
 a:hover {
 	text-decoration: none;
 }
@@ -1288,11 +1291,9 @@ a {
 #DataTables_Table_0_wrapper {
 	font-size: 15px;
 }
-
 .red {
 	color: red;
 	font-style: italic;
-	font-size: 11px;
 }
 input[type='text'], input[type='email'], input[type='tel'], input[type='password'] {
 	height: 30px;
@@ -1357,5 +1358,48 @@ legend {
 }
 .astericks {
 	color: red;
+}
+#submit_section{
+text-align:right;
+}
+#dispensing_history{
+height:300px;
+overflow: scroll;
+font-size:0.8em;
+}
+table#history_table{
+font-size:1.3em;
+}
+table#history_table th{
+background-color:#F5F5F5;
+}
+table#history_table td{
+font-size:0.8em;
+}
+#submit_section{
+text-align:right;
+}
+.add,.remove{
+cursor:pointer;
+}
+
+
+#patient_information, #patient_pill_count,#patient_regimen_history,#patient_appointment_history {
+margin: 0 auto;
+border-top: 1px solid #B9B9B9;
+font-size: 12px;
+letter-spacing: 1px;
+}
+#patient_pill_count, #patient_information,#patient_regimen_history,#patient_appointment_history td th {
+padding: 10px;
+}
+#patient_appointment_history td  {
+text-align: center;
+}
+#patient_regimen_history td  {
+text-align: center;
+}
+#patient_information td  {
+text-align: center;
 }
 

@@ -44,7 +44,7 @@ class User_Management extends MY_Controller {
 		}
 		$user_types = Access_Level::getAll($user_type);
 		
-		$tmpl = array('table_open' => '<table class="setting_table">');
+		$tmpl = array('table_open' => '<table class=" table table-bordered table-striped setting_table ">');
 		$this -> table -> set_template($tmpl);
 		$this -> table -> set_heading('id', 'Name', 'Username', 'Email Address', 'Phone Number', 'Access Level', 'Registered By', 'Options');
 
@@ -62,12 +62,20 @@ class User_Management extends MY_Controller {
 			}
 			else{
 				$links = anchor('user_management/edit/' . $user['id'], 'Edit', array('class' => 'edit_user', 'id' => $user['id']));
-				$links .= " | ";
+				
 			}
 			
 
 			if ($user['Active'] == 1) {
-				$links .= anchor('user_management/disable/' . $user['id'], 'Disable', array('class' => 'disable_user'));
+				if($access_level=="system_administrator"){
+					$links .= " | ";
+					$links .= anchor('user_management/disable/' . $user['id'], 'Disable', array('class' => 'disable_user'));
+				}
+				else if($access_level=="facility_administrator" and $user['Access']=="Pharmacist"){
+					$links .= " | ";
+					$links .= anchor('user_management/disable/' . $user['id'], 'Disable', array('class' => 'disable_user'));
+				}
+				
 			} else {
 				$links .= anchor('user_management/enable/' . $user['id'], 'Enable', array('class' => 'enable_user'));
 			}
@@ -412,20 +420,20 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 	}
 
 	public function enable($user_id) {
-		$this -> load -> database();
-		$query = $this -> db -> query("UPDATE users SET Active='1'WHERE id='$user_id'");
 		$results = Users::getUser($user_id);
+		$name=$results['Name'];
+		$query = $this -> db -> query("UPDATE users SET Active='1'WHERE id='$user_id'");
 		$this -> session -> set_userdata('message_counter', '1');
-		$this -> session -> set_userdata('message', $results -> Username . ' was enabled');
+		$this -> session -> set_userdata('message', $name . ' was enabled');
 		redirect('user_management');
 	}
 
 	public function disable($user_id) {
-		$this -> load -> database();
-		$query = $this -> db -> query("UPDATE users SET Active='0'WHERE id='$user_id'");
 		$results = Users::getUser($user_id);
+		$name=$results['Name'];
+		$query = $this -> db -> query("UPDATE users SET Active='0'WHERE id='$user_id'");
 		$this -> session -> set_userdata('message_counter', '2');
-		$this -> session -> set_userdata('message', $results -> Username . ' was disabled');
+		$this -> session -> set_userdata('message', $name . ' was disabled');
 		redirect('user_management');
 	}
 

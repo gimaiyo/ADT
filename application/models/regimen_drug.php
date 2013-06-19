@@ -39,6 +39,7 @@ class Regimen_Drug extends Doctrine_Record {
 		$regimen_drugs = $query -> execute();
 		return $regimen_drugs;
 	}
+	
 
 }
 ?>

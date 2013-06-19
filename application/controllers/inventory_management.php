@@ -286,11 +286,12 @@ class Inventory_Management extends MY_Controller {
 			$data['store']="Main Store";
 			$data['previous']='inventory_management/1';
 			$this->session->set_userdata("inventory_go_back","store_table");
+			
 		}
 		else if($stock_type==2){
 			$data['store']="Pharmacy";
 			$data['previous']='inventory_management/2';
-			$this->session->set_userdata("inventory_go_back","pharmcay_table");
+			$this->session->set_userdata("inventory_go_back","pharmacy_table");
 		}
 		
 		$today = date('Y-m-d');
@@ -394,7 +395,7 @@ class Inventory_Management extends MY_Controller {
 		$facility_code = $this -> session -> userdata('facility');
 		$stock_type=$this->input ->post("stock_type");
 		$selected_drug=$this->input ->post("selected_drug");
-		$batch_sql=$this->db->query("SELECT DISTINCT d.pack_size,u.Name,dsb.batch_number FROM drugcode d LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id LEFT JOIN drug_unit u ON u.id=d.unit  WHERE d.enabled=1 AND dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' AND dsb.drug_id='$selected_drug' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE()");
+		$batch_sql=$this->db->query("SELECT DISTINCT d.pack_size,u.Name,dsb.batch_number,d.dose as dose_id,do.Name as dose FROM drugcode d LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id LEFT JOIN drug_unit u ON u.id=d.unit LEFT JOIN dose do ON d.dose=do.id  WHERE d.enabled=1 AND dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' AND dsb.drug_id='$selected_drug' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE() ORDER BY dsb.expiry_date ASC");
 		$batches_array=$batch_sql->result_array();
 		echo json_encode($batches_array);
 	}
@@ -404,7 +405,7 @@ class Inventory_Management extends MY_Controller {
 		$stock_type=$this->input ->post("stock_type");
 		$selected_drug=$this->input ->post("selected_drug");
 		$batch_selected=$this->input ->post("batch_selected");
-		$batch_sql=$this->db->query("SELECT dsb.balance,dsb.expiry_date FROM drug_stock_balance dsb  WHERE dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' AND dsb.drug_id='$selected_drug' AND dsb.batch_number='$batch_selected' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE() LIMIT 1");
+		$batch_sql=$this->db->query("SELECT dsb.balance, dsb.expiry_date FROM drug_stock_balance dsb  WHERE dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' AND dsb.drug_id='$selected_drug' AND dsb.batch_number='$batch_selected' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE() ORDER BY dsb.expiry_date ASC LIMIT 1");
 		$batches_array=$batch_sql->result_array();
 		echo json_encode($batches_array);
 	}
@@ -463,6 +464,33 @@ class Inventory_Management extends MY_Controller {
 			
 		}
 	} 
+	public function getDrugsBatches($drug){
+		$today=date('Y-m-d');
+		$sql="select drug_stock_balance.batch_number,drug_unit.Name as unit,dose.Name as dose,drugcode.quantity,drugcode.duration from drug_stock_balance,drugcode,drug_unit,dose where drug_id='$drug' and drugcode.id=drug_stock_balance.drug_id  and drug_unit.id=drugcode.unit and dose.id= drugcode.dose and expiry_date>'$today' and balance>0 group by batch_number order by drug_stock_balance.expiry_date asc";
+		$query=$this->db->query($sql);
+		$results=$query->result_array();
+		if($results){
+		echo json_encode($results);
+		}
+	}
+	
+	public function getBatchInfo($drug,$batch){
+		$sql="select * from drug_stock_balance where drug_id='$drug' and batch_number='$batch'";
+		$query=$this->db->query($sql);
+		$results=$query->result_array();
+		if($results){
+		echo json_encode($results);
+		}
+	}
+	
+	public function getDrugsBrands($drug){
+		$sql="select * from brand where drug_id='$drug' group by brand";
+		$query=$this->db->query($sql);
+		$results=$query->result_array();
+		if($results){
+		echo json_encode($results);
+		}
+	}
 	public function base_params($data) {
 		$data['title'] = "Inventory";
 		$data['banner_text'] = "Inventory Management";

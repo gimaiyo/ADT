@@ -6,10 +6,10 @@
 		margin:0 auto;	
 	}
 	.center-content{
-		width:99%;
-		padding: 6.5% 1% 1% 1%;
+		width:98%;
+		padding: 6.5% 0.5% 0.5% 0.5%;
 		background: #D1EAF0;
-		margin:0 auto;
+		margin:0.6%;
 	}
 	}
 	table th{
@@ -45,6 +45,10 @@
 	#sub_title{
 		margin-bottom:15px;
 		font-size:16px;
+	}
+	#submit_section{
+		text-align:right;
+		padding-right:10px;	
 	}
 </style>
 
@@ -346,6 +350,23 @@
 				alert("There is a commodity that has a quantity greater that the quantity available!");
 				return;
 			}
+			
+			var rowCount = $('#drugs_table tr').length;
+			//Check if details were entered before submiting
+			if(rowCount==2){
+				var drug_selected=last_row.find(".drug").val();
+				var quantity_entered=last_row.find(".quantity").val();
+				if(drug_selected==0 ){
+					alert("You have not selected a drug!");
+					return;
+				}
+				else if(quantity_entered=="" || quantity_entered==0){
+					alert("You have not entered any quantity!");
+					return;
+				}
+				
+			}
+			
 			
 			var facility=<?php echo $facility ?>;
 			var user=<?php echo $user_id ?>;
@@ -816,7 +837,8 @@
 		</div>
 	
 		<div id="submit_section">
-			<input type="reset " class="btn" value="Reset" /><input type="button" class="btn" id="btn_submit" value="Submit" />
+			<input type="reset" class="btn" id="reset" value="Reset Fields" />
+			<input type="button" class="btn" id="btn_submit" value="Submit" />
 		</div>
 	</form>
 </div>

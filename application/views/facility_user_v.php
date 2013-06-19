@@ -130,7 +130,7 @@ $("#central_site").attr("value","<?php echo @$facility['parent'];?>");
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
 
-	    <div class="span9 span-fixed-sidebar" >
+	    <div class="span12 span-fixed-sidebar" >
 
 	    	<div id="action_panel_parent" style="display:none">
 				<div class="actions_panel" style="visibility:hidden" >
@@ -150,14 +150,14 @@ $("#central_site").attr("value","<?php echo @$facility['parent'];?>");
 				<?php echo validation_errors('<p class="error">', '</p>');?>
 				
 
-
+				<?php
+					$attributes = array('class' => 'input_form');
+					echo form_open('facility_management/update', $attributes);
+					echo validation_errors('<p class="error">', '</p>');
+				?>
 	    		<div id="facility_form" title="Facility Information">
 	    			
-		      		<?php
-						$attributes = array('class' => 'input_form');
-						echo form_open('facility_management/update', $attributes);
-						echo validation_errors('<p class="error">', '</p>');
-					?>
+		      		
 						<fieldset>
 	    					<h3>Facility Details</h3>
 							<table class="facility_basic_info" style="width:70%;">
@@ -269,15 +269,16 @@ $("#central_site").attr("value","<?php echo @$facility['parent'];?>");
 								</fieldset>
 							</div>
 
-							<div class="span3" style="padding-top: 5em;padding-left:8em">
-								<input type="submit" class="btn btn-primary" value="Save" style="padding-left: 2em; padding-right: 2em;">
-							</div>
+							
 
 							
 						</fieldset>
-					</form>
+					
 				</div>
-	    		
+				<div class="span3" style="padding-top: 2em;">
+					<input type="submit" class="btn btn-medium" value="Save" style="padding-left: 2em; padding-right: 2em;">
+				</div>
+	    		</form>
 
 			    
 			</div>
