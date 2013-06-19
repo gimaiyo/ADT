@@ -101,9 +101,7 @@ if (isset($styles)) {
 
 <body>
 <div id="wrapper">
-	<?php 
-	if(!isset($hide_header)){
-	?>
+	
 	<div id="top-panel" style="margin:0px;">
 
 		<div class="logo">
@@ -281,7 +279,8 @@ if(isset($reports)|| isset($report_title)){
 
 
 <div id="main_wrapper"> 
-	
+
+
 	<?php
 	if(!isset($hide_side_menu)){
 	?>
@@ -348,5 +347,6 @@ if(isset($reports)|| isset($report_title)){
  <?php $this -> load -> view("footer_v"); ?>
     </div>
     </div>
+    
 </body>
 </html>
