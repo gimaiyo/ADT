@@ -42,7 +42,7 @@ class Dispensement_Management extends MY_Controller {
 		}
 		
 		$data['facility']=$facility_code;
-		$data['user']=$this -> session -> userdata('user_id');
+		$data['user']=$this -> session -> userdata('full_name');
 		$data['regimens']=Regimen::getRegimens();
 		$data['non_adherence_reasons']=Non_Adherence_Reasons::getAllHydrated();
 		$data['regimen_changes']=Regimen_Change_Purpose::getAllHydrated();
@@ -108,7 +108,6 @@ class Dispensement_Management extends MY_Controller {
 		foreach($queries as $query){
 			$c++;
 			if(strlen($query)>0){
-				//echo $query."<br>";
 				$this->db->query($query);
 			}
 			
@@ -124,45 +123,6 @@ class Dispensement_Management extends MY_Controller {
 		}
 		
 		redirect("patient_management");
-		/*
-		$dispensing_date="";
-		$last_appointment="";
-		$next_appointment="";
-		$patient="";
-		$$facility="";
-		$next_appointment=$this -> input -> get_post('next_appointment_date', true); 
-		$dispensing_date=$this -> input -> get_post('dispensing_date', true); 
-		$last_appointment=$this -> input -> get_post('last_appointment_date', true); 
-		$patient=$this -> input -> get_post('patient', true);
-		$facility=$this -> session -> userdata('facility');
-		/*
-		$new_patient_visit=new Patient_Visit();
-		$new_patient_visit->Patient_Id=$this -> input -> get_post('patient', true);
-		$new_patient_visit->Visit_Purpose=$this -> input -> get_post('purpose', true);
-		$new_patient_visit->Current_Height=$this -> input -> get_post('height', true);
-		$new_patient_visit->Current_Weight=$this -> input -> get_post('weight', true);
-		$new_patient_visit->Regimen=$this -> input -> get_post('current_regimen', true);
-		$new_patient_visit->Last_Regimen=$this -> input -> get_post('last_regimen', true);
-		$new_patient_visit->Regimen_Change_Reason=$this -> input -> get_post('regimen_change_reason', true);
-		$new_patient_visit->Dispensing_Date=$this -> input -> get_post('dispensing_date', true);
-		$new_patient_visit->Adherence=$this -> input -> get_post('adherence', true);
-		$new_patient_visit->Non_Adherence_Reason=$this -> input -> get_post('non_adherence_reasons', true);
-		$new_patient_visit->save();
-		
-		if(strtotime($dispensing_date)<strtotime($last_appointment)){
-			//Dispensing date is less than the appointment(update)
-			$sql="update patient_appointment set appointment='$next_appointment' where patient='$patient' and facility='$facility' and appointment='$last_appointment'";
-		    $this -> db -> query($sql);
-		}else{
-			//Dispensing date is equal to appointment date/Dispensing date is greater than the appointment(insert)
-		$new_appointment=new Patient_Appointment();
-		$new_appointment->Patient=$this -> input -> get_post('patient', true);
-		$new_appointment->Appointment=$this -> input -> get_post('next_appointment_date', true); 
-		$new_appointment->Facility=$this -> session -> userdata('facility');
-		$new_appointment->save();
-		}
-
-          */
 	}
 	public function save_edit() {
 		$timestamp="";

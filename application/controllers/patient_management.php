@@ -212,7 +212,7 @@ class Patient_Management extends MY_Controller {
 			$facility = $this -> session -> userdata("facility");
 		}
 		//Patient History
-		$sql = "SELECT pv.dispensing_date, v.name as visit,d.unit,pv.dose,pv.duration,pv.indication,pv.id as record,d.drug,pv.quantity,pv.current_weight,pv.current_height,r.regimen_desc,pv.batch_number,pv.pill_count,pv.adherence,pv.user,pv.regimen_change_reason FROM patient_visit pv LEFT JOIN drugcode d ON pv.drug_id = d.id LEFT JOIN visit_purpose v ON pv.visit_purpose = v.id LEFT JOIN regimen r ON pv.regimen=r.id WHERE pv.patient_id ='$patient' AND pv.facility ='$facility' ORDER BY dispensing_date DESC";
+		$sql = "SELECT pv.dispensing_date, v.name AS visit, u.Name AS unit, pv.dose, pv.duration, pv.indication, pv.id AS record, d.drug, pv.quantity, pv.current_weight, pv.current_height, r1.regimen_desc, r.regimen_desc, pv.batch_number, pv.pill_count, pv.adherence, pv.user, pv.regimen_change_reason FROM patient_visit pv LEFT JOIN drugcode d ON pv.drug_id = d.id LEFT JOIN drug_unit u ON d.unit = u.id LEFT JOIN regimen r ON pv.regimen = r.id LEFT JOIN regimen r1 ON pv.last_regimen = r1.id LEFT JOIN visit_purpose v ON pv.visit_purpose = v.id WHERE pv.patient_id =  '$patient' AND pv.facility =  '$facility' ORDER BY dispensing_date DESC";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {

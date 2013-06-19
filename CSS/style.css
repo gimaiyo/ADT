@@ -62,6 +62,25 @@ body {
 	margin: 0 auto;
 	border-top: 2px solid #036;
 }
+header img{
+	margin:0 0 0 20%;;
+	
+}
+header{
+	margin:auto;
+	width:50%;
+	border-bottom:2px solid #2B597E;
+}
+#bottom_ribbon2{
+	border-top: 2px solid #036;
+	background: white;
+	padding:1%;
+	height: 50px;
+	width: 35%;
+	bottom: 0;
+	margin:auto;
+	
+}
 .pagination.flip a {
 	text-decoration: none;
 }
@@ -838,11 +857,27 @@ table.dataTable tr.odd td sorting_1 {
  * 	Login Forms
  */
 #signup_form {
-	background-color: #DDD;
-	border: 1px solid #E5E5E5;
-	padding: 3%;
+	
+	border-radius:5px;
+	background: #2B597E;
+	padding: 1%;
 	width: 35%;
-	margin: 0 auto;
+	margin:5% auto;
+	box-shadow: 0 1.2px 3px 1px #000;
+	-webkit-box-shadow: 0 1.2px 3px 1px #000;
+	color:white;
+}
+.adt{
+	color:black;
+	float:right;
+	margin-top:40px;
+}
+.adt sub{
+	color:#2B597E;
+	font-weight:bold;
+}
+#signup_form a{
+	color:black;
 }
 .login-form {
 	margin: auto;
@@ -864,6 +899,7 @@ table.dataTable tr.odd td sorting_1 {
 .login-form input[type="checkbox"] {
 	width: 5%;
 }
+
 #login-other {
 
 	display: block;
@@ -1374,6 +1410,7 @@ text-align:right;
 .add,.remove{
 cursor:pointer;
 }
+
 
 #patient_information, #patient_pill_count,#patient_regimen_history,#patient_appointment_history {
 margin: 0 auto;
