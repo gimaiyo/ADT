@@ -246,6 +246,10 @@
 
 	<body>
 		<div class="full-content" style="background:#80f26d">
+			<div id="sub_title" >
+				<a href="<?php  echo base_url().'patient_management ' ?>">Patient Listing </a> <i class=" icon-chevron-right"></i> <strong>Add Patients</strong>
+				<hr size="1">
+			</div>
 			<h3>Patient Registration
 			<div style="float:right;margin:5px 40px 0 0;">
 				(Fields Marked with <b><span class='astericks'>*</span></b> Asterisks are required)

@@ -86,6 +86,23 @@ class Dispensement_Management extends MY_Controller {
 		$results = $query -> result_array();
 		if ($results) {
 			$data['results']=$results;
+			//Get expriry date the batch
+			foreach($results as $value) {
+				$batch_number=$value['batch_number'];
+				$drug_ig=$value['drug_id'];
+				$expiry_sql=$this->db->query("select expiry_date FROM drug_stock_balance WHERE batch_number='$batch_number' AND drug_id='$drug_ig' AND stock_type='2' AND facility_code='$facility_code' AND balance>0 LIMIT 1");
+				$expiry_array=$expiry_sql->result_array();
+				$expiry_date="";
+				$data['expiries']=$expiry_array;
+				foreach ($expiry_array as $row) {
+					$expiry_date=$row['expiry_date'];
+					$data['original_expiry_date']=$expiry_date;
+				}
+			}
+			
+		}
+		else{
+			$data['results']="";
 		}
 		$data['purposes']=Visit_Purpose::getAll();
 		$data['record']=$record_no;
@@ -143,6 +160,7 @@ class Dispensement_Management extends MY_Controller {
 		  //Update drug_stock_balance
 			$sql="UPDATE drug_stock_balance SET balance=balance+".@$_POST["qty_disp"]." WHERE drug_id='".@$_POST["original_drug"]."' AND batch_number='".@$_POST["batch"]."' AND expiry_date='".@$_POST["original_expiry_date"]."' AND stock_type='2' AND facility_code='$facility";
 			$this->db->query($sql);
+			$this -> session -> set_userdata('dispense_deleted', 'success');
 		} else {
 		  $sql = "UPDATE patient_visit SET dispensing_date = '".@$_POST["dispensing_date"]."', visit_purpose = '".@$_POST["purpose"]."', current_weight='".@$_POST["weight"]."', current_height='".@$_POST["height"]."', regimen='".@$_POST["current_regimen"]."', drug_id='".@$_POST["drug"]."', batch_number='".@$_POST["batch"]."', dose='".@$_POST["dose"]."', duration='".@$_POST["duration"]."', quantity='".@$_POST["qty_disp"]."', brand='".@$_POST["brand"]."', indication='".@$_POST["indication"]. "', pill_count='".@$_POST["pill_count"]. "', missed_pills='".@$_POST["missed_pills"]. "', comment='".@$_POST["comment"]."',non_adherence_reason='".@$_POST["non_adherence_reasons"]."',adherence='".@$_POST["adherence"]."' WHERE id='".@$_POST["dispensing_id"]."';";
 		  $this->db->query($sql);	 
@@ -153,25 +171,31 @@ class Dispensement_Management extends MY_Controller {
 			            $this->db->query($sql);
 						//Update drug_stock_balance
 						//Balance=balance+(previous_qty_disp-actual_qty_dispense) 
-						$new_qty_dispensed=@$_POST["qty_hidden"]-@$_POST["qty_disp"];
+						$new_qty_dispensed=$_POST["qty_hidden"]-$_POST["qty_disp"];
+						
 						if($new_qty_dispensed>0){
 							$sql="UPDATE drug_stock_balance SET balance=balance+".@$new_qty_dispensed." WHERE drug_id='".@$_POST["original_drug"]."' AND batch_number='".@$_POST["batch"]."' AND expiry_date='".@$_POST["original_expiry_date"]."' AND stock_type='2' AND facility_code='$facility";
 							$this->db->query($sql);
 						}
 						else if($new_qty_dispensed<0){
+							
 							$new_qty_dispensed=abs($new_qty_dispensed);
 							$sql="UPDATE drug_stock_balance SET balance=balance-".@$new_qty_dispensed." WHERE drug_id='".@$_POST["original_drug"]."' AND batch_number='".@$_POST["batch"]."' AND expiry_date='".@$_POST["original_expiry_date"]."' AND stock_type='2' AND facility_code='$facility";
+							echo $sql;
+							die();
 							$this->db->query($sql);
 						}
 						
 						
 						
 			  }
+			  $this -> session -> set_userdata('dispense_updated', 'success');
 		}
 		$sql="select * from patient where patient_number_ccc='$patient' and facility_code='$facility'";
 		$query=$this->db->query($sql);
 		$results=$query->result_array();
 		$record_no=$results[0]['id'];
+		$this -> session -> set_userdata('msg_save_transaction', 'success');
         redirect("patient_management/viewDetails/$record_no");	
 	}
 	

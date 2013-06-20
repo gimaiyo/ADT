@@ -39,10 +39,7 @@
 	.table-bordered td ,.table-bordered th{
 		border-color: #000;
 	}
-	#sub_title{
-		margin-bottom:15px;
-		font-size:16px;
-	}
+	
 	#drug_info th{
 		font-size:14px;
 	}
@@ -52,7 +49,7 @@
 	
 	<div class="center-content">
 		<div id="sub_title" >
-			<a href="<?php  echo base_url().'inventory_management ' ?>">Inventory</a> <i class=" icon-chevron-right"></i>  <?php echo $store ?> <i class=" icon-chevron-right"></i> <strong>Bin Card</strong>
+			<a href="<?php  echo base_url().'inventory_management ' ?>">Inventory - <?php echo $store ?> </a> <i class=" icon-chevron-right"></i> <strong>Bin Card</strong>
 			<hr size="1">
 		</div>
 		

@@ -157,6 +157,18 @@ if (!isset($quick_link)) {
 						}
 					?>">Export Patient Master File</a>
 					</li>
+					<li>
+						<a href="<?php echo site_url("upload_management"); ?>" class="<?php
+						if ($quick_link == "export") {echo "top_menu_active";
+						}
+					?>">Import</a>
+					</li>
+					<li>
+						<a href="<?php echo site_url("user_management"); ?>" class="<?php
+						if ($quick_link == "export") {echo "top_menu_active";
+						}
+					?>">Users</a>
+					</li>
 				</ul>
 			</div>
 

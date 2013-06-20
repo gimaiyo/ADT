@@ -10,6 +10,7 @@ class Inventory_Management extends MY_Controller {
 	} 
 	
 	public function listing($stock_type=1){
+		
 		$data['active']="";
 		//Make pharmacy inventory active
 		if($stock_type==2){
