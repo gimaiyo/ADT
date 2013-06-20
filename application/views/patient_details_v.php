@@ -13,6 +13,14 @@ if(isset($results)){
 		<script type="text/javascript">
 		$(document).ready(function(){
 			
+			 $('#history_tabl').dataTable( {
+		        "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
+		        "sScrollY": "240px",
+		        "sScrollX": "100%",
+		    });
+			$.extend( $.fn.dataTableExt.oStdClasses, {
+			    "sWrapper": "dataTables_wrapper form-inline"
+			} );
 			//Function to Check Patient Numner exists
 			var base_url="<?php echo base_url();?>";
 			var patient_identification="<?php echo @$result['patient_number_ccc'];?>";
