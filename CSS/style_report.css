@@ -4,7 +4,8 @@
 	font-size:80%;
 }
 #report_container{
-	height:80px;
+	padding:1%;
+	height:20%;
 	width:100%;
 	background-color:rgb(243, 246, 247);
 }
