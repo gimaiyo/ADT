@@ -45,9 +45,9 @@ class Upload_Management extends MY_Controller {
 				}
 				$format_table = "(ArtID,Firstname,Surname,Sex,Age,Pregnant,DateTherapyStarted,WeightOnStart,ClientSupportedBy,OtherDeaseConditions,ADRorSideEffects,ReasonsforChanges,OtherDrugs,TypeOfService,DaysToNextAppointment,DateOfNextAppointment,CurrentStatus,CurrentRegimen,RegimenStarted,Address,CurrentWeight,startBSA,currentBSA,ischild,isadult,StartHeight,CurrentHeight,Naive,NonNaive,SourceofClient,Cotrimoxazole,TB,NoCotrimoxazole,NoTB,DateStartedonART,DateChangedStatus,NcurrentAge,OPIPNO,LastName,DateofBirth,PlaceofBirth,PatientCellphone,AlternateContact,PatientSmoke,PatientDrinkAlcohol,PatientDontSmoke,PatientDontDrinkAlcohol,InactiveDays,TransferFrom,facility_id)SET id=NULL,facility_id=$facility";
 				//Data sanitization
-				$next_sql = "update `$table` SET DateofBirth=STR_TO_DATE(DateofBirth,'%m/%d/%Y') WHERE DateofBirth like '%/%';";
-				$next_sql .= "update `$table` SET DateTherapyStarted=STR_TO_DATE(DateTherapyStarted,'%m/%d/%Y') WHERE DateTherapyStarted like '%/%';";
+				$next_sql = "update `$table` SET DateTherapyStarted=STR_TO_DATE(DateTherapyStarted,'%m/%d/%Y') WHERE DateTherapyStarted like '%/%';";
 				$next_sql .= "update `$table` SET DateofBirth=DATE_SUB( DateTherapyStarted, INTERVAL Age YEAR ) WHERE DateofBirth='';";
+				$next_sql .= "update `$table` SET DateofBirth=STR_TO_DATE(DateofBirth,'%m/%d/%Y') WHERE DateofBirth like '%/%';";
 				$next_sql .= "update `$table` set Sex = '1' where Sex like '%Ma%';";
 				$next_sql .= "update `$table` set Sex = '2' where Sex like '%F%';";
 				$next_sql .= "update `$table` set Pregnant = '0' where Pregnant like '%FA%';";
