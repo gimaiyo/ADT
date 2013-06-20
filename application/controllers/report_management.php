@@ -884,7 +884,7 @@ class report_management extends MY_Controller {
 		$data['not_visited'] = $not_visited;
 		$data['visited'] = $visited;
 		$data['all_count'] = $overall_total;
-		$data['title'] = "Reports";
+		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu']=1;
 		$data['banner_text']="Facility Reports";
 		$data['selected_report_type_link']="visiting_patient_report_row";
@@ -1271,7 +1271,7 @@ class report_management extends MY_Controller {
 		$data['overall_total'] = $data['overall_line_adult_female'] + $data['overall_line_adult_male'] + $data['overall_line_child_female'] + $data['overall_line_child_male'];
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['to'] = date('d-M-Y', strtotime($to));
-		$data['title'] = "Reports";
+		$data['title'] = "webADT | Reports";
 		$data['dyn_table']=$row_string;
 		$data['hide_side_menu']=1;
 		$data['banner_text']="Facility Reports";
@@ -1328,7 +1328,7 @@ class report_management extends MY_Controller {
 		$data['to'] = date('d-M-Y', strtotime($to));
 		$data['dyn_table'] = $row_string;
 		$data['all_count'] = $overall_total;
-		$data['title'] = "Reports";
+		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu']=1;
 		$data['banner_text']="Facility Reports";
 		$data['selected_report_type_link']="visiting_patient_report_row";
@@ -1387,7 +1387,7 @@ class report_management extends MY_Controller {
 		$data['to'] = date('d-M-Y', strtotime($to));
 		$data['dyn_table'] = $row_string;
 		$data['all_count'] = $overall_total;
-		$data['title'] = "Reports";
+		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu']=1;
 		$data['banner_text']="Facility Reports";
 		$data['selected_report_type_link']="visiting_patient_report_row";
@@ -1536,7 +1536,7 @@ class report_management extends MY_Controller {
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['to'] = date('d-M-Y', strtotime($to));
 		$data['dyn_table'] = $row_string;
-		$data['title'] = "Reports";
+		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu']=1;
 		$data['banner_text']="Facility Reports";
 		$data['selected_report_type_link']="standard_report_row";
@@ -1672,7 +1672,7 @@ class report_management extends MY_Controller {
 		}
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['dyn_table'] = $row_string;
-		$data['title'] = "Reports";
+		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu']=1;
 		$data['banner_text']="Facility Reports";
 		$data['selected_report_type_link']="standard_report_row";
@@ -2313,7 +2313,7 @@ class report_management extends MY_Controller {
 		$data['total']=count($data['patients']);
 		$data['from']=$start_date;
 		$data['to']=$end_date;
-		$data['title'] = "Reports";
+		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu']=1;
 		$data['banner_text']="Facility Reports";
 		$data['selected_report_type_link']="early_warning_report_select";
@@ -2443,7 +2443,7 @@ class report_management extends MY_Controller {
 
 	public function base_params($data) {
 		$data['reports']=true;
-		$data['title'] = "Reports";
+		$data['title'] = "webADT | Reports";
 		$data['banner_text'] = "Facility Reports";
 		$this -> load -> view('template', $data);
 	}

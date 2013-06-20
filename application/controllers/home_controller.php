@@ -19,7 +19,7 @@ class Home_Controller extends MY_Controller {
 		}
 		$data = array();
 		$data['current'] = "home_controller";
-		$data['title'] = "System Dashboard";
+		$data['title'] = "webADT | System Dashboard";
 		$data['banner_text'] = "System Dashboard";
 		$data['content_view'] = "platform_home_v";
 		$this -> load -> view("template_platform", $data);
@@ -49,7 +49,7 @@ class Home_Controller extends MY_Controller {
 			$data['scheduled_patients'] = Patient_Appointment::getAllScheduled($timestamp);
 		}
 
-		$data['title'] = "System Home";
+		$data['title'] = "webADT | System Home";
 		$data['content_view'] = "home_v";
 		$data['banner_text'] = "Home";
 		$data['link'] = "home";

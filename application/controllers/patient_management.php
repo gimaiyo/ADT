@@ -403,7 +403,7 @@ class Patient_Management extends MY_Controller {
 	}
 
 	public function base_params($data) {
-		$data['title'] = "Patients";
+		$data['title'] = "webADT | Patients";
 		$data['banner_text'] = "Facility Patients";
 		$data['link'] = "patients";
 		$this -> load -> view('template', $data);
@@ -426,7 +426,7 @@ class Patient_Management extends MY_Controller {
 		}
 		$data = array();
 		$data['current'] = "patient_management";
-		$data['title'] = "Patient Regimen Breakdown";
+		$data['title'] = "webADT | Patient Regimen Breakdown";
 		$data['content_view'] = "patient_regimen_breakdown_v";
 		$data['banner_text'] = "Patient Regimen Breakdown";
 		$data['facilities'] = Reporting_Facility::getAll();
