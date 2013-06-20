@@ -109,8 +109,6 @@
 </script>
 
 <div class="center-content">
-	<form id="fmChangePassword" action="<?php echo base_url().'user_management/save_new_password'?>" method="post" class="well">
-	<legend>Change Password</legend>
 	<?php
 	echo validation_errors('
 	<p class="error">', '</p>
@@ -121,6 +119,9 @@
 		$this -> session -> set_userdata("matching_password", "");
 	}
 	?>
+	<form id="fmChangePassword" action="<?php echo base_url().'user_management/save_new_password'?>" method="post" class="well">
+	<legend>Change Password</legend>
+	
 	<br>
 	<table>
 	<tr>
