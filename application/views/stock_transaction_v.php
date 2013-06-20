@@ -5,12 +5,10 @@
 	.main-content{
 		margin:0 auto;	
 	}
-	.center-content{
-		width:98%;
-		padding: 6.5% 0.5% 0.5% 0.5%;
-		background: #D1EAF0;
-		margin:0.6%;
+	
 	}
+	.full-content{
+		display:table;
 	}
 	table th{
 		text-align:left;
@@ -25,15 +23,16 @@
 		width: 4.2em;
 	}
 	#transaction_type_details{
-		float:left;
-		width:17%;
+		padding:1%;
+		display:table-cell;
+		width:15%;
 	}
 	#transaction_type_details th{
 		text-align:left;
 	}
 	#drug_details{
 		width:82%;
-		float:left;
+		display:table-cell;
 	}
 	#drugs_table{
 		width: 100%;
@@ -289,7 +288,7 @@
 				alert("You have not selected a drug!");
 			}
 			else if(quantity_entered=="" || quantity_entered==0){
-				alert("You have not entered any quantity!");
+				alert("Please Specify the Quantity of the Drug");
 			}
 			else{
 				var cloned_object = $('#drugs_table tr:last').clone(true);
@@ -683,7 +682,7 @@
 		</div>
 		<form id="stock_form" method="post" action="<?php echo base_url().'inventory_management/save' ?>">
 			<textarea name="sql" id="sql"></textarea>
-		<div class="center-content" id="stock_div">
+		<div class="full-content" id="stock_div" style="background:#64abf4">
 			<div id="sub_title" >
 				<a href="<?php  echo base_url().'inventory_management ' ?>">Inventory</a> <i class=" icon-chevron-right"></i>  <?php echo $store ?> 
 				<hr size="1">

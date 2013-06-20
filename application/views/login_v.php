@@ -16,11 +16,7 @@
 		<header>
 			<img src='<?php echo base_url();?>Images/nascop.jpg'>
 		</header>
-		<div id="signup_form">
-			<div class="short_title" >
-				Sign in
-			</div>
-			<?php
+		<?php
 			echo validation_errors('
 
 <p class="error">', '</p>
@@ -38,6 +34,11 @@
 				echo "<p class='error'>" . @$login_attempt . "</p>";
 			}
 		?>
+		<div id="signup_form">
+			<div class="short_title" >
+				Login
+			</div>
+			
 			<form class="login-form" action="<?php echo base_url().'user_management/authenticate'?>" method="post" style="margin:0 auto " >
 				<label> <strong >Please Enter Your Email/Username</strong>
 					<br>
@@ -47,14 +48,12 @@
 					<br>
 					<input type="password" name="password" class="input-xlarge" id="password" placeholder="********">
 				</label>
-				<input type="submit" class="btn" name="register" id="register" value="Sign in" >
-				<div style="margin-top:20px;display:inline">
-					<strong><a href="<?php echo base_url().'user_management/resetPassword' ?>">Forgot Password?</a></strong>
+				<input type="submit" class="btn" name="register" id="register" value="Login" >
+				<div style="margin:auto;width:30%" class="anchor">
+					<strong><a href="<?php echo base_url().'user_management/resetPassword' ?>" >Forgot Password?</a></strong>
 				</div>
 			</form>
-			<div class="adt">
-				powered by webADT <sub>2.0</sub>
-			</div>
+			
 		</div>
 		<footer id="bottom_ribbon2">
 			 <?php $this -> load -> view("footer_v"); ?>

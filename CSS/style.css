@@ -62,24 +62,28 @@ body {
 	margin: 0 auto;
 	border-top: 2px solid #036;
 }
-header img{
-	margin:0 0 0 20%;;
+header img {
+	margin: 0 0 0 20%;
+}
+header {
 	
+	padding-bottom: 1%;
+	margin: auto;
+	width: 50%;
+	border-bottom: 2px solid #2B597E;
+	margin-bottom: 2%;
 }
-header{
-	margin:auto;
-	width:50%;
-	border-bottom:2px solid #2B597E;
+.anchor a:hover {
+	color: white;
 }
-#bottom_ribbon2{
+#bottom_ribbon2 {
 	border-top: 2px solid #036;
 	background: white;
-	padding:1%;
+	padding: 1%;
 	height: 50px;
 	width: 35%;
 	bottom: 0;
-	margin:auto;
-	
+	margin: 5% auto;
 }
 .pagination.flip a {
 	text-decoration: none;
@@ -88,7 +92,7 @@ header{
 	font-weight: 300;
 	letter-spacing: 2px;
 	margin: 0 auto;
-	font-size: 16px;
+	font-size: 1em;
 	color: #036;
 	width: 90%;
 	height: 30px;
@@ -96,11 +100,7 @@ header{
 	overflow: hidden;
 	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
 }
-.error {
-	color: #BE2E21;
-	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
-	font-weight: bold;
-}
+
 #wrapper {
 	width: 100%;
 	min-width: 980px;
@@ -240,7 +240,7 @@ header{
 	font-weight: 100;
 	letter-spacing: -1px;
 	margin: .2% 0 0 1%;
-	font-size: 28px;
+	font-size: 1.4em;
 	color: #000;
 	width: 500px;
 	height: 30px;
@@ -503,7 +503,32 @@ fieldset {
 	color: #333;
 }
 .error {
-	border: 1px solid #c44509;
+	background: red;
+	background-image: linear-gradient(bottom, rgb(179,43,43) 25%, rgb(194,74,74) 99%);
+	background-image: -o-linear-gradient(bottom, rgb(179,43,43) 25%, rgb(194,74,74) 99%);
+	background-image: -moz-linear-gradient(bottom, rgb(179,43,43) 25%, rgb(194,74,74) 99%);
+	background-image: -webkit-linear-gradient(bottom, rgb(179,43,43) 25%, rgb(194,74,74) 99%);
+	background-image: -ms-linear-gradient(bottom, rgb(179,43,43) 25%, rgb(194,74,74) 99%);
+	background-image: -webkit-gradient(
+	linear,
+	left bottom,
+	left top,
+	color-stop(0.25, rgb(179,43,43)),
+	color-stop(0.99, rgb(194,74,74))
+	);
+	color: white;
+	padding: .5%;
+	border-radius: 5px;
+	font-size: 16px;
+	-webkit-box-shadow: 0 2px 6px 0.5px #000;
+	-moz-box-shadow: 0 2px 6px 0.5px #000;
+	box-shadow: 0 2px 6px 0.5px #000;
+	-o--box-shadow: 0 2px 6px 0.5px #000;
+	text-align: center;
+	margin: 3% auto 1% auto;
+	width: 36%;
+	text-align: center;
+	font-weight:bold;
 }
 .success {
 	border: 1px solid #739f1d;
@@ -600,9 +625,10 @@ tr th {
  *
  */
 .center-content h3, .full-content h3, .main-content h3, .left-content h3 {
+	line-height:2em;
 	-webkit-margin-before: 0.5em;
 	color: #fff;
-	font-size: 1.2em;
+	font-size: 1em;
 	padding: 0 0 0 1em;
 	background: #2B597E;
 	box-shadow: 0 1.2px 3px 1px #000;
@@ -617,9 +643,12 @@ tr th {
 }
 .left-content {
 	padding: 9.5% 0.5% 0.5% 1%;
-	width: 19%;
+	width: 15%;
 	float: left;
 	margin-bottom: 2%;
+}
+.left-content ul{
+	font-size:0.9em;
 }
 .center-content h3 {
 	margin: 0 0 1% 0;
@@ -627,14 +656,14 @@ tr th {
 .center-content {
 	float: right;
 	padding: 10% 1% 1% 1%;
-	width: 76%;
+	width: 80%;
 	margin: 0 0 0 1.5%;
 	padding-bottom: 8%;
 	display: inline-block;
 }
 .full-content {
 	width: 98%;
-	padding: 11% 1% 5% 1%;
+	padding: 9% 1% 5% 1%;
 }
 .full-content form {
 	width: 100%;
@@ -733,17 +762,7 @@ table.dataTable tr.odd td sorting_1 {
 	top: 157px;
 	width: 250px;
 }
-@media (max-width: 767px) {
-	.sidebar-nav-fixed {
-		width: auto;
-	}
-}
-@media (max-width: 979px) {
-	.sidebar-nav-fixed {
-		position: static;
-		width: auto;
-	}
-}
+
 .well {
 	margin-bottom: 0px;
 }
@@ -857,27 +876,32 @@ table.dataTable tr.odd td sorting_1 {
  * 	Login Forms
  */
 #signup_form {
-	
-	border-radius:5px;
+	margin-top:5%;
+	margin-bottom:2%;
+	height: 30%;
+	border-radius: 5px;
 	background: #2B597E;
 	padding: 1%;
 	width: 35%;
-	margin:5% auto;
+	margin: auto;
 	box-shadow: 0 1.2px 3px 1px #000;
 	-webkit-box-shadow: 0 1.2px 3px 1px #000;
-	color:white;
+	color: white;
 }
-.adt{
-	color:black;
-	float:right;
-	margin-top:40px;
+.adt {
+	color: black;
+	float: right;
+	margin-top: 40px;
 }
-.adt sub{
-	color:#2B597E;
-	font-weight:bold;
+.adt sub {
+	color: #2B597E;
+	font-weight: bold;
 }
-#signup_form a{
-	color:black;
+#signup_form a {
+	color: black;
+}
+#signup_form a:hover {
+	color: white;
 }
 .login-form {
 	margin: auto;
@@ -1387,51 +1411,99 @@ legend {
 .astericks {
 	color: red;
 }
-#submit_section{
-text-align:right;
+#submit_section {
+	text-align: right;
 }
-#dispensing_history{
-height:300px;
-overflow: scroll;
-font-size:0.8em;
+#dispensing_history {
+	height: 300px;
+	overflow: scroll;
+	font-size: 0.8em;
 }
-table#history_table{
-font-size:1.3em;
+table#history_table {
+	font-size: 1.3em;
 }
-table#history_table th{
-background-color:#F5F5F5;
+table#history_table th {
+	background-color: #F5F5F5;
 }
-table#history_table td{
-font-size:0.8em;
+table#history_table td {
+	font-size: 0.8em;
 }
-#submit_section{
-text-align:right;
+#submit_section {
+	text-align: right;
 }
-.add,.remove{
-cursor:pointer;
+.add, .remove {
+	cursor: pointer;
+}
+
+#patient_information, #patient_pill_count, #patient_regimen_history, #patient_appointment_history {
+	margin: 0 auto;
+	border-top: 1px solid #B9B9B9;
+	font-size: 12px;
+	letter-spacing: 1px;
+}
+#patient_pill_count, #patient_information, #patient_regimen_history, #patient_appointment_history td th {
+	padding: 10px;
+}
+#patient_appointment_history td {
+	text-align: center;
+}
+#patient_regimen_history td {
+	text-align: center;
+}
+#patient_information td {
+	text-align: center;
+}
+#sub_title {
+	margin-bottom: 15px;
+	font-size: 16px;
+}
+#sub_title a{
+	color:white;
+}
+#sub_title a:hover{
+	color:#2B597E;
 }
 
 
-#patient_information, #patient_pill_count,#patient_regimen_history,#patient_appointment_history {
-margin: 0 auto;
-border-top: 1px solid #B9B9B9;
-font-size: 12px;
-letter-spacing: 1px;
+/**
+ * 	Media Screens
+ */
+@media (min-width:360px) and (max-width: 600px) {
+	#footer_text {
+		font-size: 0.3em;
+	}
+	.sidebar-nav-fixed {
+		width: auto;
+	}
 }
-#patient_pill_count, #patient_information,#patient_regimen_history,#patient_appointment_history td th {
-padding: 10px;
+@media (min-width:601px) and (max-width: 800px) {
+	#footer_text {
+		font-size: 0.4em;
+	}
+	.sidebar-nav-fixed {
+		width: auto;
+	}
 }
-#patient_appointment_history td  {
-text-align: center;
+@media (min-width:801px) and (max-width: 900px) {
+	#footer_text {
+		font-size: 0.5em;
+	}
+	.sidebar-nav-fixed {
+		width: auto;
+	}
 }
-#patient_regimen_history td  {
-text-align: center;
+@media (min-width:901px) and (max-width: 1100px) {
+	#footer_text {
+		font-size: 0.6em;
+	}
+	.sidebar-nav-fixed {
+		width: auto;
+	}
 }
-#patient_information td  {
-text-align: center;
+#fmChangePassword{
+	margin-top:2%;
+	width:35%;
 }
-#sub_title{
-	margin-bottom:15px;
-	font-size:16px;
+.notCenter{
+	margin:0;
 }
-

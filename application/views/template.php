@@ -70,7 +70,7 @@ if (isset($styles)) {
 
 
 
-			$(document).ready(function() {
+				$(document).ready(function() {
 	<?php 
 			if($user_is_pharmacist){
 				?>
@@ -117,9 +117,9 @@ if (isset($styles)) {
 						<div id="facility_name">							
 							<span><?php echo $this -> session -> userdata('facility_name'); ?></span>
 						</div>										
-						<div class="banner_text" style="font-size: 22px; margin-top: 20px"><?php echo $banner_text; ?></div>
+						
 				</div>
-				
+				<div class="banner_text"><?php echo $banner_text; ?></div>
 				
  <div id="top_menu"> 
 
@@ -274,7 +274,7 @@ if(isset($reports)|| isset($report_title)){
 	</script>
 <?php
 
-		}
+}
 	?>
 
 

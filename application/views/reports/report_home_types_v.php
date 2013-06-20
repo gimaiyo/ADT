@@ -68,6 +68,8 @@
 							<option value="2">PEPFAR</option>
 						</select>
 					</td>
+				</tr>
+				<tr>
 					<td><strong>From : </strong></td>
 					<td>
 						<input type="text" name="donor_date_range_from" id="donor_date_range_from" class="input-medium donor_input_dates_from">
@@ -76,6 +78,8 @@
 					<td>
 						<input type="text" name="donor_date_range_to" id="donor_date_range_to" class="input-medium donor_input_dates_to">
 					</td>
+				</tr>
+				<tr>
 					<td>
 						<input type="button" id="donor_generate_date_range_report" class="btn generate_btn" value="Generate Report">
 					</td>
