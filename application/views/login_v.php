@@ -23,7 +23,7 @@ $this -> load -> view('sections/head');
  
 
 <div id="signup_form">
-	 <div class="short_title" >Sign in </div>
+	 <div class="short_title" >Login</div>
 	 
 <?php
 echo validation_errors('
