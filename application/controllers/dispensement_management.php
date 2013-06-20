@@ -86,6 +86,23 @@ class Dispensement_Management extends MY_Controller {
 		$results = $query -> result_array();
 		if ($results) {
 			$data['results']=$results;
+			//Get expriry date the batch
+			foreach($results as $value) {
+				$batch_number=$value['batch_number'];
+				$drug_ig=$value['drug_id'];
+				$expiry_sql=$this->db->query("select expiry_date FROM drug_stock_balance WHERE batch_number='$batch_number' AND drug_id='$drug_ig' AND stock_type='2' AND facility_code='$facility_code' AND balance>0 LIMIT 1");
+				$expiry_array=$expiry_sql->result_array();
+				$expiry_date="";
+				$data['expiries']=$expiry_array;
+				foreach ($expiry_array as $row) {
+					$expiry_date=$row['expiry_date'];
+					$data['original_expiry_date']=$expiry_date;
+				}
+			}
+			
+		}
+		else{
+			$data['results']="";
 		}
 		$data['purposes']=Visit_Purpose::getAll();
 		$data['record']=$record_no;

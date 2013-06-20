@@ -391,7 +391,7 @@ table.data-table caption {
 	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
 	font-size: 14px;
 }
-table.data-table th, table#history_table th {
+table.data-table th, table#history_table th, table#drugs_table th {
 	border: none;
 	color: #036;
 	text-align: center;
