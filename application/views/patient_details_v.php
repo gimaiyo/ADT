@@ -574,6 +574,49 @@ if(isset($results)){
 	</head>
 	<body>
 <div class="full-content" style="background:#9CF">
+	<div>
+		<?php if($this->session->userdata("msg_save_transaction")){
+			?>
+			
+			<script type="text/javascript">
+				setTimeout(function(){
+					$(".info").fadeOut("2000");
+				},6000)
+			</script>
+			<?php
+			if($this->session->userdata("msg_save_transaction")=="success"){
+				if($this->session->userdata("user_updated")){
+						?>
+						<p class="info"><span class="alert-success"><?php echo $this->session->userdata("user_updated") ?>'s details were successfully updated !</span></p>
+						<?php
+						$this->session->unset_userdata('user_updated');
+					}
+					else if($this->session->userdata("dispense_updated")){
+						?>
+						<p class="info"><span class="alert-success">The dispensing details were successfully updated !</span></p>
+						<?php
+						$this->session->unset_userdata('dispense_updated');
+					}
+					else if($this->session->userdata("dispense_deleted")){
+						?>
+						<p class="info"><span class="alert-error">The dispensing details were successfully deleted !</span></p>
+						<?php
+						$this->session->unset_userdata('dispense_deleted');
+					} 
+			}
+			else{
+				?>
+				<p class="info"><span class="alert-error">Your data were not saved ! Try again or contact your system administrator.</span></p>
+				<?php
+			}
+			$this->session->unset_userdata('msg_save_transaction');
+		}
+		?>
+	</div>
+	<div id="sub_title" >
+		<a href="<?php  echo base_url().'patient_management ' ?>">Patient Listing </a> <i class=" icon-chevron-right"></i> <strong>ART Card</strong>
+		<hr size="1">
+	</div>
 	<h3>Patient ART Card
 	<div style="float:right;margin:5px 40px 0 0;">
 		(Fields Marked with <b><span class='astericks'>*</span></b> Asterisks are required)

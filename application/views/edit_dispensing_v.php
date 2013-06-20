@@ -2,6 +2,9 @@
 foreach($results as $result){
 	
 }
+foreach ($expiries as $expiry) {
+	
+}
 ?>
 <!DOCTYPE html>
 <html lang="en" >
@@ -18,6 +21,7 @@ foreach($results as $result){
 				$("#dispensing_date").val("<?php echo @$result['dispensing_date'];?>"); 
 				$("#original_dispensing_date").val("<?php echo @$result['dispensing_date'];?>"); 
 				$("#original_drug").val("<?php echo @$result['drug_id']; ?>");
+				$("#original_expiry_date").val("<?php echo @$expiry['expiry_date']; ?>");
 				$("#dispensing_id").val("<?php echo @$record;?>"); 
 				$("#batch_hidden").val("<?php echo @$result['batch_number']; ?>");
 				$("#qty_hidden").val("<?php echo @$result['quantity']; ?>");
@@ -165,7 +169,6 @@ foreach($results as $result){
 				    	    $("#dose").val("<?php echo $result['dose']; ?>");
 				    	    $("#duration").val("<?php echo $result['duration']; ?>");
 				    	    $("#qty_disp").val("<?php echo $result['quantity']; ?>");
-				    	    $("#original_expiry_date").val($("#expiry").val());
 				    	    }
 				    	});
 				    	    
@@ -234,14 +237,18 @@ foreach($results as $result){
 	</head>
 	<body>
 <div class="full-content" style="background:#FFCC99">
+	<div id="sub_title" >
+		<a href="<?php  echo base_url().'patient_management ' ?>">Patient Listing </a> <i class=" icon-chevron-right"></i><a href="<?php  echo base_url().'patient_management/viewDetails/'.$result['id'] ?>"><?php echo strtoupper($result['first_name'].' '.$result['other_name'].' '.$result['last_name']) ?></a> <i class=" icon-chevron-right"></i><strong>Edit dispensing details</strong>
+		<hr size="1">
+	</div>
 	<h3>Dispensing History Editing</h3>
 	<form id="edit_dispense_form" method="post"  action="<?php echo base_url().'dispensement_management/save_edit';?>" onsubmit="return processData('edit_dispense_form')" >
 		<input id="original_dispensing_date" name="original_dispensing_date" type="hidden"/>
+		<input id="original_expiry_date" name="original_expiry_date" type="hidden"/>
 		<input id="original_drug" name="original_drug" type="hidden"/>
 		<input id="batch_hidden" name="batch_hidden" type="hidden"/>
 		<input id="dispensing_id" name="dispensing_id" type="hidden"/>
 		<input id="qty_hidden" name="qty_hidden" type="hidden"/>
-		<input id="original_expiry_date" name="original_expiry_date" type="hidden"/>
 		<input id="delete_trigger" name="delete_trigger" type="hidden" value="0"/>
 		<div class="column-5">
 			<fieldset>
@@ -342,71 +349,76 @@ foreach($results as $result){
 			</fieldset>
 		</div>
 		<div id="edit_drugs_section" style="margin: 0 auto;">
-			<table border="0" class="data-table" id="drugs_table" style="width:80%;">
-			<th class="subsection-title" colspan="14">Select Drugs</th>
-			<tr>
-			<th>Drug</th>
-			<th>Unit</th>
-			<th>Batch No.</th>
-			<th>Expiry Date</th>
-			<th>Dose</th>
-			<th>Duration</th>
-			<th>Qty. disp</th>
-			<th>Stock on Hand</th>
-			<th>Brand Name</th>
-			<th>Indication</th>
-			<th>Pill Count</th>
-			<th>Missed Pills</th>
-			<th>Comment</th>
-			</tr>
-			<tr drug_row="0">
-			<td><select name="drug" class="drug input-large" id="drug" style="width:300px"></select></td>
-			<td>
-			<input type="text" name="unit" id="unit" class="unit input-small"  readonly="readonly"/>
-			</td>
-			<td><select id="batch" name="batch" class="batch input-small" style="width:120px"></select></td>
-			<td>
-			<input type="text" id="expiry" name="expiry" class="expiry input-small" />
-			</td>
-			<td>
-			<select id="dose" name="dose" class="expiry input-small">
-				<option value="">-Select-</option>
-				<?php
-				  foreach($doses as $dose){
-				  	echo "<option value='".$dose['Name']."'>".$dose['Name']."</option>";
-				  }
-				?>			
-			</select>
-			</td>
-			<td>
-			<input type="text" id="duration" name="duration" class="duration input-small" />
-			</td>
-			<td>
-			<input type="text" id="qty_disp" name="qty_disp" class="qty_disp input-small" />
-			</td>
-			<td>
-			<input type="text" id="soh" name="soh" class="soh input-small" readonly="readonly"/>
-			</td>
-			<td><select name="brand" id="brand" class="brand input-small"></select></td>
-			<td>
-			<select name="indication" id="indication" class="indication input-small">
-			<option value=" ">None</option>
-			<?php 
-			foreach($indications as $indication){
-				echo "<option value='".$indication['id']."'>".$indication['Name']."</option>";
-			}
-			?>
-			</select></td>
-			<td>
-			<input type="text" name="pill_count" id="pill_count" class="pill_count input-small" />
-			</td>
-			<td>
-			 <input type="text" name="missed_pills" id="missed_pills" class="missed_pills input-small" />
-			</td>
-			<td>
-			<input type="text" name="comment" id="comment" class="comment input-small" />
-			</td>
-			</tr>
+			<table border="1" class="table-bordered" id="drugs_table" style="width:100%; margin-top:10px">
+				<thead>
+					<th class="subsection-title" colspan="14">Select Drugs</th>
+					<tr>
+					<th>Drug</th>
+					<th>Unit</th>
+					<th>Batch No.</th>
+					<th>Expiry Date</th>
+					<th>Dose</th>
+					<th>Duration</th>
+					<th>Qty. disp</th>
+					<th>Stock on Hand</th>
+					<th>Brand Name</th>
+					<th>Indication</th>
+					<th>Pill Count</th>
+					<th>Missed Pills</th>
+					<th>Comment</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr drug_row="0">
+					<td><select name="drug" class="drug input-large" id="drug" style="width:150px"></select></td>
+					<td>
+					<input type="text" name="unit" id="unit" class="unit input-small validate[required]"  readonly="readonly"/>
+					</td>
+					<td><select id="batch" name="batch" class="batch input-small" style="width:120px"></select></td>
+					<td>
+					<input type="text" id="expiry" name="expiry" class="expiry input-small validate[required]" />
+					</td>
+					<td>
+					<select id="dose" name="dose" class="expiry input-small">
+						<option value="">-Select-</option>
+						<?php
+						  foreach($doses as $dose){
+						  	echo "<option value='".$dose['Name']."'>".$dose['Name']."</option>";
+						  }
+						?>			
+					</select>
+					</td>
+					<td>
+					<input type="text" id="duration" name="duration" class="duration input-small validate[required]" />
+					</td>
+					<td>
+					<input type="text" id="qty_disp" name="qty_disp" class="qty_disp input-small validate[required]" />
+					</td>
+					<td>
+					<input type="text" id="soh" name="soh" class="soh input-small" readonly="readonly"/>
+					</td>
+					<td><select name="brand" id="brand" class="brand input-small"></select></td>
+					<td>
+					<select name="indication" id="indication" class="indication input-small">
+					<option value=" ">None</option>
+					<?php 
+					foreach($indications as $indication){
+						echo "<option value='".$indication['id']."'>".$indication['Name']."</option>";
+					}
+					?>
+					</select></td>
+					<td>
+					<input type="text" name="pill_count" id="pill_count" class="pill_count input-small" />
+					</td>
+					<td>
+					 <input type="text" name="missed_pills" id="missed_pills" class="missed_pills input-small" />
+					</td>
+					<td>
+					<input type="text" name="comment" id="comment" class="comment input-small" />
+					</td>
+					</tr>
+				</tbody>
+			
 			</table>
 		</div>
 		<div id="submit_section">

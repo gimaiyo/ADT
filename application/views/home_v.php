@@ -29,7 +29,7 @@ if($this->session->userdata("changed_password")){
 ?>
 
 <script type="text/javascript">
-	initDatabase();
+	//initDatabase();
 	//Retrieve the Facility Code
 	var facility_code = "<?php echo $this -> session -> userdata('facility');?>";
 	var facility_name = "<?php echo $this -> session -> userdata('facility_name');?>";
@@ -38,8 +38,9 @@ if($this->session->userdata("changed_password")){
 		
 		var machine_code = $("#machine_code").attr("value");
 		var operator = $("#operator").attr("value");
-		saveEnvironmentVariables(machine_code, operator);
+		//saveEnvironmentVariables(machine_code, operator);
 		var base_url="<?php echo base_url(); ?>";
+		/*
 		$.ajax({
 			
 			type: "POST",
@@ -48,6 +49,7 @@ if($this->session->userdata("changed_password")){
                console.log(data);
 			}					
 	    });
+	    */
 	    
 	    var fade_out = function() {
 	      $(".error").fadeOut().empty();
@@ -72,7 +74,7 @@ if($this->session->userdata("changed_password")){
 				$("#manual_dialog").dialog('open');	
 		})
 
-
+        /*
 		selectEnvironmentVariables(function(transaction, results) {
 			var variables = null;
 			var machine_code = "";
@@ -129,6 +131,7 @@ if($this->session->userdata("changed_password")){
 			     $("#synchronize_button").hide();
 			  });
 		});//End .ready opener
+		*/
 	function checkSync() {
 		var url = "";
 		var facility = "";

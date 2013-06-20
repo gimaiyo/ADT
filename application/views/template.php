@@ -279,7 +279,8 @@ if(isset($reports)|| isset($report_title)){
 
 
 <div id="main_wrapper"> 
-	
+
+
 	<?php
 	if(!isset($hide_side_menu)){
 	?>
@@ -346,5 +347,6 @@ if(isset($reports)|| isset($report_title)){
  <?php $this -> load -> view("footer_v"); ?>
     </div>
     </div>
+    
 </body>
 </html>

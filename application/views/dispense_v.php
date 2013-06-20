@@ -553,7 +553,10 @@ foreach($results as $result){
 	</head>
 	<body>
 		<div class="full-content" style="background: #f9f">
-
+			<div id="sub_title" >
+				<a href="<?php  echo base_url().'patient_management ' ?>">Patient Listing </a> <i class=" icon-chevron-right"></i><a href="<?php  echo base_url().'patient_management/viewDetails/'.$result['id'] ?>"><?php echo strtoupper($result['first_name'].' '.$result['other_name'].' '.$result['last_name']) ?></a> <i class=" icon-chevron-right"></i><strong>Dispensing details</strong>
+				<hr size="1">
+			</div>
 			<h3>Dispense Drugs</h3>
 
 			<form id="dispense_form" class="dispense_form" method="post"  action="<?php echo base_url().'dispensement_management/save';?>" onsubmit="return processData('dispense_form')" >

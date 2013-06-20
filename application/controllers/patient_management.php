@@ -52,6 +52,7 @@ class Patient_Management extends MY_Controller {
 	}
 
 	public function listing() {
+		$access_level = $this -> session -> userdata('user_indicator');
 		$facility_code = $this -> session -> userdata('facility');
 		$link = "";
 		//Testing, don't judge
@@ -175,13 +176,17 @@ class Patient_Management extends MY_Controller {
 				$row[] = $name;
 			}
 			$id = $aRow['id'];
-			if ($aRow['Active'] == 1) {
-				$link = '<a href="' . base_url() . 'patient_management/disable/' . $id . '" class="red">Disable</a>';
-
-			} else {
-				$link = '<a href="' . base_url() . 'patient_management/enable/' . $id . '" class="green">Enable</a>';
+			$link="";
+			if($access_level=="facility_administrator"){
+				if ($aRow['Active'] == 1) {
+					$link = '| <a href="' . base_url() . 'patient_management/disable/' . $id . '" class="red">Disable</a>';
+	
+				} else {
+					$link = '| <a href="' . base_url() . 'patient_management/enable/' . $id . '" class="green">Enable</a>';
+				}
 			}
-			$row[] = '<a href="' . base_url() . 'patient_management/viewDetails/' . $id . '">Detail</a> | <a href="' . base_url() . 'patient_management/edit/' . $id . '">Edit</a> | ' . $link;
+			
+			$row[] = '<a href="' . base_url() . 'patient_management/viewDetails/' . $id . '">Detail</a> | <a href="' . base_url() . 'patient_management/edit/' . $id . '">Edit</a> ' . $link;
 			$output['aaData'][] = $row;
 		}
 		echo json_encode($output);
@@ -226,6 +231,7 @@ class Patient_Management extends MY_Controller {
 		$data['family_planning'] = Family_Planning::getAll();
 		$data['other_illnesses'] = Other_Illnesses::getAll();
 		$data['regimens'] = Regimen::getRegimens();
+		
 		$data['content_view'] = 'patient_details_v';
 		//Hide side menus
 		$data['hide_side_menu'] = '1';
@@ -239,6 +245,7 @@ class Patient_Management extends MY_Controller {
 		if ($results) {
 			$data['results'] = $results;
 		}
+		$data['record_no']=$record_no;
 		$data['districts'] = District::getPOB();
 		$data['genders'] = Gender::getAll();
 		$data['statuses'] = Patient_Status::getStatus();
@@ -334,6 +341,8 @@ class Patient_Management extends MY_Controller {
 		$patient = $this -> input -> post('patient_number', TRUE);
 
 		if ($_POST['save'] == "Submit") {
+			$this -> session -> set_userdata("user_saved",$this -> input -> post('first_name', TRUE));
+			$this -> session -> set_userdata('msg_save_transaction', 'success');
 			redirect("patient_management");
 		} else if ($_POST['save'] == "Dispense") {
 			redirect("patient_management/dispense/$patient");
@@ -385,6 +394,10 @@ class Patient_Management extends MY_Controller {
 		$data = array('Medical_Record_Number' => $this -> input -> post('medical_record_number', TRUE), 'Patient_Number_CCC' => $this -> input -> post('patient_number', TRUE), 'First_Name' => $this -> input -> post('first_name', TRUE), 'Last_Name' => $this -> input -> post('last_name', TRUE), 'Other_Name' => $this -> input -> post('other_name', TRUE), 'Dob' => $this -> input -> post('dob', TRUE), 'Pob' => $this -> input -> post('pob', TRUE), 'Gender' => $this -> input -> post('gender', TRUE), 'Pregnant' => $this -> input -> post('pregnant', TRUE), 'Start_Weight' => $this -> input -> post('start_weight', TRUE), 'Start_Height' => $this -> input -> post('start_height', TRUE), 'Start_Bsa' => $this -> input -> post('start_bsa', TRUE), 'Weight' => $this -> input -> post('current_weight', TRUE), 'Height' => $this -> input -> post('current_height', TRUE), 'Sa' => $this -> input -> post('current_bsa', TRUE), 'Phone' => $this -> input -> post('phone', TRUE), 'SMS_Consent' => $this -> input -> post('sms_consent', TRUE), 'Physical' => $this -> input -> post('physical', TRUE), 'Alternate' => $this -> input -> post('alternate', TRUE), 'Partner_Status' => $this -> input -> post('partner_status', TRUE), 'Disclosure' => $this -> input -> post('disclosure', TRUE), 'Fplan' => $family_planning, 'Other_Illnesses' => $other_illness_listing, 'Other_Drugs' => $this -> input -> post('other_drugs', TRUE), 'Adr' => $this -> input -> post('other_allergies_listing', TRUE), 'Smoke' => $this -> input -> post('smoke', TRUE), 'Alcohol' => $this -> input -> post('alcohol', TRUE), 'Tb' => $this -> input -> post('tb', TRUE), 'Tbphase' => $this -> input -> post('tbphase', TRUE), 'Startphase' => $this -> input -> post('fromphase', TRUE), 'Endphase' => $this -> input -> post('tophase', TRUE), 'Date_Enrolled' => $this -> input -> post('enrolled', TRUE), 'Current_Status' => $this -> input -> post('current_status', TRUE), 'Status_Change_Date' => $this -> input -> post('status_started', TRUE), 'Source' => $this -> input -> post('source', TRUE), 'Transfer_From' => $this -> input -> post('transfer_source', TRUE), 'Supported_By' => $this -> input -> post('support', TRUE), 'Facility_Code' => $this -> session -> userdata('facility'), 'Service' => $this -> input -> post('service', TRUE), 'Start_Regimen' => $this -> input -> post('regimen', TRUE), 'Start_Regimen_Date' => $this -> input -> post('service_started', TRUE), 'Current_Regimen' => $this -> input -> post('current_regimen', TRUE), 'Nextappointment' => $this -> input -> post('next_appointment_date', TRUE));
 		$this -> db -> where('id', $record_id);
 		$this -> db -> update('patient', $data);
+		
+		//Set session for notications
+		$this -> session -> set_userdata('msg_save_transaction', 'success');
+		$this -> session -> set_userdata('user_updated', $this -> input -> post('first_name'));
 
 		redirect("patient_management/viewDetails/$record_id");
 	}
@@ -606,6 +619,16 @@ ORDER BY p.patient_number_ccc ASC";
 	public function disable($id) {
 		$sql = "update patient set active='0' where id='$id'";
 		$this -> db -> query($sql);
+		$get_user="select first_name FROM patient WHERE id='$id' LIMIT 1";
+		$user_sql=$this -> db -> query($get_user);
+		$user_array=$user_sql->result_array();
+		$first_name="";
+		foreach ($user_array as $value) {
+			$first_name=$value['first_name'];
+		}
+		//Set session for notications
+		$this -> session -> set_userdata('msg_save_transaction', 'success');
+		$this -> session -> set_userdata('user_disabled', $first_name);
 		redirect("patient_management");
 	}
 

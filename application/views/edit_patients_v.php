@@ -471,7 +471,10 @@ foreach($results as $result){
 	</head>
 	<body>
 <div class="full-content" style="background:#FF9">
-
+	<div id="sub_title" >
+		<a href="<?php  echo base_url().'patient_management ' ?>">Patient Listing </a> <i class=" icon-chevron-right"></i><a href="<?php  echo base_url().'patient_management/viewDetails/'.$result['id'] ?>"><?php echo strtoupper($result['first_name'].' '.$result['other_name'].' '.$result['last_name']) ?></a> <i class=" icon-chevron-right"></i><strong>Edit details</strong>
+		<hr size="1">
+	</div>
 	<h3>Edit Patient Details
 	<div style="float:right;margin:5px 40px 0 0;">
 		(Fields Marked with <b><span class='astericks'>*</span></b> Asterisks are required)
