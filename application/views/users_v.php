@@ -258,7 +258,9 @@ foreach($actions as $action){
 </div>
 
 <div class="center-content">
+	<button class="btn btn-large" type="button" id="new_user"><i class="icon-plus icon-black"></i>New User</button>
 	<div class="container-fluid">
+		
 	  <div class="row-fluid row">
 		 <!-- Side bar menus -->
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
@@ -273,7 +275,7 @@ foreach($actions as $action){
 				echo $users;
 				?>
 	      	</div>
-	      	<button class="btn btn-large" type="button" id="new_user"><i class="icon-plus icon-black"></i>New User</button>
+	      	
 	    </div>
 	  </div>
 	</div>
@@ -285,7 +287,7 @@ foreach($actions as $action){
 			echo form_open('user_management/save', $attributes);
 			echo validation_errors('<p class="error">', '</p>');
 			?>
-			<div><span class="_red" id="msg_error">Fields with <i class="icon-star icon-black"></i> are compulsory</span></div>
+			<div><span class="error" id="msg_error">Fields with <i class="icon-star icon-black"></i> are compulsory</span></div>
 			<br>
 			<table style="margin:0 auto" class="table-striped" width="100%">
 				<tr><td><strong class="label">Usertype</strong> </td>

@@ -51,9 +51,7 @@
     
     <!-- JS --------------------------------------------------------------->
 
-    <!-- Bootstrap -->
-    <script src="<?php echo base_url().'Scripts/bootstrap/js/bootstrap.min.js'?>"></script>
-    <script src="<?php echo base_url().'Scripts/bootstrap/js/paging.js'?>"></script>
+  
 
     <!-- JQuery -->
     <script src="<?php echo base_url().'Scripts/jquery.js'?>" type="text/javascript"></script> 
@@ -70,6 +68,10 @@
 	
 	<!-- Datatables -->
 	<script src="<?php echo base_url().'Scripts/datatable/jquery.dataTables.min.js'?>"></script>
+	
+	<!-- Bootstrap -->
+    <script src="<?php echo base_url().'Scripts/bootstrap/js/bootstrap.min.js'?>"></script>
+    <script src="<?php echo base_url().'Scripts/bootstrap/js/paging.js'?>"></script>
 	
 	<!-- Table Filter -->
 	<script type="text/javascript" src="<?php echo base_url().'TableFilter/tablefilter_all.js' ?>"></script>
