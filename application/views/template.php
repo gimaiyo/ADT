@@ -31,7 +31,7 @@ if ($access_level == "system_administrator") {
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title><?php echo $title; ?></title>
+<title><?php echo $title;?></title>
 <link rel="SHORTCUT ICON" href="<?php echo base_url().'Images/favicon.ico'?>">
 
 
@@ -70,17 +70,13 @@ if (isset($styles)) {
 
 
 
-				$(document).ready(function() {
-	<?php 
+					$(document).ready(function() {<?php 
 			if($user_is_pharmacist){
 				?>
 				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>
 					');
 					$('#notification2').load('
-<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>
-	');
-
-				<?php
+<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');<?php
 				}
 
 				if($user_is_facility_administrator){
@@ -89,10 +85,7 @@ if (isset($styles)) {
 				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>
 					');
 					$('#notification2').load('
-<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>
-	');
-
-				<?php
+<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');<?php
 				}
 				?>});</script>
       
@@ -105,7 +98,7 @@ if (isset($styles)) {
 	<div id="top-panel" style="margin:0px;">
 
 		<div class="logo">
-			<a class="logo" href="<?php echo base_url(); ?>" ></a> 
+			<a class="logo" href="<?php echo base_url();?>" ></a> 
 </div>
 
 
@@ -115,11 +108,11 @@ if (isset($styles)) {
 					?>
 						
 						<div id="facility_name">							
-							<span><?php echo $this -> session -> userdata('facility_name'); ?></span>
+							<span><?php echo $this -> session -> userdata('facility_name');?></span>
 						</div>										
 						
 				</div>
-				<div class="banner_text"><?php echo $banner_text; ?></div>
+				<div class="banner_text"><?php echo $banner_text;?></div>
 				
  <div id="top_menu"> 
 
@@ -131,24 +124,24 @@ if (isset($styles)) {
 	$counter = 0;
 	if($menus){
 ?>
- 	<a href="<?php  echo site_url('home_controller'); ?>" class="top_menu_link  first_link <?php
+ 	<a href="<?php  echo site_url('home_controller');?>" class="top_menu_link  first_link <?php
 	if ($current == "home_controller") {echo " top_menu_active ";
 	}
-?>">Home </a><?php } ?>
+?>">Home </a><?php }?>
 <?php
 if($menus){
 foreach($menus as $menu){?>
-	<a href = "<?php echo site_url($menu['url']); ?>" class="top_menu_link <?php
+	<a href = "<?php echo site_url($menu['url']);?>" class="top_menu_link <?php
 	if ($current == $menu['url'] || $menu['url'] == $link) {echo " top_menu_active ";
 	}
 ?>"><?php echo $menu['text']; if($menu['offline'] == "1"){?>
 	 <!-- Offline -->
 	 <span class=" red_"></span></a>
 	
-<?php } else{ ?>
+<?php } else{?>
 	<!-- Online -->
 	 <span class=" green_"></span></a>
-<?php } ?>
+<?php }?>
 
 
 
@@ -172,11 +165,11 @@ if($menus){
 </ul>
 </div>
 <div class="welcome_msg">
-	<span>Welcome <b style="font-weight: bolder;font-size: 20px;"><?php echo $this -> session -> userdata('full_name'); ?></b>. <a href="<?php echo base_url().'user_management/logout' ?>">Logout</a></span>
+	<span>Welcome <b style="font-weight: bolder;font-size: 20px;"><?php echo $this -> session -> userdata('full_name');?></b>. <a href="<?php echo base_url().'user_management/logout' ?>">Logout</a></span>
 	<br>
 	<span class="date"><?php echo date('l, jS \of F Y') ?></span>
 </div>
-<?php } ?>
+<?php }?>
  </div>
 
 </div>
@@ -192,38 +185,38 @@ if(isset($reports)|| isset($report_title)){
 
 		$(".generate_btn").live('click', function() {
 
-			if ($(".input-medium").is(":visible") || $(".report_type").is(":visible") || $(".report_type_1").is(":visible") || $(".input_year").is(":visible") || $(".input_dates").is(":visible") || $(".donor_input_dates_from").is(":visible") || $(".input_dates_from").is(":visible") || $(".donor_input_dates_to").is(":visible") || $(".input_dates_to").is(":visible")) {
+			if($(".input-medium").is(":visible") || $(".report_type").is(":visible") || $(".report_type_1").is(":visible") || $(".input_year").is(":visible") || $(".input_dates").is(":visible") || $(".donor_input_dates_from").is(":visible") || $(".input_dates_from").is(":visible") || $(".donor_input_dates_to").is(":visible") || $(".input_dates_to").is(":visible")) {
 
-				if ($(".input_year").is(":visible") && $(".input_year").val() == "") {
+				if($(".input_year").is(":visible") && $(".input_year").val() == "") {
 					alert("Please enter the year");
 				}
 				//Dates not selected
-				if ($(".input_dates").is(":visible") && $(".input_dates").val() == "") {
+				if($(".input_dates").is(":visible") && $(".input_dates").val() == "") {
 					alert("Please select the date");
 				}
 				//Dates not selected
-				else if ($(".input_dates_from").is(":visible") && $(".input_dates_from").val() == "") {
+				else if($(".input_dates_from").is(":visible") && $(".input_dates_from").val() == "") {
 					alert("Please select the starting date");
 				}
 				//Dates not selected
-				else if ($(".donor_input_dates_from").is(":visible") && $(".donor_input_dates_from").val() == "") {
+				else if($(".donor_input_dates_from").is(":visible") && $(".donor_input_dates_from").val() == "") {
 					alert("Please select the starting date");
 				}
 				//Dates not selected
-				else if ($(".input_dates_to").is(":visible") && $(".input_dates_to").val() == "") {
+				else if($(".input_dates_to").is(":visible") && $(".input_dates_to").val() == "") {
 					alert("Please select the end date");
 				}
 				//Dates not selected
-				else if ($(".donor_input_dates_to").is(":visible") && $(".donor_input_dates_to").val() == "") {
+				else if($(".donor_input_dates_to").is(":visible") && $(".donor_input_dates_to").val() == "") {
 					alert("Please select the end date");
 				}
 
 				//Dropdown not chosen
-				else if ($(".report_type").is(":visible") && $(".input-large").val() == 0) {
+				else if($(".report_type").is(":visible") && $(".input-large").val() == 0) {
 
-					if ($("#commodity_summary_report_type").is(":visible") && $("#commodity_summary_report_type").val() == 0) {
+					if($("#commodity_summary_report_type").is(":visible") && $("#commodity_summary_report_type").val() == 0) {
 						alert("Please select the report type");
-					} else if ($("#commodity_summary_report_type_1").is(":visible") && $("#commodity_summary_report_type_1").val() == 0) {
+					} else if($("#commodity_summary_report_type_1").is(":visible") && $("#commodity_summary_report_type_1").val() == 0) {
 						alert("Please select the report type");
 					}
 
@@ -232,32 +225,32 @@ if(isset($reports)|| isset($report_title)){
 				else {
 
 					var id = $(this).attr("id");
-					if (id == "generate_date_range_report") {
+					if(id == "generate_date_range_report") {
 
 						var report = $(".select_report:visible").attr("value");
 						var from = $("#date_range_from").attr("value");
 						var to = $("#date_range_to").attr("value");
 						var report_url = "report_management/" + report + "/" + from + "/" + to;
 						window.location = report_url;
-					} else if (id == "generate_single_date_report") {
+					} else if(id == "generate_single_date_report") {
 						var report = $(".select_report:visible").attr("value");
 						var selected_date = $("#single_date_filter").attr("value");
 						var report_url = "report_management/" + report + "/" + selected_date;
 						window.location = report_url;
-					} else if (id == "generate_single_year_report") {
+					} else if(id == "generate_single_year_report") {
 						var report = $(".select_report:visible").attr("value");
 						var selected_year = $("#single_year_filter").attr("value");
 						var report_url = "report_management/" + report + "/" + selected_year;
 						window.location = report_url;
-					} else if (id == "generate_no_filter_report") {
+					} else if(id == "generate_no_filter_report") {
 						var report = $(".select_report:visible").attr("value");
 						var stock_type = "";
-						if ($("#commodity_summary_report_type_1")) {
+						if($("#commodity_summary_report_type_1")) {
 							stock_type = $("#commodity_summary_report_type_1").attr("value");
 						}
 						var report_url = "report_management/" + report + "/" + stock_type;
 						window.location = report_url;
-					} else if (id == "donor_generate_date_range_report") {
+					} else if(id == "donor_generate_date_range_report") {
 						var report = $(".select_report:visible").attr("value");
 						var from = $("#donor_date_range_from").attr("value");
 						var to = $("#donor_date_range_to").attr("value");
@@ -270,7 +263,6 @@ if(isset($reports)|| isset($report_title)){
 
 		})
 	})
-
 	</script>
 <?php
 
@@ -308,8 +300,8 @@ if(isset($reports)|| isset($report_title)){
 				if($user_is_facility_administrator){
 				?>
 				<li><a href="<?php echo base_url().'patient_management/addpatient_show' ?>"><i class="icon-user"></i>Add Patients</a></li>
-			    <li><a href="<?php echo base_url().'inventory_management/mainstore_show' ?>"><i class="icon-inbox"></i>Add Main Store Inventory</a></li>
-			    <li><a href="<?php echo base_url().'inventory_management/pharmacy_show' ?>"><i class="icon-inbox"></i>Add Pharmacy Inventory</a></li>
+                <li><a href="<?php echo base_url().'inventory_management/stock_transaction/1' ?>"><i class="icon-inbox"></i>Receive/Issue - Main Store</a></li>
+			    <li><a href="<?php echo base_url().'inventory_management/stock_transaction/2' ?>"><i class="icon-inbox"></i>Receive/Issue - Pharmacy</a></li>
 			    <li class="divider"></li>
 				<li><a href="<?php echo base_url().'user_manual.pdf' ?>"><i class="icon-book"></i>User Manual</a></li>			
 			    
@@ -339,12 +331,12 @@ if(isset($reports)|| isset($report_title)){
  	
 	
 	
-<?php $this -> load -> view($content_view); ?>
+<?php $this -> load -> view($content_view);?>
  
     <div id="bottom_ribbon">
 
         <div id="footer">
- <?php $this -> load -> view("footer_v"); ?>
+ <?php $this -> load -> view("footer_v");?>
     </div>
     </div>
     
