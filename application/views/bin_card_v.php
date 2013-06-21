@@ -45,7 +45,6 @@
 		font-size:14px;
 	}
 </style>
-
 <div class="main-content">
 	
 	<div class="full-content" style="background-color: #D6DFEC;">
@@ -105,9 +104,28 @@
 				</div>
 			</div>
 			
-			<div id="transactions" style="width:100%;overflow: scroll; height:230px">
+			<div id="transactions" style="width:100%;">
+				<script>
+					$(document).ready(function(){
+						 $('#transaction_table').dataTable( {
+					        "sDom": "<'row'<'span7'l><'span5'f>r>t<'row'<'span6'i><'span5'p>>",
+					        "sPaginationType": "bootstrap",
+					        "sScrollY": "200px",
+					        "sScrollX": "100%",
+					       
+					    });
+						$.extend( $.fn.dataTableExt.oStdClasses, {
+						    "sWrapper": "dataTables_wrapper form-inline"
+						} );
+						$(".pagination").css("margin","10px 0px");
+						$(".dataTables_length").css("width","70%");
+						$(".dataTables_filter").css("width","70%");
+						$("div.row .span5").css("float","right");
+					});
+						
+				</script>
 				<div><span class="title">Transactions Information</span></div>
-				<table class="table table-bordered table-hover sortable">
+				<table class="table table-bordered table-hover sortable" id="transaction_table">
 					<thead>
 						<tr>
 							<th>Ref./Order No</th>
