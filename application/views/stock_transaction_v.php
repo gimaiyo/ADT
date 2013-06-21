@@ -5,7 +5,8 @@
 	.main-content{
 		margin:0 auto;	
 	}
-	
+	#sql{
+		display:none;
 	}
 	.full-content{
 		display:table;
@@ -680,9 +681,10 @@
 		<div>
 			<span id="msg_server"></span>
 		</div>
+		<div class="full-content" id="stock_div" style="background:#9CF">
 		<form id="stock_form" method="post" action="<?php echo base_url().'inventory_management/save' ?>">
 			<textarea name="sql" id="sql"></textarea>
-		<div class="full-content" id="stock_div" style="background:#64abf4">
+		
 			<div id="sub_title" >
 				<a href="<?php  echo base_url().'inventory_management ' ?>">Inventory</a> <i class=" icon-chevron-right"></i>  <?php echo $store ?> 
 				<hr size="1">
@@ -833,11 +835,12 @@
 				</table>
 			</div>
 		
-		</div>
+		
 	
 		<div id="submit_section">
 			<input type="reset" class="btn" id="reset" value="Reset Fields" />
 			<input type="button" class="btn" id="btn_submit" value="Submit" />
 		</div>
 	</form>
+	</div>
 </div>
