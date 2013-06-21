@@ -7,10 +7,11 @@
 	}
 	.center-content{
 		width:96%;
+		background-color: #D6DFEC;
 	}
 	#bin_card_details {
 		padding: 5px;
-		background-color: #D6DFEC;
+		
 	}
 	.title {
 		font-size: 20px;
@@ -47,7 +48,7 @@
 
 <div class="main-content">
 	
-	<div class="center-content">
+	<div class="full-content" style="background-color: #D6DFEC;">
 		<div id="sub_title" >
 			<a href="<?php  echo base_url().'inventory_management ' ?>">Inventory - <?php echo $store ?> </a> <i class=" icon-chevron-right"></i> <strong>Bin Card</strong>
 			<hr size="1">

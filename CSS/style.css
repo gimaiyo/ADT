@@ -448,8 +448,8 @@ body {
 	font-size: 90%;
 }
 #system_title {
+	top:20px;
 	position: absolute;
-	top: 10px;
 	left: 110px;
 	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
 	letter-spacing: 1px;
@@ -517,7 +517,7 @@ fieldset {
 	color-stop(0.99, rgb(194,74,74))
 	);
 	color: white;
-	padding: .5%;
+	padding: 1%;
 	border-radius: 5px;
 	font-size: 16px;
 	-webkit-box-shadow: 0 2px 6px 0.5px #000;
@@ -663,7 +663,7 @@ tr th {
 }
 .full-content {
 	width: 98%;
-	padding: 9% 1% 5% 1%;
+	padding: 10% 1% 5% 1%;
 }
 .full-content form {
 	width: 100%;
@@ -951,20 +951,17 @@ table.dataTable tr.odd td sorting_1 {
 .forgotten-password {
 	float: right;
 }
-#system_title {
-	position: absolute;
-	left: 110px;
-	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
-	letter-spacing: 1px;
-}
+
 #main_wrapper {
 	width: auto;
 	border: 0px;
 }
+
+
+
 /**
  * 	Dashboard Tiles
  */
-
 .tile {
 	display: inline-block;
 	float: left;
