@@ -680,9 +680,10 @@
 		<div>
 			<span id="msg_server"></span>
 		</div>
+		<div class="full-content" id="stock_div" style="background:#9CF">
 		<form id="stock_form" method="post" action="<?php echo base_url().'inventory_management/save' ?>">
-			<textarea name="sql" id="sql"></textarea>
-		<div class="full-content" id="stock_div" style="background:#64abf4">
+			<textarea name="sql" id="sql" style="display: none"></textarea>
+		
 			<div id="sub_title" >
 				<a href="<?php  echo base_url().'inventory_management ' ?>">Inventory</a> <i class=" icon-chevron-right"></i>  <?php echo $store ?> 
 				<hr size="1">

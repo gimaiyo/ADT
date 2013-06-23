@@ -308,8 +308,8 @@ if(isset($reports)|| isset($report_title)){
 				if($user_is_facility_administrator){
 				?>
 				<li><a href="<?php echo base_url().'patient_management/addpatient_show' ?>"><i class="icon-user"></i>Add Patients</a></li>
-			    <li><a href="<?php echo base_url().'inventory_management/mainstore_show' ?>"><i class="icon-inbox"></i>Add Main Store Inventory</a></li>
-			    <li><a href="<?php echo base_url().'inventory_management/pharmacy_show' ?>"><i class="icon-inbox"></i>Add Pharmacy Inventory</a></li>
+			    <li><a href="<?php echo base_url().'inventory_management/stock_transaction/1' ?>"><i class="icon-inbox"></i>Receive/Issue - Main Store</a></li>
+			    <li><a href="<?php echo base_url().'inventory_management/stock_transaction/2' ?>"><i class="icon-inbox"></i>Receive/Issue - Pharmacy</a></li>
 			    <li class="divider"></li>
 				<li><a href="<?php echo base_url().'user_manual.pdf' ?>"><i class="icon-book"></i>User Manual</a></li>			
 			    
