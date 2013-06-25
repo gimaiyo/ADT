@@ -137,33 +137,48 @@ class User_Management extends MY_Controller {
 	}
 
 	public function save_new_password() {
-		$valid = $this -> _submit_validate_password();
-		if ($valid) {
-			$key = $this -> encrypt -> get_key();
-			$encrypted_password = md5($key . $this -> input -> post("new_password"));
-			$user_id = $this -> session -> userdata('user_id');
-			$timestamp = date("Y-m-d");
-			
-			//check if password matches last three passwords for this user
-			$checkpassword_query = $this -> db -> query("SELECT * FROM (SELECT password FROM `password_log` WHERE user_id='$user_id' order by id desc limit 3) as pl where pl.password='$encrypted_password'");
-			$check_results = $checkpassword_query -> result_array();
-			if ($check_results) {
-				$this -> session -> set_userdata("matching_password", "The current password Matches a Previous Password");
-				$this -> change_password();
-			} else {
-				$query = $this -> db -> query("update users set Password='$encrypted_password',Time_Created='$timestamp' where id='$user_id'");
-				$new_password_log = new Password_Log();
-				$new_password_log -> user_id = $user_id;
-				$new_password_log -> password = $encrypted_password;
-				$new_password_log -> save();
-
-				$data['expired'] = true;
-				$this -> session -> set_userdata("changed_password", "Your Password Has Been Changed");
-				redirect("user_management/login");
-			}
-		} else {
-			$this -> change_password();
+		$old_password=$this->input->post("old_password");
+		$new_password=$this->input->post("new_password");
+		$valid_old_password=$this->correct_current_password($old_password);
+		
+		$key = $this -> encrypt -> get_key();
+		$encrypted_password = md5($key . $new_password);
+		$user_id = $this -> session -> userdata('user_id');
+		$timestamp = date("Y-m-d");
+		
+		//check if password matches last three passwords for this user
+		$checkpassword_query = $this -> db -> query("SELECT * FROM (SELECT password FROM `password_log` WHERE user_id='$user_id' order by id desc limit 3) as pl where pl.password='$encrypted_password'");
+		$check_results = $checkpassword_query -> result_array();
+		
+		//Check if old password is correct
+		if($valid_old_password==FALSE){
+			$response=array(
+						'msg_password_change'=>$encrypted_password
+						);
+			echo json_encode($response);
 		}
+		else if ($check_results) {
+			$this -> session -> set_userdata("matching_password", "The current password Matches a Previous Password");
+			//$this -> change_password();
+			$response=array(
+						'msg_password_change'=>'password_exist'
+						);
+			echo json_encode($response);
+		} else {
+			$query = $this -> db -> query("update users set Password='$encrypted_password',Time_Created='$timestamp' where id='$user_id'");
+			$new_password_log = new Password_Log();
+			$new_password_log -> user_id = $user_id;
+			$new_password_log -> password = $encrypted_password;
+			$new_password_log -> save();
+			$data['expired'] = true;
+			$this -> session -> set_userdata("msg_password_change", "Your Password Has Been Changed");
+			$response=array(
+						'msg_password_change'=>'password_changed'
+						);
+			echo json_encode($response);
+			//redirect("user_management/login");
+		}
+		
 	}
 
 	private function _submit_validate_password() {
@@ -651,6 +666,7 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 	}
 	
 	public function profile_update(){
+		
 		$data['title']='User Profile';
 		$data['banner_text']='My Profile';
 		$user_id=$this->session->userdata('user_id');
@@ -689,14 +705,16 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 			//Update user details
 			$update_user_sql=$this->db->query("UPDATE users SET Name='$full_name',username='$user_name',Email_Address='$email',Phone_Number='$phone' WHERE id='$user_id'");
 			if($update_user_sql==1){
-				$data['message_success']="<span class='alert-info'>Your details were successfully updated!<span>";
+				$message_success="<span class='alert-info'>Your details were successfully updated!<span>";
 			}
 			//Update session details!
 			$session_data = array('username' => $user_name, 'full_name' => $full_name,'Email_Address'=> $email,'Phone_Number'=>$phone);
 			$this -> session -> set_userdata($session_data);
+			$this -> session -> set_userdata("message_user_update_success",$message_success);
 			
 		}
-		$this->profile($data);
+		$previous_url=$this->input->cookie('actual_page',true);
+		redirect($previous_url);
 		
 	}
 	

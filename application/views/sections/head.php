@@ -54,24 +54,29 @@
   
 
     <!-- JQuery -->
-    <script src="<?php echo base_url().'Scripts/jquery.js'?>" type="text/javascript"></script> 
+    <script src="<?php echo base_url().'Scripts/jquery-1.7.2.min.js'?>" type="text/javascript"></script> 
+    <script src="<?php echo base_url().'Scripts/jquery-migrate-1.2.1.js'?>" type="text/javascript"></script>
     <script src="<?php echo base_url().'Scripts/jquery.form.js'?>" type="text/javascript"></script>
     
     <!-- Jquery UI -->
     <script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script>
     
     <!-- Jquery UI -->
+    
 	<script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script> 
 	
 	<!-- Sortable JS -->
 	<script type="text/javascript" src="<?php echo base_url().'Scripts/sorttable.js' ?>"></script>
 	
 	<!-- Datatables -->
+	
 	<script src="<?php echo base_url().'Scripts/datatable/jquery.dataTables.min.js'?>"></script>
 	
 	<!-- Bootstrap -->
+	
     <script src="<?php echo base_url().'Scripts/bootstrap/js/bootstrap.min.js'?>"></script>
     <script src="<?php echo base_url().'Scripts/bootstrap/js/paging.js'?>"></script>
+    
 	
 	<!-- Table Filter -->
 	<script type="text/javascript" src="<?php echo base_url().'TableFilter/tablefilter_all.js' ?>"></script>

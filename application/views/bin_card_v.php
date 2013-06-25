@@ -43,6 +43,27 @@
 	#drug_info th{
 		font-size:14px;
 	}
+	.row_top {
+		background: #2B597E;
+		color: #fff;
+		padding: 5px;
+		border-top-right-radius: 4px;
+		border-top-left-radius: 4px;
+		margin:0px;
+		margin-right:0.1%;
+	}
+	.row_bottom {
+		background: #2B597E;
+		color: #fff;
+		padding: 5px;
+		border-bottom-right-radius: 4px;
+		border-bottom-left-radius: 4px;
+		margin:0px;
+	}
+	.btn{
+		padding-left:15px;
+		padding-right:15px;
+	}
 </style>
 <div class="main-content">
 	
@@ -107,7 +128,7 @@
 				<script>
 					$(document).ready(function(){
 						 $('#transaction_table').dataTable( {
-					        "sDom": "<'row'<'span7'l><'span5'f>r>t<'row'<'span6'i><'span5'p>>",
+					        "sDom": "<'row row_top'<'span7'l><'span5'f>r>t<'row row_bottom'<'span6'i><'span5'p>>",
 					        "sPaginationType": "bootstrap",
 					        "sScrollY": "200px",
 					        "sScrollX": "100%",
@@ -116,7 +137,7 @@
 						$.extend( $.fn.dataTableExt.oStdClasses, {
 						    "sWrapper": "dataTables_wrapper form-inline"
 						} );
-						$(".pagination").css("margin","10px 0px");
+						$(".pagination").css("margin","1px 0px");
 						$(".dataTables_length").css("width","70%");
 						$(".dataTables_filter").css("width","70%");
 						$("div.row .span5").css("float","right");

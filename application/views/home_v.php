@@ -207,8 +207,6 @@ if($this->session->userdata("changed_password")){
 		});
 
     </script>
-    <link rel="stylesheet" href="<?php echo base_url()?>css/bootstrap.css"/>
-    <link rel="stylesheet" href="<?php echo base_url()?>css/bootstrap-responsive.css"/>
     <style type="text/css">
     	
     
