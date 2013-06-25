@@ -613,6 +613,16 @@ ORDER BY p.patient_number_ccc ASC";
 	public function enable($id) {
 		$sql = "update patient set active='1' where id='$id'";
 		$this -> db -> query($sql);
+		$get_user="select first_name FROM patient WHERE id='$id' LIMIT 1";
+		$user_sql=$this -> db -> query($get_user);
+		$user_array=$user_sql->result_array();
+		$first_name="";
+		foreach ($user_array as $value) {
+			$first_name=$value['first_name'];
+		}
+				//Set session for notications
+		$this -> session -> set_userdata('msg_save_transaction', 'success');
+		$this -> session -> set_userdata('user_enabled', $first_name);
 		redirect("patient_management");
 	}
 

@@ -662,7 +662,8 @@ tr th {
 	display: inline-block;
 }
 .full-content {
-	width: 98%;
+	width: 95%;
+	margin:auto;	
 	padding: 10% 1% 5% 1%;
 }
 .full-content form {

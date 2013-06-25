@@ -49,7 +49,7 @@ foreach ($expiries as $expiry) {
 				//Get Drugs in current_regimen
 				getRegimenDrugs($("#current_regimen").val());
 				
-				getDrugBatches("<?php echo $result['drug_id']; ?>");
+				
 				
 			//Dynamically change the list of drugs once a current regimen is selected
 			$("#current_regimen").change(function() {
@@ -122,13 +122,15 @@ foreach ($expiries as $expiry) {
 				    	$("#drug").append($("<option></option>").attr("value",'').text('--Select One--'));
 				    	$.each(data, function(i, jsondata){
 				    		$("#drug").append($("<option></option>").attr("value",jsondata.drug_id).text(jsondata.drug_name));
+				    		if(jsondata.drug_id==$("#original_drug").val()){
+				    			getDrugBatches(jsondata.drug_id);
+				    		}
 				    	});
-				    	$("#drug").val("<?php echo $result['drug_id']; ?>");
+				    	$("#drug").val($("#original_drug").val());
 				    	$("#duration").val("");
                         $("#qty_disp").val("");
                         $("#expiry").val("");
                         $("#soh").val("");
-                        $("#batch").val("");
                         $("#dose").val("");
 				    }
 				});
@@ -165,13 +167,13 @@ foreach ($expiries as $expiry) {
 				    	    $("#duration").val(jsondata.duration);
 				    	    $("#qty_disp").val(jsondata.quantity); 
 				    	    if($("#original_drug").val()==drug){
-				    	    $("#batch").val("<?php echo $result['batch_number']; ?>");
+				    	    $("#batch").val($("#batch_hidden").val());   
 				    	    $("#dose").val("<?php echo $result['dose']; ?>");
 				    	    $("#duration").val("<?php echo $result['duration']; ?>");
 				    	    $("#qty_disp").val("<?php echo $result['quantity']; ?>");
 				    	    }
 				    	});
-				    	    
+
 				    	getBatchInfo();
 				    }
 				});

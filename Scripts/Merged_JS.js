@@ -12,18 +12,18 @@ $(document).ready(function() {
 /**
  * End of datatables settings
  */
+/*
 
-
-	initDatabase();
+	//initDatabase();
 	//Retrieve the Facility Code
 	var facility_code = "<?php echo $this -> session -> userdata('facility');?>";
 	var facility_name = "<?php echo $this -> session -> userdata('facility_name');?>";
 
 	$(document).ready(function() {
-		
+	
 		var machine_code = $("#machine_code").attr("value");
 		var operator = $("#operator").attr("value");
-		saveEnvironmentVariables(machine_code, operator);
+		//saveEnvironmentVariables(machine_code, operator);
 		var base_url="<?php echo base_url(); ?>";
 		$.ajax({
 			
@@ -33,6 +33,7 @@ $(document).ready(function() {
                console.log(data);
 			}					
 	    });
+	  
 	    
 	    var fade_out = function() {
 	      $(".error").fadeOut().empty();
@@ -57,7 +58,7 @@ $(document).ready(function() {
 				$("#manual_dialog").dialog('open');	
 		})
 
-
+/*
 		selectEnvironmentVariables(function(transaction, results) {
 			var variables = null;
 			var machine_code = "";
@@ -91,6 +92,8 @@ $(document).ready(function() {
 				checkSync();
 			}
 		});
+		
+		
 		//Add Listener to the save button of the dialog box so as to save the entered environment variables
 		$("#save_variables").click(function() {
 			var machine_code = $("#machine_code").attr("value");
@@ -152,7 +155,7 @@ $(document).ready(function() {
         	  $('#dataDiv').show('slow', function() {});
     	});
 	}
-	
+	*/
 	
   	
 		     

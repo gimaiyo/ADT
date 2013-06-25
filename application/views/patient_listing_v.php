@@ -67,9 +67,15 @@ if ($access_level == "facility_administrator") {
 						}
 						else if($this->session->userdata("user_disabled")){
 							?>
-							<p class="info"><span class="alert-error"> Patient <?php echo $this->session->userdata("user_disabled") ?> was disabled !</span></p>
+							<p class="info"><span class="error"> Patient <?php echo $this->session->userdata("user_disabled") ?> was disabled !</span></p>
 							<?php
 							$this->session->unset_userdata('user_disabled');
+						}
+						else if($this->session->userdata("user_enabled")){
+							?>
+							<p class="info"><span class="alert-success"> Patient <?php echo $this->session->userdata("user_enabled") ?> was enabled !</span></p>
+							<?php
+							$this->session->unset_userdata('user_enabled');
 						}
 						?>
 						<?php
