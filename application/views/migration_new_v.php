@@ -30,8 +30,8 @@
 							var array = selected_table.split(",");
 							$.each(array,function(i){
 								var table_name=array[i];
-								var target_name=target_array[i+1];
-                                if(table_name=='tblARTPatientTransactions' || table_name=='tblARVDrugStockTransactions'){
+								var target_name=target_array[i];
+                                if(table_name=='tblARVDrugStockMain' || table_name=='tblARVDrugStockTransactions'){
                                 	//If patient and drug transactions(Advanced Migration)
                                 	advancedMigration(table_name,target_name);
                                 }else{
@@ -62,17 +62,39 @@
 					});
 				}
 				function advancedMigration(table_name,target_name){
-				   var link = base_url + "migration_management/advancedmigrate/"+table_name+"/"+target_name;
-					$.ajax({
+				   var link = base_url + "migration_management/countRecords/"+table_name;
+				   var count=0;
+				   var percentage=0;
+				   $.ajax({
 						url : link,
-						type : 'POST',
+						type : 'POST', 
 						success : function(data) {
-							$("#output").append(data);
-						}
-					});
+							       var total_records=parseFloat(data);
+							       $("#output").append("Data From <b>"+table_name+"</b> Migrated to <b>"+target_name+"</b> table (<span id='percentage'>"+percentage+'% </span>)');
+							           //Check while Counter is not equal to total
+							           recursive(table_name,target_name,count,total_records); 
+								  }
+				    });
 				}
-			});
 
+				function recursive(table_name,target_name,count,total_records) {
+					var link = base_url + "migration_management/advancedmigrate/" + table_name + "/" + target_name + "/" + count;
+						$.ajax({
+						  url : link,
+						  type : 'POST',
+						  success : function(data) {
+						  count += parseFloat(data);
+						  
+						  percentage = ((count / total_records) * 100).toFixed(1);
+						  $("#percentage").text(percentage + '%');
+							 if(count!=total_records){
+								recursive(table_name,target_name,count,total_records); 
+							  }
+						   }
+						});
+				}
+
+		  });
 		</script>
 		<style type="text/css">
 			#table_view {

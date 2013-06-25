@@ -23,7 +23,7 @@ class Migration_Management extends MY_Controller {
 		$message = "";
 		$sql = "TRUNCATE $targetname";
 		$this -> db -> query($sql);
-		$sql="";
+		$sql = "";
 		if ($targetname == 'drugcode') {
 			$sql .= "INSERT INTO drugcode(drug,pack_size,unit,generic_name,safety_quantity,comment,supported_by,dose,duration,quantity,tb_drug,drug_in_use,supplied)SELECT arvdrugsid,packsizes,unit,genericname,saftystock,comment,supportedby,stddose,stdduration,stdqty,IF(tbdrug=0,'F','T')as tbdrug,'T','1' from tblarvdrugstockmain;";
 		} else if ($targetname == 'patient_status') {
@@ -58,6 +58,33 @@ class Migration_Management extends MY_Controller {
 		$this -> db -> query($sql);
 		$message = "Data From <b>$tablename</b> Migrated to <b>$targetname</b> table <br/>";
 		echo $message;
+	}
+
+	public function advancedmigrate($tablename, $targetname,$offset=0,$limit=0) {
+		$facility = $this -> session -> userdata('facility');
+		$message = "";
+		$limit=$offset+50;
+		$sql = "";
+		if ($targetname == 'drugcode') {
+			$mainsql="SELECT arvdrugsid,packsizes,unit,genericname,saftystock,comment,supportedby,stddose,stdduration,stdqty,IF(tbdrug=0,'F','T')as tbdrug,'T','1' from tblarvdrugstockmain LIMIT $offset,$limit;";
+			$sql .= "INSERT INTO drugcode(drug,pack_size,unit,generic_name,safety_quantity,comment,supported_by,dose,duration,quantity,tb_drug,drug_in_use,supplied)SELECT arvdrugsid,packsizes,unit,genericname,saftystock,comment,supportedby,stddose,stdduration,stdqty,IF(tbdrug=0,'F','T')as tbdrug,'T','1' from tblarvdrugstockmain LIMIT $offset,$limit;";
+		} else if ($targetname == 'patient_status') {
+			$sql .= "INSERT INTO patient_status(id,Name,Active)SELECT currentstatusid,currentstatus,'1' FROM tblcurrentstatus WHERE currentstatus is not null;";
+		}
+
+		$this -> db -> query($sql);
+		$query=$this -> db -> query($mainsql);
+		$answer=$query->num_rows();
+
+		echo $answer;
+	}
+
+	public function countRecords($tablename) {
+		$sql = "Select count(*) as total from $tablename";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		echo $results[0]['total'];
+
 	}
 
 	public function base_params($data) {
