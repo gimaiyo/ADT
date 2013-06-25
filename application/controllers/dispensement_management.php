@@ -200,7 +200,7 @@ class Dispensement_Management extends MY_Controller {
 	}
 	
 	public function base_params($data) { 
-		$data['title'] = "Drug Dispensements"; 
+		$data['title'] = "webADT | Drug Dispensements"; 
 		$data['banner_text'] = "Facility Dispensements";
 		$data['link'] = "dispensements";
 		$this -> load -> view('template', $data);

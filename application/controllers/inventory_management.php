@@ -493,7 +493,7 @@ class Inventory_Management extends MY_Controller {
 		}
 	}
 	public function base_params($data) {
-		$data['title'] = "Inventory";
+		$data['title'] = "webADT | Inventory";
 		$data['banner_text'] = "Inventory Management";
 		$data['link'] = "inventory";
 		$this -> load -> view('template', $data);

@@ -18,7 +18,7 @@ class User_Management extends MY_Controller {
 
 	public function login() {
 		$data = array();
-		$data['title'] = "System Login";
+		$data['title'] = "webADT | System Login";
 		$this -> load -> view("login_v", $data);
 	}
 
@@ -659,15 +659,14 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 	}
 
 	public function profile($data=""){
-		$data['title']='User Profile';
+		$data['title']='webADT | User Profile';
 		$data['banner_text']='My Profile';
 		$data['content_view']='user_profile_v';
 		$this->base_params($data);
 	}
 	
 	public function profile_update(){
-		
-		$data['title']='User Profile';
+		$data['title']='webADT | User Profile';
 		$data['banner_text']='My Profile';
 		$user_id=$this->session->userdata('user_id');
 		$full_name=$this->input->post('u_fullname');

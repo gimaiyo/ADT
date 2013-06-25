@@ -403,7 +403,7 @@ class Patient_Management extends MY_Controller {
 	}
 
 	public function base_params($data) {
-		$data['title'] = "Patients";
+		$data['title'] = "webADT | Patients";
 		$data['banner_text'] = "Facility Patients";
 		$data['link'] = "patients";
 		$this -> load -> view('template', $data);
@@ -426,7 +426,7 @@ class Patient_Management extends MY_Controller {
 		}
 		$data = array();
 		$data['current'] = "patient_management";
-		$data['title'] = "Patient Regimen Breakdown";
+		$data['title'] = "webADT | Patient Regimen Breakdown";
 		$data['content_view'] = "patient_regimen_breakdown_v";
 		$data['banner_text'] = "Patient Regimen Breakdown";
 		$data['facilities'] = Reporting_Facility::getAll();
@@ -613,6 +613,16 @@ ORDER BY p.patient_number_ccc ASC";
 	public function enable($id) {
 		$sql = "update patient set active='1' where id='$id'";
 		$this -> db -> query($sql);
+		$get_user="select first_name FROM patient WHERE id='$id' LIMIT 1";
+		$user_sql=$this -> db -> query($get_user);
+		$user_array=$user_sql->result_array();
+		$first_name="";
+		foreach ($user_array as $value) {
+			$first_name=$value['first_name'];
+		}
+				//Set session for notications
+		$this -> session -> set_userdata('msg_save_transaction', 'success');
+		$this -> session -> set_userdata('user_enabled', $first_name);
 		redirect("patient_management");
 	}
 

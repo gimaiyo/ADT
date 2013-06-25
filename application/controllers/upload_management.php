@@ -7,6 +7,8 @@ class Upload_Management extends MY_Controller {
 		$this -> load -> helper(array('form', 'url'));
 		ini_set("max_execution_time", "1000000");
 		ini_set("upload_max_filesize", "500000000");
+		$this -> load -> database();
+		$data = array();
 	}
 
 	public function index() {
@@ -45,9 +47,9 @@ class Upload_Management extends MY_Controller {
 				}
 				$format_table = "(ArtID,Firstname,Surname,Sex,Age,Pregnant,DateTherapyStarted,WeightOnStart,ClientSupportedBy,OtherDeaseConditions,ADRorSideEffects,ReasonsforChanges,OtherDrugs,TypeOfService,DaysToNextAppointment,DateOfNextAppointment,CurrentStatus,CurrentRegimen,RegimenStarted,Address,CurrentWeight,startBSA,currentBSA,ischild,isadult,StartHeight,CurrentHeight,Naive,NonNaive,SourceofClient,Cotrimoxazole,TB,NoCotrimoxazole,NoTB,DateStartedonART,DateChangedStatus,NcurrentAge,OPIPNO,LastName,DateofBirth,PlaceofBirth,PatientCellphone,AlternateContact,PatientSmoke,PatientDrinkAlcohol,PatientDontSmoke,PatientDontDrinkAlcohol,InactiveDays,TransferFrom,facility_id)SET id=NULL,facility_id=$facility";
 				//Data sanitization
-				$next_sql = "update `$table` SET DateofBirth=STR_TO_DATE(DateofBirth,'%m/%d/%Y') WHERE DateofBirth like '%/%';";
-				$next_sql .= "update `$table` SET DateTherapyStarted=STR_TO_DATE(DateTherapyStarted,'%m/%d/%Y') WHERE DateTherapyStarted like '%/%';";
+				$next_sql = "update `$table` SET DateTherapyStarted=STR_TO_DATE(DateTherapyStarted,'%m/%d/%Y') WHERE DateTherapyStarted like '%/%';";
 				$next_sql .= "update `$table` SET DateofBirth=DATE_SUB( DateTherapyStarted, INTERVAL Age YEAR ) WHERE DateofBirth='';";
+				$next_sql .= "update `$table` SET DateofBirth=STR_TO_DATE(DateofBirth,'%m/%d/%Y') WHERE DateofBirth like '%/%';";
 				$next_sql .= "update `$table` set Sex = '1' where Sex like '%Ma%';";
 				$next_sql .= "update `$table` set Sex = '2' where Sex like '%F%';";
 				$next_sql .= "update `$table` set Pregnant = '0' where Pregnant like '%FA%';";
@@ -143,6 +145,105 @@ class Upload_Management extends MY_Controller {
 			redirect("upload_management/index");
 
 		}
+	}
+
+	public function startMigration() {
+		$sql = "select facilitycode,name from facilities order by name asc";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$data['facilities'] = $results;
+		$this -> load -> view('migration_v', $data);
+	}
+
+	public function migrate($facility="") {
+		$str = "";
+		/*SQL SCRIPT*/
+
+		//Migrating drugcodes
+		$sql = "Truncate drugcode;";
+		$sql .= "INSERT INTO drugcode(drug,pack_size,unit,generic_name,safety_quantity,comment,supported_by,dose,duration,quantity,tb_drug,drug_in_use,supplied)SELECT arvdrugsid,packsizes,unit,genericname,saftystock,comment,supportedby,stddose,stdduration,stdqty,IF(tbdrug=0,'F','T')as tbdrug,'T','1' from tblarvdrugstockmain;";
+		//Migrating patient status
+		$sql .= "Truncate patient_status;";
+		$sql .= "INSERT INTO patient_status(id,Name,Active)SELECT currentstatusid,currentstatus,'1' FROM tblcurrentstatus WHERE currentstatus is not null;";
+		//Migrating patient doses
+		$sql .= "Truncate dose;";
+		$sql .= "INSERT INTO dose(Name,value,frequency,Active)SELECT dose,value,frequency ,'1' FROM tbldose;";
+		//Migrating generic names
+		$sql .= "Truncate generic_name;";
+		$sql .= "INSERT INTO generic_name(id,name,active)SELECT genid,genericname,'1' FROM tblgenericname WHERE genericname is not null;";
+		//Migrating Opportunistic Infections
+		$sql .= "Truncate opportunistic_infection;";
+		$sql .= "INSERT INTO opportunistic_infection(name,indication,active)SELECT indicationname,indicationcode,'1'  FROM tblindication;";
+		//Migrating Regimen Change Purposes
+		$sql .= "Truncate regimen_change_purpose;";
+		$sql .= "INSERT INTO regimen_change_purpose(id,name,active)SELECT  reasonforchangeid,reasonforchange,'1'  FROM tblreasonforchange  WHERE reasonforchange is not null;";
+		//Migrating Regimen Categories
+		$sql .= "Truncate regimen_category;";
+		$sql .= "INSERT INTO regimen_category(id,Name,Active)SELECT categoryid,categoryname,'1' FROM tblregimencategory;";
+		//Migrating Regimen Service Types
+		$sql .= "Truncate regimen_service_type;";
+		$sql .= "INSERT INTO regimen_service_type(id,name,active)SELECT typeofserviceid,typeofservice,'1'  FROM tbltypeofservice;";
+		//Migrating Regimens
+		$sql .= "Truncate regimen;";
+		$sql .= "INSERT INTO regimen(regimen_code,regimen_desc,line,remarks,category,type_of_service,enabled)SELECT regimencode,regimen,line,remarks,category,typeoservice,IF(status='New','1','0') as status FROM tblregimen;";
+		//Migrating Regimens_Drugs
+		$sql .= "Truncate regimen_drug;";
+		$sql .= "INSERT INTO regimen_drug(regimen,drugcode,active)SELECT  regimencode,combinations,'1' FROM tbldrugsinregimen;";
+		//Migration Users
+		$sql .= "Truncate users;";
+		$sql .= "INSERT INTO users(Name,Username,Password,Access_Level,Facility_Code,Active)SELECT name,userid,md5(concat('67d573de98323509593b1e2f258ee47e',password)) as password,IF(UCASE(authoritylevel)='USER','2','1')  as authoritylevel,'$facility','1' FROM tblsecurity;";
+		//Migration Patient Sources
+		$sql .= "Truncate patient_source;";
+		$sql .= "INSERT INTO patient_source(id,name,active)SELECT sourceid,sourceofclient,'1' FROM tblsourceofclient WHERE sourceofclient is not null;";
+		//Migration Transaction Types
+		$sql .= "Truncate transaction_type;";
+		$sql .= "INSERT INTO transaction_type(id,name,`desc`,active)SELECT transactiontype,transactiondescription,reporttitle,'1' FROM tblstocktransactiontype;";
+		//Migration Visit Purposes
+		$sql .= "Truncate visit_purpose;";
+		$sql .= "INSERT INTO visit_purpose(id,name,active) SELECT transactioncode,visittranname,'1'  FROM tblvisittransaction;";
+		//Migration Patients
+		$sql .= "Truncate patient;";
+		$sql .= "INSERT INTO patient(`patient_number_ccc`,`first_name`,`last_name`,`gender`,`pregnant`,`date_enrolled`,`start_weight`,`supported_by`,`other_illnesses`,`adr`,`other_drugs`,`service`,`nextappointment`,`current_status`,`current_regimen`,`start_regimen`,`physical`,`weight`,`start_bsa`,`sa`,`start_height`,`height`,`source`,`tb`,`start_regimen_date`,`status_change_date`,`other_name`,`dob`,`pob`,`phone`,`alternate`,`smoke`,`alcohol`,`transfer_from`,`facility_code`)select artid,firstname,surname,sex,pregnant,datetherapystarted,weightonstart,clientsupportedby,otherdeaseconditions,adrorsideeffects,otherdrugs,typeofservice,dateofnextappointment,currentstatus,currentregimen,regimenstarted,address,currentweight, startbsa,currentbsa,startheight,currentheight,sourceofclient,tb,datestartedonart,datechangedstatus,lastname,dateofbirth,placeofbirth, patientcellphone,alternatecontact,patientsmoke,patientdrinkalcohol,transferfrom,'$facility' FROM tblartpatientmasterinformation;";
+		//Migrate Patient Visits
+		$sql.="INSERT INTO patient_visit(patient_id,dispensing_date,drug_id,brand,visit_purpose,quantity,dose,duration,regimen,last_regimen,comment,user,indication,current_weight,pill_count,adherence,regimen_change_reason,batch_number,facility)SELECT artid,dateofvisit,drugname,brandname,transactioncode,arvqty,dose,duration,regimen,lastregimen,comment,operator,indication,weight,pillcount,adherence,reasonsforchange,batchno,'$facility' FROM tblartpatienttransactions;";
+		//Migrate drug Stock Movements
+		//$sql.="INSERT INTO drug_stock_movement(drug,transaction_date,order_number,batch_number,transaction_type,source,destination,expiry_date,packs,unit_cost,quantity,quantity_out,amount,remarks,facility)SELECT arvdrugsid,trandate,reforderno,batchno,transactiontype,'$facility','$facility',expirydate,npacks,unitcost,'0',qty,amount,remarks,operator,'$facility' FROM tblarvdrugstocktransactions;";
+
+		/*DROP STATEMENTS*/
+		$sql .= "DROP TABLE tblARVDrugStockMain;";
+		$sql .= "DROP TABLE tblCurrentStatus;";
+		$sql .= "DROP TABLE tblDose;";
+		$sql .= "DROP TABLE tblDrugsInRegimen;";
+		$sql .= "DROP TABLE tblGenericName;";
+		$sql .= "DROP TABLE tblIndication;";
+		$sql .= "DROP TABLE tblReasonforChange;";
+		$sql .= "DROP TABLE tblRegimen;";
+		$sql .= "DROP TABLE tblRegimenCategory;";
+		$sql .= "DROP TABLE tblSecurity;";
+		$sql .= "DROP TABLE tblARTPatientMasterInformation;";
+		$sql .= "DROP TABLE tblStockTransactionType;";
+		$sql .= "DROP TABLE tblTypeOfService;";
+		$sql .= "DROP TABLE tblVisitTransaction;";
+		$sql .= "DROP TABLE tblSourceOfClient;";
+		$sql.="DROP TABLE tblARTPatientTransactions;";
+		//$sql.="DROP TABLE tblARVDrugStockTransactions;";
+
+		$file = 'migrate.sql';
+		// Open the file to get existing content
+		$current = @file_get_contents($file);
+		// Append SQL SCRIPT
+		$current .= "$sql";
+		// Write the contents back to the file
+		file_put_contents($file, $current);
+		$str = realpath($_SERVER['MYSQL_HOME']) . "\mysql";
+		$script_path = $_SERVER['DOCUMENT_ROOT'] . "/ADT/" . $file;
+		$mysql_bin = str_replace("\\", "\\\\", $str);
+		$script_path = str_replace("/", "//", $script_path);
+		//Load File to mysql for execcution in command prompt
+		$command = "$mysql_bin -v -u root -h localhost testadt<\"$script_path\"";
+		$results = shell_exec($command);
+		echo $results."Migration Complete";
+		//file_put_contents($file,"");
 	}
 
 	public function base_params($data) {
