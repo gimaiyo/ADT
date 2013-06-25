@@ -1,3 +1,21 @@
+<style>
+	.table-bordered {
+		border-color: #000;
+	}
+	.table td {
+		padding: 2px;
+	}
+	table.sortable thead {
+		background-color: #eee;
+		color: #666666;
+		font-weight: bold;
+		cursor: default;
+	}
+	.table-bordered td ,.table-bordered th{
+		border-color: #000;
+	}
+</style>
+
 <?php
 if(isset($results)){
 	foreach($results as $result){
@@ -6,21 +24,9 @@ if(isset($results)){
 }
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		
-		<script type="text/javascript">
+<script type="text/javascript">
 		$(document).ready(function(){
 			
-			 $('#history_tabl').dataTable( {
-		        "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
-		        "sScrollY": "240px",
-		        "sScrollX": "100%",
-		    });
-			$.extend( $.fn.dataTableExt.oStdClasses, {
-			    "sWrapper": "dataTables_wrapper form-inline"
-			} );
 			//Function to Check Patient Numner exists
 			var base_url="<?php echo base_url();?>";
 			var patient_identification="<?php echo @$result['patient_number_ccc'];?>";
@@ -579,8 +585,6 @@ if(isset($results)){
 	            }
 	       }
 		</script>
-	</head>
-	<body>
 <div class="full-content" style="background:#9CF">
 	<div>
 		<?php if($this->session->userdata("msg_save_transaction")){
@@ -1011,25 +1015,45 @@ if(isset($results)){
 			<input type="button" class="btn" id="edit_patient" value="Edit Patient Record" />
 			<input type="button" class="btn" id="dispense" value="Dispense to Patient" />
 </div>
-			<div id="dispensing_history">
+			<div id="dispensing_histor">
 				<fieldset>
 					<legend>
 						Dispensing History
 					</legend>
-					<table border="1" class="table-bordered table-hover sortable" id="history_table" >
-						<thead>
-							<tr id="table-header">
-								<th>Date</th>
+					<script>
+						
+					
+						$(document).ready(function(){
+							 $('#history_table').dataTable( {
+						        "sDom": "<'row'<'span7'l><'span5'f>r>t<'row'<'span6'i><'span5'p>>",
+						        "sPaginationType": "bootstrap",
+						        "sScrollY": "200px",
+						        "sScrollX": "100%",
+						       
+						    });
+							$.extend( $.fn.dataTableExt.oStdClasses, {
+							    "sWrapper": "dataTables_wrapper form-inline"
+							} );
+							$(".pagination").css("margin","10px 0px");
+							$(".dataTables_length").css("width","70%");
+							$(".dataTables_filter").css("width","70%");
+							$("div.row .span5").css("float","right");
+							$("div.row .span5").css("margin-right","15px");
+							
+						});
+						
+					</script>
+					<table class="sortable table table-bordered table-hover " id="history_table" >
+						<thead style="font-size:0.8em;">
+							<tr >
+								<th id="header_date">Date</th>
 								<th>Purpose of Visit</th>
-								<th>Unit</th>
 								<th>Dose</th>
 								<th>Duration</th>
-								<th>Indication</th>
 								<th>Action</th>
 								<th>Drug</th>
 								<th>Qty</th>
 								<th>Weight</th>
-								<th>Height</th>
 								<th>Last Regimen</th>
 								<th>Regimen</th>
 								<th>BatchNo</th>
@@ -1043,10 +1067,10 @@ if(isset($results)){
 							<?php 
 							if($history_logs){
 							foreach($history_logs as $history){
-								echo "<tr><td>".date('d-M-Y',strtotime($history['dispensing_date']))."</td><td>".$history['visit']."</td><td>".$history['unit']."</td><td>".$history['dose']."</td><td>".$history['duration']."</td><td>".$history['indication']."</td><td><input id='".$history['record']."' type='button' class='button edit_dispensing' value='Edit'/></td><td>".$history['drug']."</td><td>".$history['quantity']."</td><td>".$history['current_weight']."</td><td>".$history['current_height']."</td><td>".$history['regimen_desc']."</td><td>".$history['regimen_desc']."</td><td>".$history['batch_number']."</td><td>".$history['pill_count']."</td><td>".$history['adherence']."</td><td>".$history['user']."</td><td>".$history['regimen_change_reason']."</td></tr>";
+								echo "<tr><td>".date('d-M-Y',strtotime($history['dispensing_date']))."</td><td>".$history['visit']."</td><td>".$history['dose']."</td><td>".$history['duration']."</td><td align='center'><input id='".$history['record']."' type='button' class='button edit_dispensing' value='Edit'/></td><td>".$history['drug']."</td><td>".$history['quantity']."</td><td>".$history['current_weight']."</td><td>".$history['last_regimen']."</td><td>".$history['regimen_desc']."</td><td>".$history['batch_number']."</td><td>".$history['pill_count']."</td><td>".$history['adherence']."</td><td>".$history['user']."</td><td>".$history['regimen_change_reason']."</td></tr>";
 							}
 							}else{
-								echo "<tr><td colspan='20'>No History Available</td></tr>";
+								//echo "<tr><td colspan='20'>No History Available</td></tr>";
 							}
 							?>
 							
@@ -1113,7 +1137,3 @@ if(isset($results)){
 		</table>
 				
 			</div>
-
-
-</body>
-</html>

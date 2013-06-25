@@ -391,7 +391,7 @@ table.data-table caption {
 	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
 	font-size: 14px;
 }
-table.data-table th, table#history_table th, table#drugs_table th {
+table.data-table th, table#drugs_table th {
 	border: none;
 	color: #036;
 	text-align: center;
@@ -1413,12 +1413,17 @@ legend {
 }
 table#history_table {
 	font-size: 1.3em;
+	border:1px solid #000000;
 }
-table#history_table th {
-	background-color: #F5F5F5;
+table#history_table thead {
+	background-color: #eee;
+	color: #666666;
+	font-weight: bold;
+	cursor: default;
+	
 }
 table#history_table td {
-	font-size: 0.8em;
+	font-size: 0.6em;
 }
 #submit_section {
 	text-align: right;
@@ -1446,7 +1451,7 @@ table#history_table td {
 	text-align: center;
 }
 #sub_title {
-	margin-bottom: 15px;
+	margin: 15px;
 	font-size: 16px;
 }
 #sub_title a {
