@@ -74,11 +74,8 @@ if (isset($styles)) {
 	<?php 
 			if($user_is_pharmacist){
 				?>
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>
-					');
-					$('#notification2').load('
-<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>
-	');
+				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>	');
+				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
 
 				<?php
 				}
@@ -86,11 +83,8 @@ if (isset($styles)) {
 				if($user_is_facility_administrator){
 				?>
 				
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>
-					');
-					$('#notification2').load('
-<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>
-	');
+				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
+					$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
 
 				<?php
 				}
