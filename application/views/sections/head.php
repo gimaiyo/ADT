@@ -27,15 +27,15 @@
     
     <!--Multiselect CSS-->
 
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url().'CSS/assets/jquery.multiselect.css';?>" />
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url().'CSS/assets/jquery.multiselect.filter.css';?>" />
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url().'CSS/assets/prettify.css';?>" />
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url() . 'CSS/assets/jquery.multiselect.css'; ?>" />
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url() . 'CSS/assets/jquery.multiselect.filter.css'; ?>" />
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url() . 'CSS/assets/prettify.css'; ?>" />
 	
 	<!-- Report CSS -->
 	<?php
 	if(isset($reports)|| isset($report_title)){
 	?>
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url().'CSS/style_report.css';?>" />
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url() . 'CSS/style_report.css'; ?>" />
 	<?php
 	}
 	?>

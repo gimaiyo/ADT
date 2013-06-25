@@ -94,11 +94,8 @@ if (isset($styles)) {
 	<?php 
 			if($user_is_pharmacist){
 				?>
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>
-					');
-					$('#notification2').load('
-<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>
-	');
+				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>	');
+				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
 
 				<?php
 				}
@@ -106,11 +103,8 @@ if (isset($styles)) {
 				if($user_is_facility_administrator){
 				?>
 				
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>
-					');
-					$('#notification2').load('
-<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>
-	');
+				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
+					$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
 
 				<?php
 				}
@@ -133,11 +127,9 @@ if (isset($styles)) {
 					<?php
 					$this -> load -> view('sections/banner');
 					?>
-						
-						<div id="facility_name">							
-							<span><?php echo $this -> session -> userdata('facility_name'); ?></span>
-						</div>										
-						
+					<div id="facility_name">							
+						<span><?php echo $this -> session -> userdata('facility_name'); ?></span>
+					</div>
 				</div>
 				<div class="banner_text"><?php echo $banner_text; ?></div>
 				
@@ -433,7 +425,7 @@ if(isset($reports)|| isset($report_title)){
 	  <div class="modal-body">
 	  	
 	   <form id="fmChangePassword" action="<?php echo base_url().'user_management/save_new_password'?>" method="post" class="well">
-			<span class="msg error" id="error_msg_change_pass"></span>
+			<span class="message error" id="error_msg_change_pass"></span>
 			<br>
 			<table>
 				<tr>

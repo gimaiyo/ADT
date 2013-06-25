@@ -155,12 +155,12 @@ if ($access_level == "facility_administrator") {
 					<?php
 					if($this->session->userdata("msg_save_transaction")=="success"){
 						?>
-						<p class="info"><span class="alert-success">Your data were successfully saved !</span></p>
+						<p class="info"><span class="message success">Your data were successfully saved !</span></p>
 						<?php
 					}
 					else{
 						?>
-						<p class="info"><span class="alert-error">Your data were not saved ! Try again or contact your system administrator.</span></p>
+						<p class="info"><span class="message error">Your data were not saved ! Try again or contact your system administrator.</span></p>
 						<?php
 					}
 					$this->session->unset_userdata('msg_save_transaction');

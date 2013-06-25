@@ -7,6 +7,7 @@
 	}
 	.center-content{
 		width:96%;
+		background-color: #D6DFEC;
 	}
 	#bin_card_details {
 		padding: 5px;

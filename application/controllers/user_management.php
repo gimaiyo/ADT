@@ -153,7 +153,7 @@ class User_Management extends MY_Controller {
 		//Check if old password is correct
 		if($valid_old_password==FALSE){
 			$response=array(
-						'msg_password_change'=>$encrypted_password
+						'msg_password_change'=>'password_no_exist'
 						);
 			echo json_encode($response);
 		}
@@ -690,14 +690,14 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 		}
 		
 		if($c_user>0 and $e_user>0){
-			$data['error']="<span class='alert-error'>The username and email entered are already in use!</span>";
+			$data['error']="<span class='message error'>The username and email entered are already in use!</span>";
 			
 		}
 		else if($c_user>0){
-			$data['error']="<span class='alert-error'>The username entered is already in use !</span>";
+			$data['error']="<span class='message error'>The username entered is already in use !</span>";
 		}
 		else if($e_user>0){
-			$data['error']="<span class='alert-error'>The email entered is already in use !</span>";
+			$data['error']="<span class='message error'>The email entered is already in use !</span>";
 		}
 		
 		//Neither email nor username is in use
@@ -705,7 +705,7 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 			//Update user details
 			$update_user_sql=$this->db->query("UPDATE users SET Name='$full_name',username='$user_name',Email_Address='$email',Phone_Number='$phone' WHERE id='$user_id'");
 			if($update_user_sql==1){
-				$message_success="<span class='alert-info'>Your details were successfully updated!<span>";
+				$message_success="<span class='message info'>Your details were successfully updated!<span>";
 			}
 			//Update session details!
 			$session_data = array('username' => $user_name, 'full_name' => $full_name,'Email_Address'=> $email,'Phone_Number'=>$phone);

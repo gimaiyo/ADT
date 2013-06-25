@@ -645,26 +645,26 @@ if(isset($results)){
 			if($this->session->userdata("msg_save_transaction")=="success"){
 				if($this->session->userdata("user_updated")){
 						?>
-						<p class="info"><span class="alert-success"><?php echo $this->session->userdata("user_updated") ?>'s details were successfully updated !</span></p>
+						<p class="info"><span class="message success"><?php echo $this->session->userdata("user_updated") ?>'s details were successfully updated !</span></p>
 						<?php
 						$this->session->unset_userdata('user_updated');
 					}
 					else if($this->session->userdata("dispense_updated")){
 						?>
-						<p class="info"><span class="alert-success">The dispensing details were successfully updated !</span></p>
+						<p class="info"><span class="message  success">The dispensing details were successfully updated !</span></p>
 						<?php
 						$this->session->unset_userdata('dispense_updated');
 					}
 					else if($this->session->userdata("dispense_deleted")){
 						?>
-						<p class="info"><span class="alert-error">The dispensing details were successfully deleted !</span></p>
+						<p class="info"><span class="message  error">The dispensing details were successfully deleted !</span></p>
 						<?php
 						$this->session->unset_userdata('dispense_deleted');
 					} 
 			}
 			else{
 				?>
-				<p class="info"><span class="alert-error">Your data were not saved ! Try again or contact your system administrator.</span></p>
+				<p class="info"><span class="message  error">Your data were not saved ! Try again or contact your system administrator.</span></p>
 				<?php
 			}
 			$this->session->unset_userdata('msg_save_transaction');

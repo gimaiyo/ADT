@@ -27,11 +27,11 @@
 				$this -> session -> set_userdata("changed_password", "");
 			}
 			if (isset($invalid)) {
-				echo "<p class='error'>Invalid Credentials. Please try again " . @$login_attempt . "</p>";
+				echo "<p class='message error'>Invalid Credentials. Please try again " . @$login_attempt . "</p>";
 			} else if (isset($inactive)) {
-				echo "<p class='error'>The Account is not active. Seek help from the Administrator</p>";
+				echo "<p class='message error'>The Account is not active. Seek help from the Administrator</p>";
 			} else if (isset($expired)) {
-				echo "<p class='error'>" . @$login_attempt . "</p>";
+				echo "<p class='message error'>" . @$login_attempt . "</p>";
 			}
 		?>
 		<div id="signup_form">

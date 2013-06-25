@@ -121,13 +121,19 @@ $(document).ready(function() {
 				     request.done(function(data){
 				     	$.each(data,function(key,value){
 				     		if(value=="password_no_exist"){
-				     			alert("NO");
+				     			$("#error_msg_change_pass").css("display","block");
+				     			$("#error_msg_change_pass").html("You entered a wrong password!");
 				     		}
 				    		else if(value=="password_exist"){
-				    			alert("NO");
+				    			$("#error_msg_change_pass").css("display","block");
+				     			$("#error_msg_change_pass").html("Your new password matches one of your three pevious passwords!");
 				    		}
-				    		else if(value=="changed_password"){
-				    			alert("OK");
+				    		else if(value=="password_changed"){
+				    			$("#error_msg_change_pass").css("display","block");
+				    			$("#error_msg_change_pass").removeClass("error");
+				    			$("#error_msg_change_pass").addClass("success");
+				    			$("#error_msg_change_pass").html("Your password was successfully updated!");
+				    			window.setTimeout('location.reload()', 3000);
 				    		}
 				    		else{
 				    			alert(value);
