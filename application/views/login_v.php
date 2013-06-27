@@ -19,11 +19,11 @@
 		<?php
 			echo validation_errors('
 
-<p class="error">', '</p>
+<p class="message error">', '</p>
 ');
 			if ($this -> session -> userdata("changed_password")) {
 				$message = $this -> session -> userdata("changed_password");
-				echo "<p class='error'>" . $message . "</p>";
+				echo "<p class='message error'>" . $message . "</p>";
 				$this -> session -> set_userdata("changed_password", "");
 			}
 			if (isset($invalid)) {
