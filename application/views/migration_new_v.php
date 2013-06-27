@@ -5,7 +5,7 @@
 				var base_url="<?php echo base_url(); ?>";
 				$("#table_list").multiselect().multiselectfilter();
 				var table_array =['tblARVDrugStockMain', 'tblCurrentStatus', 'tblDose', 'tblDrugsInRegimen', 'tblGenericName', 'tblIndication', 'tblReasonforChange', 'tblRegimen', 'tblRegimenCategory', 'tblSecurity', 'tblARTPatientMasterInformation', 'tblStockTransactionType', 'tblTypeOfService', 'tblVisitTransaction', 'tblSourceOfClient', 'tblARTPatientTransactions', 'tblARVDrugStockTransactions'];
-				var target_array =['drugcode', 'patient_status', 'dose', 'regimen_drug', 'generic_name', 'opportunistic_infection', 'regimen_change_purpose', 'regimen', 'regimen_category', 'users', 'patient','transaction_type', 'regimen_service_type', 'visit_purpose', 'patient_source', 'patient_visit_new', 'drug_stock_movement_new'];
+				var target_array =['drugcode', 'patient_status', 'dose', 'regimen_drug', 'generic_name', 'opportunistic_infection', 'regimen_change_purpose', 'regimen', 'regimen_category', 'users_new', 'patient_new','transaction_type', 'regimen_service_type', 'visit_purpose', 'patient_source','patient_visit_new', 'drug_stock_movement_new'];
 
 				$("#migrate").click(function(){
 					var selected_table=$("select#table_list").val();
@@ -55,15 +55,21 @@
 				}
 				function advancedMigration(table_name,target_name,offset){
 				   var link = base_url + "migration_management/countRecords/"+table_name;
-				   var count=offset;
+                   var count=parseFloat(offset);
 				   var percentage=0;
+				   var viewpercentage="";
+				   if(table_name=="tblARTPatientTransactions"){
+				   	viewpercentage="ppercentage";
+				   }else if(table_name=="tblARVDrugStockTransactions"){
+				   	viewpercentage="dpercentage";
+				   }
 				   $.ajax({
 						url : link,
 						type : 'POST', 
 						success : function(data) {
 							      var total_records=parseFloat(data);
 							      percentage=((count/total_records)*100).toFixed(1);
-							       $("#output").append("Data From <b>"+table_name+"</b> Migrated to <b>"+target_name+"</b> table (<span id='percentage'>"+percentage+'% </span>)');
+							       $("#output").append("Data From <b>"+table_name+"</b> Migrated to <b>"+target_name+"</b> table (<span id='"+viewpercentage+"'>"+percentage+"% </span>)<br/>");
 							           //Check while Counter is not equal to total
 							           recursive(table_name,target_name,count,total_records); 
 								  }
@@ -76,23 +82,31 @@
 						  url : link,
 						  type : 'POST',
 						  success : function(data) {
-						  	var data_source=data.toString();
-						  	var data_array = data_source.split(",");
-                            var count_data=data_array[0];
-                            var last_index=parseFloat(data_array[1]);
-						    count = parseFloat(count_data);
+						  	var selected_data=data.toString();
+							var selected_array = selected_data.split(",");
+							var count=parseFloat(selected_array[0]);
+							var offset=parseFloat(selected_array[1]);
 						    percentage = ((count / total_records) * 100).toFixed(1);
-						  $("#percentage").text(percentage + '%');
-						     updatelog(target_name,last_index);//Update Migration Log
-							 if(count!=total_records){
-								recursive(table_name,target_name,count,total_records); 
-							 }
+						    
+						    if(table_name=="tblARTPatientTransactions"){
+				   	           var percent="ppercentage";
+				   	           if(count<=total_records){
+								recursive(table_name,target_name,offset,total_records); 
+							   }
+				            }else if(table_name=="tblARVDrugStockTransactions"){
+				   	           var percent="dpercentage";
+				   	           if(count<=total_records){
+								recursive(table_name,target_name,offset,total_records); 
+							  }
+				            }
+				            $("#"+percent).text(percentage + '%');
+							 
 						   }
 						});
 				}
 				
-				function updatelog(table_name,count){
-					var link = base_url + "migration_management/updatelog/" + table_name+"/"+count;
+				function updatelog(table_name,last_index,count){
+					var link = base_url + "migration_management/updatelog/" + table_name+"/"+last_index+"/"+count;
 						$.ajax({
 						  url : link,
 						  type : 'POST',
@@ -126,7 +140,7 @@
 		<style type="text/css">
 			#table_view {
 				margin: 0 auto;
-				width:600px;
+				width:65%;
 				background:#DDD;
 			}
 			#output{
