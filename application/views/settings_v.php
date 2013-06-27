@@ -4,9 +4,17 @@
 			$('.dropdown-menu').dropdown();
 		});
 		
-		$('.regimens-view').click(function() {
-			$('.settings').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
-		});
+		//so which link was clicked?
+			  $('.dropdown-menu li').on('click',function(){
+			  	var linkDomain=" ";
+				link_id='#'+$(this).find('a').attr('id');
+				linkSub=$(this).find('a').attr('class');
+				linkIdUrl=link_id.substr(link_id.indexOf('#')+1,(link_id.indexOf('_li')-1));
+				
+				$(".settings").load('<?php echo base_url();?>'+linkSub+'/'+linkIdUrl);
+				
+				})/*end of which link was clicked*/
+	
 		
 		
 		
@@ -22,13 +30,13 @@
 					<a class="dropdown-toggle" role="button" data-toggle="dropdown" id="dLabel" href="#">Regimens<b class="caret"></b></a>
 					<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 						<li>
-							<a href="<?php echo site_url("regimen_management"); ?>" class="regimens-view">View Regimens</a>
+							<a href="#" class="regimen_management" id="index">View Regimens</a>
 						</li>
 						<li>
-							<a href="<?php echo site_url("regimen_drug_management"); ?>" class="regimens-view">Regimen Drugs</a>
+							<a href="#" class="regimen_drug_management" id="index">Regimen Drugs</a>
 						</li>
 						<li>
-							<a href="<?php echo site_url("regimenchange_management"); ?>" class="regimens-view">Regimen change reasons</a>
+							<a href="#" class="regimenchange_management" id="index">Regimen change reasons</a>
 						</li>
 					</ul>
 				</li>
@@ -39,16 +47,16 @@
 							<a href="<?php echo site_url("drugcode_management"); ?>">Drug Codes</a>
 						</li>
 						<li>
-							<a href="<?php echo site_url("dose_management"); ?>" class="regimens-view">Drug Doses</a>
+							<a href="<?php echo site_url("dose_management"); ?>" class="">Drug Doses</a>
 						</li>
 						<li>
-							<a href="<?php echo site_url("indication_management"); ?>" class="regimens-view">Drug Indications</a>
+							<a href="<?php echo site_url("indication_management"); ?>" class="">Drug Indications</a>
 						</li>
 						<li>
-							<a href="<?php echo site_url("drugsource_management"); ?>" class="regimens-view">Drug Sources</a>
+							<a href="<?php echo site_url("drugsource_management"); ?>" class="">Drug Sources</a>
 						</li>
 						<li>
-							<a href="<?php echo site_url("drugdestination_management"); ?>" class="regimens-view">Drug Destinations</a>
+							<a href="<?php echo site_url("drugdestination_management"); ?>" class="">Drug Destinations</a>
 						</li>
 					</ul>
 				</li>
@@ -56,13 +64,13 @@
 					<a class="dropdown-toggle" role="button" data-toggle="dropdown" id="dLabel" href="#">Download<b class="caret"></b></a>
 					<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 						<li>
-							<a href="<?php echo site_url("client_management"); ?>" class="regimens-view">Client Sources</a>
+							<a href="<?php echo site_url("client_management"); ?>" class="">Client Sources</a>
 						</li>
 						<li>
-							<a href="<?php echo site_url("client_support"); ?>" class="regimens-view">Supported By</a>
+							<a href="<?php echo site_url("client_support"); ?>" class="">Supported By</a>
 						</li>
 						<li>
-							<a href="<?php echo site_url("nonadherence_management"); ?>" class="regimens-view">Non Adherence reasons</a>
+							<a href="<?php echo site_url("nonadherence_management"); ?>" class="">Non Adherence reasons</a>
 						</li>
 					</ul>
 				</li>
@@ -81,16 +89,16 @@
 					<a class="dropdown-toggle" role="button" data-toggle="dropdown" id="dLabel" href="#">Facility<b class="caret"></b></a>
 					<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 						<li>
-							<a href="<?php echo site_url("facility_management"); ?>" class="regimens-view">Facility Info</a>
+							<a href="<?php echo site_url("facility_management"); ?>" class="">Facility Info</a>
 						</li>
 						<li>
-							<a href="<?php echo site_url("auto_management"); ?>" class="regimens-view">Export Patient Master File</a>
+							<a href="<?php echo site_url("auto_management"); ?>" class="">Export Patient Master File</a>
 						</li>
 						<li>
-							<a href="<?php echo site_url("upload_management"); ?>" class="regimens-view">Import</a>
+							<a href="<?php echo site_url("upload_management"); ?>" class="">Import</a>
 						</li>
 						<li>
-							<a href="<?php echo site_url("user_management"); ?>" class="regimens-view">Users</a>
+							<a href="<?php echo site_url("user_management"); ?>" class="">Users</a>
 						</li>
 					</ul>
 				</li>
@@ -104,26 +112,5 @@
 
 	</div>
 
-	<!-- Modal -->
-	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-				X
-			</button>
-			<h4 id="myModalLabel">Modal header</h4>
-		</div>
-		<div class="modal-body">
-			<p>
-				One fine body…
-			</p>
-		</div>
-		<div class="modal-footer">
-			<button class="btn" data-dismiss="modal" aria-hidden="true">
-				Close
-			</button>
-			<button class="btn btn-primary">
-				Save changes
-			</button>
-		</div>
-	</div>
+	<div class="settings well"></div>
 </div>

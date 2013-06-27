@@ -19,7 +19,6 @@ class Regimen_management extends MY_Controller {
 
 		$data = array();
 		$data['content_view'] = "regimen_listing_v";
-
 		$data['styles'] = array("jquery-ui.css");
 		$data['scripts'] = array("jquery-ui.js");
 		

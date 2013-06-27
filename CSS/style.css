@@ -667,7 +667,7 @@ tr th {
 	padding: 10% 1% 1% 1%;
 	width: 80%;
 	margin: 0 0 0 1.5%;
-	padding-bottom: 8%;
+	padding-bottom: 5%;
 	display: inline-block;
 }
 .full-content {
@@ -1531,4 +1531,11 @@ table#history_table td {
 
 .good {
 	color: #2D98F3;
+.notWhite{
+	color:#999;
+}
+.settings{
+	width:95%;
+	height:57%;
+	overflow:auto;
 }

@@ -14,7 +14,7 @@ class Settings_Management extends MY_Controller {
 			$data['settings_view']='settings_system_admin_v';
 		}
 		else{
-			$data['settings_view']='settings_view';
+			$data['content_view'] = "settings_v";
 		}
 		
 		$this->base_params($data);
@@ -23,7 +23,7 @@ class Settings_Management extends MY_Controller {
 
 	public function base_params($data) {
 		$data['title'] = "System Settings";
-		$data['content_view'] = "settings_v";
+		
 		$data['banner_text'] = "System Settings";
 		$data['link'] = "settings_management";
 		$this -> load -> view("template", $data);
