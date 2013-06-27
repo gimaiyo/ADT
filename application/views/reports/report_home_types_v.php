@@ -2,7 +2,7 @@
 	<table >
 		<!-- Standard reports -->
 		<tr id="standard_report_row" class="reports_types">
-			<td><strong >Select Report </strong></td>
+			<td><label >Select Report </label></td>
 			<td>
 				<select id="standard_report_select" class="input-large select_report">
 					<option  value="0" class="none">-- Select a Report  --</option>
@@ -16,7 +16,7 @@
 		</tr>
 		<!-- Visiting patients reports -->
 		<tr id="visiting_patient_report_row" class="reports_types">
-			<td><strong >Select Report </strong></td>
+			<td><label >Select Report </label></td>
 			<td>
 				<select id="visiting_patient_report_select" class="input-large select_report">
 					<option value="0" class="none">-- Select a Report  --</option>
@@ -30,7 +30,7 @@
 		</tr>
 		<!-- Early warning reports -->
 		<tr id="early_warning_report_row" class="reports_types">
-			<td><strong >Select Report </strong></td>
+			<td><label >Select Report </label></td>
 			<td>
 				<select id="early_warning_report_select" class="input-large select_report">
 					<option value="0" class="none">-- Select a Report  --</option>
@@ -43,7 +43,7 @@
 		</tr>
 		<!-- Drug inventory reports -->
 		<tr id="drug_inventory_report_row" class="reports_types">
-			<td><strong >Select Report </strong></td>
+			<td><label >Select Report </label></td>
 			<td>
 				<select id="drug_inventory_report__select" class="input-large select_report">
 					<option value="0" class="none">-- Select a Report  --</option>
@@ -60,7 +60,7 @@
 			<!-- Select report range donors -->
 			<table id="donor_date_range_report" class="select_types">
 				<tr>
-					<td><strong >Select Donor : </strong></td>
+					<td><label >Select Donor : </label></td>
 					<td>
 						<select id="donor" class="input-medium">
 							<option value="0">--All Donor--</option>
@@ -70,11 +70,11 @@
 					</td>
 				</tr>
 				<tr>
-					<td><strong>From : </strong></td>
+					<td><label>From : </label></td>
 					<td>
 						<input type="text" name="donor_date_range_from" id="donor_date_range_from" class="input-medium donor_input_dates_from">
 					</td>
-					<td><strong >To : </strong></td>
+					<td><label >To : </label></td>
 					<td>
 						<input type="text" name="donor_date_range_to" id="donor_date_range_to" class="input-medium donor_input_dates_to">
 					</td>
@@ -88,7 +88,7 @@
 			<!-- Report year -->
 			<table id="year" class="select_types">
 				<tr>
-					<td><strong>Select Year : </strong></td>
+					<td><label>Select Year : </label></td>
 					<td>
 						<input type="text" name="filter_year" id="single_year_filter" class="input-medium input_year" />
 					</td>
@@ -100,7 +100,7 @@
 			<!-- Report single date -->
 			<table id="single_date" class="select_types">
 				<tr>
-					<td><strong>Select Date : </strong></td>
+					<td><label>Select Date : </label></td>
 					<td>
 						<input type="text" name="filter_date" id="single_date_filter" class="input-medium input_dates" />
 					</td>
@@ -112,7 +112,7 @@
 			<!-- Report date range -->
 			<table id="date_range_report" class="select_types">
 				<tr>
-					<td class="show_report_type"><strong>Select Report Type :</strong></td>
+					<td class="show_report_type"><label>Select Report Type :</label></td>
 					<td class="show_report_type">
 						<select name="commodity_summary_report_type" id="commodity_summary_report_type" class="report_type input-large">
 							<option value="0">-- Select Report Type --</option>
@@ -120,9 +120,9 @@
 							<option value="2">Pharmacy</option>
 						</select>
 					</td>
-					<td><strong >From: </strong></td>
+					<td><label >From: </label></td>
 					<td><input type="text" name="date_range_from" id="date_range_from" class="input-medium input_dates_from"></td>
-					<td><strong >To: </strong></td>
+					<td><label >To: </label></td>
 					<td><input type="text" name="date_range_to" id="date_range_to" class="input-medium input_dates_to"></td>
 					<td><input type="button" id="generate_date_range_report" class="btn generate_btn" value="Generate Report"></td>
 				</tr>
@@ -130,7 +130,7 @@
 			<!-- Reports no filter -->
 			<table id="no_filter" class="select_types">
 				<tr  >
-					<td class="show_report_type"><strong>Select Report Type :</strong></td>
+					<td class="show_report_type"><label>Select Report Type :</label></td>
 					<td class="show_report_type">
 						<select name="commodity_summary_report_type_1" id="commodity_summary_report_type_1" class="report_type input-large">
 							<option value="0">-- Select Report Type --</option>
@@ -145,14 +145,3 @@
 	</table>
 </div>
 
-<div id="visiting_patient_sub">
-	
-</div>
-
-<div id="early_warning_sub">
-	
-</div>
-
-<div id="drug_inventory_sub">
-	
-</div>

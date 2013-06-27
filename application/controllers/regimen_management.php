@@ -18,7 +18,7 @@ class Regimen_management extends MY_Controller {
 		}
 
 		$data = array();
-		$data['settings_view'] = "regimen_listing_v";
+		$data['content_view'] = "regimen_listing_v";
 
 		$data['styles'] = array("jquery-ui.css");
 		$data['scripts'] = array("jquery-ui.js");
@@ -220,10 +220,9 @@ class Regimen_management extends MY_Controller {
 	public function base_params($data) {
 		$data['quick_link'] = "regimen";
 		$data['title'] = "Regimens";
-		$data['content_view'] = "settings_v";
 		$data['banner_text'] = "Regimen Management";
 		$data['link'] = "settings_management";
-		$this -> load -> view('template', $data);
+		$this -> load -> view('regimen_listing_v', $data);
 	}
 
 }

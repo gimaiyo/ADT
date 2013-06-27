@@ -127,7 +127,7 @@ if (isset($error)) {
 <p>
 	<span class="alert-info">To reset your password, please enter your email address</span>
 </p>
-
+<input type="hidden" name="type" value="email" />
 <div class="input-prepend" id='div_email'>
 	<span class="add-on">@</span><input style="height:31px;" type="text" name="contact_email" class="input-xlarge" id="contact_email" value="" placeholder="youremail@example.com" required="">
 </div>

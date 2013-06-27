@@ -1385,7 +1385,7 @@ class report_management extends MY_Controller {
 			}
 
 		} else {
-			$row_string .= "<tr><td colspan='6'>No Data Available</td></tr>";
+			//$row_string .= "<tr><td colspan='6'>No Data Available</td></tr>";
 		}
 		$row_string .= "</tbody></table>";
 		$data['from'] = date('d-M-Y', strtotime($from));
@@ -1536,7 +1536,7 @@ class report_management extends MY_Controller {
 			}
 			$row_string .= "<tr class='tfoot'><td><b>Totals:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $patient_total) * 100, 1) . "</b></td></tr>";
 		} else {
-			$row_string .= "<tr><td colspan='6'>No Data Available</td></tr>";
+			$row_string .= "<tr><td colspan='11'>No Data Available</td></tr>";
 		}
 		$row_string .= "</table>";
 		$data['from'] = date('d-M-Y', strtotime($from));

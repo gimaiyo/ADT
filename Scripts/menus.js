@@ -12,7 +12,10 @@ $(document).ready(function() {
 	$("#date_range_from").datepicker({
 		changeMonth : true,
 		changeYear : true,
-		dateFormat : 'dd-M-yy'
+		dateFormat : 'dd-M-yy',
+		onSelect: function(selected) {
+          $("#date_range_to").datepicker("option","minDate", selected)
+        }
 	});
 	$("#single_date_filter").datepicker({
 		changeMonth : true,
@@ -22,18 +25,27 @@ $(document).ready(function() {
 	$("#date_range_to").datepicker({
 		changeMonth : true,
 		changeYear : true,
-		dateFormat : 'dd-M-yy'
+		dateFormat : 'dd-M-yy',
+		onSelect: function(selected) {
+           $("#date_range_from").datepicker("option","maxDate", selected)
+        }
 	});
 
 	$("#donor_date_range_from").datepicker({
 		changeMonth : true,
 		changeYear : true,
-		dateFormat : 'dd-M-yy'
+		dateFormat : 'dd-M-yy',
+		onSelect: function(selected) {
+          $("#donor_date_range_to").datepicker("option","minDate", selected)
+        }
 	});
 	$("#donor_date_range_to").datepicker({
 		changeMonth : true,
 		changeYear : true,
-		dateFormat : 'dd-M-yy'
+		dateFormat : 'dd-M-yy',
+		onSelect: function(selected) {
+           $("#donor_date_range_from").datepicker("option","maxDate", selected)
+        }
 	});
 
 	$(".reports_types").css("display","none");

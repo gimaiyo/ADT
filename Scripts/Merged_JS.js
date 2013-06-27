@@ -19,6 +19,93 @@ $(document).ready(function() {
 	 */
 	$(document).ready(function() {
 		
+		/*
+		 * Reports generation
+		 */
+		
+		$(".generate_btn").live('click', function() {
+			var base_url=$("#base_url").val();
+			if($(".input-medium").is(":visible") || $(".report_type").is(":visible") || $(".report_type_1").is(":visible") || $(".input_year").is(":visible") || $(".input_dates").is(":visible") || $(".donor_input_dates_from").is(":visible") || $(".input_dates_from").is(":visible") || $(".donor_input_dates_to").is(":visible") || $(".input_dates_to").is(":visible")) {
+
+				if($(".input_year").is(":visible") && $(".input_year").val() == "") {
+					alert("Please enter the year");
+				}
+				//Dates not selected
+				if($(".input_dates").is(":visible") && $(".input_dates").val() == "") {
+					alert("Please select the date");
+				}
+				//Dates not selected
+				else if($(".input_dates_from").is(":visible") && $(".input_dates_from").val() == "") {
+					alert("Please select the starting date");
+				}
+				//Dates not selected
+				else if($(".donor_input_dates_from").is(":visible") && $(".donor_input_dates_from").val() == "") {
+					alert("Please select the starting date");
+				}
+				//Dates not selected
+				else if($(".input_dates_to").is(":visible") && $(".input_dates_to").val() == "") {
+					alert("Please select the end date");
+				}
+				//Dates not selected
+				else if($(".donor_input_dates_to").is(":visible") && $(".donor_input_dates_to").val() == "") {
+					alert("Please select the end date");
+				}
+
+				//Dropdown not chosen
+				else if($(".report_type").is(":visible") && $(".input-large").val() == 0) {
+
+					if($("#commodity_summary_report_type").is(":visible") && $("#commodity_summary_report_type").val() == 0) {
+						alert("Please select the report type");
+					} else if($("#commodity_summary_report_type_1").is(":visible") && $("#commodity_summary_report_type_1").val() == 0) {
+						alert("Please select the report type");
+					}
+
+				}
+				//If everything is ok,generatea report
+				else {
+
+					var id = $(this).attr("id");
+					if(id == "generate_date_range_report") {
+
+						var report = $(".select_report:visible").attr("value");
+						var from = $("#date_range_from").attr("value");
+						var to = $("#date_range_to").attr("value");
+						var report_url =base_url+ "report_management/" + report + "/" + from + "/" + to;
+						window.location = report_url;
+					} else if(id == "generate_single_date_report") {
+						var report = $(".select_report:visible").attr("value");
+						var selected_date = $("#single_date_filter").attr("value");
+						var report_url = base_url+"report_management/" + report + "/" + selected_date;
+						window.location = report_url;
+					} else if(id == "generate_single_year_report") {
+						var report = $(".select_report:visible").attr("value");
+						var selected_year = $("#single_year_filter").attr("value");
+						var report_url = base_url+"report_management/" + report + "/" + selected_year;
+						window.location = report_url;
+					} else if(id == "generate_no_filter_report") {
+						var report = $(".select_report:visible").attr("value");
+						var stock_type = "";
+						if($("#commodity_summary_report_type_1")) {
+							stock_type = $("#commodity_summary_report_type_1").attr("value");
+						}
+						var report_url = base_url+"report_management/" + report + "/" + stock_type;
+						window.location = report_url;
+					} else if(id == "donor_generate_date_range_report") {
+						var report = $(".select_report:visible").attr("value");
+						var from = $("#donor_date_range_from").attr("value");
+						var to = $("#donor_date_range_to").attr("value");
+						var donor = $("#donor").attr("value");
+						var report_url =base_url+ "report_management/" + report + "/" + from + "/" + to + "/" + donor;
+						window.location = report_url;
+					}
+				}
+			}
+
+		})
+		/*
+		 * Reports generation end
+		 */
+			var base_url=$("#base_url").val();
 			$("#change_password_link").click(function(){
 				$("#old_password").attr("value","");
 				$("#new_password").attr("value","");
@@ -86,6 +173,7 @@ $(document).ready(function() {
 	
 	
 			$("#btn_submit_change_pass").click(function(event) {
+				var base_url=$("#base_url").val();
 				$(".error").css("display","none");
 				$('#result_confirm').html("");
 				event.preventDefault();
@@ -112,7 +200,7 @@ $(document).ready(function() {
 				} else {
 					$(".error").css("display","none");
 					//$("#fmChangePassword").submit();
-					var _url="user_management/save_new_password";
+					var _url=base_url+"user_management/save_new_password";
 					var request=$.ajax({
 					     url: _url,
 					     type: 'post',

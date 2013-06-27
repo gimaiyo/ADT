@@ -220,6 +220,7 @@ class User_Management extends MY_Controller {
 			$remember = $this -> input -> post("remember");
 			$key = $this -> encrypt -> get_key();
 			$encrypted_password = $key . $password;
+			
 			$logged_in = Users::login($username, $encrypted_password);
 			//This code checks if the credentials are valid
 			if ($logged_in == false) {
@@ -227,10 +228,11 @@ class User_Management extends MY_Controller {
 				$data['title'] = "System Login";
 				$this -> load -> view("login_v", $data);
 			}
+			
 			//Check if credentials are valid for username not password
 			
-else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
-
+			else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
+				
 				//check to see whether the user is active
 				if ($logged_in["user"] -> Active == 0) {
 					$data['inactive'] = true;
@@ -238,16 +240,18 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 					$data['login_attempt'] = "<p class='error'>The Account has been deactivated. Seek help from the Facility Administrator</p>";
 					$this -> load -> view("login_v", $data);
 				} else {
+					
 					$data['invalid'] = false;
 					$data['title'] = "System Login";
 					//Check if there is a login attempt
 					if (!$this -> session -> userdata($username . '_login_attempt')) {
+						
 						$login_attempt = 1;
 						$this -> session -> set_userdata($username . '_login_attempt', $login_attempt);
 						$fail = $this -> session -> userdata($username . '_login_attempt');
 						$data['login_attempt'] = "(Attempt: " . $fail . " )";
 					} else {
-
+						
 						//Check if login Attempt is below 4
 						if ($this -> session -> userdata($username . '_login_attempt') && $this -> session -> userdata($username . '_login_attempt') <= 4) {
 							$login_attempt = $this -> session -> userdata($username . '_login_attempt');
@@ -278,6 +282,7 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 
 			//If the credentials are valid, continue
 			else {
+				
 				$today_time = strtotime(date("Y-m-d"));
 				$create_time = strtotime($logged_in -> Time_Created);
 				//check to see whether the user is active
@@ -546,7 +551,9 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 		
 	}
 	public function resendPassword(){
+		
 		$type=$this -> input -> post("type");
+		
 		//If user want to reset his password using email
 		$input = array("Jpqw_!90)", "Jpqop_!290-", "Ksqop_!293-", "W9qip_!290", "W01ip_!134","T41tf_!126","442et_!237","CJai34_*5","34Tgd!*_","Jat_23@*");
 		$rand_keys = array_rand($input, 2);
@@ -649,6 +656,7 @@ else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 		
 		//If activatio code is to be sent via sms
 		else if($type=='phone'){
+			
 			$phone=$contact;
 			$message="Your Web adt verification code is : ".$code;
 			//$x= file_get_contents("http://41.57.109.238:13000cgi-bin/sendsms?username=clinton&password=ch41sms&to=$phone&text=$message");
