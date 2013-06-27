@@ -19,19 +19,19 @@
 		<?php
 			echo validation_errors('
 
-<p class="error">', '</p>
+<p class="message error">', '</p>
 ');
 			if ($this -> session -> userdata("changed_password")) {
 				$message = $this -> session -> userdata("changed_password");
-				echo "<p class='error'>" . $message . "</p>";
+				echo "<p class='message error'>" . $message . "</p>";
 				$this -> session -> set_userdata("changed_password", "");
 			}
 			if (isset($invalid)) {
-				echo "<p class='error'>Invalid Credentials. Please try again " . @$login_attempt . "</p>";
+				echo "<p class='message error'>Invalid Credentials. Please try again " . @$login_attempt . "</p>";
 			} else if (isset($inactive)) {
-				echo "<p class='error'>The Account is not active. Seek help from the Administrator</p>";
+				echo "<p class='message error'>The Account is not active. Seek help from the Administrator</p>";
 			} else if (isset($expired)) {
-				echo "<p class='error'>" . @$login_attempt . "</p>";
+				echo "<p class='message error'>" . @$login_attempt . "</p>";
 			}
 		?>
 		<div id="signup_form">

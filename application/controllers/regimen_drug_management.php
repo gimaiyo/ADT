@@ -15,7 +15,6 @@ class Regimen_Drug_Management extends MY_Controller {
 			$source = $this -> session -> userdata('facility');
 		}
 		$data = array();
-		$data['settings_view'] = "regimen_drug_listing_v";
 		$data['styles'] = array("jquery-ui.css");
 		$data['scripts'] = array("jquery-ui.js");
 		$data['regimens'] = Regimen::getAll($source);
@@ -65,10 +64,9 @@ class Regimen_Drug_Management extends MY_Controller {
 	public function base_params($data) {
 		$data['quick_link'] = "regimen_drug";
 		$data['title'] = "Regimen_Drug Management";
-		$data['content_view'] = "settings_v";
 		$data['banner_text'] = "Regimen Drug Management";
 		$data['link'] = "settings_management";
-		$this -> load -> view('template', $data);
+		$this -> load -> view('regimen_drug_listing_v', $data);
 	}
 
 }
