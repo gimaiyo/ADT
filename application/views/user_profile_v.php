@@ -38,6 +38,7 @@
 			User details
 		</legend>
 		<form action="<?php echo base_url().'user_management/profile_update' ?>" method="post">
+			
 			<table>
 				<tr>
 

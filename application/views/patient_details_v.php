@@ -14,6 +14,28 @@
 	.table-bordered td ,.table-bordered th{
 		border-color: #000;
 	}
+	.row_top {
+		background: #2B597E;
+		color: #fff;
+		padding: 5px;
+		border-top-right-radius: 4px;
+		border-top-left-radius: 4px;
+		margin:0px;
+		margin-right:1.3%;
+	}
+	.row_bottom {
+		background: #2B597E;
+		color: #fff;
+		padding: 5px;
+		border-bottom-right-radius: 4px;
+		border-bottom-left-radius: 4px;
+		margin:0px;
+		margin-right:1.3%;
+	}
+	.btn{
+		padding-left:15px;
+		padding-right:15px;
+	}
 </style>
 
 <?php
@@ -24,6 +46,7 @@ if(isset($results)){
 }
 
 ?>
+
 <script type="text/javascript">
 		$(document).ready(function(){
 			
@@ -585,6 +608,29 @@ if(isset($results)){
 	            }
 	       }
 		</script>
+		<script>
+			$(document).ready(function(){
+				 $('#history_table').dataTable( {
+			        "sDom": "<'row row_top'<'span7'l><'span5'f>r>t<'row row_bottom'<'span6'i><'span5'p>>",
+			        "sPaginationType": "bootstrap",
+			        "sScrollY": "200px",
+			        "sScrollX": "100%",
+			       
+			    });
+				$.extend( $.fn.dataTableExt.oStdClasses, {
+				    "sWrapper": "dataTables_wrapper form-inline"
+				} );
+				$(".pagination").css("margin","1px 0px");
+				$("#history_table_filter input").removeAttr("disabled", "disabled");
+				$(".dataTables_length").css("width","70%");
+				$(".dataTables_filter").css("width","70%");
+				$("div.row .span5").css("float","right");
+				$("div.row .span5").css("margin-right","15px");
+				$("div.row  .span5").css("margin-right","15px");
+				
+			});
+			
+		</script>
 <div class="full-content" style="background:#9CF">
 	<div>
 		<?php if($this->session->userdata("msg_save_transaction")){
@@ -599,26 +645,26 @@ if(isset($results)){
 			if($this->session->userdata("msg_save_transaction")=="success"){
 				if($this->session->userdata("user_updated")){
 						?>
-						<p class="info"><span class="alert-success"><?php echo $this->session->userdata("user_updated") ?>'s details were successfully updated !</span></p>
+						<p class="info"><span class="message success"><?php echo $this->session->userdata("user_updated") ?>'s details were successfully updated !</span></p>
 						<?php
 						$this->session->unset_userdata('user_updated');
 					}
 					else if($this->session->userdata("dispense_updated")){
 						?>
-						<p class="info"><span class="alert-success">The dispensing details were successfully updated !</span></p>
+						<p class="info"><span class="message  success">The dispensing details were successfully updated !</span></p>
 						<?php
 						$this->session->unset_userdata('dispense_updated');
 					}
 					else if($this->session->userdata("dispense_deleted")){
 						?>
-						<p class="info"><span class="alert-error">The dispensing details were successfully deleted !</span></p>
+						<p class="info"><span class="message  error">The dispensing details were successfully deleted !</span></p>
 						<?php
 						$this->session->unset_userdata('dispense_deleted');
 					} 
 			}
 			else{
 				?>
-				<p class="info"><span class="alert-error">Your data were not saved ! Try again or contact your system administrator.</span></p>
+				<p class="info"><span class="message  error">Your data were not saved ! Try again or contact your system administrator.</span></p>
 				<?php
 			}
 			$this->session->unset_userdata('msg_save_transaction');
@@ -1020,29 +1066,7 @@ if(isset($results)){
 					<legend>
 						Dispensing History
 					</legend>
-					<script>
-						
 					
-						$(document).ready(function(){
-							 $('#history_table').dataTable( {
-						        "sDom": "<'row'<'span7'l><'span5'f>r>t<'row'<'span6'i><'span5'p>>",
-						        "sPaginationType": "bootstrap",
-						        "sScrollY": "200px",
-						        "sScrollX": "100%",
-						       
-						    });
-							$.extend( $.fn.dataTableExt.oStdClasses, {
-							    "sWrapper": "dataTables_wrapper form-inline"
-							} );
-							$(".pagination").css("margin","10px 0px");
-							$(".dataTables_length").css("width","70%");
-							$(".dataTables_filter").css("width","70%");
-							$("div.row .span5").css("float","right");
-							$("div.row .span5").css("margin-right","15px");
-							
-						});
-						
-					</script>
 					<table class="sortable table table-bordered table-hover " id="history_table" >
 						<thead style="font-size:0.8em;">
 							<tr >
@@ -1067,7 +1091,7 @@ if(isset($results)){
 							<?php 
 							if($history_logs){
 							foreach($history_logs as $history){
-								echo "<tr><td>".date('d-M-Y',strtotime($history['dispensing_date']))."</td><td>".$history['visit']."</td><td>".$history['dose']."</td><td>".$history['duration']."</td><td align='center'><input id='".$history['record']."' type='button' class='button edit_dispensing' value='Edit'/></td><td>".$history['drug']."</td><td>".$history['quantity']."</td><td>".$history['current_weight']."</td><td>".$history['last_regimen']."</td><td>".$history['regimen_desc']."</td><td>".$history['batch_number']."</td><td>".$history['pill_count']."</td><td>".$history['adherence']."</td><td>".$history['user']."</td><td>".$history['regimen_change_reason']."</td></tr>";
+								echo "<tr><td>".date('d-M-Y',strtotime($history['dispensing_date']))."</td><td>".$history['visit']."</td><td>".$history['dose']."</td><td>".$history['duration']."</td><td align='center'><input id='".$history['record']."' type='button' class='btn btn-small edit_dispensing ' value='Edit'/></td><td>".$history['drug']."</td><td>".$history['quantity']."</td><td>".$history['current_weight']."</td><td>".$history['last_regimen']."</td><td>".$history['regimen_desc']."</td><td>".$history['batch_number']."</td><td>".$history['pill_count']."</td><td>".$history['adherence']."</td><td>".$history['user']."</td><td>".$history['regimen_change_reason']."</td></tr>";
 							}
 							}else{
 								//echo "<tr><td colspan='20'>No History Available</td></tr>";

@@ -12,9 +12,152 @@ $(document).ready(function() {
 /**
  * End of datatables settings
  */
+
+	
+	/**
+	 *Change password validation 
+	 */
+	$(document).ready(function() {
+		
+			$("#change_password_link").click(function(){
+				$("#old_password").attr("value","");
+				$("#new_password").attr("value","");
+				$("#new_password_confirm").attr("value","");
+				$(".error").html("");
+				$(".error").css("display","none");
+				$("#result").html("");
+			});
+			
+			$(".error").css("display","none");
+			$('#new_password').keyup(function() {
+				$('#result').html(checkStrength($('#new_password').val()))
+			})
+			function checkStrength(password) {
+	
+				//initial strength
+				var strength = 0
+	
+				//if the password length is less than 6, return message.
+				if (password.length < 6) {
+					$('#result').removeClass()
+					$('#result').addClass('short')
+					return 'Too short'
+				}
+	
+				//length is ok, lets continue.
+	
+				//if length is 8 characters or more, increase strength value
+				if (password.length > 7)
+					strength += 1
+	
+				//if password contains both lower and uppercase characters, increase strength value
+				if (password.match(/([a-z].*[A-Z])|([A-Z].*[a-z])/))
+					strength += 1
+	
+				//if it has numbers and characters, increase strength value
+				if (password.match(/([a-zA-Z])/) && password.match(/([0-9])/))
+					strength += 1
+	
+				//if it has one special character, increase strength value
+				if (password.match(/([!,%,&,@,#,$,^,*,?,_,~])/))
+					strength += 1
+	
+				//if it has two special characters, increase strength value
+				if (password.match(/(.*[!,%,&,@,#,$,^,*,?,_,~].*[!,",%,&,@,#,$,^,*,?,_,~])/))
+					strength += 1
+	
+				//now we have calculated strength value, we can return messages
+	
+				//if value is less than 2
+				if (strength < 2) {
+					$('#result').removeClass()
+					$('#result').addClass('weak')
+					return 'Weak'
+				} else if (strength == 2) {
+					$('#result').removeClass()
+					$('#result').addClass('good')
+					return 'Good'
+				} else {
+					$('#result').removeClass()
+					$('#result').addClass('strong')
+					return 'Strong'
+				}
+			}
+	
+	
+			$("#btn_submit_change_pass").click(function(event) {
+				$(".error").css("display","none");
+				$('#result_confirm').html("");
+				event.preventDefault();
+				var old_password = $("#old_password").attr("value");
+				var new_password = $("#new_password").attr("value");
+				var new_password_confirm = $("#new_password_confirm").attr("value");
+				
+				if (new_password == "" || new_password_confirm=="" || old_password=="") {
+					$(".error").css("display","block");
+					$("#error_msg_change_pass").html("All fields are required !");
+				} 
+				else if($('#new_password').val().length < 6){
+					$(".error").css("display","block");
+					$("#error_msg_change_pass").html("Your password must have more than 6 characters!");
+				}
+				else if ($("#result").attr("class") == "weak") {
+					$(".error").css("display","block");
+					$("#error_msg_change_pass").html("Please enter a strong password!");
+				} else if (new_password != new_password_confirm) {
+					$(".error").css("display","block");
+					$('#result_confirm').removeClass();
+					$('#result_confirm').addClass('short');
+					$("#error_msg_change_pass").html("You passwords do not match !");
+				} else {
+					$(".error").css("display","none");
+					//$("#fmChangePassword").submit();
+					var _url="user_management/save_new_password";
+					var request=$.ajax({
+					     url: _url,
+					     type: 'post',
+					     data: {"old_password":old_password,"new_password":new_password},
+					     dataType: "json"
+				    });
+				     request.done(function(data){
+				     	$.each(data,function(key,value){
+				     		if(value=="password_no_exist"){
+				     			$("#error_msg_change_pass").css("display","block");
+				     			$("#error_msg_change_pass").html("You entered a wrong password!");
+				     		}
+				    		else if(value=="password_exist"){
+				    			$("#error_msg_change_pass").css("display","block");
+				     			$("#error_msg_change_pass").html("Your new password matches one of your three pevious passwords!");
+				    		}
+				    		else if(value=="password_changed"){
+				    			$("#error_msg_change_pass").css("display","block");
+				    			$("#error_msg_change_pass").removeClass("error");
+				    			$("#error_msg_change_pass").addClass("success");
+				    			$("#error_msg_change_pass").html("Your password was successfully updated!");
+				    			window.setTimeout('location.reload()', 3000);
+				    		}
+				    		else{
+				    			alert(value);
+				    		}
+				   		});
+				     });
+				     request.fail(function(jqXHR, textStatus) {
+					  alert( "An error occured while updating your password : " + textStatus+". Please try again or contact your system administrator!" );
+					});
+				}
+			});
+	
+		});
+		/**
+	 * End Change password validation 
+	 */
+
+	initDatabase();
+
 /*
 
 	//initDatabase();
+
 	//Retrieve the Facility Code
 	var facility_code = "<?php echo $this -> session -> userdata('facility');?>";
 	var facility_name = "<?php echo $this -> session -> userdata('facility_name');?>";
