@@ -105,10 +105,7 @@ if (isset($styles)) {
 					$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
 
 				<?php
-<<<<<<< HEAD
 
-=======
->>>>>>> f808b93b10297a4a88bda816c1e6e52a3754765e
 				}
 				?>});</script>
       
