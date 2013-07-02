@@ -6,8 +6,6 @@ class Regimen_Drug extends Doctrine_Record {
 		$this -> hasColumn('Drugcode', 'varchar', 5);
 		$this -> hasColumn('Source', 'varchar', 10);
 		$this -> hasColumn('Active', 'varchar', 10);
-		$this -> hasColumn('Merged_From', 'varchar', 50);
-		$this -> hasColumn('Regimen_Merged_From', 'varchar', 20);
 	}
 
 	public function setUp() {

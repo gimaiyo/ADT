@@ -11,7 +11,6 @@ class Regimen extends Doctrine_Record {
 		$this -> hasColumn('Enabled', 'varchar', 4);
 		$this -> hasColumn('Source', 'varchar', 10);
 		$this -> hasColumn('Optimality', 'varchar', 1);
-		$this -> hasColumn('Merged_To', 'varchar', 50);
 		
 	}
 

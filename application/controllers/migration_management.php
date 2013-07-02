@@ -4,6 +4,7 @@ class Migration_Management extends MY_Controller {
 		parent::__construct();
 		$data = array();
 		$this -> load -> database();
+		$this -> load -> library('encrypt');
 	}
 
 	public function index() {
@@ -13,7 +14,7 @@ class Migration_Management extends MY_Controller {
 	public function migration_interface() {
 		$data['content_view'] = "migration_new_v";
 		$data['banner_text'] = "Data Migration";
-		$tables = array('tblARVDrugStockMain', 'tblCurrentStatus', 'tblDose', 'tblDrugsInRegimen', 'tblGenericName', 'tblIndication', 'tblReasonforChange', 'tblRegimen', 'tblRegimenCategory', 'tblSecurity', 'tblARTPatientMasterInformation','tblStockTransactionType', 'tblTypeOfService', 'tblVisitTransaction', 'tblSourceOfClient', 'tblARTPatientTransactions', 'tblARVDrugStockTransactions');
+		$tables = array('tblARVDrugStockMain', 'tblCurrentStatus', 'tblDose', 'tblDrugsInRegimen', 'tblGenericName', 'tblIndication', 'tblReasonforChange', 'tblRegimen', 'tblRegimenCategory', 'tblSecurity', 'tblARTPatientMasterInformation', 'tblStockTransactionType', 'tblTypeOfService', 'tblVisitTransaction', 'tblSourceOfClient', 'tblARTPatientTransactions', 'tblARVDrugStockTransactions');
 		$data['tables'] = $tables;
 		$this -> base_params($data);
 	}
@@ -24,7 +25,7 @@ class Migration_Management extends MY_Controller {
 		$appendsql = "LIMIT $offset,18446744073709551615";
 		$sql = "";
 		if ($targetname == 'drugcode') {
-			$sql .= "INSERT IGNORE INTO drugcode(drug,pack_size,unit,generic_name,safety_quantity,comment,supported_by,dose,duration,quantity,tb_drug,drug_in_use,supplied)SELECT arvdrugsid,packsizes,unit,genericname,saftystock,comment,supportedby,stddose,stdduration,stdqty,IF(tbdrug=0,'F','T')as tbdrug,'T','1' from tblarvdrugstockmain $appendsql;";
+			$sql .= "INSERT IGNORE INTO drugcode(drug,pack_size,unit,generic_name,safety_quantity,comment,supported_by,dose,duration,quantity,tb_drug,drug_in_use,supplied)SELECT arvdrugsid,packsizes,unit,genericname,saftystock,comment,supportedby,stddose,stdduration,stdqty,IF(tbdrug=0,'F','T')as tbdrug,IF(inuse=0,'F','T') as inuse,'1' from tblarvdrugstockmain $appendsql;";
 		} else if ($targetname == 'patient_status') {
 			$sql .= "INSERT IGNORE INTO patient_status(id,Name,Active)SELECT currentstatusid,currentstatus,'1' FROM tblcurrentstatus WHERE currentstatus is not null $appendsql;";
 		} else if ($targetname == 'dose') {
@@ -40,11 +41,19 @@ class Migration_Management extends MY_Controller {
 		} else if ($targetname == 'regimen_service_type') {
 			$sql .= "INSERT IGNORE INTO regimen_service_type(id,name,active)SELECT typeofserviceid,typeofservice,'1'  FROM tbltypeofservice $appendsql;";
 		} else if ($targetname == 'regimen') {
-			$sql .= "INSERT IGNORE INTO regimen(regimen_code,regimen_desc,line,remarks,category,type_of_service,enabled)SELECT regimencode,regimen,line,remarks,category,typeoservice,IF(status='New','1','0') as status FROM tblregimen $appendsql;";
+			$sql .= "INSERT IGNORE INTO regimen(regimen_code,regimen_desc,line,remarks,category,type_of_service,enabled)SELECT regimencode,regimen,line,remarks,category,typeoservice,IF(`show`=0,'0','1') as active FROM tblregimen $appendsql;";
+			$this -> db -> query($sql);
+			$sql = "UPDATE `regimen` SET `enabled`='0' WHERE `regimen_desc`='';";
 		} else if ($targetname == 'regimen_drug') {
-			$sql .= "INSERT IGNORE INTO regimen_drug(regimen,drugcode,active)SELECT  regimencode,combinations,'1' FROM tbldrugsinregimen $appendsql;";
+			$sql .= "INSERT IGNORE INTO regimen_drug(regimen,drugcode,active)SELECT regimencode,combinations,'1' FROM tbldrugsinregimen WHERE combinations is not null $appendsql;";
+			$this -> db -> query($sql);
+			$sql = "UPDATE regimen_drug rd,regimen r,drugcode d SET rd.regimen=r.id,rd.drugcode=d.id WHERE rd.regimen=r.regimen_code AND rd.drugcode=d.drug;";
 		} else if ($targetname == 'users_new') {
-			$sql .= "INSERT IGNORE INTO users_new(Name,Username,Password,Access_Level,Facility_Code,Active)SELECT name,userid,md5(concat('67d573de98323509593b1e2f258ee47e',password)) as password,IF(UCASE(authoritylevel)='USER','2','1')  as authoritylevel,'$facility','1' FROM tblsecurity $appendsql;";
+			$key = $this -> encrypt -> get_key();
+			$today = date('Y-m-d H:i:s');
+			$sql .= "INSERT IGNORE INTO users_new(id,Name,Username,Password,Access_Level,Facility_Code,Active,Created_By,Time_Created)VALUES('1','System Admin','admin',md5(concat('$key','admin')),'1','$facility','1','1','$today')";
+			$this -> db -> query($sql);
+			$sql = "INSERT IGNORE INTO users_new(Name,Username,Password,Access_Level,Facility_Code,Active,Created_By,Time_Created)SELECT name,userid,md5(concat('$key',password)) as password,IF(UCASE(authoritylevel)='USER','2','3')  as authoritylevel,'$facility','1','1','$today' FROM tblsecurity $appendsql;";
 		} else if ($targetname == 'patient_source') {
 			$sql .= "INSERT IGNORE INTO patient_source(id,name,active)SELECT sourceid,sourceofclient,'1' FROM tblsourceofclient WHERE sourceofclient is not null $appendsql;";
 		} else if ($targetname == 'transaction_type') {
@@ -52,9 +61,21 @@ class Migration_Management extends MY_Controller {
 		} else if ($targetname == 'visit_purpose') {
 			$sql .= "INSERT IGNORE INTO visit_purpose(id,name,active) SELECT transactioncode,visittranname,'1'  FROM tblvisittransaction $appendsql;";
 		} else if ($targetname == 'patient_new') {
-		    $sql= "INSERT IGNORE INTO patient_appointment_new(`patient`,`appointment`,`facility`)select artid,dateofnextappointment,'$facility' FROM tblartpatientmasterinformation $appendsql;";
+			$sql = "INSERT IGNORE INTO patient_appointment_new(`patient`,`appointment`,`facility`)select artid,STR_TO_DATE(dateofnextappointment,'%Y-%m-%d'),'$facility' FROM tblartpatientmasterinformation $appendsql;";
 			$this -> db -> query($sql);
-			$sql= "INSERT IGNORE INTO patient_new(`patient_number_ccc`,`first_name`,`last_name`,`gender`,`pregnant`,`date_enrolled`,`start_weight`,`supported_by`,`other_illnesses`,`adr`,`other_drugs`,`service`,`nextappointment`,`current_status`,`current_regimen`,`start_regimen`,`physical`,`weight`,`start_bsa`,`sa`,`start_height`,`height`,`source`,`tb`,`start_regimen_date`,`status_change_date`,`other_name`,`dob`,`pob`,`phone`,`alternate`,`smoke`,`alcohol`,`transfer_from`,`facility_code`)select artid,firstname,surname,sex,pregnant,datetherapystarted,weightonstart,clientsupportedby,otherdeaseconditions,adrorsideeffects,otherdrugs,typeofservice,dateofnextappointment,currentstatus,currentregimen,regimenstarted,address,currentweight, startbsa,currentbsa,startheight,currentheight,sourceofclient,tb,datestartedonart,datechangedstatus,lastname,dateofbirth,placeofbirth, patientcellphone,alternatecontact,patientsmoke,patientdrinkalcohol,transferfrom,'$facility' FROM tblartpatientmasterinformation $appendsql;";
+			$sql = "select count(*) as total from $tablename";
+			$query = $this -> db -> query($sql);
+			$results = $query -> result_array();
+			$last_index = $results[0]['total'];
+			$this -> updatelog("patient_appointment_new", $last_index);
+			$sql = "update `tblartpatientmasterinformation` SET dateofbirth=DATE_SUB(datetherapystarted, INTERVAL ncurrentage YEAR ) WHERE dateofbirth is null;";
+			$query = $this -> db -> query($sql);
+			$sql = "update `tblartpatientmasterinformation`,regimen r SET currentregimen=r.id WHERE currentregimen=r.regimen_code;";
+			$query = $this -> db -> query($sql);
+			$sql = "update `tblartpatientmasterinformation`,regimen r SET regimenstarted=r.id WHERE regimenstarted=r.regimen_code;";
+			$query = $this -> db -> query($sql);
+			$sql = "INSERT IGNORE INTO patient_new(`patient_number_ccc`,`first_name`,`last_name`,`gender`,`pregnant`,`date_enrolled`,`start_weight`,`supported_by`,`other_illnesses`,`adr`,`other_drugs`,`service`,`nextappointment`,`current_status`,`current_regimen`,`start_regimen`,`physical`,`weight`,`start_bsa`,`sa`,`start_height`,`height`,`source`,`tb`,`start_regimen_date`,`status_change_date`,`other_name`,`dob`,`pob`,`phone`,`alternate`,`smoke`,`alcohol`,`transfer_from`,`facility_code`)select artid,firstname,surname,IF(UCASE(sex)='MALE','1','2'),IF(pregnant=0,'0','1'),STR_TO_DATE(datetherapystarted, '%Y-%m-%d'),weightonstart,clientsupportedby,otherdeaseconditions,adrorsideeffects,otherdrugs,typeofservice,STR_TO_DATE(dateofnextappointment, '%Y-%m-%d'),currentstatus,currentregimen,regimenstarted,address,currentweight, startbsa,currentbsa,startheight,currentheight,sourceofclient,tb,STR_TO_DATE(datestartedonart, '%Y-%m-%d'),STR_TO_DATE(datechangedstatus, '%Y-%m-%d'),lastname,STR_TO_DATE(dateofbirth,'%Y-%m-%d'),placeofbirth, patientcellphone,alternatecontact,patientsmoke,patientdrinkalcohol,transferfrom,'$facility' FROM tblartpatientmasterinformation $appendsql;";
+
 		}
 		$this -> db -> query($sql);
 		$message = "Data From <b>$tablename</b> Migrated to <b>$targetname</b> table <br/>";
@@ -93,7 +114,7 @@ class Migration_Management extends MY_Controller {
 		$query = $this -> db -> query($thesql);
 		$answer = $query -> num_rows();
 		$this -> updatelog($targetname, $last_index, $answer);
-		echo $answer.",".$last_index;
+		echo $answer . "," . $last_index;
 	}
 
 	public function countRecords($tablename) {
@@ -110,7 +131,7 @@ class Migration_Management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($tablename == "patient_visit_new" || $tablename == "drug_stock_movement_new") {
-			$last_index = $results[0]['count'].",".$results[0]['last_index'];
+			$last_index = $results[0]['count'] . "," . $results[0]['last_index'];
 		} else {
 			$last_index = $results[0]['last_index'];
 		}

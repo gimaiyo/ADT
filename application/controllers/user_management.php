@@ -228,8 +228,7 @@ class User_Management extends MY_Controller {
 				$this -> load -> view("login_v", $data);
 			}
 			//Check if credentials are valid for username not password
-			
-else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
+			else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
 
 				//check to see whether the user is active
 				if ($logged_in["user"] -> Active == 0) {
