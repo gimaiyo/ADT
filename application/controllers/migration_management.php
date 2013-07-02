@@ -110,7 +110,7 @@ class Migration_Management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($tablename == "patient_visit_new" || $tablename == "drug_stock_movement_new") {
-			$last_index = $results[0]['count'];
+			$last_index = $results[0]['count'].",".$results[0]['last_index'];
 		} else {
 			$last_index = $results[0]['last_index'];
 		}
