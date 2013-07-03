@@ -11,16 +11,19 @@
 
 		$this -> load -> view('sections/head');
 		?>
+		
 	</head>
 	<body>
 		<header>
 			<img src='<?php echo base_url();?>Images/nascop.jpg'>
 		</header>
+		        <script>
+					$(document).ready(function(){
+						$(".error").css("display","block");
+					})
+				</script>
 		<?php
-			echo validation_errors('
-
-<p class="message error">', '</p>
-');
+			echo validation_errors('<span class="message error">', '</span>');
 			if ($this -> session -> userdata("changed_password")) {
 				$message = $this -> session -> userdata("changed_password");
 				echo "<p class='message error'>" . $message . "</p>";

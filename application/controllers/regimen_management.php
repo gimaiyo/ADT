@@ -63,13 +63,13 @@ class Regimen_management extends MY_Controller {
 				}
 			}
 			
-			if ($regimen['Enabled'] == 1 && $regimen['Merged_To']) {
+			if ($regimen['Enabled'] == 1 && @$regimen['Merged_To']) {
 				$links .= " | ";
 				$links .= anchor('regimen_management/disable/' . $regimen['id'], 'Disable', array('class' => 'disable_user'));
 		
 			} 
 
-			if ($regimen['Enabled'] == 1 && $regimen['Merged_To']=="" && $access_level == "system_administrator") {
+			if ($regimen['Enabled'] == 1 && @$regimen['Merged_To']=="" && $access_level == "system_administrator") {
 				$links .= anchor('regimen_management/disable/' . $regimen['id'], 'Disable', array('class' => 'disable_user'));
 				$links .= " | ";
 				$links .= "<a href='#' class='merge_drug' id='$drug'>Merge</a>";
@@ -77,7 +77,7 @@ class Regimen_management extends MY_Controller {
 			if ($regimen['Enabled'] == 0 && $access_level == "system_administrator"){
 				$links .= anchor('regimen_management/enable/' . $regimen['id'], 'Enable', array('class' => 'enable_user'));
 			}
-			if ($regimen['Merged_To']) {
+			if (@$regimen['Merged_To']) {
 				if($access_level == "system_administrator"){
 					$links .= " | ";
 					$links .= anchor('regimen_management/unmerge/' . $regimen['id'], 'Unmerge', array('class' => 'unmerge_drug'));

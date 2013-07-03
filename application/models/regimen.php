@@ -46,7 +46,7 @@ class Regimen extends Doctrine_Record {
 		else{
 			$displayed_enabled="(Source='$source' or Source='0') AND Enabled='1'";
 		}
-		$query = Doctrine_Query::create() -> select("r.Regimen_Code, r.Regimen_Desc,Line,rc.Name as Regimen_Category, rst.Name as Regimen_Service_Type,r.Enabled,r.Merged_To ") -> from("Regimen r") -> leftJoin('r.Regimen_Category rc, r.Regimen_Service_Type rst') -> where($displayed_enabled) -> orderBy("r.id desc");
+		$query = Doctrine_Query::create() -> select("r.Regimen_Code, r.Regimen_Desc,Line,rc.Name as Regimen_Category, rst.Name as Regimen_Service_Type,r.Enabled") -> from("Regimen r") -> leftJoin('r.Regimen_Category rc, r.Regimen_Service_Type rst') -> where($displayed_enabled) -> orderBy("r.id desc");
 		$regimens = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
 		return $regimens;
 	}

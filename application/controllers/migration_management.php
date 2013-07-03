@@ -25,7 +25,9 @@ class Migration_Management extends MY_Controller {
 		$appendsql = "LIMIT $offset,18446744073709551615";
 		$sql = "";
 		if ($targetname == 'drugcode') {
-			$sql .= "INSERT IGNORE INTO drugcode(drug,pack_size,unit,generic_name,safety_quantity,comment,supported_by,dose,duration,quantity,tb_drug,drug_in_use,supplied)SELECT arvdrugsid,packsizes,unit,genericname,saftystock,comment,supportedby,stddose,stdduration,stdqty,IF(tbdrug=0,'F','T')as tbdrug,IF(inuse=0,'F','T') as inuse,'1' from tblarvdrugstockmain $appendsql;";
+			$sql = "INSERT IGNORE INTO drugcode(drug,pack_size,unit,generic_name,safety_quantity,comment,supported_by,dose,duration,quantity,tb_drug,drug_in_use,supplied)SELECT arvdrugsid,packsizes,unit,genericname,saftystock,comment,supportedby,stddose,stdduration,stdqty,IF(tbdrug=0,'F','T')as tbdrug,IF(inuse=0,'F','T') as inuse,'1' from tblarvdrugstockmain $appendsql;";
+		    $this -> db -> query($sql);
+		    $sql="update drugcode dc,drug_unit du SET dc.unit=du.id WHERE dc.unit=du.Name";
 		} else if ($targetname == 'patient_status') {
 			$sql .= "INSERT IGNORE INTO patient_status(id,Name,Active)SELECT currentstatusid,currentstatus,'1' FROM tblcurrentstatus WHERE currentstatus is not null $appendsql;";
 		} else if ($targetname == 'dose') {
