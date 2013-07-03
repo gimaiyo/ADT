@@ -230,16 +230,16 @@ class User_Management extends MY_Controller {
 			}
 			
 			//Check if credentials are valid for username not password
-			
 			else if (isset($logged_in["attempt"]) && $logged_in["attempt"] == "attempt") {
-				
+
 				//check to see whether the user is active
 				if ($logged_in["user"] -> Active == 0) {
 					$data['inactive'] = true;
 					$data['title'] = "System Login";
 					$data['login_attempt'] = "<p class='error'>The Account has been deactivated. Seek help from the Facility Administrator</p>";
 					$this -> load -> view("login_v", $data);
-				} else {
+				} 
+				else {
 					
 					$data['invalid'] = false;
 					$data['title'] = "System Login";

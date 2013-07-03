@@ -6,7 +6,6 @@
 				$("#table_list").multiselect().multiselectfilter();
 				var table_array =['tblARVDrugStockMain', 'tblCurrentStatus', 'tblDose', 'tblDrugsInRegimen', 'tblGenericName', 'tblIndication', 'tblReasonforChange', 'tblRegimen', 'tblRegimenCategory', 'tblSecurity', 'tblARTPatientMasterInformation', 'tblStockTransactionType', 'tblTypeOfService', 'tblVisitTransaction', 'tblSourceOfClient', 'tblARTPatientTransactions', 'tblARVDrugStockTransactions'];
 				var target_array =['drugcode', 'patient_status', 'dose', 'regimen_drug', 'generic_name', 'opportunistic_infection', 'regimen_change_purpose', 'regimen', 'regimen_category', 'users_new', 'patient_new','transaction_type', 'regimen_service_type', 'visit_purpose', 'patient_source','patient_visit_new', 'drug_stock_movement_new'];
-
 				$("#migrate").click(function(){
 					var selected_table=$("select#table_list").val();
 					var checked_value=$("input[name='tablename']:checked").val();
@@ -17,7 +16,7 @@
 								var offset=0;
 								var index =table_array.indexOf(table_name);
 								var target_name=target_array[index];
-								//Check Migration Log
+								//Check Migration Log							
 								checklog(table_name,target_name);
                          });
 					}else{
@@ -34,6 +33,7 @@
                             });
 						}						  
 					}
+					
 				});
 				
 				$("#tablecustom").click(function(){
@@ -53,9 +53,8 @@
 						}
 					});
 				}
-				function advancedMigration(table_name,target_name,offset){
+				function advancedMigration(table_name,target_name,count,offset){
 				   var link = base_url + "migration_management/countRecords/"+table_name;
-                   var count=parseFloat(offset);
 				   var percentage=0;
 				   var viewpercentage="";
 				   if(table_name=="tblARTPatientTransactions"){
@@ -71,8 +70,10 @@
 							      percentage=((count/total_records)*100).toFixed(1);
 							       $("#output").append("Data From <b>"+table_name+"</b> Migrated to <b>"+target_name+"</b> table (<span id='"+viewpercentage+"'>"+percentage+"% </span>)<br/>");
 							           //Check while Counter is not equal to total
-							           recursive(table_name,target_name,count,total_records); 
-								  }
+							           if(count<=total_records){
+							           	recursive(table_name,target_name,offset,total_records); 
+							           }
+								 }		 
 				    });
 				}
 
@@ -87,15 +88,14 @@
 							var count=parseFloat(selected_array[0]);
 							var offset=parseFloat(selected_array[1]);
 						    percentage = ((count / total_records) * 100).toFixed(1);
-						    
 						    if(table_name=="tblARTPatientTransactions"){
 				   	           var percent="ppercentage";
-				   	           if(count<=total_records){
+				   	           if(count<total_records){
 								recursive(table_name,target_name,offset,total_records); 
 							   }
 				            }else if(table_name=="tblARVDrugStockTransactions"){
 				   	           var percent="dpercentage";
-				   	           if(count<=total_records){
+				   	           if(count<total_records){
 								recursive(table_name,target_name,offset,total_records); 
 							  }
 				            }
@@ -104,35 +104,28 @@
 						   }
 						});
 				}
-				
-				function updatelog(table_name,last_index,count){
-					var link = base_url + "migration_management/updatelog/" + table_name+"/"+last_index+"/"+count;
-						$.ajax({
-						  url : link,
-						  type : 'POST',
-						  success : function(data) {
-                         
-                          }
-						});
-					
-				}
+
 				function checklog(table_name,target_name){
 					var link = base_url + "migration_management/checklog/" + target_name;
 						$.ajax({
 						  url : link,
 						  type : 'POST',
 						  success : function(data) {
-						    var offset=parseFloat(data)
+						    
 						     if(table_name=='tblARTPatientTransactions' || table_name=='tblARVDrugStockTransactions'){
+						     	    var selected_data=data.toString();
+							        var selected_array = selected_data.split(",");
+							        var count=parseFloat(selected_array[0]);
+							        var offset=parseFloat(selected_array[1]);
                                 	//If patient and drug transactions(Advanced Migration)
-                                	advancedMigration(table_name,target_name,offset);
+                                	advancedMigration(table_name,target_name,count,offset);
                                 }else{
+                                	var offset=parseFloat(data)
                                 	//Other tables(Simple Migration)
                                 	simpleMigration(table_name,target_name,offset);
                                }
 						  }
 						});
-					
 				}
 
 		  });
