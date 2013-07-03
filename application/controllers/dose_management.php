@@ -5,6 +5,8 @@ if (!defined('BASEPATH'))
 class Dose_Management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
+		$this->session->set_userdata("link_id","index");
+		$this->session->set_userdata("linkSub","dose_management");
 		
 	}
 
@@ -22,15 +24,21 @@ class Dose_Management extends MY_Controller {
 		foreach ($doses as $dose) {
 			$links="";	
 			if($dose->Active==1){
-				$links = anchor('','Edit',array('class' => 'edit_user','id'=>$dose->id,'name'=>$dose->Name));
-				$links.=" | ";
+				$array_param=array(
+					'id'=>$dose['id'],
+					'role'=>'button',
+					'class'=>'edit_user',
+					'data-toggle'=>'modal'
+				);
+				//$links = anchor('','Edit',array('class' => 'edit_user','id'=>$dose->id,'name'=>$dose->Name));
+				$links .= anchor('#edit_dose', 'Edit', $array_param);
 			}
 			if($access_level=="system_administrator"){
-				
+				$links.=" | ";
 				if($dose->Active==1){
-				$links .= anchor('dose_management/disable/' .$dose->id, 'Disable',array('class' => 'disable_user'));	
+					$links .= anchor('dose_management/disable/' .$dose->id, 'Disable',array('class' => 'disable_user'));	
 				}else{
-				$links .= anchor('dose_management/enable/' .$dose->id, 'Enable',array('class' => 'enable_user'));	
+					$links .= anchor('dose_management/enable/' .$dose->id, 'Enable',array('class' => 'enable_user'));	
 				}
 			}
 			
@@ -44,7 +52,6 @@ class Dose_Management extends MY_Controller {
 		$data['link'] = "dose";
 		$actions = array(0 => array('Edit', 'edit'), 1 => array('Disable', 'disable'));
 		$data['actions'] = $actions;
-		$data['settings_view'] = "dose_v";
 		$this -> base_params($data);
 	}
 
@@ -57,12 +64,12 @@ class Dose_Management extends MY_Controller {
 		$dose -> save();
 		
 		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$this -> input -> post('dose_name').' was Added');
-		redirect('dose_management');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('dose_name').' was Added');
+		redirect('settings_management');
 	}
 
 	public function edit() {
-		$dose_id=7;
+		$dose_id=$this->input->post("id");
 		$data['doses'] = Dose::getDoseHydrated($dose_id);
 		echo json_encode($data);
 	}
@@ -76,8 +83,8 @@ class Dose_Management extends MY_Controller {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE dose SET Name='$dose_name',Value='$dose_value',Frequency='$dose_frequency' WHERE id='$dose_id'");
 		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$this -> input -> post('dose_name').' was Updated');
-		redirect('dose_management');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('dose_name').' was Updated');
+		redirect('settings_management');
 	}
 
 	public function enable($dose_id) {
@@ -99,9 +106,8 @@ class Dose_Management extends MY_Controller {
 	}
 
 	public function base_params($data) {
-		$data['content_view'] = "settings_v";
 		$data['quick_link'] = "dose";
-		$this -> load -> view("template", $data);
+		$this -> load -> view("dose_v", $data);
 	}
 
 	

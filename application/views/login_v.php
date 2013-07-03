@@ -49,7 +49,7 @@
 					<input type="password" name="password" class="input-xlarge" id="password" placeholder="********">
 				</label>
 				<input type="submit" class="btn" name="register" id="register" value="Login" >
-				<div style="margin:auto;width:30%" class="anchor">
+				<div style="margin:auto;width:auto" class="anchor">
 					<strong><a href="<?php echo base_url().'user_management/resetPassword' ?>" >Forgot Password?</a></strong>
 				</div>
 			</form>

@@ -53,16 +53,19 @@
 		font-size: 16px;
 		font-weight: bold;
 	}
-	#DataTables_Table_0_wrapper{
-		width: 80%;
-	}
 	#indication_form, #edit_form{
 		background-color:#CCFFFF;
+	}
+	.dataTables_info{
+		width:40%;
 	}
 
 </style>
 <script type="text/javascript">
 	$(document).ready(function() {
+		
+		$(".setting_table").find("tr :first").css("min-width","230px");
+		
 		//This loop goes through each table row in the page and applies the necessary modifications
 		$.each($(".table_row"), function(i, v) {
 			//First get the row id which will be used later
@@ -107,9 +110,10 @@
 			event.preventDefault();
 			$('#edit_indication_id').val(this.id);
 			$('#edit_indication_name').val(this.name);
-			$("#edit_form").dialog("open");
+			//$("#edit_form").dialog("open");
 		});
 		//Dialog form for new drug indication form
+		/*
 		$("#indication_form").dialog({
 			height : 200,
 			width : 340,
@@ -123,6 +127,7 @@
 			modal : true,
 			autoOpen : false
 		});
+		*/
 		
 		//count to check which message to display
         var count='<?php echo @$this -> session -> userdata['message_counter']?>';
@@ -188,40 +193,58 @@ foreach($actions as $action){
 				<div class="passmessage"></div>
 			    <div class="errormessage"></div>
 				<?php echo validation_errors('<p class="error">', '</p>');?>
-				<button class="btn btn-large btn-success" type="button" id="new_indication"><i class="icon-plus icon-black"></i>New Indication</button>
-		        <?php echo $indications; ?>
+				<?php echo $indications; ?>
+				<a href="#indication_form" role="button" id="new_indication" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Indication</a>
 			</div>
 	    </div><!--/span-->
 	  </div><!--/row-->
 	</div><!--/.fluid-container-->
-	<div id="indication_form" title="New Drug Indication">
+	<div id="indication_form" title="New Drug Indication" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="NewDrug" aria-hidden="true">
 		<?php
 		$attributes = array('class' => 'input_form');
 		echo form_open('indication_management/save', $attributes);
 		echo validation_errors('<p class="error">', '</p>');
 		?>
-			
-		<label>
-			<strong class="label">Indication Name</strong>
-			<input type="text" name="indication_name" id="indication_name" class="input-xlarge">
-		</label>
-		<input type="submit" value="Save" class="btn btn-primary"/>
+		<div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		    <h3 id="NewDrug">Drug details</h3>
+		</div>
+		<div class="modal-body">
+			<label>
+				<strong class="label">Indication Name</strong>
+				<input type="text" name="indication_name" id="indication_name" class="input-xlarge">
+			</label>
+		</div>	
+		
+		<div class="modal-footer">
+		   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		   <input type="submit" value="Save" class="btn btn-primary " />
+		</div>
 		</form>
 	</div>
 	<!-- Edit form -->
-	<div id="edit_form" title="Edit Drug Indication">
+	<div id="edit_form" title="Edit Drug Indication" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="NewDrug" aria-hidden="true">
 		<?php
 		$attributes = array('class' => 'input_form');
 		echo form_open('indication_management/update', $attributes);
 		echo validation_errors('<p class="error">', '</p>');
 		?>
-			
-		<label>
-			<strong class="label">Indication Name</strong>
-			<input type="hidden" name="indication_id" id="edit_indication_id" class="input-xlarge">
-			<input type="text" name="indication_name" id="edit_indication_name" class="input-xlarge">
-		</label>
-		<input type="submit" value="Save" class="btn btn-primary"/>
+		<div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		    <h3 id="NewDrug">Drug details</h3>
+		</div>
+		<div class="modal-body">
+			<label>
+				<strong class="label">Indication Name</strong>
+				<input type="hidden" name="indication_id" id="edit_indication_id" class="input-xlarge">
+				<input type="text" name="indication_name" id="edit_indication_name" class="input-xlarge">
+			</label>
+		</div>	
+		
+		<div class="modal-footer">
+		   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		   <input type="submit" value="Save" class="btn btn-primary " />
+		</div>
 		</form>
 	</div>
 

@@ -105,10 +105,15 @@ if (isset($styles)) {
 					$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
 
 				<?php
+
 				}
 				?>});</script>
       
-
+<style>
+	.setting_table{
+		font-size:0.8em;
+	}
+</style>
 </head>
 
 <body>

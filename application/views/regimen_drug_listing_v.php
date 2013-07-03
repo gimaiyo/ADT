@@ -1,46 +1,15 @@
 <script type="text/javascript" src="<?php echo base_url().'Scripts/datatable/jquery.dataTables.rowGrouping.js'?>"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
-    $('#brand_name_table').dataTable({
-    			"sScrollY": "240px",
-    			"bLengthChange": false,
-                "bPaginate": false,
-                "bJQueryUI": true,
-            	"bDestroy":true})
-    	.rowGrouping({
-                    bExpandableGrouping: true,
-                    bExpandSingleGroup: false,
-                    iExpandGroupOffset: -1,
-                    asExpandedGroups: [""],
-                    
-                });
-        GridRowCount();
-});
-	function GridRowCount() {
-                $('span.rowCount-grid').remove();
-                $('input.expandedOrCollapsedGroup').remove();
-
-                $('.dataTables_wrapper').find('[id|=group-id]').each(function () {
-                    var rowCount = $(this).nextUntil('[id|=group-id]').length;
-                    $(this).find('td').append($('<span />', { 'class': 'rowCount-grid' }).append($('<b />', { 'text': '('+rowCount+')' })));
-                });
-
-                $('.dataTables_wrapper').find('.dataTables_filter').append($('<input />', { 'type': 'button', 'class': 'expandedOrCollapsedGroup collapsed', 'value': 'Expanded All Group' }));
-
-                $('.expandedOrCollapsedGroup').live('click', function () {
-                    if ($(this).hasClass('collapsed')) {
-                        $(this).addClass('expanded').removeClass('collapsed').val('Collapse All Group').parents('.dataTables_wrapper').find('.collapsed-group').trigger('click');
-                    }
-                    else {
-                        $(this).addClass('collapsed').removeClass('expanded').val('Expanded All Group').parents('.dataTables_wrapper').find('.expanded-group').trigger('click');
-                    }
-                });
-            };
+		
+	});
+		
 
 </script>
 
 <script>
 	$(document).ready(function() {
+		/*
 		$("#entry_form").dialog({
 			height : 200,
 			width : 'auto',
@@ -50,6 +19,7 @@
 		$("#new_regimen_drug").click(function() {
 			$("#entry_form").dialog("open");
 		});
+		*/
 		$("#regimen_drug_listing").accordion({
 			autoHeight : false,
 			navigation : true
@@ -158,13 +128,12 @@
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
 
-	    <div class="span9 span-fixed-sidebar">
+	    <div class="span10 span-fixed-sidebar">
 	      	<div class="hero-unit">
 				<div class="passmessage"></div>
 			    <div class="errormessage"></div>
 				<?php echo validation_errors('<p class="error">', '</p>');?>
-				<button class="btn btn-large btn-success" type="button" id="new_regimen_drug"><i class="icon-plus icon-black"></i>New Regimen Drug</button>
-		        <table class="setting_table" id="brand_name_table">
+				<table class="setting_table" id="brand_name_table">
 		        	<thead>
 		        		<tr>
 		        			<th>Regimens</th>
@@ -223,43 +192,53 @@
 		        		  }
 		        		} ?>
 		        	</tbody>
-		        </table>	
+		        </table>
+		        <a href="#entry_form" role="button" id="new_regimen_drug" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Regimen Drug</a>	
     		</div>
 	    </div><!--/span-->
 	  </div><!--/row-->
 	</div><!--/.fluid-container-->
 	
-	<div id="entry_form" title="New Regimen Drug">
+	<div id="entry_form" title="New Regimen Drug" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="NewDrug" aria-hidden="true">
 		<?php
 		$attributes = array('class' => 'input_form');
 		echo form_open('regimen_drug_management/save', $attributes);
 		?>
-		
-		<table>
-			<tr><td><strong class="label">Select Regimen</strong></td>
-				<td>
-					<select class="input-xlarge" id="regimen" name="regimen">
-					<?php
-					foreach($regimens_enabled as $regimen){
-					?>
-					<option value="<?php echo $regimen -> id;?>"><?php echo $regimen -> Regimen_Desc;?></option>
-					<?php }?>
-			</select>
-				</td>
-			</tr>
-			<tr><td><strong class="label">Select Drug</strong></td>
-				<td>
-					<select class="input-xlarge" id="regimen" name="regimen">
+		<div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		    <h3 id="NewDrug">Drug details</h3>
+		</div>
+		<div class="modal-body">
+			<table>
+				<tr><td><strong class="label">Select Regimen</strong></td>
+					<td>
+						<select class="input-xlarge" id="regimen" name="regimen">
 						<?php
-						foreach($drug_codes_enabled as $drug){
+						foreach($regimens_enabled as $regimen){
 						?>
-						<option value="<?php echo $drug ['id'];?>"><?php echo $drug['Drug'];?></option>
+						<option value="<?php echo $regimen -> id;?>"><?php echo $regimen -> Regimen_Desc;?></option>
 						<?php }?>
-					</select>
-				</td>
-			</tr>
-			<tr><td><input type="submit" value="Save" class="btn btn-primary"/></td><td></td></tr>
-		</table>
+				</select>
+					</td>
+				</tr>
+				<tr><td><strong class="label">Select Drug</strong></td>
+					<td>
+						<select class="input-xlarge" id="drugid" name="drugid">
+							<?php
+							foreach($drug_codes_enabled as $drug){
+							?>
+							<option value="<?php echo $drug ['id'];?>"><?php echo $drug['Drug'];?></option>
+							<?php }?>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</div>	
+		
+		<div class="modal-footer">
+		   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		   <input type="submit" value="Save" class="btn btn-primary " />
+		</div>
 		<?php echo form_close() ; ?>
 	</div>
 </div>

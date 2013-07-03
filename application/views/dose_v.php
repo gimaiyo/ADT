@@ -101,7 +101,7 @@
 		
 		//When clicked dialog form for new dose pops up
 		$("#new_client").click(function(){ 
-			$("#client_form").dialog("open");
+			//$("#client_form").dialog("open");
 		});
 		
 		$(".edit_user").live('click',function(event){ 
@@ -126,7 +126,7 @@
 									$('#edit_dose_frequency').val(msg[key][y].Frequency);
 		     					}
 			     			}
-			     			$("#edit_form").dialog("open");
+			     			//$("#edit_form").dialog("open");
 			     		}
 		     		}
 		     	}
@@ -135,6 +135,7 @@
 		});
 		
 		//Dialog form for new user form
+		/*
 		$("#client_form").dialog({
 			height : 250,
 			width : 500,
@@ -147,11 +148,11 @@
 			modal : true,
 			autoOpen : false
 		});
-		
+		*/
 		//count to check which message to display
         var count='<?php echo @$this -> session -> userdata['message_counter']?>';
         var message='<?php echo @$this -> session -> userdata['message']?>';	
-	
+	/*
 	if(count == 1) {
 	$(".passmessage").slideDown('slow', function() {
 
@@ -163,11 +164,13 @@
 	}
 	setTimeout(fade_out, 5000);
      <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
+     //$this -> session -> set_userdata('message_counter', "0");
+     //$this -> session -> set_userdata('message', " ");
      ?>
 
 	}
+	*/
+	
 	if(count == 2) {
 	$(".errormessage").slideDown('slow', function() {
 
@@ -179,8 +182,8 @@
 	}
 	setTimeout(fade_out, 5000);
      <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
+     //$this -> session -> set_userdata('message_counter', "0");
+     //$this -> session -> set_userdata('message', " ");
      ?>
 
 	}
@@ -207,60 +210,74 @@ foreach($actions as $action){
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
 
-	    <div class="span9 span-fixed-sidebar">
+	    <div class="span12 span-fixed-sidebar">
 	      	<div class="hero-unit">
 				<div class="passmessage"></div>
 			    <div class="errormessage"></div>
 				<?php echo validation_errors('<p class="error">', '</p>');?>
-				<button class="btn btn-large btn-success" type="button" id="new_client"><i class="icon-plus icon-black"></i>New Drug Dose</button>
-		        <?php echo $doses; ?>
+				<?php echo $doses; ?>
+				<a href="#client_form" role="button" id="new_client" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Drug Dose</a>
 			</div>
 	    </div><!--/span-->
 	  </div><!--/row-->
 	</div><!--/.fluid-container-->
-	<div id="client_form" title="New Drug Dose">
+	<div id="client_form" title="New Drug Dose" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="NewDrug" aria-hidden="true">
 		<?php
 		$attributes = array('class' => 'input_form');
 		echo form_open('dose_management/save', $attributes);
 		echo validation_errors('<p class="error">', '</p>');
 		?>
-		<table>
-			<tr>
-				<td>
-					<strong class="label">Dose Name</strong>
-				</td>
-				<td>
-					<input type="text" name="dose_name" id="dose_name" class="input-xlarge" size="30">
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<strong class="label">Dose Value</strong>
-				</td>
-				<td>
-					<input type="text" name="dose_value" id="dose_value" class="input-xlarge" size="30">
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<strong class="label">Dose Frequency</strong>
-				</td>
-				<td>
-					<input type="text" name="dose_frequency" id="dose_frequency" class="input-xlarge" size="30">
-				</td>
-			</tr>
-			<tr><td><input type="submit" value="Save" class="btn btn-primary"/></td><td></td></tr>
-		</table>
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="NewDrug">Dose details</h3>
+		</div>
+		<div class="modal-body">
+			<table>
+				<tr>
+					<td>
+						<strong class="label">Dose Name</strong>
+					</td>
+					<td>
+						<input type="text" name="dose_name" id="dose_name" class="input-xlarge" size="30">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<strong class="label">Dose Value</strong>
+					</td>
+					<td>
+						<input type="text" name="dose_value" id="dose_value" class="input-xlarge" size="30">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<strong class="label">Dose Frequency</strong>
+					</td>
+					<td>
+						<input type="text" name="dose_frequency" id="dose_frequency" class="input-xlarge" size="30">
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="modal-footer">
+		   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		   <input type="submit" value="Save" class="btn btn-primary " />
+		</div>
+		
 		<?php echo form_close(); ?>
 	</div>
 	
 	<!-- Edit drug dose -->
-	<div id="edit_form" title="Edit Drug Dose">
+	<div id="edit_dose" title="Edit Drug Dose" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="NewDrug" aria-hidden="true">
 		<?php
 		$attributes = array('class' => 'input_form');
 		echo form_open('dose_management/update', $attributes);
 		echo validation_errors('<p class="error">', '</p>');
 		?>
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="NewDrug">Dose details</h3>
+		</div>
 		<table>
 			<tr>
 				<td>
@@ -289,6 +306,10 @@ foreach($actions as $action){
 			</tr>
 			<tr><td><input type="submit" value="Save" class="btn btn-primary"/></td><td></td></tr>
 		</table>
+		<div class="modal-footer">
+		   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		   <input type="submit" value="Save" class="btn btn-primary " />
+		</div>
 		<?php echo form_close(); ?>
 	</div>
 

@@ -2,6 +2,8 @@
 class Drugcode_management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
+		$this->session->set_userdata("link_id","index");
+		$this->session->set_userdata("linkSub","drugcode_management");
 		ini_set("max_execution_time", "100000");
 	}
 
@@ -16,7 +18,6 @@ class Drugcode_management extends MY_Controller {
 			$source = $this -> session -> userdata('facility');
 		}
 		$data = array();
-		$data['settings_view'] = "drugcode_listing_v";
 		$drugcodes = Drugcode::getAll($source,$access_level);
 		$tmpl = array ( 'table_open'  => '<table id="drugcode_setting" class="setting_table">' );
 		$this -> table ->set_template($tmpl);
@@ -24,18 +25,28 @@ class Drugcode_management extends MY_Controller {
 
 
 		foreach ($drugcodes as $drugcode) {
+			$array_param=array(
+				'id'=>$drugcode['id'],
+				'role'=>'button',
+				'class'=>'edit_user',
+				'data-toggle'=>'modal'
+			);
+			
 			$links="";
 			if($drugcode['Enabled'] == 1){
-				$links = anchor('drugcode_management/edit/' . $drugcode['id'], 'Edit', array('class' => 'edit_user','id'=>$drugcode['id']));
-				$links .= " | ";
+				//$links = anchor('#edit_drugcode', 'Edit', array('class' => 'edit_user','id'=>$drugcode['id']));
+				$links .= anchor('#edit_drugcode', 'Edit', $array_param);
+				
 			}
 			
 			$drug = $drugcode['id'];
 			if ($drugcode['Enabled'] == 1 && $access_level=="system_administrator") {
-				$links .= anchor('drugcode_management/disable/' . $drugcode['id'], 'Disable', array('class' => 'disable_user'));
 				$links .= " | ";
+				$links .= anchor('drugcode_management/disable/' . $drugcode['id'], 'Disable', array('class' => 'disable_user'));
+				
 				$links .= "<a href='#' class='merge_drug' id='$drug'>Merge</a>";
 			} elseif($access_level=="system_administrator") {
+				$links .= " | ";
 				$links .= anchor('drugcode_management/enable/' . $drugcode['id'], 'Enable', array('class' => 'enable_user'));
 
 			}
@@ -122,9 +133,9 @@ class Drugcode_management extends MY_Controller {
 			$drugcode -> Source = $source;
 
 			$drugcode -> save();
-			$this -> session -> set_userdata('message_counter', '1');
-			$this -> session -> set_userdata('message', $this -> input -> post('drugname') . ' was added.');
-			redirect('drugcode_management');
+			//$this -> session -> set_userdata('message_counter', '1');
+			$this -> session -> set_userdata('msg_success', $this -> input -> post('drugname') . ' was added.');
+			redirect('settings_management');
 		}
 
 	//}
@@ -178,19 +189,19 @@ class Drugcode_management extends MY_Controller {
 		$this -> load -> database();
 		$this -> db -> where('id', $source_id);
 		$this -> db -> update('drugcode', $data);
-		$this -> session -> set_userdata('message_counter', '1');
-		$this -> session -> set_userdata('message', $this -> input -> post('drugname') . ' was Updated');
-		redirect('drugcode_management');
+		//$this -> session -> set_userdata('message_counter', '1');
+		$this -> session -> set_userdata('msg_success', $this -> input -> post('drugname') . ' was Updated');
+		redirect('settings_management');
 	}
 
 	public function enable($drugcode_id) {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE drugcode SET Enabled='1'WHERE id='$drugcode_id'");
 		$results = Drugcode::getDrugCode($drugcode_id);
-		$this -> session -> set_userdata('message_counter', '1');
-		$this -> session -> set_userdata('message', $results['Drug'] . ' was enabled');
+		//$this -> session -> set_userdata('message_counter', '1');
+		$this -> session -> set_userdata('msg_success', $results['Drug'] . ' was enabled');
 		
-		redirect('drugcode_management');
+		redirect('settings_management');
 	}
 
 	public function disable($drugcode_id) {
@@ -198,8 +209,8 @@ class Drugcode_management extends MY_Controller {
 		$query = $this -> db -> query("UPDATE drugcode SET Enabled='0'WHERE id='$drugcode_id'");
 		$results = Drugcode::getDrugCode($drugcode_id);
 		$this -> session -> set_userdata('message_counter', '2');
-		$this -> session -> set_userdata('message', $results['Drug'] . ' was disabled');
-		redirect('drugcode_management');
+		$this -> session -> set_userdata('msg_success', $results['Drug'] . ' was disabled');
+		redirect('settings_management');
 	}
 
 	public function merge($primary_drugcode_id) {
@@ -260,10 +271,9 @@ class Drugcode_management extends MY_Controller {
 		$data['scripts'] = array("jquery-ui.js");
 		$data['quick_link'] = "drugcode";
 		$data['title'] = "Drug Code";
-		$data['content_view'] = "settings_v";
 		$data['banner_text'] = "Drug Code Management";
 		$data['link'] = "settings_management";
-		$this -> load -> view('template', $data);
+		$this -> load -> view('drugcode_listing_v', $data);
 	}
 
 }

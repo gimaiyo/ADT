@@ -2,6 +2,8 @@
 class Regimen_Drug_Management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
+		$this->session->set_userdata("link_id","index");
+		$this->session->set_userdata("linkSub","regimen_drug_management");
 	}
 
 	public function index() {
@@ -38,8 +40,12 @@ class Regimen_Drug_Management extends MY_Controller {
 			$regimen_drug -> Drugcode = $this -> input -> post('drugid');
 			$regimen_drug -> Source = $source;
 			$regimen_drug -> save();
+			$regimen_drug_id=$this -> input -> post('drugid');
+			$results = Drugcode::getDrugCode($regimen_drug_id);
+			$this -> session -> set_userdata('msg_success',$results->Drug.' was Added');
+		
 		}
-		redirect('regimen_drug_management/listing');
+		redirect('settings_management');
 
 	}
 
@@ -47,18 +53,18 @@ class Regimen_Drug_Management extends MY_Controller {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE regimen_drug SET active='1'WHERE drugcode='$regimen_drug_id'");
 		$results = Drugcode::getDrugCode($regimen_drug_id);
-		$this -> session -> set_userdata('message_counter', '1');
-		$this -> session -> set_userdata('message', $results -> Drug  . ' was enabled');
-		redirect('regimen_drug_management/listing');
+		//$this -> session -> set_userdata('message_counter', '1');
+		$this -> session -> set_userdata('msg_success', $results -> Drug  . ' was enabled');
+		redirect('settings_management');
 	}
 
 	public function disable($regimen_drug_id) {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE regimen_drug SET active='0'WHERE drugcode='$regimen_drug_id'");
 		$results = Drugcode::getDrugCode($regimen_drug_id);
-		$this -> session -> set_userdata('message_counter', '2');
-		$this -> session -> set_userdata('message', $results -> Drug . ' was disabled');
-		redirect('regimen_drug_management/listing');
+		//$this -> session -> set_userdata('message_counter', '2');
+		$this -> session -> set_userdata('msg_success', $results -> Drug . ' was disabled');
+		redirect('settings_management');
 	}
 
 	public function base_params($data) {

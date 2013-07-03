@@ -9,8 +9,6 @@ class brandname_management extends MY_Controller {
 	}
 
 	public function listing($data="") {
-		
-		$data['settings_view'] = "brandname_listing_v";
 		$data['drug_codes'] = Drugcode::getBrands();
 		
 		$this -> base_params($data);
@@ -75,11 +73,10 @@ class brandname_management extends MY_Controller {
 		$data['scripts'] = array("jquery-ui.js");
 		$data['quick_link'] = "brand";
 		$data['title'] = "Brand Management";
-		$data['content_view'] = "settings_v";
 		$data['banner_text'] = "Brand Management";
 		$data['link'] = "settings_management";
 		
-		$this -> load -> view('template', $data);
+		$this -> load -> view('brandname_listing_v', $data);
 	}
 
 }

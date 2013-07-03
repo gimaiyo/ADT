@@ -5,6 +5,8 @@ if (!defined('BASEPATH'))
 class Indication_Management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
+		$this->session->set_userdata("link_id","index");
+		$this->session->set_userdata("linkSub","indication_management");
 		
 	}
 
@@ -23,11 +25,18 @@ class Indication_Management extends MY_Controller {
 			$links="";
 			
 			if($infection->Active==1){
-				$links = anchor('indication_management/edit/' .$infection->id, 'Edit',array('class' => 'edit_user','id'=>$infection->id,'name'=>$infection->Name));
-				$links.=" | ";
+				$array_param=array(
+					'id'=>$infection->id,
+					'role'=>'button',
+					'class'=>'edit_user',
+					'data-toggle'=>'modal',
+					'name'=>$infection->Name
+				);
+				//$links = anchor('indication_management/edit/' .$infection->id, 'Edit',array('class' => 'edit_user','id'=>$infection->id,'name'=>$infection->Name));
+				$links .= anchor('#edit_form', 'Edit', $array_param);
 			}
 			if($access_level=="system_administrator"){
-				
+				$links.=" | ";
 				if($infection->Active==1){
 				$links .= anchor('indication_management/disable/' .$infection->id, 'Disable',array('class' => 'disable_user'));	
 				}else{
@@ -39,7 +48,6 @@ class Indication_Management extends MY_Controller {
 
 		$data['indications'] = $this -> table -> generate();
 		$data['title'] = "Drug Indications";
-		$data['settings_view'] = "indications_v";
 		$data['banner_text'] = "Drug Indications";
 		$data['link'] = "indications";
 		$actions = array(0 => array('Edit', 'edit'), 1 => array('Disable', 'disable'));
@@ -56,9 +64,9 @@ class Indication_Management extends MY_Controller {
 		$indication -> Active = "1";
 		$indication -> save();
 		
-		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$this -> input -> post('indication_name').' was Added');
-		redirect('indication_management');
+		//$this -> session -> set_userdata('message_counter','1');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('indication_name').' was Added');
+		redirect('settings_management');
 	}
 
 	public function edit($indication_id) {
@@ -77,33 +85,32 @@ class Indication_Management extends MY_Controller {
 
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE opportunistic_infection SET Name='$indication_name' WHERE id='$indication_id'");
-		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$this -> input -> post('indication_name').' was Updated');
-		redirect('indication_management');
+		//$this -> session -> set_userdata('message_counter','1');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('indication_name').' was Updated');
+		redirect('settings_management');
 	}
 
 	public function enable($indication_id) {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE opportunistic_infection SET Active='1'WHERE id='$indication_id'");
 		$results=Opportunistic_Infection::getIndication($indication_id);
-		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$results->Name.' was enabled');
-		redirect('indication_management');
+		//$this -> session -> set_userdata('message_counter','1');
+		$this -> session -> set_userdata('msg_success',$results->Name.' was enabled');
+		redirect('settings_management');
 	}
 
 	public function disable($indication_id) {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE opportunistic_infection SET Active='0'WHERE id='$indication_id'");
 		$results=Opportunistic_Infection::getIndication($indication_id);
-		$this -> session -> set_userdata('message_counter','2');
-		$this -> session -> set_userdata('message',$results->Name.' was disabled');
-		redirect('indication_management');
+		//$this -> session -> set_userdata('message_counter','2');
+		$this -> session -> set_userdata('msg_success',$results->Name.' was disabled');
+		redirect('settings_management');
 	}
 
 	public function base_params($data) {
 		$data['quick_link'] = "indications";
-		$data['content_view'] = "settings_v";
-		$this -> load -> view('template', $data);
+		$this -> load -> view('indications_v', $data);
 	}
 
 	

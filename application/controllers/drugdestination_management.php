@@ -41,7 +41,6 @@ class Drugdestination_Management extends MY_Controller {
 		$data['link'] = "drugdestinations";
 		$actions = array(0 => array('Edit', 'edit'), 1 => array('Disable', 'disable'));
 		$data['actions'] = $actions;
-		$data['settings_view'] = "drugdestination_v";
 		$this -> base_params($data);
 	}
 
@@ -99,9 +98,8 @@ class Drugdestination_Management extends MY_Controller {
 	}
 
 	public function base_params($data) {
-		$data['content_view'] = "settings_v";
 		$data['quick_link'] = "drug_destination";
-		$this -> load -> view("template", $data);
+		$this -> load -> view("drugdestination_v", $data);
 	}
 
 	

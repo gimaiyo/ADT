@@ -104,9 +104,17 @@ class Facility_Management extends MY_Controller {
 	}
 
 	public function base_params($data) {
-		$data['content_view'] = "settings_v";
+		$access_level = $this -> session -> userdata('user_indicator');
 		$data['quick_link'] = "facility";
-		$this -> load -> view("template", $data);
+		if($access_level=="system_administrator"){
+			$data['facilities_list'] = Facilities::getAll($source);
+			$this -> load -> view("facility_v", $data);
+		}
+		else{
+			$data['facilities'] = Facilities::getCurrentFacility($source);
+			$this -> load -> view("facility_user_v", $data);
+
+		}
 	}
 
 	

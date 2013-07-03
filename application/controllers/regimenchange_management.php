@@ -44,7 +44,6 @@ class Regimenchange_Management extends MY_Controller {
 		$data['link'] = "Regimen_change_reasons";
 		$actions = array(0 => array('Edit', 'edit'), 1 => array('Disable', 'disable'));
 		$data['actions'] = $actions;
-		$data['settings_view'] = "regimenchange_listing_v";
 		$this -> base_params($data);
 	}
 
@@ -101,9 +100,8 @@ class Regimenchange_Management extends MY_Controller {
 	}
 
 	public function base_params($data) {
-		$data['content_view'] = "settings_v";
 		$data['quick_link'] = "regimen_change_reason";
-		$this -> load -> view("template", $data);
+		$this -> load -> view("regimenchange_listing_v", $data);
 	}
 
 	

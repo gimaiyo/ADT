@@ -43,7 +43,6 @@ class Nonadherence_Management extends MY_Controller {
 		$data['link'] = "Non_Adherence_Reasons";
 		$actions = array(0 => array('Edit', 'edit'), 1 => array('Disable', 'disable'));
 		$data['actions'] = $actions;
-		$data['settings_view'] = "nonadherence_listing_v";
 		$this -> base_params($data);
 	}
 
@@ -101,9 +100,8 @@ class Nonadherence_Management extends MY_Controller {
 	}
 
 	public function base_params($data) {
-		$data['content_view'] = "settings_v";
 		$data['quick_link'] = "non_adherence_reason";
-		$this -> load -> view("template", $data);
+		$this -> load -> view("nonadherence_listing_v", $data);
 	}
 
 	

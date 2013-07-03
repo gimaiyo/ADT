@@ -43,7 +43,6 @@ class Client_Management extends MY_Controller {
 		$data['link'] = "client";
 		$actions = array(0 => array('Edit', 'edit'), 1 => array('Disable', 'disable'));
 		$data['actions'] = $actions;
-		$data['settings_view'] = "client_v";
 		$this -> base_params($data);
 	}
 
@@ -101,9 +100,8 @@ class Client_Management extends MY_Controller {
 	}
 
 	public function base_params($data) {
-		$data['content_view'] = "settings_v";
 		$data['quick_link'] = "client_sources";
-		$this -> load -> view("template", $data);
+		$this -> load -> view("client_v", $data);
 	}
 
 	

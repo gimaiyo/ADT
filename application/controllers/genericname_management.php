@@ -13,7 +13,6 @@ class genericname_management extends MY_Controller {
 	public function listing() {
 		$access_level = $this -> session -> userdata('user_indicator');
 		$data = array();
-		$data['settings_view'] = "generic_listing_v";
 		$generics = Generic_Name::getAllHydrated($access_level);
 		$tmpl = array ( 'table_open'  => '<table class="setting_table">'  );
 		$this -> table ->set_template($tmpl);
@@ -111,11 +110,10 @@ class genericname_management extends MY_Controller {
 		$data['scripts'] = array("jquery-ui.js");
 		$data['quick_link'] = "generic";
 		$data['title'] = "Generic Names";
-		$data['content_view'] = "settings_v";
 		$data['banner_text'] = "Generic Management";
 		$data['link'] = "settings_management";
 
-		$this -> load -> view('template', $data);
+		$this -> load -> view('generic_listing_v', $data);
 	}
 
 }

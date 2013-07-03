@@ -2,11 +2,14 @@
 class Regimen_management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
+		$this->session->set_userdata("link_id","index");
+		$this->session->set_userdata("linkSub","regimen_management");
 		$this -> load -> database();
 	}
 
 	public function index() {
 		$this -> listing();
+		
 	}
 
 	public function listing() {
@@ -23,7 +26,7 @@ class Regimen_management extends MY_Controller {
 		$data['scripts'] = array("jquery-ui.js");
 		
 		$regimens = Regimen::getAllHydrated($source,$access_level);
-		$tmpl = array ( 'table_open'  => '<table id="regimen_setting" class="table table-bordered setting_table">' );
+		$tmpl = array ( 'table_open'  => '<table id="regimen_setting" class="table table-bordered table-hover table-striped setting_table">' );
 		$this -> table ->set_template($tmpl);
 		$this -> table -> set_heading('id', 'Regimen Code', 'Regimen Desc', 'Line', 'Regimen Category', 'Type Of Service', 'Options');
 		
@@ -34,15 +37,28 @@ class Regimen_management extends MY_Controller {
 			$type_of_service=$regimen['Regimen_Service_Type'];
 
 			if($type_of_service!="ART" && $access_level!="system_administrator"){
+				$array_param=array(
+					'id'=>$regimen['id'],
+					'role'=>'button',
+					'class'=>'edit_user',
+					'data-toggle'=>'modal'
+				);
 				if($regimen['Enabled'] == 1){
-					$links .= anchor('' . $regimen['id'], 'Edit', array('class' => 'edit_user','id'=>$regimen['id']));
-					
+					//$links .= anchor('' . $regimen['id'], 'Edit', array('class' => 'edit_user','id'=>$regimen['id']));
+					$links .= anchor('#edit_form', 'Edit', $array_param);
 				}
 				
 			}
 			elseif($access_level=="system_administrator"){
+				//href="#entry_form" role="button" id="new_regimen" class="btn" data-toggle="modal"
+				$array_param=array(
+					'id'=>$regimen['id'],
+					'role'=>'button',
+					'class'=>'edit_user',
+					'data-toggle'=>'modal'
+				);
 				if($regimen['Enabled'] == 1){
-					$links .= anchor('regimen_management/edit/' . $regimen['id'], 'Edit', array('class' => 'edit_user','id'=>$regimen['id']));
+					$links .= anchor('#edit_form', 'Edit', $array_param);
 					
 				}
 			}
@@ -100,8 +116,8 @@ class Regimen_management extends MY_Controller {
 
 		$regimen -> save();
 		$this -> session -> set_userdata('message_counter', '1');
-		$this -> session -> set_userdata('message', $this -> input -> post('regimen_code') . ' was added.');
-		redirect('regimen_management');
+		$this -> session -> set_userdata('msg_success', $this -> input -> post('regimen_code') . ' was added.');
+		redirect('settings_management');
 	}
 
 	public function edit() {
@@ -123,8 +139,8 @@ class Regimen_management extends MY_Controller {
 		
 		$query = $this -> db -> query("UPDATE regimen SET regimen_code='$regimen_Code',regimen_desc='$regimen_Desc',category='$category',line='$line',type_of_service='$type_Of_Service',remarks='$remarks' WHERE id='$regimen_id'");
 		$this -> session -> set_userdata('message_counter', '1');
-		$this -> session -> set_userdata('message', $this -> input -> post('regimen_code') . ' was Updated');
-		redirect('regimen_management');
+		$this -> session -> set_userdata('msg_success', $this -> input -> post('regimen_code') . ' was Updated');
+		redirect("settings_management");
 	}
 
 	public function enable($regimen_id) {
@@ -132,8 +148,8 @@ class Regimen_management extends MY_Controller {
         $query = $this -> db -> query("UPDATE regimen SET enabled='1'WHERE id='$regimen_id'");	
         $results = Regimen::getRegimen($regimen_id);
 		$this -> session -> set_userdata('message_counter', '1');
-		$this -> session -> set_userdata('message', $results -> Regimen_Code . ' was enabled');
-		redirect('regimen_management');
+		$this -> session -> set_userdata('msg_success', $results -> Regimen_Code . ' was enabled');
+		redirect('settings_management');
 	}
 
 	public function disable($regimen_id) {
@@ -141,8 +157,8 @@ class Regimen_management extends MY_Controller {
 		$query = $this -> db -> query("UPDATE regimen SET enabled='0'WHERE id='$regimen_id'");
 		$results = Regimen::getRegimen($regimen_id);
 		$this -> session -> set_userdata('message_counter', '2');
-		$this -> session -> set_userdata('message', $results -> Regimen_Code . ' was disabled');
-		redirect('regimen_management');
+		$this -> session -> set_userdata('msg_success', $results -> Regimen_Code . ' was disabled');
+		redirect('settings_management');
 	}
 	
 	public function merge($primary_drugcode_id) {

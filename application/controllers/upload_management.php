@@ -247,10 +247,8 @@ class Upload_Management extends MY_Controller {
 	}
 
 	public function base_params($data) {
-		$data['settings_view'] = "upload_form_v";
 		$data['quick_link'] = "upload";
-		$data['content_view'] = "settings_v";
-		$this -> load -> view("template", $data);
+		$this -> load -> view("upload_form_v", $data);
 	}
 
 }

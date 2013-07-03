@@ -1,29 +1,27 @@
 <script>
 	$(document).ready(function() {
 		
-		$("#entry_form").dialog({
-			height : 390,
-			width : 750,
-			modal : true,
-			autoOpen : false
-		});
-		$("#edit_form").dialog({
-			height : 390,
-			width : 750,
-			modal : true,
-			autoOpen : false
-		});
+		/*
+		 * $("#edit_form").dialog({
+				height : 390,
+				width : 750,
+				modal : true,
+				autoOpen : false
+			});
+		 */
+		
 		
 		$(".edit_user").live('click',function(event) {
-			event.preventDefault();
+			$("#regimen_edit_tbl").css("display","none");
+			//event.preventDefault();
 			var _id=this.id;
 			var request=$.ajax({
-		     url: "regimen_management/edit",
-		     type: 'POST',
-		     data: {"id":_id},
-		     dataType: "json",
-		     
-		    });
+	    	url: "regimen_management/edit",
+	     	type: 'POST',
+	     	data: {"id":_id},
+	     	dataType: "json",
+	     
+	    });
 		    
 		     request.done(function(msg) {
 		     	for (var key in msg){
@@ -42,7 +40,8 @@
 			     					}	
 			     					break;	
 			     			}
-			     			$("#edit_form").dialog("open");
+			     			//$("#edit_form").dialog("open");
+			     			$("#regimen_edit_tbl").css("display","block");
 			     		}
 			     	}
 			    }
@@ -55,9 +54,8 @@
 			
 		});
 		
-		$("#new_regimen").click(function() {
-			$("#entry_form").dialog("open");
-		});
+		//Update regimen details
+		//$("btn_update_regimen").click
 		
 		//Check the drugcodes selected when merge is clicked
 		$(".merge_drug").live('click',function(){
@@ -201,41 +199,11 @@
 	    color:red;
 		font-weight:bold;	
 	}
-	.passmessage {
-
-		display: none;
-		background: #00CC33;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding: 5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
-	.errormessage {
-
-		display: none;
-		background: #FF0000;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding: 5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
+	
 	#entry_form,#edit_form{
 		background-color:#CCFFFF;
 	}
+	
 
 </style>
 
@@ -243,8 +211,7 @@
 
 <div id="view_content">
 	
-
-    <div class="container-fluid">
+	<div class="container-fluid">
 	  <div class="row-fluid row">
 
 	    <!-- Side bar menus -->
@@ -253,8 +220,6 @@
 
 	    <div class="span12 span-fixed-sidebar">
 	      <div class="hero-unit">
-	      	<div class="passmessage"></div>
-    		<div class="errormessage"></div>
 	      	
 	        <?php echo $regimens;?>
 	      </div>
@@ -267,81 +232,102 @@
 	</div><!--/.fluid-container-->
 
 
-	<div id="entry_form" title="New Regimen">
+	
+	<a href="#entry_form" role="button" id="new_regimen" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Regimen</a>
+	
+	<div id="entry_form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="NewRegimen" aria-hidden="true">
 		<?php
-		$attributes = array('class' => 'input_form');
-		echo form_open('regimen_management/save', $attributes);
-		echo validation_errors('<p class="error">', '</p>');
+			$attributes = array('class' => 'input_form');
+			echo form_open('regimen_management/save', $attributes);
 		?>
-		<table>
-			<tr><td><strong class="label">Regimen Code</strong></td>
-				<td><input type="hidden" name="regimen_id" id="regimen_id" class="input" >
-					<input type="text" name="regimen_code" id="regimen_code" class="input-xlarge"></td>
-				
-			</tr>
-			<tr><td><strong class="label">Description</strong></td>
-				<td>
-					<input type="text" name="regimen_desc" id="regimen_desc" class="input-xlarge"></td>
-				
-			</tr>
-			<tr><td><strong class="label">Category</strong></td>
-				<td>
-					<select class="input-xlarge" id="category" name="category">
-						<?php
-		foreach($regimen_categories as $regimen_category){
-						?>
-						<option value="<?php echo $regimen_category -> id;?>"><?php echo $regimen_category -> Name;?></option>
-						<?php }?>
-					</select>
-				</td>
-				
-			</tr>
-			<tr>
-				<td><strong class="label">Line</strong></td>
-				<td><input type="text" name="line" id="line" class="input-xlarge"></td>
-			</tr>
-			<tr>
-				<td><strong class="label">Type of Service</strong></td>
-				<td>
-					<select class="input-xlarge" id="type_of_service" name="type_of_service">
-						<?php 
-							foreach($regimen_service_types as $regimen_service_type){
-							if($access_level!="system_administrator"){
-								if($regimen_service_type -> Name!="ART"){
-								?>
-								<option value="<?php echo $regimen_service_type -> id;?>"><?php echo $regimen_service_type -> Name;?></option>
-								<?php  
+		<div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		    <h3 id="NewRegimen">Regimen details</h3>
+		</div>
+		<div class="modal-body">
+			<?php
+			echo validation_errors('<p class="error">', '</p>');
+			?>
+			<table>
+				<tr><td><strong class="label">Regimen Code</strong></td>
+					<td><input type="hidden" name="regimen_id" id="regimen_id" class="input" >
+						<input type="text" name="regimen_code" id="regimen_code" class="input-xlarge"></td>
+					
+				</tr>
+				<tr><td><strong class="label">Description</strong></td>
+					<td>
+						<input type="text" name="regimen_desc" id="regimen_desc" class="input-xlarge"></td>
+					
+				</tr>
+				<tr><td><strong class="label">Category</strong></td>
+					<td>
+						<select class="input-xlarge" id="category" name="category">
+							<?php
+			foreach($regimen_categories as $regimen_category){
+							?>
+							<option value="<?php echo $regimen_category -> id;?>"><?php echo $regimen_category -> Name;?></option>
+							<?php }?>
+						</select>
+					</td>
+					
+				</tr>
+				<tr>
+					<td><strong class="label">Line</strong></td>
+					<td><input type="text" name="line" id="line" class="input-xlarge"></td>
+				</tr>
+				<tr>
+					<td><strong class="label">Type of Service</strong></td>
+					<td>
+						<select class="input-xlarge" id="type_of_service" name="type_of_service">
+							<?php 
+								foreach($regimen_service_types as $regimen_service_type){
+								if($access_level!="system_administrator"){
+									if($regimen_service_type -> Name!="ART"){
+									?>
+									<option value="<?php echo $regimen_service_type -> id;?>"><?php echo $regimen_service_type -> Name;?></option>
+									<?php  
+									}
 								}
-							}
-							elseif($access_level=="system_administrator") {
-								?>
-								<option value="<?php echo $regimen_service_type -> id;?>"><?php echo $regimen_service_type -> Name;?></option>
-								<?php
-							}
-						}?>
-					</select>
-				</td>
-				
-			</tr>
-			<tr><td><strong class="label">Remarks</strong></td>
-				<td>
-					<textarea name="remarks" id="remarks" class="input-xxlarge" rows="3"></textarea>
-				</td>
-				
-			</tr>
-			<tr><td><input type="submit" value="Save" class="btn btn-primary " /></td></tr>
-		</table>
+								elseif($access_level=="system_administrator") {
+									?>
+									<option value="<?php echo $regimen_service_type -> id;?>"><?php echo $regimen_service_type -> Name;?></option>
+									<?php
+								}
+							}?>
+						</select>
+					</td>
+					
+				</tr>
+				<tr><td><strong class="label">Remarks</strong></td>
+					<td>
+						<textarea name="remarks" id="remarks" class="input-xlarge" rows="4"></textarea>
+					</td>
+					
+				</tr>
+			</table>
+			
+		</div>
+		
+		<div class="modal-footer">
+		   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		   <input type="submit" value="Save" class="btn btn-primary " />
+		</div>
 		<?php echo form_close(); ?>
 	</div>
-	<button class="btn btn-large" type="button" id="new_regimen"><i class="icon-plus icon-black"></i>New Regimen</button>
 	
-	<div id="edit_form" title="Edit Regimen">
+	<div id="edit_form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="EditRegimen" aria-hidden="true">
 		<?php
 		$attributes = array('class' => 'input_form');
 		echo form_open('regimen_management/update', $attributes);
 		echo validation_errors('<p class="error">', '</p>');
 		?>
-		<table>
+		<div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		    <h3 id="EditRegimen">Regimen details</h3>
+		</div>
+		<div class="modal-body">
+		
+		<table id="regimen_edit_tbl">
 			<tr><td><strong class="label">Regimen Code</strong></td>
 				<td><input type="hidden" name="regimen_id" id="edit_regimen_id" class="input" >
 					<input type="text" name="regimen_code" id="edit_regimen_code" class="input-xlarge"></td>
@@ -383,13 +369,18 @@
 			</tr>
 			<tr><td><strong class="label">Remarks</strong></td>
 				<td>
-					<textarea name="remarks" id="edit_remarks" class="input-xxlarge" rows="3"></textarea>
+					<textarea name="remarks" id="edit_remarks" class="input-xlarge" rows="4"></textarea>
 				</td>
 				
 			</tr>
-			<tr><td><input type="submit" value="Save" class="btn btn-primary " /></td></tr>
 		</table>
 		
+		
+		</div>
+		<div class="modal-footer">
+		   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		   <input type="submit" value="Save" id="btn_update_regimen" class="btn btn-primary " />
+		</div>
 		<?php echo form_close() ; ?>
 		
 	</div>

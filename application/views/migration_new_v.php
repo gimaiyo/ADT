@@ -5,7 +5,7 @@
 				var base_url="<?php echo base_url(); ?>";
 				$("#table_list").multiselect().multiselectfilter();
 				var table_array =['tblARVDrugStockMain', 'tblCurrentStatus', 'tblDose', 'tblDrugsInRegimen', 'tblGenericName', 'tblIndication', 'tblReasonforChange', 'tblRegimen', 'tblRegimenCategory', 'tblSecurity', 'tblARTPatientMasterInformation', 'tblStockTransactionType', 'tblTypeOfService', 'tblVisitTransaction', 'tblSourceOfClient', 'tblARTPatientTransactions', 'tblARVDrugStockTransactions'];
-				var target_array =['drugcode', 'patient_status', 'dose', 'regimen_drug', 'generic_name', 'opportunistic_infection', 'regimen_change_purpose', 'regimen', 'regimen_category', 'users', 'patient','transaction_type', 'regimen_service_type', 'visit_purpose', 'patient_source', 'patient_visit', 'drug_stock_movement'];
+				var target_array =['drugcode', 'patient_status', 'dose', 'regimen_drug', 'generic_name', 'opportunistic_infection', 'regimen_change_purpose', 'regimen', 'regimen_category', 'users_new', 'patient_new','transaction_type', 'regimen_service_type', 'visit_purpose', 'patient_source','patient_visit_new', 'drug_stock_movement_new'];
 
 				$("#migrate").click(function(){
 					var selected_table=$("select#table_list").val();
@@ -13,15 +13,12 @@
 					if(checked_value==0){
 						//Selected All
 						$.each(table_array,function(i){
-								var table_name=array[i];
-								var target_name=target_array[i+1];
-                                if(table_name=='tblARTPatientTransactions' || table_name=='tblARVDrugStockTransactions'){
-                                	//If patient and drug transactions(Advanced Migration)
-                                	advancedMigration(table_name,target_name);
-                                }else{
-                                	//Other tables(Simple Migration)
-                                	simpleMigration(table_name,target_name);
-                                }
+								var table_name=table_array[i];
+								var offset=0;
+								var index =table_array.indexOf(table_name);
+								var target_name=target_array[index];
+								//Check Migration Log
+								checklog(table_name,target_name);
                          });
 					}else{
 						//Custom Select
@@ -30,18 +27,13 @@
 							var array = selected_table.split(",");
 							$.each(array,function(i){
 								var table_name=array[i];
-								var target_name=target_array[i];
-                                if(table_name=='tblARVDrugStockMain' || table_name=='tblARVDrugStockTransactions'){
-                                	//If patient and drug transactions(Advanced Migration)
-                                	advancedMigration(table_name,target_name);
-                                }else{
-                                	//Other tables(Simple Migration)
-                                	simpleMigration(table_name,target_name);
-                                }
+								var index =table_array.indexOf(table_name);
+								var target_name=target_array[index];
+								//Check Migration Log
+								checklog(table_name,target_name);
                             });
 						}						  
 					}
-
 				});
 				
 				$("#tablecustom").click(function(){
@@ -51,8 +43,8 @@
 					$("#table_select").hide();
 				});
 				
-				function simpleMigration(table_name,target_name){
-				   var link = base_url + "migration_management/simplemigrate/"+table_name+"/"+target_name;
+				function simpleMigration(table_name,target_name,offset){
+				   var link = base_url + "migration_management/simplemigrate/"+table_name+"/"+target_name+"/"+offset;
 					$.ajax({
 						url : link,
 						type : 'POST',
@@ -61,16 +53,23 @@
 						}
 					});
 				}
-				function advancedMigration(table_name,target_name){
+				function advancedMigration(table_name,target_name,offset){
 				   var link = base_url + "migration_management/countRecords/"+table_name;
-				   var count=0;
+                   var count=parseFloat(offset);
 				   var percentage=0;
+				   var viewpercentage="";
+				   if(table_name=="tblARTPatientTransactions"){
+				   	viewpercentage="ppercentage";
+				   }else if(table_name=="tblARVDrugStockTransactions"){
+				   	viewpercentage="dpercentage";
+				   }
 				   $.ajax({
 						url : link,
 						type : 'POST', 
 						success : function(data) {
-							       var total_records=parseFloat(data);
-							       $("#output").append("Data From <b>"+table_name+"</b> Migrated to <b>"+target_name+"</b> table (<span id='percentage'>"+percentage+'% </span>)');
+							      var total_records=parseFloat(data);
+							      percentage=((count/total_records)*100).toFixed(1);
+							       $("#output").append("Data From <b>"+table_name+"</b> Migrated to <b>"+target_name+"</b> table (<span id='"+viewpercentage+"'>"+percentage+"% </span>)<br/>");
 							           //Check while Counter is not equal to total
 							           recursive(table_name,target_name,count,total_records); 
 								  }
@@ -83,15 +82,57 @@
 						  url : link,
 						  type : 'POST',
 						  success : function(data) {
-						  count += parseFloat(data);
-						  
-						  percentage = ((count / total_records) * 100).toFixed(1);
-						  $("#percentage").text(percentage + '%');
-							 if(count!=total_records){
-								recursive(table_name,target_name,count,total_records); 
+						  	var selected_data=data.toString();
+							var selected_array = selected_data.split(",");
+							var count=parseFloat(selected_array[0]);
+							var offset=parseFloat(selected_array[1]);
+						    percentage = ((count / total_records) * 100).toFixed(1);
+						    
+						    if(table_name=="tblARTPatientTransactions"){
+				   	           var percent="ppercentage";
+				   	           if(count<=total_records){
+								recursive(table_name,target_name,offset,total_records); 
+							   }
+				            }else if(table_name=="tblARVDrugStockTransactions"){
+				   	           var percent="dpercentage";
+				   	           if(count<=total_records){
+								recursive(table_name,target_name,offset,total_records); 
 							  }
+				            }
+				            $("#"+percent).text(percentage + '%');
+							 
 						   }
 						});
+				}
+				
+				function updatelog(table_name,last_index,count){
+					var link = base_url + "migration_management/updatelog/" + table_name+"/"+last_index+"/"+count;
+						$.ajax({
+						  url : link,
+						  type : 'POST',
+						  success : function(data) {
+                         
+                          }
+						});
+					
+				}
+				function checklog(table_name,target_name){
+					var link = base_url + "migration_management/checklog/" + target_name;
+						$.ajax({
+						  url : link,
+						  type : 'POST',
+						  success : function(data) {
+						    var offset=parseFloat(data)
+						     if(table_name=='tblARTPatientTransactions' || table_name=='tblARVDrugStockTransactions'){
+                                	//If patient and drug transactions(Advanced Migration)
+                                	advancedMigration(table_name,target_name,offset);
+                                }else{
+                                	//Other tables(Simple Migration)
+                                	simpleMigration(table_name,target_name,offset);
+                               }
+						  }
+						});
+					
 				}
 
 		  });
@@ -99,28 +140,16 @@
 		<style type="text/css">
 			#table_view {
 				margin: 0 auto;
-				width: 50%;
-				height:40%;
+				width:65%;
 				background:#DDD;
-			}
-			#left_content{
-				float:left;
-				width:35%;
-				padding:5px;
-			}
-			#right_content{
-				float:right;
-				width:60%;
-				padding:5px;
-				background:#999;
 			}
 			#output{
 				width:100%;
-				
 			}
 			#table_select{
 				display:none;
 				padding:5px;
+				width:400px;
 			}
 			#table_list{
 				width:250px;
@@ -135,7 +164,6 @@
 							webADT Migration Configuration
 						</p>
 					</legend>
-					<div id="left_content">
 						<p>
 						All <input type="radio" name="tablename" id="tablename" checked="checked" value="0"/>
 						Custom <input type="radio" name="tablename" id="tablecustom" value="1"/>
@@ -155,14 +183,11 @@
 						<div class="btn-group">
 							<input type="submit" value="Migrate"  id='migrate'" class="btn"/>
 						</div>
-				   </div>
-					</div>
-					<div id="right_content">
-						<label>Migration Output</label>
+						<p>
 						<div id="output"  disabled="disabled">
-					
+					          Migration Started<br/><hr/>
 				        </div>
-					</div>
+				        </p>
 			</fieldset>
 		</div>
 	</body>

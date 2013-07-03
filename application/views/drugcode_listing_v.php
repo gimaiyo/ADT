@@ -73,10 +73,11 @@
 	#new_drugcode,#edit_drugcode{
 		background-color:#CCFFFF;
 	}
+	
 </style>
 <script type="text/javascript">
 	$(document).ready(function() {
-
+		$(".setting_table").find("tr :first").css("min-width","300px");
 		//This loop goes through each table row in the page and applies the necessary modifications
 		$.each($(".table_row"), function(i, v) {
 			//First get the row id which will be used later
@@ -113,6 +114,7 @@
 		
 		//When clicked dialog form for new indication pops up
 		$("#btn_new_drugcode").click(function(event){ 
+			
 			event.preventDefault();
 			var request=$.ajax({
 		     url: "drugcode_management/add",
@@ -150,7 +152,7 @@
 		     			}
 		     		}
 		     	}
-		     	$("#new_drugcode").dialog("open");
+		     	//$("#new_drugcode").dialog("open");
 		     });
 			request.fail(function(jqXHR, textStatus) {
 			  alert( "Could not open the form to add new drug code: " + textStatus );
@@ -254,6 +256,7 @@
 			});
 		});
 		//Dialog form for new user form
+		/*
 		$("#new_drugcode").dialog({
 			height : 530,
 			width : "62em",
@@ -266,6 +269,7 @@
 			modal : true,
 			autoOpen : false
 		});
+		*/
 		//Check the drugcodes selected when merge is clicked
 		$(".merge_drug").live('click',function(){
 			var primary_drug_merge_id = $(this).attr("id");
@@ -306,22 +310,7 @@
         var count='<?php echo @$this -> session -> userdata['message_counter'];?>';
         var message='<?php echo @$this -> session -> userdata['message'];?>';	
 	
-	if(count == 1) {
-	$(".passmessage").slideDown('slow', function() {
-
-	});
-	$(".passmessage").append(message);
-
-	var fade_out = function() {
-	$(".passmessage").fadeOut().empty();
-	}
-	setTimeout(fade_out, 5000);
-     <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
-     ?>
-
-	}
+	
 	if(count == 2) {
 	$(".errormessage").slideDown('slow', function() {
 
@@ -354,10 +343,10 @@
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
 
-	    <div class="span9 span-fixed-sidebar">
+	    <div class="span12 span-fixed-sidebar">
 	      <div class="hero-unit">
-	      	<a id="btn_new_drugcode" href="<?php echo base_url()."drugcode_management/add"?>"><button class="btn btn-large btn-success" type="button"><i class="icon-plus icon-black"></i>New Drug Code</button></a>
-	        <?php echo $drugcodes;?>
+	      	<?php echo $drugcodes;?>
+	      	<a href="#new_drugcode" role="button" id="btn_new_drugcode" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Drug Code</a>
 	      </div>
 
 	      
@@ -367,12 +356,17 @@
 
 	</div><!--/.fluid-container-->
 	<!-- Add new drug -->
-	<div id="new_drugcode" title="Add New Drug" class="cyan">
+	<div style="width:1000px;margin-left:-500px;" id="new_drugcode" title="Add New Drug" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="NewDrug" aria-hidden="true">
 		<?php
 			$attributes = array('id' => 'entry_form');
 			echo form_open('drugcode_management/save', $attributes);
 			
 		?>
+		<div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		    <h3 id="NewDrug">Drug details</h3>
+		</div>
+		<div class="modal-body">
 		<div class="span5">
 			
 			<table style="margin-top:54px">
@@ -458,24 +452,29 @@
 					</tr>
 				</table>
 			
+			</div>
 		</div>
-		<div style="clear:left">
-			<p>
-				<input type="submit" value="Save Drug Code" name="submit" class="btn btn-primary"/>
-			</p>
-			
+		<div class="modal-footer">
+		   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		   <input type="submit" value="Save" class="btn btn-primary " />
 		</div>
+		
 		<?php echo form_close() ?>
 	</div>
 	
 	<!-- Edit drugcode -->
-	<div id="edit_drugcode" title="Edit Drug">
+	<div style="width:1000px;margin-left:-500px;" id="edit_drugcode" title="Edit Drug" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="NewDrug" aria-hidden="true">
 		<?php
 			$attributes = array('id' => 'entry_form');
 			echo form_open('drugcode_management/update', $attributes);
 			
 		?>
-		<div class="span5">
+		<div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		    <h3 id="NewDrug">Drug details</h3>
+		</div>
+		<div class="modal-body">
+			<div class="span5">
 			
 			<table style="margin-top:54px">
 				<tr><td>
@@ -563,12 +562,11 @@
 					</tr>
 				</table>
 			
+			</div>
 		</div>
-		<div style="clear:left">
-			<p>
-				<input type="submit" value="Save Drug Code" name="submit" class="btn btn-primary"/>
-			</p>
-			
+		<div class="modal-footer">
+		   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		   <input type="submit" value="Save" class="btn btn-primary " />
 		</div>
 		<?php echo form_close() ?>
 	</div>
