@@ -1409,6 +1409,7 @@ class report_management extends MY_Controller {
 		$facility_code = $this -> session -> userdata("facility");
 		$supported_query = "and facility_code='$facility_code'";
 		$from = date('Y-m-d', strtotime($from));
+		$to = date('Y-m-d', strtotime($to));
 		$regimen_totals = array();
 
 		$total_adult_male = 0;
@@ -1433,7 +1434,7 @@ class report_management extends MY_Controller {
 		$results = $query -> result_array();
 		$patient_total = $results[0]['total'];
 		//Get Totals for each regimen
-		$sql = "select count(*) as total, r.regimen_desc,r.regimen_code,p.start_regimen from patient p,gender g,regimen_service_type rs,regimen r where start_regimen_date between '$from' and '$to' and p.gender=g.id and p.service=rs.id and p.start_regimen=r.id and p.service='1' and p.facility_code='$facility_code' group by p.start_regimen";
+		$sql = "select count(*) as total, r.regimen_desc,r.regimen_code,p.start_regimen from patient p,gender g,regimen_service_type rs,regimen r where start_regimen_date between '$from' and '$to' and p.gender=g.id and p.service=rs.id and p.start_regimen=r.id and p.service='1' and p.facility_code='$facility_code' group by p.start_regimen ORDER BY r.regimen_code ASC";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$row_string = "<table   id='patient_listing' border='1' cellpadding='5'>
@@ -2427,6 +2428,24 @@ class report_management extends MY_Controller {
 		$data['report_title'] = "HIV Early Warning Indicators";
 		$data['facility_name'] = $this -> session -> userdata('facility_name');
 		$data['content_view'] = 'reports/early_warning_indicators_v';
+		$this -> load -> view('template', $data);
+	}
+
+	public function graph_patients_enrolled_in_year($year = "") {
+		$facility_code = $this -> session -> userdata('facility');
+		$sql = "SELECT MONTH(p.date_enrolled) AS MONTH,rst.name AS Enrollment,COUNT(*) AS TOTAL FROM patient p LEFT JOIN regimen_service_type rst ON rst.id = p.service WHERE YEAR(p.date_enrolled)='$year' AND rst.active=1 AND p.facility_code='$facility_code' AND(p.supported_by=1 OR p.supported_by=2) GROUP BY MONTH(p.date_enrolled),rst.name";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$data['graphs'] = $results;
+		$data['title'] = "Reports";
+		$data['hide_side_menu'] = 1;
+		$data['banner_text'] = "Facility Reports";
+		$data['selected_report_type_link'] = "standard_report_row";
+		$data['selected_report_type'] = "Standard Reports";
+		$data['report_title'] = "Graph of Number of Patients Enrolled Per Month in a Given Year";
+		$data['facility_name'] = $this -> session -> userdata('facility_name');
+		$data['year'] = $year;
+		$data['content_view'] = 'reports/graphs_on_patients_v';
 		$this -> load -> view('template', $data);
 	}
 
