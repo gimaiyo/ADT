@@ -11,100 +11,14 @@
 			}
 
 		});
+		
 	});
 
 </script>
-<style>
-	#commodity-table {
-		width: 70%;
-		float: left;
-	}
-	
-	
-	.regimen-table {
-		width: 28%;
-		float: right;
-	}
-	.regimen-table tbody th {
-		font-size: 14px;
-		padding-left: 40px;
-	}
-	.regimen-table input {
-		margin: 5px;
-	}
-	
-	.big-table th. ,.big-table td {
-		border:1px solid #000000;
-		border-top:1px solid #000000;
-		vertical-align: middle;
-	}
-	.big-table input {
-		width: 60px;
-	}
-	.big-table td.number {
-		text-align: center;
-	}
-	th div {
-		font-size: 10px;
-	}
-	.button {
-		width: 100px;
-		margin: 10px;
-	}
-	
-	#comments-section td {
-		border: 0px;
-	}
-	#comments-section th {
-		text-align: left !important;
-	}
-	td {
-		word-wrap: break-word;
-	}
-	.col_drug {
-		width: 400px !important;
-		font-size: 13px;
-	}
-	.accordion{
-		height:25px;
-	}
-	
-	#facility_info{
-		width:60%;
-		margin:0 auto;
-	}
-	.table-bordered input{
-		width:70px;
-		height:23px;
-		margin:0 auto;
-	}
-	#commodity-table tbody tr{
-		font-size:14px;
-		
-	}
-	tr.odd{
-		background-color:rgb(244, 255, 240);
-	}
-	.regimen-table tbody td {
-		font-size: 13px;
-		color: #000;
-		padding:5px;
-	}
-	
-	.ui-state-active{
-		background: #e6e6e6 url(images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x;
-	}
-	.regimen-table thead .col_drug{
-		font-size:14px;
-	}
-	.dataTables_wrapper{
-		width: auto;
-		margin:0 auto;
-	}
-</style>
-<div class="full-content">
-<div id="facility_info" class="header section">
-	<table class="table table-bordered table-striped" >
+
+<div class="full-content" style="background:#9CF">
+<div class="facility_info">
+	<table class="table table-bordered table-striped" style="width:60%;margin:auto">
 		<tbody>
 			<tr>
 				<th>Order No</th>
@@ -189,7 +103,7 @@
 	</thead>';
 	?>
 <div id="commodity-table">
-	<table class="table table-bordered table_order_details">
+	<table class="table table-bordered table_order_details ">
 		<?php echo $header_text;?>
 		<tbody>
 			<?php

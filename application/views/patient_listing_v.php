@@ -61,19 +61,19 @@ if ($access_level == "facility_administrator") {
 					if($this->session->userdata("msg_save_transaction")=="success"){
 						if($this->session->userdata("user_saved")){
 							?>
-							<p class="info"><span class="message success"><?php echo $this->session->userdata("user_saved") ?>'s details were successfully saved !</span></p>
+							<div class="message success"><?php echo $this->session->userdata("user_saved") ?>'s details were successfully saved !</div>
 							<?php
 							$this->session->unset_userdata('user_saved');
 						}
 						else if($this->session->userdata("user_disabled")){
 							?>
-							<p class="info"><span class="error"> Patient <?php echo $this->session->userdata("user_disabled") ?> was disabled !</span></p>
+							<div class="message error"> Patient <?php echo $this->session->userdata("user_disabled") ?> was disabled !</div>
 							<?php
 							$this->session->unset_userdata('user_disabled');
 						}
 						else if($this->session->userdata("user_enabled")){
 							?>
-							<p class="info"><span class="message success"> Patient <?php echo $this->session->userdata("user_enabled") ?> was enabled !</span></p>
+							<div class="message success"> Patient <?php echo $this->session->userdata("user_enabled") ?> was enabled !</div>
 							<?php
 							$this->session->unset_userdata('user_enabled');
 						}
@@ -82,7 +82,7 @@ if ($access_level == "facility_administrator") {
 					}
 					else{
 						?>
-						<p class="info"><span class="alert-error">Your data were not saved ! Try again or contact your system administrator.</span></p>
+						<div class="message error">Your data were not saved ! Try again or contact your system administrator.</div>
 						<?php
 					}
 					$this->session->unset_userdata('msg_save_transaction');
@@ -103,12 +103,12 @@ if ($access_level == "facility_administrator") {
 				<?php
 				if($this->session->userdata("msg_save_transaction")=="success"){
 					?>
-					<p class="info"><span class="alert-success">Your data were successfully saved !</span></p>
+					<div class="message success">Your data were successfully saved !</div>
 					<?php
 				}
 				else{
 					?>
-					<p class="info"><span class="alert-error">Your data were not saved ! Try again or contact your system administrator.</span></p>
+					<div class="message error">Your data were not saved ! Try again or contact your system administrator.</div>
 					<?php
 				}
 				$this->session->unset_userdata('msg_save_transaction');

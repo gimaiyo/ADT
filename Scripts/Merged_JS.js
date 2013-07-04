@@ -10,7 +10,12 @@
 	 *Change password validation 
 	 */
 	$(document).ready(function() {
-		
+		   $('.dataTables').dataTable( {
+			"bProcessing": true,
+			"bServerSide": false,
+	        "bJQueryUI": true,
+	        "sPaginationType": "full_numbers"
+		} );
 		/*
 		 * Reports generation
 		 */
