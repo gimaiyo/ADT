@@ -228,6 +228,7 @@
 			});
 	
 		});
+		
 		/**
 	 * End Change password validation 
 	 */

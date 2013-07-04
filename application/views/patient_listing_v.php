@@ -59,6 +59,7 @@ if ($access_level == "facility_administrator") {
 					</script>
 					<?php
 					if($this->session->userdata("msg_save_transaction")=="success"){
+						
 						if($this->session->userdata("user_saved")){
 							?>
 							<p class="info"><span class="message success"><?php echo $this->session->userdata("user_saved") ?>'s details were successfully saved !</span></p>
@@ -67,7 +68,8 @@ if ($access_level == "facility_administrator") {
 						}
 						else if($this->session->userdata("user_disabled")){
 							?>
-							<p class="info"><span class="error"> Patient <?php echo $this->session->userdata("user_disabled") ?> was disabled !</span></p>
+							
+							<p class="info"><span class="message error"> Patient <?php echo $this->session->userdata("user_disabled") ?> was disabled !</span></p>
 							<?php
 							$this->session->unset_userdata('user_disabled');
 						}
@@ -82,7 +84,7 @@ if ($access_level == "facility_administrator") {
 					}
 					else{
 						?>
-						<p class="info"><span class="alert-error">Your data were not saved ! Try again or contact your system administrator.</span></p>
+						<p class="info"><span class="message error">Your data were not saved ! Try again or contact your system administrator.</span></p>
 						<?php
 					}
 					$this->session->unset_userdata('msg_save_transaction');
