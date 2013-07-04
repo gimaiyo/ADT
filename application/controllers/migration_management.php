@@ -25,7 +25,9 @@ class Migration_Management extends MY_Controller {
 		$appendsql = "LIMIT $offset,18446744073709551615";
 		$sql = "";
 		if ($targetname == 'drugcode') {
-			$sql .= "INSERT IGNORE INTO drugcode(drug,pack_size,unit,generic_name,safety_quantity,comment,supported_by,dose,duration,quantity,tb_drug,drug_in_use,supplied)SELECT arvdrugsid,packsizes,unit,genericname,saftystock,comment,supportedby,stddose,stdduration,stdqty,IF(tbdrug=0,'F','T')as tbdrug,IF(inuse=0,'F','T') as inuse,'1' from tblarvdrugstockmain $appendsql;";
+			$sql = "INSERT IGNORE INTO drugcode(drug,pack_size,unit,generic_name,safety_quantity,comment,supported_by,dose,duration,quantity,tb_drug,drug_in_use,supplied)SELECT arvdrugsid,packsizes,unit,genericname,saftystock,comment,supportedby,stddose,stdduration,stdqty,IF(tbdrug=0,'F','T')as tbdrug,IF(inuse=0,'F','T') as inuse,'1' from tblarvdrugstockmain $appendsql;";
+			$this -> db -> query($sql);
+			$sql = "update drugcode dc,drug_unit du SET dc.unit=du.id WHERE dc.unit=du.Name";
 		} else if ($targetname == 'patient_status') {
 			$sql .= "INSERT IGNORE INTO patient_status(id,Name,Active)SELECT currentstatusid,currentstatus,'1' FROM tblcurrentstatus WHERE currentstatus is not null $appendsql;";
 		} else if ($targetname == 'dose') {
@@ -57,7 +59,9 @@ class Migration_Management extends MY_Controller {
 		} else if ($targetname == 'patient_source') {
 			$sql .= "INSERT IGNORE INTO patient_source(id,name,active)SELECT sourceid,sourceofclient,'1' FROM tblsourceofclient WHERE sourceofclient is not null $appendsql;";
 		} else if ($targetname == 'transaction_type') {
-			$sql .= "INSERT IGNORE INTO transaction_type(id,name,`desc`,active)SELECT transactiontype,transactiondescription,reporttitle,'1' FROM tblstocktransactiontype $appendsql;";
+			$sql = "INSERT IGNORE INTO transaction_type(id,name,`desc`,active)SELECT transactiontype,transactiondescription,reporttitle,'1' FROM tblstocktransactiontype $appendsql;";
+			$this -> db -> query($sql);
+			$sql = "update `transaction_type` set effect='1' WHERE name like '%dispense%' or name like '%issue%'";
 		} else if ($targetname == 'visit_purpose') {
 			$sql .= "INSERT IGNORE INTO visit_purpose(id,name,active) SELECT transactioncode,visittranname,'1'  FROM tblvisittransaction $appendsql;";
 		} else if ($targetname == 'patient_new') {
@@ -74,7 +78,7 @@ class Migration_Management extends MY_Controller {
 			$query = $this -> db -> query($sql);
 			$sql = "update `tblartpatientmasterinformation`,regimen r SET regimenstarted=r.id WHERE regimenstarted=r.regimen_code;";
 			$query = $this -> db -> query($sql);
-			$sql = "INSERT IGNORE INTO patient_new(`patient_number_ccc`,`first_name`,`last_name`,`gender`,`pregnant`,`date_enrolled`,`start_weight`,`supported_by`,`other_illnesses`,`adr`,`other_drugs`,`service`,`nextappointment`,`current_status`,`current_regimen`,`start_regimen`,`physical`,`weight`,`start_bsa`,`sa`,`start_height`,`height`,`source`,`tb`,`start_regimen_date`,`status_change_date`,`other_name`,`dob`,`pob`,`phone`,`alternate`,`smoke`,`alcohol`,`transfer_from`,`facility_code`)select artid,firstname,surname,IF(UCASE(sex)='MALE','1','2'),IF(pregnant=0,'0','1'),STR_TO_DATE(datetherapystarted, '%Y-%m-%d'),weightonstart,clientsupportedby,otherdeaseconditions,adrorsideeffects,otherdrugs,typeofservice,STR_TO_DATE(dateofnextappointment, '%Y-%m-%d'),currentstatus,currentregimen,regimenstarted,address,currentweight, startbsa,currentbsa,startheight,currentheight,sourceofclient,tb,STR_TO_DATE(datestartedonart, '%Y-%m-%d'),STR_TO_DATE(datechangedstatus, '%Y-%m-%d'),lastname,STR_TO_DATE(dateofbirth,'%Y-%m-%d'),placeofbirth, patientcellphone,alternatecontact,patientsmoke,patientdrinkalcohol,transferfrom,'$facility' FROM tblartpatientmasterinformation $appendsql;";
+			$sql = "INSERT IGNORE INTO patient_new(`patient_number_ccc`,`first_name`,`last_name`,`gender`,`pregnant`,`date_enrolled`,`start_weight`,`supported_by`,`other_illnesses`,`adr`,`other_drugs`,`service`,`nextappointment`,`current_status`,`current_regimen`,`start_regimen`,`physical`,`weight`,`start_bsa`,`sa`,`start_height`,`height`,`source`,`tb`,`start_regimen_date`,`status_change_date`,`other_name`,`dob`,`pob`,`phone`,`alternate`,`smoke`,`alcohol`,`transfer_from`,`facility_code`)select artid,firstname,surname,IF(UCASE(sex)='MALE','1','2'),IF(pregnant=0,'0','1'),STR_TO_DATE(datetherapystarted, '%Y-%m-%d'),weightonstart,clientsupportedby,otherdeaseconditions,adrorsideeffects,otherdrugs,typeofservice,STR_TO_DATE(dateofnextappointment, '%Y-%m-%d'),currentstatus,currentregimen,regimenstarted,address,currentweight, startbsa,currentbsa,startheight,currentheight,sourceofclient,IF(tb=0,'0','1'),STR_TO_DATE(datestartedonart, '%Y-%m-%d'),STR_TO_DATE(datechangedstatus, '%Y-%m-%d'),lastname,STR_TO_DATE(dateofbirth,'%Y-%m-%d'),placeofbirth, patientcellphone,alternatecontact,IF(patientsmoke=0,'0','1'),IF(patientdrinkalcohol=0,'0','1'),transferfrom,'$facility' FROM tblartpatientmasterinformation $appendsql;";
 
 		}
 		$this -> db -> query($sql);
@@ -93,7 +97,7 @@ class Migration_Management extends MY_Controller {
 		$sql = "";
 		if ($tablename == 'tblARTPatientTransactions') {
 			$appendsql = "WHERE patienttranno >=$offset LIMIT $limit";
-			$mainsql = "SELECT artid,dateofvisit,drugname,brandname,transactioncode,arvqty,dose,duration,regimen,lastregimen,comment,operator,indication,weight,pillcount,adherence,reasonsforchange,batchno,'$facility' FROM tblartpatienttransactions $appendsql;";
+			$mainsql = "SELECT tp.artid,STR_TO_DATE(tp.dateofvisit, '%Y-%m-%d'),d.id,tp.brandname,tp.transactioncode,tp.arvqty,tp.dose,tp.duration,r.id,r1.id,tp.comment,tp.operator,tp.indication,tp.weight,tp.pillcount,tp.adherence,tp.reasonsforchange,tp.batchno,'$facility' FROM tblartpatienttransactions tp LEFT JOIN drugcode d ON tp.drugname=d.drug LEFT JOIN regimen r ON tp.regimen=r.regimen_code LEFT JOIN regimen r1 ON tp.lastregimen=r1.regimen_code $appendsql;";
 			$minsql = "SELECT temp.patienttranno as max FROM (SELECT patienttranno FROM tblartpatienttransactions $appendsql) as temp ORDER BY temp.patienttranno desc LIMIT 1";
 			$query = $this -> db -> query($minsql);
 			$results = $query -> result_array();
@@ -102,7 +106,7 @@ class Migration_Management extends MY_Controller {
 			$sql .= "INSERT INTO patient_visit_new(patient_id,dispensing_date,drug_id,brand,visit_purpose,quantity,dose,duration,regimen,last_regimen,comment,user,indication,current_weight,pill_count,adherence,regimen_change_reason,batch_number,facility)$mainsql";
 		} else if ($tablename == 'tblARVDrugStockTransactions') {
 			$appendsql = "WHERE stocktranno >=$offset LIMIT $limit";
-			$mainsql = "SELECT arvdrugsid,trandate,reforderno,batchno,transactiontype,'$facility','$facility',expirydate,npacks,unitcost,'0',qty,amount,remarks,operator,'$facility' FROM tblarvdrugstocktransactions $appendsql;";
+			$mainsql = "SELECT d.id,STR_TO_DATE(trandate, '%Y-%m-%d'),reforderno,batchno,transactiontype,'$facility','$facility',STR_TO_DATE(expirydate, '%Y-%m-%d'),npacks,unitcost,IF(t.effect='0',qty,'0'),IF(t.effect='1',qty,'0'),amount,remarks,operator,'$facility' FROM tblarvdrugstocktransactions td LEFT JOIN drugcode d ON td.arvdrugsid=d.drug LEFT JOIN transaction_type t ON td.transactiontype=t.id $appendsql;";
 			$minsql = "SELECT temp.stocktranno as max FROM (SELECT stocktranno FROM tblarvdrugstocktransactions $appendsql) as temp ORDER BY temp.stocktranno desc LIMIT 1";
 			$query = $this -> db -> query($minsql);
 			$results = $query -> result_array();

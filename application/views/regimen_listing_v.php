@@ -1,16 +1,5 @@
 <script>
-	$(document).ready(function() {
-		
-		/*
-		 * $("#edit_form").dialog({
-				height : 390,
-				width : 750,
-				modal : true,
-				autoOpen : false
-			});
-		 */
-		
-		
+	$(document).ready(function() {	
 		$(".edit_user").live('click',function(event) {
 			$("#regimen_edit_tbl").css("display","none");
 				//event.preventDefault();

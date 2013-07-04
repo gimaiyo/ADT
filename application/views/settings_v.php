@@ -23,7 +23,7 @@
 		                "bPaginate": false,
 		                "bJQueryUI": true,
 		            	"bDestroy":true})
-		    	.rowGrouping({
+		    	        .rowGrouping({
 		                    bExpandableGrouping: true,
 		                    bExpandSingleGroup: false,
 		                    iExpandGroupOffset: -1,
@@ -245,7 +245,6 @@
 
 			</ul>
 		</div>
-
 	</div>
 
 	<div class="settings well"></div>
