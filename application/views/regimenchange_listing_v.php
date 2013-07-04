@@ -54,9 +54,6 @@
 		font-weight: bold;
 	}
 
-	#DataTables_Table_0_wrapper{
-		width: 80%;
-	}
 	#regimenchange_form{
 		background-color:#CCFFFF;
 	}
@@ -107,6 +104,7 @@
 		});
 		
 		//When clicked dialog form for new indication pops up
+		/*
 		$("#new_regimenchange").click(function(){ 
 			$("#regimenchange_form").dialog("open");
 		});
@@ -124,6 +122,7 @@
 			modal : true,
 			autoOpen : false
 		});
+		*/
 		
 		//count to check which message to display
         var count='<?php echo @$this -> session -> userdata['message_counter']?>';
@@ -185,45 +184,63 @@ foreach($actions as $action){
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
 
-	    <div class="span9 span-fixed-sidebar">
+	    <div class="span12 span-fixed-sidebar">
 	      	<div class="hero-unit">
 				<div class="passmessage"></div>
 			    <div class="errormessage"></div>
 				<?php echo validation_errors('<p class="error">', '</p>');?>
-				<button class="btn btn-large btn-success" type="button" id="new_regimenchange"><i class="icon-plus icon-black"></i>New regimen change reason</button>
-		        <?php echo $sources;?>
+				<?php echo $sources;?>
+				<a href="#regimenchange_form" role="button" id="new_regimenchange" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Regimen Change Reason</a>
 			</div>
 	    </div><!--/span-->
 	  </div><!--/row-->
 	</div><!--/.fluid-container-->
-	<div id="regimenchange_form" title="New regimen change reason">
+	<div id="regimenchange_form" title="New regimen change reason" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="NewRegimen" aria-hidden="true">
 		<?php
 		$attributes = array('class' => 'input_form');
 		echo form_open('regimenchange_management/save', $attributes);
 		echo validation_errors('<p class="error">', '</p>');
-		?>	
-		<label>
-			<strong class="label">Regimen change reason</strong>
-			<input type="hidden" name="regimenchange_id" id="regimenchange_id" class="input" >
-			<input type="text" name="regimenchange_name" id="regimenchange_name" class="input-xlarge" >
-		</label>
-		<input type="submit" value="Save" class="btn btn-primary"/>
+		?>
+		<div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		    <h3 id="NewRegimen">Regimen Change Reason details</h3>
+		</div>	
+		<div class="modal-body">
+			<label>
+				<strong class="label">Regimen change reason</strong>
+				<input type="hidden" name="regimenchange_id" id="regimenchange_id" class="input" >
+				<input type="text" name="regimenchange_name" id="regimenchange_name" class="input-xlarge" >
+			</label>
+		</div>
+		<div class="modal-footer">
+		   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		   <input type="submit" value="Save" class="btn btn-primary " />
+		</div>
 		</form>
 	</div>
 	
 	<!--Edit regimen change reason -->
-	<div id="edit_form" title="Edit regimen change reason">
+	<div id="edit_form" title="Edit regimen change reason" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="NewRegimen" aria-hidden="true">
 		<?php
 		$attributes = array('class' => 'input_form');
 		echo form_open('regimenchange_management/update', $attributes);
 		echo validation_errors('<p class="error">', '</p>');
-		?>	
-		<label>
-			<strong class="label">Regimen change reason</strong>
-			<input type="hidden" name="regimenchange_id" id="edit_regimenchange_id" class="input" >
-			<input type="text" name="regimenchange_name" id="edit_regimenchange_name" class="input-xlarge" >
-		</label>
-		<input type="submit" value="Save" class="btn btn-primary"/>
+		?>
+		<div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		    <h3 id="NewRegimen">Regimen Change Reason details</h3>
+		</div>
+		<div class="modal-body">
+			<label>
+				<strong class="label">Regimen change reason</strong>
+				<input type="hidden" name="regimenchange_id" id="edit_regimenchange_id" class="input" >
+				<input type="text" name="regimenchange_name" id="edit_regimenchange_name" class="input-xlarge" >
+			</label>
+		</div>	
+		<div class="modal-footer">
+		   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		   <input type="submit" value="Save" class="btn btn-primary " />
+		</div>
 		</form>
 	</div>
 

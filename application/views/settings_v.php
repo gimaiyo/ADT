@@ -1,11 +1,3 @@
-<style>
-	.row-fluid{
-		width:auto;
-	}
-	.container-fluid{
-		padding-right:0px;
-	}
-</style>
 <script>
 	
 	$(document).ready(function() {

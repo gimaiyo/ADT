@@ -5,7 +5,8 @@ if (!defined('BASEPATH'))
 class Regimenchange_Management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
-		
+		$this->session->set_userdata("link_id","index");
+		$this->session->set_userdata("linkSub","regimenchange_management");
 	}
 
 	public function index() {
@@ -22,11 +23,18 @@ class Regimenchange_Management extends MY_Controller {
 		foreach ($sources as $source) {
 			$links="";
 			if($source->Active==1){
-				$links = anchor('regimenchange_management/edit/' .$source->id, 'Edit',array('id'=>$source->id,'class' => 'edit_user','name'=>$source->Name));
-				$links.=" | ";
-				
+				$array_param=array(
+					'id'=>$source->id,
+					'role'=>'button',
+					'class'=>'edit_user',
+					'data-toggle'=>'modal',
+					'name'=>$source->Name
+				);
+				//$links = anchor('regimenchange_management/edit/' .$source->id, 'Edit',array('id'=>$source->id,'class' => 'edit_user','name'=>$source->Name));
+				$links .= anchor('#edit_form', 'Edit', $array_param);
 			}
 			if($access_level=="system_administrator" ){
+				$links.=" | ";
 				if($source->Active==1){
 				$links .= anchor('regimenchange_management/disable/' .$source->id, 'Disable',array('class' => 'disable_user'));	
 				}
@@ -56,9 +64,9 @@ class Regimenchange_Management extends MY_Controller {
 		$source -> Active = "1";
 		$source -> save();
 		
-		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$this -> input -> post('regimenchange_name').' was Added');
-		redirect('regimenchange_management');
+		//$this -> session -> set_userdata('message_counter','1');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('regimenchange_name').' was Added');
+		redirect('setting_management');
 	}
 
 	public function edit($source_id) {
@@ -76,18 +84,18 @@ class Regimenchange_Management extends MY_Controller {
 		
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE Regimen_Change_Purpose SET Name='$regimenchange_name' WHERE id='$regimenchange_id'");
-		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$this -> input -> post('regimenchange_name').' was Updated');
-		redirect('regimenchange_management');
+		//$this -> session -> set_userdata('message_counter','1');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('regimenchange_name').' was Updated');
+		redirect('settings_management');
 	}
 
 	public function enable($regimenchange_id) {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE Regimen_Change_Purpose SET Active='1'WHERE id='$regimenchange_id'");
 		$results=Regimen_change_purpose::getSource($regimenchange_id);
-		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$results->Name.' was enabled');
-		redirect('regimenchange_management');
+		//$this -> session -> set_userdata('message_counter','1');
+		$this -> session -> set_userdata('msg_success',$results->Name.' was enabled');
+		redirect('setting_management');
 	}
 
 	public function disable($regimenchange_id) {
@@ -95,8 +103,8 @@ class Regimenchange_Management extends MY_Controller {
 		$query = $this -> db -> query("UPDATE Regimen_Change_Purpose SET Active='0'WHERE id='$regimenchange_id'");
 		$results=Regimen_change_purpose::getSource($regimenchange_id);
 		$this -> session -> set_userdata('message_counter','2');
-		$this -> session -> set_userdata('message',$results->Name.' was disabled');
-		redirect('regimenchange_management');
+		$this -> session -> set_userdata('msg_success',$results->Name.' was disabled');
+		redirect('setting_management');
 	}
 
 	public function base_params($data) {
