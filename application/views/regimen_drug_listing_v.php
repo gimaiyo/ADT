@@ -9,17 +9,7 @@
 
 <script>
 	$(document).ready(function() {
-		/*
-		$("#entry_form").dialog({
-			height : 200,
-			width : 'auto',
-			modal : true,
-			autoOpen : false
-		});
-		$("#new_regimen_drug").click(function() {
-			$("#entry_form").dialog("open");
-		});
-		*/
+		
 		$("#regimen_drug_listing").accordion({
 			autoHeight : false,
 			navigation : true

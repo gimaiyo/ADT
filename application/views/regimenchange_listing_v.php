@@ -1,14 +1,5 @@
 <style type="text/css">
-	.actions_panel {
-		width: 200px;
-		margin-top: 5px;
-	}
-	.hovered td {
-		background-color: #E5E5E5 !important;
-	}
-	a{
-		text-decoration: none;
-	}
+	
 	.enable_user{
 		color:green;
 		font-weight:bold;
@@ -21,47 +12,22 @@
 		color:blue;
 		font-weight:bold;
 	}
-	.passmessage {
-
-		display: none;
-		background: #00CC33;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding:5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
-	.errormessage {
-
-		display: none;
-		background: #FF0000;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding:5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
+	
 
 	#regimenchange_form{
 		background-color:#CCFFFF;
 	}
-
+	.dataTables_length{
+		width:50%;
+	}
+	.dataTables_info{
+		width:36%;
+	}
 
 </style>
 <script type="text/javascript">
 	$(document).ready(function() {
+		$(".setting_table").find("tr :first").css("min-width","250px");
 		
 		$('.edit_user').live('click',function(event){
 			event.preventDefault();
@@ -103,26 +69,6 @@
 			$(this).find(".actions_panel").css("visibility", "hidden");
 		});
 		
-		//When clicked dialog form for new indication pops up
-		/*
-		$("#new_regimenchange").click(function(){ 
-			$("#regimenchange_form").dialog("open");
-		});
-		
-		//Dialog form for new user form
-		$("#regimenchange_form").dialog({
-			height : 200,
-			width : 300,
-			modal : true,
-			autoOpen : false
-		});
-		$("#edit_form").dialog({
-			height : 200,
-			width : 300,
-			modal : true,
-			autoOpen : false
-		});
-		*/
 		
 		//count to check which message to display
         var count='<?php echo @$this -> session -> userdata['message_counter']?>';
@@ -184,7 +130,7 @@ foreach($actions as $action){
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
 
-	    <div class="span12 span-fixed-sidebar">
+	    <div class="span8 span-fixed-sidebar">
 	      	<div class="hero-unit">
 				<div class="passmessage"></div>
 			    <div class="errormessage"></div>

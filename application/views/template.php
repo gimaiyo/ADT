@@ -87,27 +87,26 @@ if (isset($styles)) {
 ?> 
 
 <script>
+$(document).ready(function() {<?php 
+	if($user_is_pharmacist){
+		?>
+		$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>	');
+		$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
 
+		<?php
+		}
 
+		if($user_is_facility_administrator){
+		?>
+		$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
+			$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
 
-					$(document).ready(function() {<?php 
-			if($user_is_pharmacist){
-				?>
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>	');
-				$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
+		<?php
 
-				<?php
-				}
-
-				if($user_is_facility_administrator){
-				?>
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
-					$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
-
-				<?php
-
-				}
-				?>});</script>
+	}
+	?>
+});
+</script>
       
 <style>
 	.setting_table{

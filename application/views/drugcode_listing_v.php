@@ -31,38 +31,6 @@
 		font-weight:bold;	
 	}
 	
-	.passmessage {
-
-		display: none;
-		background: #00CC33;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding:5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
-	.errormessage {
-
-		display: none;
-		background: #FF0000;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding:5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
 	
 	.color_red{
 		color:red;
@@ -255,21 +223,6 @@
 			  alert( "Could not retrieve facility information: " + textStatus );
 			});
 		});
-		//Dialog form for new user form
-		/*
-		$("#new_drugcode").dialog({
-			height : 530,
-			width : "62em",
-			modal : true,
-			autoOpen : false
-		});
-		$("#edit_drugcode").dialog({
-			height : 530,
-			width : "62em",
-			modal : true,
-			autoOpen : false
-		});
-		*/
 		//Check the drugcodes selected when merge is clicked
 		$(".merge_drug").live('click',function(){
 			var primary_drug_merge_id = $(this).attr("id");
@@ -311,20 +264,6 @@
         var message='<?php echo @$this -> session -> userdata['message'];?>';	
 	
 	
-	if(count == 2) {
-	$(".errormessage").slideDown('slow', function() {
-
-	});
-	$(".errormessage").append(message);
-
-	var fade_out = function() {
-	$(".errormessage").fadeOut().empty();
-	}
-	setTimeout(fade_out, 5000);
-     <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
-     ?>
 
 	}
 		
