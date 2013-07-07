@@ -5,7 +5,8 @@ if (!defined('BASEPATH'))
 class Nonadherence_Management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
-		
+		$this->session->set_userdata("link_id","index");
+		$this->session->set_userdata("linkSub","nonadherence_management");
 	}
 
 	public function index() {
@@ -21,12 +22,20 @@ class Nonadherence_Management extends MY_Controller {
 
 		foreach ($sources as $source) {
 			$links="";
+			$array_param=array(
+				'id'=>$source->id,
+				'role'=>'button',
+				'class'=>'edit_user',
+				'data-toggle'=>'modal',
+				'name'=>$source->Name
+			);
 			if($source->Active==1){
-				$links = anchor('Nonadherence_Management/edit/' .$source->id, 'Edit',array('class' => 'edit_user','class' => 'edit_user','id'=> $source->id,'name'=>$source->Name));
-				$links.=" | ";
+				//$links = anchor('Nonadherence_Management/edit/' .$source->id, 'Edit',array('class' => 'edit_user','class' => 'edit_user','id'=> $source->id,'name'=>$source->Name));
+				$links .= anchor('#edit_form', 'Edit', $array_param);
 			}
 			
 			if($access_level=="system_administrator" ){
+				$links.=" | ";
 				if($source->Active==1){
 					$links .= anchor('Nonadherence_Management/disable/' .$source->id, 'Disable',array('class' => 'disable_user'));	
 				}
@@ -55,9 +64,9 @@ class Nonadherence_Management extends MY_Controller {
 		$source -> Active = "1";
 		$source -> save();
 		
-		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$this -> input -> post('nonadherence_name').' was Added');
-		redirect('nonadherence_management');
+		//$this -> session -> set_userdata('message_counter','1');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('nonadherence_name').' was Added');
+		redirect('settings_management');
 	}
 
 	public function edit($source_id) {
@@ -76,27 +85,27 @@ class Nonadherence_Management extends MY_Controller {
 
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE Non_Adherence_Reasons SET Name='$nonadherence_name' WHERE id='$nonadherence_id'");
-		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$this -> input -> post('nonadherence_name').' was Updated');
-		redirect('nonadherence_management');
+		//$this -> session -> set_userdata('message_counter','1');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('nonadherence_name').' was Updated');
+		redirect('settings_management');
 	}
 
 	public function enable($nonadherence_id) {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE Non_Adherence_Reasons SET Active='1'WHERE id='$nonadherence_id'");
 		$results=Regimen_change_purpose::getSource($nonadherence_id);
-		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$results->Name.' was enabled');
-		redirect('nonadherence_management');
+		//$this -> session -> set_userdata('message_counter','1');
+		$this -> session -> set_userdata('msg_success',$results->Name.' was enabled');
+		redirect('settings_management');
 	}
 
 	public function disable($nonadherence_id) {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE Non_Adherence_Reasons SET Active='0'WHERE id='$nonadherence_id'");
 		$results=Regimen_change_purpose::getSource($nonadherence_id);
-		$this -> session -> set_userdata('message_counter','2');
-		$this -> session -> set_userdata('message',$results->Name.' was disabled');
-		redirect('nonadherence_management');
+		//$this -> session -> set_userdata('message_counter','2');
+		$this -> session -> set_userdata('msg_error',$results->Name.' was disabled');
+		redirect('settings_management');
 	}
 
 	public function base_params($data) {

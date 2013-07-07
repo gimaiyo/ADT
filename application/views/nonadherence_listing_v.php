@@ -1,14 +1,5 @@
 <style type="text/css">
-	.actions_panel {
-		width: 200px;
-		margin-top: 5px;
-	}
-	.hovered td {
-		background-color: #E5E5E5 !important;
-	}
-	a{
-		text-decoration: none;
-	}
+	
 	.enable_user{
 		color:green;
 		font-weight:bold;
@@ -17,53 +8,16 @@
 		color:red;
 		font-weight:bold;
 	}
-	.edit_user{
-		color:blue;
-		font-weight:bold;
+	.dataTables_length{
+		width:50%;
 	}
-	.passmessage {
-
-		display: none;
-		background: #00CC33;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding:5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
+	.dataTables_info{
+		width:36%;
 	}
-	.errormessage {
-
-		display: none;
-		background: #FF0000;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding:5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
-
-	#DataTables_Table_0_wrapper{
-		width: 80%;
-	}
-	#edit_form, #nonadherence_form{
-		background-color:#CCFFFF;
-	}
-
 </style>
 <script type="text/javascript">
 	$(document).ready(function() {
+		$(".setting_table").find("tr :first").css("min-width","300px");
 		//This loop goes through each table row in the page and applies the necessary modifications
 		$.each($(".table_row"), function(i, v) {
 			//First get the row id which will be used later
@@ -98,83 +52,18 @@
 			$(this).find(".actions_panel").css("visibility", "hidden");
 		});
 		
-		//When clicked dialog form for new indication pops up
-		$("#new_nonadherence").click(function(){ 
-			$("#nonadherence_form").dialog("open");
-		});
 		
 		$(".edit_user").live('click',function(event){
 			event.preventDefault(); 
 			$("#edit_nonadherence_id").val(this.id);
 			$("#edit_nonadherence_name").val(this.name);
-			$("#edit_form").dialog("open");
+			//$("#edit_form").dialog("open");
 		});
-		//Dialog form for new user form
-		$("#nonadherence_form").dialog({
-			height : 200,
-			width : 340,
-			modal : true,
-			autoOpen : false
-		});
-		$("#edit_form").dialog({
-			height : 200,
-			width : 340,
-			modal : true,
-			autoOpen : false
-		});
-		
-		//count to check which message to display
-        var count='<?php echo @$this -> session -> userdata['message_counter']?>';
-        var message='<?php echo @$this -> session -> userdata['message']?>';	
 	
-	if(count == 1) {
-	$(".passmessage").slideDown('slow', function() {
-
-	});
-	$(".passmessage").append(message);
-
-	var fade_out = function() {
-	$(".passmessage").fadeOut().empty();
-	}
-	setTimeout(fade_out, 5000);
-     <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
-     ?>
-
-	}
-	if(count == 2) {
-	$(".errormessage").slideDown('slow', function() {
-
-	});
-	$(".errormessage").append(message);
-
-	var fade_out = function() {
-	$(".errormessage").fadeOut().empty();
-	}
-	setTimeout(fade_out, 5000);
-     <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
-     ?>
-
-	}
 		
 	});
 
 </script>
-<div id="action_panel_parent" style="display:none">
-	<div class="actions_panel" style="visibility:hidden" >
-
-		<?php
-//Loop through all the actions passed on to this file
-foreach($actions as $action){
-		?>
-		<a class="link" link="<?php echo $this->router->class."/".$action[1]."/"?>"><?php echo $action[0]
-		?></a>
-		<?php }?>
-	</div>
-</div>
 
 <div id="view_content">
 	<div class="container-fluid">
@@ -183,44 +72,60 @@ foreach($actions as $action){
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
 
-	    <div class="span9 span-fixed-sidebar">
+	    <div class="span8 span-fixed-sidebar">
 	      	<div class="hero-unit">
-				<div class="passmessage"></div>
-			    <div class="errormessage"></div>
 				<?php echo validation_errors('<p class="error">', '</p>');?>
-				<button class="btn btn-large btn-success" type="button" id="new_nonadherence"><i class="icon-plus icon-black"></i>New Non adherence reason</button>
-		        <?php echo $sources;?>
+				<?php echo $sources;?>
+				<a href="#client_form" role="button" id="new_client" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Non adherence reason</a>
 			</div>
 	    </div><!--/span-->
 	  </div><!--/row-->
 	</div><!--/.fluid-container-->
-	<div id="nonadherence_form" title="New Non adherence reason">
+	<div id="client_form" title="New Non adherence reason" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="label" aria-hidden="true">
 		<?php
 		$attributes = array('class' => 'input_form');
 		echo form_open('nonadherence_management/save', $attributes);
 		echo validation_errors('<p class="error">', '</p>');
-		?>	
-		<label>
-			<strong class="label">Non adherence reason</strong>
-			<input type="hidden" name="nonadherence_id" id="nonadherence_id" class="input" >
-			<input type="text" name="nonadherence_name" id="nonadherence_name" class="input-xlarge" >
-		</label>
-		<input type="submit" value="Save" class="btn btn-primary"/>
+		?>
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="NewDrug">Non adherence details</h3>
+		</div>
+		<div class="modal-body">	
+			<label>
+				<strong class="label">Non adherence reason</strong>
+				<input type="hidden" name="nonadherence_id" id="nonadherence_id" class="input" >
+				<input type="text" name="nonadherence_name" id="nonadherence_name" class="input-xlarge" >
+			</label>
+		</div>
+		<div class="modal-footer">
+		   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		   <input type="submit" value="Save" class="btn btn-primary " />
+		</div>
 		</form>
 	</div>
 	
-	<div id="edit_form" title="Edit Non adherence reason">
+	<div id="edit_form" title="Edit Non adherence reason" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="label" aria-hidden="true">
 		<?php
 		$attributes = array('class' => 'input_form');
 		echo form_open('nonadherence_management/update', $attributes);
 		echo validation_errors('<p class="error">', '</p>');
-		?>	
+		?>
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="NewDrug">Non adherence details</h3>
+		</div>
+		<div class="modal-body">	
 		<label>
 			<strong class="label">Non adherence reason</strong>
 			<input type="hidden" name="nonadherence_id" id="edit_nonadherence_id" class="input" >
 			<input type="text" name="nonadherence_name" id="edit_nonadherence_name" class="input-xlarge" >
 		</label>
-		<input type="submit" value="Save" class="btn btn-primary"/>
+		</div>
+		<div class="modal-footer">
+		   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		   <input type="submit" value="Save" class="btn btn-primary " />
+		</div>
 		</form>
 	</div>
 

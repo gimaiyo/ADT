@@ -156,8 +156,8 @@ class Regimen_management extends MY_Controller {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE regimen SET enabled='0'WHERE id='$regimen_id'");
 		$results = Regimen::getRegimen($regimen_id);
-		$this -> session -> set_userdata('message_counter', '2');
-		$this -> session -> set_userdata('msg_success', $results -> Regimen_Code . ' was disabled');
+		//$this -> session -> set_userdata('message_counter', '2');
+		$this -> session -> set_userdata('msg_error', $results -> Regimen_Code . ' was disabled');
 		redirect('settings_management');
 	}
 	

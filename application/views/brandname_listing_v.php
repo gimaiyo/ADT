@@ -1,44 +1,5 @@
 <script type="text/javascript" src="<?php echo base_url().'Scripts/datatable/jquery.dataTables.rowGrouping.js'?>"></script>
-<script type="text/javascript">
-	$(document).ready(function() {
 
-    $('#brand_name_table').dataTable({
-    			"sScrollY": "240px",
-    			"bLengthChange": false,
-                "bPaginate": false,
-                "bJQueryUI": true,
-            	"bDestroy":true})
-    	.rowGrouping({
-                    bExpandableGrouping: true,
-                    bExpandSingleGroup: false,
-                    iExpandGroupOffset: -1,
-                    asExpandedGroups: [""],
-                    
-                });
-        GridRowCount();
-});
-	function GridRowCount() {
-                $('span.rowCount-grid').remove();
-                $('input.expandedOrCollapsedGroup').remove();
-
-                $('.dataTables_wrapper').find('[id|=group-id]').each(function () {
-                    var rowCount = $(this).nextUntil('[id|=group-id]').length;
-                    $(this).find('td').append($('<span />', { 'class': 'rowCount-grid' }).append($('<b />', { 'text': '('+rowCount+')' })));
-                });
-
-                $('.dataTables_wrapper').find('.dataTables_filter').append($('<input />', { 'type': 'button', 'class': 'expandedOrCollapsedGroup collapsed', 'value': 'Expanded All Group' }));
-
-                $('.expandedOrCollapsedGroup').live('click', function () {
-                    if ($(this).hasClass('collapsed')) {
-                        $(this).addClass('expanded').removeClass('collapsed').val('Collapse All Group').parents('.dataTables_wrapper').find('.collapsed-group').trigger('click');
-                    }
-                    else {
-                        $(this).addClass('collapsed').removeClass('expanded').val('Expanded All Group').parents('.dataTables_wrapper').find('.expanded-group').trigger('click');
-                    }
-                });
-            };
-
-</script>
 
 <script>
 	$(document).ready(function() {
@@ -56,42 +17,6 @@
 			navigation : true
 		});
 
-		//count to check which message to display
-        var count='<?php echo @$this -> session -> userdata['message_counter']?>';
-        var message='<?php echo @$this -> session -> userdata['message']?>';	
-	
-		if(count == 1) {
-		$(".passmessage").slideDown('slow', function() {
-
-		});
-		$(".passmessage").append(message);
-
-		var fade_out = function() {
-		$(".passmessage").fadeOut().empty();
-		}
-		setTimeout(fade_out, 5000);
-	     <?php 
-	     $this -> session -> set_userdata('message_counter', "0");
-	     $this -> session -> set_userdata('message', " ");
-	     ?>
-
-		}
-		if(count == 2) {
-		$(".errormessage").slideDown('slow', function() {
-
-		});
-		$(".errormessage").append(message);
-
-		var fade_out = function() {
-		$(".errormessage").fadeOut().empty();
-		}
-		setTimeout(fade_out, 5000);
-	     <?php 
-	     $this -> session -> set_userdata('message_counter', "0");
-	     $this -> session -> set_userdata('message', " ");
-	     ?>
-
-		}
 	});
 
 	
@@ -117,38 +42,7 @@
 		color: blue;
 		font-weight: bold;
 	}
-	.passmessage {
-
-		display: none;
-		background: #00CC33;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding: 5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
-	.errormessage {
-
-		display: none;
-		background: #FF0000;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding: 5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
+	
 	#drug_listing{
 		width:90%;
 		margin:10px auto;
@@ -170,11 +64,8 @@
 
 	    <div class="span-fixed-sidebar">
 	      <div class="hero-unit">
-	      	<div class="passmessage"></div>
-    		<div class="errormessage"></div>
     		<?php echo validation_errors('<p class="error">', '</p>');?>
-	      	<button class="btn btn-large btn-success" type="button" id="new_brandname"><i class="icon-plus icon-black"></i>New Brand Name</button>
-	        <table class="setting_table" id="brand_name_table">
+	      	<table class="setting_table" id="brand_name_table">
 	        	<thead>
 	        		<tr>
 	        			<th>Drug Codes</th>
@@ -193,41 +84,47 @@
 	        			}
 	        		} ?>
 	        	</tbody>
-	        </table>	
+	        </table>
+	        <a href="#client_form" role="button" id="new_client" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Supporter</a>	
 	      </div>
 	    </div><!--/span-->
 	  </div><!--/row-->
 	</div><!--/.fluid-container-->
 
-	<div id="entry_form" title="New Brandname">
+	<div id="client_form" title="New Brandname" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="label" aria-hidden="true">
 		<?php
 		$attributes = array('class' => 'input_form');
 		echo form_open('brandname_management/save', $attributes);
 		?>
-		<table>
-			<tr><td><strong class="label">Select Drug</strong></td>
-				<td>
-					<select class="input-xlarge" id="drugid" name="drugid">
-						<?php
-						foreach($drug_codes as $drug_code){
-						?>
-						<option value="<?php echo $drug_code -> id;?>"><?php echo $drug_code -> Drug;?></option>
-						<?php }?>
-					</select>
-				</td>
-			</tr>
-			<tr><td><strong class="label">Brand Name</strong></td>
-				<td>
-					<input type="text" name="brandname" id="brandname" class="input-xlarge">
-				</td>
-			</tr>
-			<tr><td><input type="submit" value="Save" class="btn btn-primary"/></td>
-				<td>
-					
-				</td>
-			</tr>
 		
-		</table>
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="NewDrug">Brand details</h3>
+		</div>
+		<div class="modal-body">
+			<table>
+				<tr><td><strong class="label">Select Drug</strong></td>
+					<td>
+						<select class="input-xlarge" id="drugid" name="drugid">
+							<?php
+							foreach($drug_codes as $drug_code){
+							?>
+							<option value="<?php echo $drug_code -> id;?>"><?php echo $drug_code -> Drug;?></option>
+							<?php }?>
+						</select>
+					</td>
+				</tr>
+				<tr><td><strong class="label">Brand Name</strong></td>
+					<td>
+						<input type="text" name="brandname" id="brandname" class="input-xlarge">
+					</td>
+				</tr>
+			</table>
+			</div>
+			<div class="modal-footer">
+			   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+			   <input type="submit" value="Save" class="btn btn-primary " />
+			</div>
 		<?php echo form_close() ; ?>
 	</div>
 </div>

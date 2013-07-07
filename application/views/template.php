@@ -1,3 +1,4 @@
+
 <?php
 /**
  * Using Session Data
@@ -103,11 +104,15 @@ $(document).ready(function() {<?php
 
 		<?php
 
-	}
-	?>
-});
+		}
+		?>});
 </script>
-      
+ <script>
+	$(document).ready(function(){
+		$(".error").css("display","block");
+	})
+</script>
+     
 <style>
 	.setting_table{
 		font-size:0.8em;

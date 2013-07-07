@@ -2323,7 +2323,7 @@ class report_management extends MY_Controller {
 		$data['total'] = count($data['patients']);
 		$data['from'] = $start_date;
 		$data['to'] = $end_date;
-		$data['title'] = "Reports";
+		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu'] = 1;
 		$data['banner_text'] = "Facility Reports";
 		$data['selected_report_type_link'] = "early_warning_report_select";
@@ -2420,7 +2420,7 @@ class report_management extends MY_Controller {
 		$data['total_before_period'] = $total_before_period;
 		$data['lost_to_follow'] = $lost_to_follow;
 		$data['percentage_lost_to_follow'] = number_format($percentage_lost_to_follow, 1);
-		$data['title'] = "Reports";
+		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu'] = 1;
 		$data['banner_text'] = "Facility Reports";
 		$data['selected_report_type_link'] = "early_warning_report_select";
@@ -2437,7 +2437,7 @@ class report_management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$data['graphs'] = $results;
-		$data['title'] = "Reports";
+		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu'] = 1;
 		$data['banner_text'] = "Facility Reports";
 		$data['selected_report_type_link'] = "standard_report_row";
@@ -2446,6 +2446,28 @@ class report_management extends MY_Controller {
 		$data['facility_name'] = $this -> session -> userdata('facility_name');
 		$data['year'] = $year;
 		$data['content_view'] = 'reports/graphs_on_patients_v';
+		$this -> load -> view('template', $data);
+	}
+
+	public function patients_adherence($start_date = "", $end_date = "") {
+		$data['from'] = $start_date;
+		$data['to'] = $end_date;
+		$start_date = date('Y-m-d', strtotime($start_date));
+		$end_date = date('Y-m-d', strtotime($end_date));
+		$facility_code = $this -> session -> userdata('facility');
+		$sql = "SELECT SUM(pill_count) as pill_count,SUM(missed_pills) as missed_pills,adherence,SUM(pv.quantity) as quantity, frequency, p.patient_number_ccc, p.service, p.gender,(YEAR(curdate()) - YEAR(p.dob)) as age FROM patient_visit pv LEFT JOIN patient p ON p.patient_number_ccc = pv.patient_id LEFT JOIN dose ds ON ds.name = pv.dose LEFT JOIN drugcode dc ON dc.id=pv.drug_id LEFT JOIN regimen r ON pv.regimen=r.id WHERE dispensing_date BETWEEN  '$start_date' AND  '$end_date' AND pv.facility ='$facility_code' AND frequency <=2 AND (r.regimen_code NOT LIKE '%OI%' OR dc.drug LIKE '%COTRIMOXAZOLE%' OR dc.drug LIKE '%DAPSONE%' ) GROUP BY p.patient_number_ccc";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$data['results'] = $results;
+		$data['title'] = "webADT | Reports";
+		$data['hide_side_menu'] = 1;
+		$data['banner_text'] = "Facility Reports";
+		$data['selected_report_type_link'] = "visiting_patient_report_row";
+		$data['selected_report_type'] = "Visiting Patients";
+		$data['report_title'] = "Patient Adherence";
+		$data['facility_name'] = $this -> session -> userdata('facility_name');
+
+		$data['content_view'] = 'reports/patient_adherence_v';
 		$this -> load -> view('template', $data);
 	}
 

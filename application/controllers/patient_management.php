@@ -620,7 +620,7 @@ ORDER BY p.patient_number_ccc ASC";
 		foreach ($user_array as $value) {
 			$first_name=$value['first_name'];
 		}
-				//Set session for notications
+		//Set session for notications
 		$this -> session -> set_userdata('msg_save_transaction', 'success');
 		$this -> session -> set_userdata('user_enabled', $first_name);
 		redirect("patient_management");

@@ -58,16 +58,16 @@ class Drugcode_management extends MY_Controller {
 			}
 			 * *
 			 */
-			if ($drugcode['Merged_To']) {
+			//if (@$drugcode['Merged_To']) {
 				if($access_level == "system_administrator"){
 					$links .= " | ";
 					$links .= anchor('drugcode_management/unmerge/' . $drugcode['id'], 'Unmerge', array('class' => 'unmerge_drug'));
 				}
 				$checkbox = "<input type='checkbox' name='drugcodes' id='drugcodes' value='$drug' disabled/>";
 
-			} else {
-				$checkbox = "<input type='checkbox' name='drugcodes' id='drugcodes' value='$drug'/>";
-			}
+			//} else {
+			//	$checkbox = "<input type='checkbox' name='drugcodes' id='drugcodes' value='$drug'/>";
+			//}
 			$this -> table -> add_row($drugcode['id'], $checkbox . "&nbsp;" . $drugcode['Drug'], $drugcode['Pack_Size'], $drugcode['Safety_Quantity'], $drugcode['Quantity'], $drugcode['Duration'], $links);
 		}
 

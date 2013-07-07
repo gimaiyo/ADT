@@ -4,6 +4,8 @@ class genericname_management extends MY_Controller {
 	//required
 	function __construct() {
 		parent::__construct();
+		$this->session->set_userdata("link_id","index");
+		$this->session->set_userdata("linkSub","genericname_management");
 	}
 
 	public function index() {
@@ -19,8 +21,16 @@ class genericname_management extends MY_Controller {
 		$this -> table -> set_heading('Id', 'Name', 'Options');
 		foreach ($generics as $generic) {
 			$links="";
+			$array_param=array(
+				'id'=>$generic['id'],
+				'role'=>'button',
+				'class'=>'edit_user',
+				'data-toggle'=>'modal',
+				'name'=>$generic['Name']
+			);
 			if ($generic['Active'] == 1) {
-				$links = anchor('genericname_management/edit/' . $generic['id'], 'Edit', array('class' => 'edit_user','id'=>$generic['id'],'name'=>$generic['Name']));
+				//$links = anchor('genericname_management/edit/' . $generic['id'], 'Edit', array('class' => 'edit_user','id'=>$generic['id'],'name'=>$generic['Name']));
+				$links .= anchor('#edit_form', 'Edit', $array_param);
 			}
 			//Check if user is an admin
 			if($access_level=="system_administrator"){
@@ -52,10 +62,8 @@ class genericname_management extends MY_Controller {
 			$generic_name -> Name = $drugname;
 			$generic_name -> Active = "1";
 			$generic_name -> save();
-
-			$this -> session -> set_userdata('message_counter', '1');
-			$this -> session -> set_userdata('message', $this -> input -> post('generic_name') . ' was Added');
-			redirect("genericname_management");
+			$this -> session -> set_userdata('msg_success', $this -> input -> post('generic_name') . ' was Added');
+			redirect("settings_management");
 		}
 
 	}
@@ -75,27 +83,24 @@ class genericname_management extends MY_Controller {
 
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE generic_name SET Name='$generic_name' WHERE id='$generic_id'");
-		$this -> session -> set_userdata('message_counter', '1');
-		$this -> session -> set_userdata('message', $this -> input -> post('edit_generic_name') . ' was Updated');
-		redirect("genericname_management/listing");
+		$this -> session -> set_userdata('msg_success', $this -> input -> post('edit_generic_name') . ' was Updated');
+		redirect("settings_management");
 	}
 
 	public function enable($generic_id) {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE generic_name SET Active='1'WHERE id='$generic_id'");
 		$results = Generic_Name::getGeneric($generic_id);
-		$this -> session -> set_userdata('message_counter', '1');
-		$this -> session -> set_userdata('message', $results -> Name . ' was enabled');
-		redirect("genericname_management/listing");
+		$this -> session -> set_userdata('msg_success', $results -> Name . ' was enabled');
+		redirect("settings_management");
 	}
 
 	public function disable($generic_id) {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE generic_name SET Active='0'WHERE id='$generic_id'");
 		$results = Generic_Name::getGeneric($generic_id);
-		$this -> session -> set_userdata('message_counter', '2');
-		$this -> session -> set_userdata('message', $results -> Name . ' was disabled');
-		redirect("genericname_management/listing");
+		$this -> session -> set_userdata('msg_error', $results -> Name . ' was disabled');
+		redirect("settings_management");
 	}
 
 	private function _submit_validate() {

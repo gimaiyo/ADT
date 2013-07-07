@@ -479,7 +479,7 @@ fieldset {
 	margin-top: 20px;
 }
 /*NOTIFICATION MESSAGES*/
-.message {
+.message ,.msg{
 	display: block;
 	color: white;
 	padding: 1%;

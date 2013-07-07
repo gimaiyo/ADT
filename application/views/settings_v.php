@@ -1,3 +1,31 @@
+<style>
+	.dataTables_length{
+		width:50%;
+	}
+	.dataTables_info{
+		width:44%;
+	}
+	.enable_user{
+		color:green;
+		font-weight:bold;
+	}
+	.disable_user{
+		color:red;
+		font-weight:bold;
+	}
+	.edit_user{
+		color:blue;
+		font-weight:bold;
+	}
+	.edit_user{
+		color:blue;
+		font-weight:bold;
+	}
+	#edit_form, #client_form,#entry_form{
+		background-color:#CCFFFF;
+	}
+
+</style>
 <script>
 	
 	$(document).ready(function() {
@@ -16,9 +44,9 @@
 		$(".settings").load('<?php echo base_url();?>'+linkSub+'/'+linkIdUrl,function(){
 			$("#loadingDiv").css("display","none");
 			$(".settings").css("display","block");
-				if(linkSub=="regimen_drug_management"){
+				if(linkSub=="regimen_drug_management" || linkSub=="brandname_management"){
 						$('#brand_name_table').dataTable({
-		    			"sScrollY": "240px",
+		    			"sScrollY": "200px",
 		    			"bLengthChange": false,
 		                "bPaginate": false,
 		                "bJQueryUI": true,
@@ -30,31 +58,31 @@
 		                    asExpandedGroups: [""],
 		                    
 		                });
-		        GridRowCount();
-				function GridRowCount() {
-			        $('span.rowCount-grid').remove();
-			        $('input.expandedOrCollapsedGroup').remove();
-			
-			        $('.dataTables_wrapper').find('[id|=group-id]').each(function () {
-			            var rowCount = $(this).nextUntil('[id|=group-id]').length;
-			            $(this).find('td').append($('<span />', { 'class': 'rowCount-grid' }).append($('<b />', { 'text': '('+rowCount+')' })));
-			        });
-			
-			        $('.dataTables_wrapper').find('.dataTables_filter').append($('<input />', { 'type': 'button', 'class': 'expandedOrCollapsedGroup collapsed', 'value': 'Expanded All Group' }));
-			
-			        $('.expandedOrCollapsedGroup').live('click', function () {
-			            if ($(this).hasClass('collapsed')) {
-			                $(this).addClass('expanded').removeClass('collapsed').val('Collapse All Group').parents('.dataTables_wrapper').find('.collapsed-group').trigger('click');
-			            }
-			            else {
-			                $(this).addClass('collapsed').removeClass('expanded').val('Expanded All Group').parents('.dataTables_wrapper').find('.expanded-group').trigger('click');
-			            }
-		        	});
-		        };
+			        GridRowCount();
+					function GridRowCount() {
+				        $('span.rowCount-grid').remove();
+				        $('input.expandedOrCollapsedGroup').remove();
+				
+				        $('.dataTables_wrapper').find('[id|=group-id]').each(function () {
+				            var rowCount = $(this).nextUntil('[id|=group-id]').length;
+				            $(this).find('td').append($('<span />', { 'class': 'rowCount-grid' }).append($('<b />', { 'text': '('+rowCount+')' })));
+				        });
+				
+				        $('.dataTables_wrapper').find('.dataTables_filter').append($('<input />', { 'type': 'button', 'class': 'expandedOrCollapsedGroup collapsed', 'value': 'Expanded All Group' }));
+				
+				        $('.expandedOrCollapsedGroup').live('click', function () {
+				            if ($(this).hasClass('collapsed')) {
+				                $(this).addClass('expanded').removeClass('collapsed').val('Collapse All Group').parents('.dataTables_wrapper').find('.collapsed-group').trigger('click');
+				            }
+				            else {
+				                $(this).addClass('collapsed').removeClass('expanded').val('Expanded All Group').parents('.dataTables_wrapper').find('.expanded-group').trigger('click');
+				            }
+			        	});
+			        };
 				}
 				else{
 					oTable = $('.setting_table').dataTable({
-						"sScrollY" : "240px",
+						"sScrollY" : "200px",
 						"bJQueryUI" : true,
 						"sPaginationType" : "full_numbers",
 						"bDestroy":true
@@ -154,7 +182,7 @@
   		
   	elseif($this->session->userdata("msg_error")){
   		?>
-  		<span class="message error"></span>
+  		<span class="message error"><?php echo $this->session->userdata("msg_error")  ?></span>
   	<?php
   	$this->session->unset_userdata("msg_error");
   	}

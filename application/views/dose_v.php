@@ -3,20 +3,6 @@
 		width: 200px;
 		margin-top: 5px;
 	}
-	.enable_user{
-		color:green;
-		font-weight:bold;
-	}
-	.disable_user{
-		color:red;
-		font-weight:bold;
-	}
-	.edit_user{
-		color:blue;
-		font-weight:bold;
-	}
-	
-
 	#client_form{
 		background-color:#CCFFFF;
 	}

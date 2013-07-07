@@ -1,14 +1,5 @@
 <style type="text/css">
-	.actions_panel {
-		width: 200px;
-		margin-top: 5px;
-	}
-	.hovered td {
-		background-color: #E5E5E5 !important;
-	}
-	a{
-		text-decoration: none;
-	}
+	
 	.enable_user{
 		color:green;
 		font-weight:bold;
@@ -21,49 +12,16 @@
 		color:blue;
 		font-weight:bold;
 	}
-	.passmessage {
-
-		display: none;
-		background: #00CC33;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding:5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
+	.dataTables_length{
+		width:50%;
 	}
-	.errormessage {
-
-		display: none;
-		background: #FF0000;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding:5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
+	.dataTables_info{
+		width:36%;
 	}
-
-	#DataTables_Table_0_wrapper{
-		width: 80%;
-	}
-	#edit_form, #client_form{
-		background-color:#CCFFFF;
-	}
-
 </style>
 <script type="text/javascript">
 	$(document).ready(function() {
+		$(".setting_table").find("tr :first").css("min-width","300px");
 		//This loop goes through each table row in the page and applies the necessary modifications
 		$.each($(".table_row"), function(i, v) {
 			//First get the row id which will be used later
@@ -98,69 +56,14 @@
 			$(this).find(".actions_panel").css("visibility", "hidden");
 		});
 		
-		//When clicked dialog form for new indication pops up
-		$("#new_client").click(function(){ 
-			$("#client_form").dialog("open");
-		});
-		
 		$(".edit_user").live('click',function(event){
 			event.preventDefault(); 
 			$("#edit_source_id").val(this.id);
 			$("#edit_source_name").val(this.name);
-			$("#edit_form").dialog("open");
+			//$("#edit_form").dialog("open");
 		});
 		
-		//Dialog form for new user form
-		$("#client_form").dialog({
-			height : 200,
-			width : 340,
-			modal : true,
-			autoOpen : false
-		});
 		
-		$("#edit_form").dialog({
-			height : 200,
-			width : 340,
-			modal : true,
-			autoOpen : false
-		});
-		
-		//count to check which message to display
-        var count='<?php echo @$this -> session -> userdata['message_counter']?>';
-        var message='<?php echo @$this -> session -> userdata['message']?>';	
-	
-	if(count == 1) {
-	$(".passmessage").slideDown('slow', function() {
-
-	});
-	$(".passmessage").append(message);
-
-	var fade_out = function() {
-	$(".passmessage").fadeOut().empty();
-	}
-	setTimeout(fade_out, 5000);
-     <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
-     ?>
-
-	}
-	if(count == 2) {
-	$(".errormessage").slideDown('slow', function() {
-
-	});
-	$(".errormessage").append(message);
-
-	var fade_out = function() {
-	$(".errormessage").fadeOut().empty();
-	}
-	setTimeout(fade_out, 5000);
-     <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
-     ?>
-
-	}
 		
 	});
 
@@ -185,43 +88,59 @@ foreach($actions as $action){
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
 
-	    <div class="span9 span-fixed-sidebar">
+	    <div class="span8 span-fixed-sidebar">
 	      	<div class="hero-unit">
-				<div class="passmessage"></div>
-			    <div class="errormessage"></div>
 				<?php echo validation_errors('<p class="error">', '</p>');?>
-				<button class="btn btn-large btn-success" type="button" id="new_client"><i class="icon-plus icon-black"></i>New Client Sources</button>
-		        <?php echo $sources;?>
+				<?php echo $sources;?>
+				<a href="#client_form" role="button" id="new_client" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Client Source</a>
 			</div>
 	    </div><!--/span-->
 	  </div><!--/row-->
 	</div><!--/.fluid-container-->
-	<div id="client_form" title="New Client Sources">
+	<div id="client_form" title="New Client Sources" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="NewDrug" aria-hidden="true">
 		<?php
 		$attributes = array('class' => 'input_form');
 		echo form_open('client_management/save', $attributes);
 		echo validation_errors('<p class="error">', '</p>');
 		?>	
-		<label>
-			<strong class="label">Client Source Name</strong>
-			<input type="text" name="source_name" id="source_name" class="input-xlarge">
-		</label>
-		<input type="submit" value="Save" class="btn btn-primary"/>
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="NewDrug">Client source details</h3>
+		</div>
+		<div class="modal-body">
+			<label>
+				<strong class="label">Client Source Name</strong>
+				<input type="text" name="source_name" id="source_name" class="input-xlarge">
+			</label>
+		</div>
+		<div class="modal-footer">
+		   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		   <input type="submit" value="Save" class="btn btn-primary " />
+		</div>
 		</form>
 	</div>
 	
-	<div id="edit_form" title="Edit Client Sources">
+	<div id="edit_form" title="Edit Client Sources" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="NewDrug" aria-hidden="true">>
 		<?php
 		$attributes = array('class' => 'input_form');
 		echo form_open('client_management/update', $attributes);
 		echo validation_errors('<p class="error">', '</p>');
 		?>	
-		<label>
-			<strong class="label">Client Source Name</strong>
-			<input type="hidden" name="source_id" id="edit_source_id" class="input-xlarge">
-			<input type="text" name="source_name" id="edit_source_name" class="input-xlarge">
-		</label>
-		<input type="submit" value="Save" class="btn btn-primary"/>
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="NewDrug">Client source details</h3>
+		</div>
+		<div class="modal-body">
+			<label>
+				<strong class="label">Client Source Name</strong>
+				<input type="hidden" name="source_id" id="edit_source_id" class="input-xlarge">
+				<input type="text" name="source_name" id="edit_source_name" class="input-xlarge">
+			</label>
+		</div>
+		<div class="modal-footer">
+		   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		   <input type="submit" value="Save" class="btn btn-primary " />
+		</div>
 		</form>
 	</div>
 
