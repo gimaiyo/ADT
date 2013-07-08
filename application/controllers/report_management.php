@@ -2578,7 +2578,15 @@ class report_management extends MY_Controller {
 		$start_date = date('Y-m-d', strtotime($start_date));
 		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
-		$sql="select * from patient where date_enrolled between '$start_date' and '$end_date'";
+		//$sql = "select * from patient where date_enrolled between '$start_date' and '$end_date'";
+		$sql="SELECT gender, disclosure, count( * ) AS total FROM `patient` WHERE partner_status = '2' AND gender != '' AND disclosure != '2' GROUP BY gender,disclosure";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			foreach ($results as $result) {
+
+			}
+		}
 	}
 
 	public function base_params($data) {
