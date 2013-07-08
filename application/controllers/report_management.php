@@ -2579,44 +2579,144 @@ class report_management extends MY_Controller {
 		$start_date = date('Y-m-d', strtotime($start_date));
 		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
-		$sql = "SELECT gender, disclosure, count( * ) AS total FROM `patient` where date_enrolled between '$start_date' and '$end_date' and partner_status = '2' AND gender != '' AND disclosure != '2' GROUP BY gender, disclosure";
+		$sql = "SELECT gender, disclosure, count( * ) AS total FROM `patient` where date_enrolled between '$start_date' and '$end_date' and partner_status = '2' AND gender != '' AND disclosure != '2' AND facility_code='$facility_code' GROUP BY gender, disclosure";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		$strXML=array();
+		$strXML = array();
 		if ($results) {
 			//$strXML = "<chart caption='$heading'  pieSliceDepth='30' showBorder='0' formatNumberScale='0' showValues='1' showPercentageInLabel='1'  showPercentageValues='1' >";
 			foreach ($results as $result) {
 				if ($result['gender'] == '1' && $result['disclosure'] == 0) {
 					//$strXML .= "<set label='Male Disclosure(NO)' value='" . $result['total'] . "' />";
-					$strXML['Male Disclosure(NO)']=$result['total'];
+					$strXML['Male Disclosure(NO)'] = $result['total'];
 				} else if ($result['gender'] == '1' && $result['disclosure'] == 1) {
 					//$strXML .= "<set label='Male Disclosure(YES)' value='" . $result['total'] . "' />";
-					$strXML['Male Disclosure(YES)']=$result['total'];
+					$strXML['Male Disclosure(YES)'] = $result['total'];
 				} else if ($result['gender'] == '2' && $result['disclosure'] == 0) {
-					$strXML['Female Disclosure(NO)']=$result['total'];
+					$strXML['Female Disclosure(NO)'] = $result['total'];
 					//$strXML .= "<set label='Female Disclosure(NO)' value='" . $result['total'] . "' />";
 				} else if ($result['gender'] == '2' && $result['disclosure'] == 1) {
-					$strXML['Female Disclosure(YES)']=$result['total'];
+					$strXML['Female Disclosure(YES)'] = $result['total'];
 					//$strXML .= "<set label='Female Disclosure(YES)' value='" . $result['total'] . "' />";
 				}
 
 			}
 			echo json_encode($strXML);
 			/*
-			header('Content-type: text/xml');
-			$strXML .= "</chart>";
-			$data['dyn_table'] = $strXML;
+			 header('Content-type: text/xml');
+			 $strXML .= "</chart>";
+			 $data['dyn_table'] = $strXML;
+			 $data['title'] = "webADT | Reports";
+			 $data['hide_side_menu'] = 1;
+			 $data['banner_text'] = "Facility Reports";
+			 $data['selected_report_type_link'] = "visiting_patient_report_row";
+			 $data['selected_report_type'] = "Patient Disclosure";
+			 $data['report_title'] = "Patient Disclosure";
+			 $data['facility_name'] = $this -> session -> userdata('facility_name');
+			 $data['content_view'] = 'reports/patient_disclosure_v';
+			 $this -> load -> view('template', $data);
+			 */
+		}
+	}
+
+	public function getTBPatients($start_date = "", $end_date = "") {
+		$data['from'] = $start_date;
+		$data['to'] = $end_date;
+		$start_date = date('Y-m-d', strtotime($start_date));
+		$end_date = date('Y-m-d', strtotime($end_date));
+		$facility_code = $this -> session -> userdata('facility');
+		$adult_male = 0;
+		$child_male = 0;
+		$adult_female = 0;
+		$child_female = 0;
+		$sql = "select gender,ROUND(DATEDIFF(curdate(),dob)/360) as age from patient where date_enrolled between '$start_date' and '$end_date' and facility_code='$facility_code' and gender !='' and tb='1'";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$strXML = array();
+		if ($results) {
+			foreach ($results as $result) {
+				if ($result['gender'] == 1) {
+					if ($result['age'] >= 15) {
+						$adult_male++;
+					} else if ($result['age'] < 15) {
+						$child_male++;
+					}
+				} else if ($result['gender'] == 2) {
+					if ($result['age'] >= 15) {
+						$adult_male++;
+					} else if ($result['age'] < 15) {
+						$child_female++;
+					}
+				}
+			}
+			$strXML['adult_male'] = $adult_male;
+			$strXML['child_male'] = $child_male;
+			$strXML['adult_female'] = $adult_female;
+			$strXML['child_female'] = $child_female;
+			echo json_encode($strXML);
+		}
+	}
+
+	public function getFamilyPlanning($start_date = "", $end_date = "") {
+		$data['from'] = $start_date;
+		$data['to'] = $end_date;
+		$start_date = date('Y-m-d', strtotime($start_date));
+		$end_date = date('Y-m-d', strtotime($end_date));
+		$facility_code = $this -> session -> userdata('facility');
+		$arr = array();
+		$total = 0;
+		$sql = "select fplan from patient where date_enrolled between '$start_date' and '$end_date' and gender='2' and gender !='' and facility_code='$facility_code' AND fplan != '' AND fplan != 'null' AND ROUND(DATEDIFF(curdate(),dob)/360)>=15 AND ROUND(DATEDIFF(curdate(),dob)/360)<=49";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			foreach ($results as $result) {
+				if (strstr($result['fplan'], ',', true)) {
+					$values = explode(",", $result['fplan']);
+					foreach ($values as $value) {
+						$arr[] = $value;
+					}
+				} else {
+					$arr[] = $result['fplan'];
+				}
+
+			}
+			$family_planning = array_count_values($arr);
+			foreach ($family_planning as $family_plan => $index) {
+				$sql = "select name from family_planning where indicator='$family_plan'";
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				if ($results) {
+					foreach ($results as $result) {
+						$family[$result['name']] = $index;
+					}
+				}
+				$total += $index;
+			}
+			$dyn_str = "<table id='patient_listing' border='1' cellpadding='5'><tr><th>Method</th><th>No. Of Women on Method</th><th>Percentage Proportion(%)</th></tr>";
+			foreach ($family as $farm => $index) {
+				$dyn_str .= "<tr><td>" . $farm . "</td><td>" . $index . "</td><td>" . number_format(($index / $total) * 100, 1) . "%</td></tr>";
+			}
+			$dyn_str .= "<tr><td><b>TOTALS</b></td><td><b>$total</b></td><td><b>100%</b></td></tr>";
+			$dyn_str .= "</table>";
+			$data['dyn_table'] = $dyn_str;
 			$data['title'] = "webADT | Reports";
 			$data['hide_side_menu'] = 1;
 			$data['banner_text'] = "Facility Reports";
-			$data['selected_report_type_link'] = "visiting_patient_report_row";
-			$data['selected_report_type'] = "Patient Disclosure";
-			$data['report_title'] = "Patient Disclosure";
+			$data['selected_report_type_link'] = "standard_report_row";
+			$data['selected_report_type'] = "Standard Reports";
+			$data['report_title'] = "Family Planning Summary";
 			$data['facility_name'] = $this -> session -> userdata('facility_name');
-			$data['content_view'] = 'reports/patient_disclosure_v';
+			$data['content_view'] = 'reports/family_planning_v';
 			$this -> load -> view('template', $data);
-			 */
 		}
+	}
+
+	public function getIndications($start_date = "", $end_date = "") {
+		$data['from'] = $start_date;
+		$data['to'] = $end_date;
+		$start_date = date('Y-m-d', strtotime($start_date));
+		$end_date = date('Y-m-d', strtotime($end_date));
+		$facility_code = $this -> session -> userdata('facility');
 	}
 
 	public function base_params($data) {
