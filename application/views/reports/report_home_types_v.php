@@ -12,6 +12,7 @@
 					<option class="single_date_report" value="cumulative_patients">Cumulative Number of Patients to Date</option>
 					<option class="single_date_report" value="patient_active_byregimen">Number of Active Patients Receiving ART (by Regimen)</option>
 					<option class="date_range_report" value="getFamilyPlanning">Family Planning Summary</option>
+					<option class="date_range_report" value="getIndications">Patient Indications Summary</option>
 				</select>
 			</td>
 		</tr>

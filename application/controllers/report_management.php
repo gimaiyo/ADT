@@ -2696,7 +2696,7 @@ class report_management extends MY_Controller {
 			foreach ($family as $farm => $index) {
 				$dyn_str .= "<tr><td>" . $farm . "</td><td>" . $index . "</td><td>" . number_format(($index / $total) * 100, 1) . "%</td></tr>";
 			}
-			$dyn_str .= "<tr><td><b>TOTALS</b></td><td><b>$total</b></td><td><b>100%</b></td></tr>";
+			$dyn_str .= "<tr class='tfoot'><td><b>TOTALS</b></td><td><b>$total</b></td><td><b>100%</b></td></tr>";
 			$dyn_str .= "</table>";
 			$data['dyn_table'] = $dyn_str;
 			$data['title'] = "webADT | Reports";
@@ -2721,28 +2721,58 @@ class report_management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$total = 0;
+		$children = 0;
+		$adult_male = 0;
+		$adult_female = 0;
+		$overall_adult_male = 0;
+		$overall_adult_female = 0;
+		$overall_children = 0;
+		$dyn_table = "";
 		if ($results) {
+			$dyn_table .= "<table id='patient_listing' border='1' cellpadding='5'><tr><th>Indication</th><th>Adult Male</th><th>Adult Female</th><th>Children</th></tr>";
 			foreach ($results as $result) {
 				$indication = $result['indication'];
 				$indication_name = $result['name'];
-				$sql = "select ROUND(DATEDIFF(curdate(),p.dob)/360) as age,gender from patient_visit pv left join patient p on p.patient_number_ccc=pv.patient_id where pv.dispensing_date between '$start_date' and '$end_date' and pv.indication='$indication' and facility='$facility_code' group by pv.patient_id,pv.pv.indication";
+				$sql = "select ROUND(DATEDIFF(curdate(),p.dob)/360) as age,gender from patient_visit pv left join patient p on p.patient_number_ccc=pv.patient_id where pv.dispensing_date between '$start_date' and '$end_date' and pv.indication='$indication' and facility='$facility_code' group by pv.patient_id,pv.indication";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				if ($results) {
 					foreach ($results as $result) {
 						if ($result['age'] >= 15) {
 							if ($result['gender'] == 2) {
-
+								$adult_male++;
 							} else if ($result['gender'] == 2) {
-
+								$adult_female++;
 							} else if ($result['age'] < 15) {
-
+								$children++;
 							}
 						}
 					}
+
+				} else {
+                     $adult_male=0;
+                     $adult_female=0;
+                     $children=0;
 				}
+				$overall_adult_male += $adult_male;
+				$overall_adult_female += $adult_female;
+				$overall_children += $children;
+				$dyn_table .= "<tr><td><b>$indication | $indication_name <b></td><td>" . number_format($adult_male) . "</td><td>" . number_format($adult_female) . "</td><td>" . number_format($children) . "</td></tr>";
+
 			}
+			$dyn_table .= "<tr class='tfoot'><td><b>TOTALS</b></td><td><b>" . number_format($overall_adult_male) . "</b></td><td><b>" . number_format($overall_adult_female) . "</b></td><td><b>" . number_format($overall_children) . "</b></td></tr>";
+			$dyn_table .= "</table>";
 		}
+		$data['dyn_table'] = $dyn_table;
+		$data['title'] = "webADT | Reports";
+		$data['hide_side_menu'] = 1;
+		$data['banner_text'] = "Facility Reports";
+		$data['selected_report_type_link'] = "standard_report_row";
+		$data['selected_report_type'] = "Standard Reports";
+		$data['report_title'] = "Patient Indication Summary";
+		$data['facility_name'] = $this -> session -> userdata('facility_name');
+		$data['content_view'] = 'reports/patient_indication_v';
+		$this -> load -> view('template', $data);
 	}
 
 	public function base_params($data) {
