@@ -2584,7 +2584,7 @@ class report_management extends MY_Controller {
 		$results = $query -> result_array();
 		if ($results) {
 			foreach ($results as $result) {
-
+                 echo "Help";
 			}
 		}
 	}
