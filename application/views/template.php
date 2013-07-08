@@ -114,6 +114,11 @@ if (isset($styles)) {
 
 				}
 				?>});</script>
+				 <script>
+					$(document).ready(function(){
+						$(".error").css("display","block");
+					})
+				</script>
       
 <style>
 	.setting_table {

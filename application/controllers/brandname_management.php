@@ -2,6 +2,8 @@
 class brandname_management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
+		$this->session->set_userdata("link_id","index");
+		$this->session->set_userdata("linkSub","brandname_management");
 	}
 
 	public function index() {
@@ -10,7 +12,6 @@ class brandname_management extends MY_Controller {
 
 	public function listing($data="") {
 		$data['drug_codes'] = Drugcode::getBrands();
-		
 		$this -> base_params($data);
 	}
 
@@ -30,14 +31,14 @@ class brandname_management extends MY_Controller {
 		$rowdelete=Drugcode::deleteBrand($id);
 		//If query succeeds
 		if($rowdelete>0){
-			$this -> session -> set_userdata('message_counter', '1');
-			$this -> session -> set_userdata('message',$brand['Brand']. ' was deleted !');
+			//$this -> session -> set_userdata('message_counter', '1');
+			$this -> session -> set_userdata('msg_error',$brand['Brand']. ' was deleted !');
 		}
 		else{
-			$this -> session -> set_userdata('message_counter', '2');
-			$this -> session -> set_userdata('message', 'An error occured while deleting the brand. Try again !');
+			//$this -> session -> set_userdata('message_counter', '2');
+			$this -> session -> set_userdata('msg_error', 'An error occured while deleting the brand. Try again !');
 		}
-		redirect("brandname_management");
+		redirect("settings_management");
 	}
 
 	public function save() {
@@ -55,9 +56,9 @@ class brandname_management extends MY_Controller {
 			$brand -> Brand = $brandname;
 
 			$brand -> save();
-			$this -> session -> set_userdata('message_counter', '1');
-			$this -> session -> set_userdata('message', $this -> input -> post('brandname') . ' was Added');
-			redirect("brandname_management/listing");
+			//$this -> session -> set_userdata('message_counter', '1');
+			$this -> session -> set_userdata('msg_success', $this -> input -> post('brandname') . ' was Added');
+			redirect("settings_management");
 		}
 	}
 

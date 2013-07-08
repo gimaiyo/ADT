@@ -5,7 +5,8 @@ if (!defined('BASEPATH'))
 class Facility_Management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
-		
+		$this->session->set_userdata("link_id","index");
+		$this->session->set_userdata("linkSub","facility_management");
 	}
 
 	public function index() {
@@ -16,22 +17,9 @@ class Facility_Management extends MY_Controller {
 	public function listing() {
 		$access_level = $this -> session -> userdata('user_indicator');
 		$data['access_level'] = $access_level;
-		$source = $this -> session -> userdata('facility');
 		$data['sites'] = Facilities::getFacilities();
-		if($access_level=="system_administrator"){
-			$data['facilities_list'] = Facilities::getAll($source);
-			$data['settings_view'] = "facility_v";
-		
-		}
-		else{
-			$data['facilities'] = Facilities::getCurrentFacility($source);
-			$data['settings_view'] = "facility_user_v";
-
-		}
-		
 		$data['supporter']=Supporter::getAll();
 
-		$this->load->database();
 		$district_query=$this -> db -> query("select * from district");
 		$data['districts'] = $district_query -> result_array();
 		$county_query=$this -> db -> query("select * from counties");
@@ -90,20 +78,20 @@ class Facility_Management extends MY_Controller {
             'parent' => $this -> input -> post('central_site'),
             );
 			
-		$this -> load -> database();
         $this->db->where('id', $facility_id);
         $this->db->update('facilities', $data);
-		$this -> session -> set_userdata('message_counter', '1');
-		$this -> session -> set_userdata('message', $this -> input -> post('facility_name') . ' was Updated');
+		//$this -> session -> set_userdata('message_counter', '1');
+		$this -> session -> set_userdata('msg_success', $this -> input -> post('facility_name') . ' \'s details were successfully Updated!');
 		}
 		else{
-		$this -> session -> set_userdata('message_counter', '2');
-		$this -> session -> set_userdata('message','Failed Update');	
+		//$this -> session -> set_userdata('message_counter', '2');
+			$this -> session -> set_userdata('msg_error','Facility details could not be updated!');	
 		}
-		redirect('facility_management');	
+		redirect('settings_management');	
 	}
 
 	public function base_params($data) {
+		$source = $this -> session -> userdata('facility');
 		$access_level = $this -> session -> userdata('user_indicator');
 		$data['quick_link'] = "facility";
 		if($access_level=="system_administrator"){

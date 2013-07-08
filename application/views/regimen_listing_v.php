@@ -2,15 +2,15 @@
 	$(document).ready(function() {	
 		$(".edit_user").live('click',function(event) {
 			$("#regimen_edit_tbl").css("display","none");
-			//event.preventDefault();
-			var _id=this.id;
-			var request=$.ajax({
-	    	url: "regimen_management/edit",
-	     	type: 'POST',
-	     	data: {"id":_id},
-	     	dataType: "json",
-	     
-	    });
+				//event.preventDefault();
+				var _id=this.id;
+				var request=$.ajax({
+		    	url: "regimen_management/edit",
+		     	type: 'POST',
+		     	data: {"id":_id},
+		     	dataType: "json",
+		     
+		    });
 		    
 		     request.done(function(msg) {
 		     	for (var key in msg){
@@ -132,9 +132,9 @@
 	$(".passmessage").fadeOut().empty();
 	}
 	setTimeout(fade_out, 5000);
-     <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
+     <?php      
+     	//$this -> session -> set_userdata('message_counter', "0");
+     	$this -> session -> set_userdata('message', " ");
      ?>
 
 	}
@@ -149,8 +149,8 @@
 	}
 	setTimeout(fade_out, 5000);
      <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
+     //$this -> session -> set_userdata('message_counter', "0");
+     //$this -> session -> set_userdata('message', " ");
      ?>
 
 	}

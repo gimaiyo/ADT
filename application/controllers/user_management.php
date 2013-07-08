@@ -4,9 +4,10 @@ if (!defined('BASEPATH'))
 class User_Management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
+		$this->session->set_userdata("link_id","index");
+		$this->session->set_userdata("linkSub","user_management");
 		$this -> load -> library('encrypt');
 		$this -> load -> helper('geoiploc');
-		$this -> load -> database();
 		ini_set("SMTP",'ssl://smtp.googlemail.com');
 		ini_set("smtp_port",'465');
 		ini_set("sendmail_from",'webadt.chai@gmail.com');
@@ -49,11 +50,18 @@ class User_Management extends MY_Controller {
 		$this -> table -> set_heading('id', 'Name', 'Username', 'Email Address', 'Phone Number', 'Access Level', 'Registered By', 'Options');
 
 		foreach ($users as $user) {
-
+			$links="";
+			$array_param=array(
+				'id'=>$user['id'],
+				'role'=>'button',
+				'class'=>'edit_user',
+				'data-toggle'=>'modal'
+			);
 			//Is user is a system admin, allow him to edit only system  admin and nascop users
 			if($access_level=="system_administrator"){
 				if($user['Access'] == "System Administrator" or $user['Access'] == "NASCOP Pharmacist" or $user['Access'] == "Facility Administrator"){
-					$links = anchor('user_management/edit/' . $user['id'], 'Edit', array('class' => 'edit_user', 'id' => $user['id']));
+					//$links = anchor('user_management/edit/' . $user['id'], 'Edit', array('class' => 'edit_user', 'id' => $user['id']));
+					$links = anchor('#edit_user', 'Edit', $array_param);
 					$links .= " | ";
 				}
 				else{
@@ -61,7 +69,11 @@ class User_Management extends MY_Controller {
 				}
 			}
 			else{
-				$links = anchor('user_management/edit/' . $user['id'], 'Edit', array('class' => 'edit_user', 'id' => $user['id']));
+				//$links = anchor('user_management/edit/' . $user['id'], 'Edit', array('class' => 'edit_user', 'id' => $user['id']));
+				//Only show edit link for pharmacists
+				if($user['Access']=="Pharmacist" || $user['Access']=="User"){
+					$links = anchor('#edit_user', 'Edit', $array_param);
+				}
 				
 			}
 			
@@ -396,9 +408,9 @@ class User_Management extends MY_Controller {
 		$user -> Active = "1";
 
 		$user -> save();
-		$this -> session -> set_userdata('message_counter', '1');
-		$this -> session -> set_userdata('message', $this -> input -> post('username') . ' was Added');
-		redirect('user_management');
+		//$this -> session -> set_userdata('message_counter', '1');
+		$this -> session -> set_userdata('msg_success', $this -> input -> post('username') . ' \' s details were successfully saved!');
+		redirect('settings_management');
 	}
 
 	public function edit() {
@@ -418,7 +430,7 @@ class User_Management extends MY_Controller {
 		}
 		
 		$user_id = $this -> input -> get('u_id');
-		$data['users'] = Users::getUser($user_id);
+		$data['users'] = Users::getUserAdmin($user_id);
 		$data['user_type']=Access_Level::getAll($user_type);
 		echo json_encode($data);
 	}
@@ -432,29 +444,28 @@ class User_Management extends MY_Controller {
 		$email_address = $this -> input -> post('email');
 		$facility = $this -> input -> post('facility');
 
-		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE users SET Name='$name',Username='$username',Access_Level='$access_Level',Phone_Number='$phone_number',Email_Address='$email_address',Facility_Code='$facility' WHERE id='$user_id'");
-		$this -> session -> set_userdata('message_counter', '1');
-		$this -> session -> set_userdata('message', $this -> input -> post('username') . ' was Updated');
-		redirect('user_management');
+		//$this -> session -> set_userdata('message_counter', '1');
+		$this -> session -> set_userdata('msg_success', $this -> input -> post('username') . ' \' s details were successfully Updated!');
+		redirect('settings_management');
 	}
 
 	public function enable($user_id) {
 		$results = Users::getUser($user_id);
 		$name=$results['Name'];
 		$query = $this -> db -> query("UPDATE users SET Active='1'WHERE id='$user_id'");
-		$this -> session -> set_userdata('message_counter', '1');
-		$this -> session -> set_userdata('message', $name . ' was enabled');
-		redirect('user_management');
+		//$this -> session -> set_userdata('message_counter', '1');
+		$this -> session -> set_userdata('msg_success', $name . ' was enabled!');
+		redirect('settings_management');
 	}
 
 	public function disable($user_id) {
 		$results = Users::getUser($user_id);
 		$name=$results['Name'];
 		$query = $this -> db -> query("UPDATE users SET Active='0'WHERE id='$user_id'");
-		$this -> session -> set_userdata('message_counter', '2');
-		$this -> session -> set_userdata('message', $name . ' was disabled');
-		redirect('user_management');
+		//$this -> session -> set_userdata('message_counter', '2');
+		$this -> session -> set_userdata('msg_error', $name . ' was disabled!');
+		redirect('settings_management');
 	}
 
 	

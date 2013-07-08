@@ -479,7 +479,7 @@ fieldset {
 	margin-top: 20px;
 }
 /*NOTIFICATION MESSAGES*/
-.message {
+.message ,.msg{
 	display: block;
 	color: white;
 	padding: 1%;
@@ -1543,6 +1543,7 @@ table#history_table td {
 	overflow: auto;
 }
 body .modal {
+
 	/* new custom width */
 	width: 800px;
 	/* must be half of the width, minus scrollbar on the left (30px) */
@@ -1636,7 +1637,7 @@ tr.odd {
 	margin: 0 auto;
 }
 
-table thead tr {
-	background: #999;
-}
 
+table thead tr{
+	background:#999;
+}

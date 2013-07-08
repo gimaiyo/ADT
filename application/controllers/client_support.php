@@ -5,7 +5,8 @@ if (!defined('BASEPATH'))
 class Client_Support extends MY_Controller {
 	function __construct() {
 		parent::__construct();
-		
+		$this->session->set_userdata("link_id","index");
+		$this->session->set_userdata("linkSub","client_support");
 	}
 
 	public function index() {
@@ -21,11 +22,19 @@ class Client_Support extends MY_Controller {
 
 		foreach ($supports as $support) {
 			$links="";
+			$array_param=array(
+				'id'=>$support->id,
+				'role'=>'button',
+				'class'=>'edit_user',
+				'data-toggle'=>'modal',
+				'name'=>$support->Name
+			);
 			if($support->Active==1){
-				$links = anchor('client_support/edit/' .$support->id, 'Edit',array('class' => 'edit_user','id'=>$support->id,'name'=>$support->Name));
-				$links.=" | ";
+				//$links = anchor('client_support/edit/' .$support->id, 'Edit',array('class' => 'edit_user','id'=>$support->id,'name'=>$support->Name));
+				$links .= anchor('#edit_form', 'Edit', $array_param);
 			}
 			if($access_level=="system_administrator" ){
+				$links.=" | ";
 				if($support->Active==1){
 				
 				$links .= anchor('client_support/disable/' .$support->id, 'Disable',array('class' => 'disable_user'));	
@@ -55,9 +64,9 @@ class Client_Support extends MY_Controller {
 		$source -> Active = "1";
 		$source -> save();
 		
-		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$this -> input -> post('support_name').' was Added');
-		redirect('client_support');
+		//$this -> session -> set_userdata('message_counter','1');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('support_name').' was Added');
+		redirect('settings_management');
 	}
 
 	public function edit($source_id) {
@@ -76,18 +85,18 @@ class Client_Support extends MY_Controller {
 
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE supporter SET Name='$source_name' WHERE id='$source_id'");
-		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$this -> input -> post('source_name').' was Updated');
-		redirect('client_support');
+		//$this -> session -> set_userdata('message_counter','1');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('source_name').' was Updated');
+		redirect('settings_management');
 	}
 
 	public function enable($source_id) {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE supporter SET Active='1'WHERE id='$source_id'");
 		$results=Clientsupport::getSource($source_id);
-		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$results->Name.' was enabled');
-		redirect('client_support');
+		//$this -> session -> set_userdata('message_counter','1');
+		$this -> session -> set_userdata('msg_success',$results->Name.' was enabled');
+		redirect('settings_management');
 	}
 
 	public function disable($source_id) {
@@ -95,8 +104,8 @@ class Client_Support extends MY_Controller {
 		$query = $this -> db -> query("UPDATE supporter SET Active='0'WHERE id='$source_id'");
 		$results=Clientsupport::getSource($source_id);
 		$this -> session -> set_userdata('message_counter','2');
-		$this -> session -> set_userdata('message',$results->Name.' was disabled');
-		redirect('client_support');
+		$this -> session -> set_userdata('msg_error',$results->Name.' was disabled');
+		redirect('settings_management');
 	}
 
 	public function base_params($data) {
