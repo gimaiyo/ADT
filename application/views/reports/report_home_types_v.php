@@ -25,6 +25,7 @@
 					<option class="date_range_report" value="getPatientsforRefill">List of Patients Visited For Refill</option>
 					<option class="date_range_report" value="getPatientMissingAppointments">Patients Missing Appointments</option>
 					<option class="date_range_report" value="patients_adherence">Patients Adherence Report</option>
+					<option class="date_range_report" value="patients_disclosure">Patients Status &amp; Disclosure</option>
 				</select>
 			</td>
 		</tr>
@@ -52,6 +53,7 @@
 					<option id="commodity_summary" class="date_range_report" value="commodity_summary">Facility Summary Commodity Report</option>
 					<option id="expiring_drugs" class="no_filter" value="expiring_drugs">Short Dated Stocks &lt;6 Months to Expiry</option>
 					<option id="expired_drugs" class="no_filter" value="expired_drugs">List of Expired Drugs</option>
+					<option id="getFacilityConsumption" class="date_range_report" value="getFacilityConsumption">Stock Consumption</option>
 				</select>
 			</td>
 		</tr>
