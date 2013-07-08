@@ -1,4 +1,3 @@
-
 <style type="text/css">
 	.actions_panel {
 		width: 200px;
@@ -30,7 +29,7 @@
 	    color:red;
 		font-weight:bold;	
 	}
-	
+
 	.passmessage {
 
 		display: none;
@@ -63,7 +62,7 @@
 		font-size: 16px;
 		font-weight: bold;
 	}
-	
+
 	.color_red{
 		color:red;
 	}
@@ -73,7 +72,7 @@
 	#new_drugcode,#edit_drugcode{
 		background-color:#CCFFFF;
 	}
-	
+
 </style>
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -111,17 +110,17 @@
 			$(this).removeClass("hovered");
 			$(this).find(".actions_panel").css("visibility", "hidden");
 		});
-		
+
 		//When clicked dialog form for new indication pops up
 		$("#btn_new_drugcode").click(function(event){ 
-			
+
 			event.preventDefault();
 			var request=$.ajax({
 		     url: "drugcode_management/add",
 		     type: 'POST',
 		     dataType: "json"
 		    });
-		    
+
 		     request.done(function(msg) {
 		     	for (var key in msg){
 		     		if (msg.hasOwnProperty(key)){
@@ -141,7 +140,7 @@
 		     					}
 		     				}
 		     			}
-		     			
+
 		     			if(key=="doses"){
 		     				$("#add_dose_frequency option").remove();
 		     				for(var y in msg[key]) {
@@ -158,28 +157,28 @@
 			  alert( "Could not open the form to add new drug code: " + textStatus );
 			});
 		});
-		
+
 		//Edit user
 		$(".edit_user").live('click',function(event){
 			event.preventDefault();
 			var drugcode_id=this.id;
-			
+
 			var request=$.ajax({
 		     url: "drugcode_management/edit",
 		     type: 'POST',
 		     data: {"drugcode_id":drugcode_id},
 		     dataType: "json",
-		     
+
 		    });
-		    
+
 		    request.done(function(msg) {
-		    	
+
 		    	for (var key in msg){
 		     		if (msg.hasOwnProperty(key)){
 		     			if(key=="drug_units"){
 		     				for(var y in msg[key]) {
 		     					if (msg[key].hasOwnProperty(y)) {
-		     						
+
 		     						$("#drugunit").append("<option value="+msg[key][y].id+">"+msg[key][y].Name+"</option>");
 		     					}
 		     				}
@@ -191,7 +190,7 @@
 		     					}
 		     				}
 		     			}
-		     			
+
 		     			if(key=="doses"){
 		     				for(var y in msg[key]) {
 		     					if (msg[key].hasOwnProperty(y)) {
@@ -200,9 +199,9 @@
 		     				}
 		     			}
 		     			var drugname,drugunit,packsize,safety_quantity,genericname,supported_by,none_arv,tb_drug,drug_in_use,comments,dose_frequency,duration,quantity,dose_strength="";
-		     			
+
 		     			if(key=="drugcodes"){
-		     				
+
 		     				for(var y in msg[key]) {
 		     					if (msg[key].hasOwnProperty(y)) {
 		     					 $("#drugcode_id").val(msg[key][y].id);
@@ -231,26 +230,26 @@
 							     else{
 							     	$("#drug_in_use").attr("checked",false);
 							     }
-							    
-							     
+
+
 							     $("#comments").attr("value",msg[key][y].Comment);
 							     $("#dose_frequency").attr("value",msg[key][y].Dose);
 							     $("#duration").attr("value",msg[key][y].Duration);
 							     $("#quantity").attr("value",msg[key][y].Quantity);
 							     $("#dose_strength").attr("value",msg[key][y].Strength);
 		     					}
-		     					
-		     					
+
+
 		     				}
 		     			}
 		     		}
 		     	}
-		     	 
-		     	
+
+
 		     	$("#edit_drugcode").dialog("open");
-		     	
+
 		    });
-		    
+
 		    request.fail(function(jqXHR, textStatus) {
 			  alert( "Could not retrieve facility information: " + textStatus );
 			});
@@ -295,7 +294,7 @@
 	                  $(".passmessage").fadeOut().empty();
 	                }
 	                setTimeout(fade_out, 5000);
-	                
+
                      //Refresh Page
                      location.reload(); 
                 },
@@ -303,30 +302,15 @@
                 	alert("Failed merged")
                 }
            });
-		
+
 		});
-		
+
 		//count to check which message to display
         var count='<?php echo @$this -> session -> userdata['message_counter'];?>';
         var message='<?php echo @$this -> session -> userdata['message'];?>';	
+
+
 	
-	
-	if(count == 2) {
-	$(".errormessage").slideDown('slow', function() {
-
-	});
-	$(".errormessage").append(message);
-
-	var fade_out = function() {
-	$(".errormessage").fadeOut().empty();
-	}
-	setTimeout(fade_out, 5000);
-     <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
-     ?>
-
-	}
 		
 	});
 
@@ -360,7 +344,7 @@
 		<?php
 			$attributes = array('id' => 'entry_form');
 			echo form_open('drugcode_management/save', $attributes);
-			
+
 		?>
 		<div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -467,7 +451,7 @@
 		<?php
 			$attributes = array('id' => 'entry_form');
 			echo form_open('drugcode_management/update', $attributes);
-			
+
 		?>
 		<div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>

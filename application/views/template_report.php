@@ -30,26 +30,26 @@ if ($access_level == "system_administrator") {
 	<head>
 		
 		<?php
-			$this -> load -> view('sections/head');
+		$this -> load -> view('sections/head');
 		?>
 		
 		<style>
-			#wrapper{
-				width:1050px;
-				margin:0 auto;
+			#wrapper {
+				width: 1050px;
+				margin: 0 auto;
 			}
-			table#drug_listing{
-				width:100%;
-				border-collapse:collapse;
-				margin: :0 auto;
+			table#drug_listing {
+				width: 100%;
+				border-collapse: collapse;
+				margin:  :0 auto;
 			}
-			
+
 		</style>
 		
 		
 		<script type="text/javascript">
 		
-			//-------- Date picker -------------------------
+						//-------- Date picker -------------------------
 
 			$(document).ready(function() {
 				var href = window.location.href;
@@ -234,55 +234,52 @@ if ($access_level == "system_administrator") {
 				});
 			
 				$("#donor_generate_date_range_report").click(function() {
-					var _report =<?php echo "'".base_url()."report_management/"."'"?>;
-					var report=_report+$("#selected_report").attr("value");
+					var _report =<?php echo "'".base_url()."report_management/"."'"?>
+					;
+					var report = _report + $("#selected_report").attr("value");
 					var from = $("#donor_date_range_from").attr("value");
 					var to = $("#donor_date_range_to").attr("value");
 					var donor = $("#donor").attr("value");
 					var report_url = report + "/" + from + "/" + to + "/" + donor;
 					window.location = report_url;
-				});
-				//-------- Date picker end ---------------------
-				
-				$("#standard_report").click(function(){
-					$("#standard_report_sub").toggle();
-					$("#visiting_patient_sub").hide();
-					$("#early_warning_sub").hide();
-					$("#drug_inventory_sub").hide();
-				});
-				$("#visiting_patient").click(function(){
-					$("#visiting_patient_sub").toggle();
-					$("#standard_report_sub").hide();
-					$("#early_warning_sub").hide();
-					$("#drug_inventory_sub").hide();
-				});
-				$("#early_warning").click(function(){
-					$("#early_warning_sub").toggle();
-					$("#visiting_patient_sub").hide();
-					$("#standard_report_sub").hide();
-					$("#drug_inventory_sub").hide();
-				});
-				$("#drug_inventory").click(function(){
-					$("#drug_inventory_sub").toggle();
-					$("#visiting_patient_sub").hide();
-					$("#early_warning_sub").hide();
-					$("#standard_report_sub").hide();
-				});
-						
-			});
-			
+					});
+					//-------- Date picker end ---------------------
 
-			
+					$("#standard_report").click(function() {
+						$("#standard_report_sub").toggle();
+						$("#visiting_patient_sub").hide();
+						$("#early_warning_sub").hide();
+						$("#drug_inventory_sub").hide();
+					});
+					$("#visiting_patient").click(function() {
+						$("#visiting_patient_sub").toggle();
+						$("#standard_report_sub").hide();
+						$("#early_warning_sub").hide();
+						$("#drug_inventory_sub").hide();
+					});
+					$("#early_warning").click(function() {
+						$("#early_warning_sub").toggle();
+						$("#visiting_patient_sub").hide();
+						$("#standard_report_sub").hide();
+						$("#drug_inventory_sub").hide();
+					});
+					$("#drug_inventory").click(function() {
+						$("#drug_inventory_sub").toggle();
+						$("#visiting_patient_sub").hide();
+						$("#early_warning_sub").hide();
+						$("#standard_report_sub").hide();
+					});
 
-		
-			$(document).ready(function(){
-				$("#edit_year").dialog({
-					autoOpen : false,
-					modal : true
-				});
-				
-			})
-			
+					});
+
+					$(document).ready(function() {
+						$("#edit_year").dialog({
+							autoOpen : false,
+							modal : true
+						});
+
+					})
+
 		</script>
 		
 		
@@ -359,11 +356,16 @@ if ($access_level == "system_administrator") {
 			  </div>
 			</div>
 			<!-- Menus end -->
-			<h2 id="facility_name" style="text-align: center"><?php if(isset($facility_name)){echo $facility_name;}if(isset($stock_type)){ echo ' - '.$stock_type;}  ?></h2>
+			<h2 id="facility_name" style="text-align: center"><?php
+				if (isset($facility_name)) {echo $facility_name;
+				}
+				if (isset($stock_type)) { echo ' - ' . $stock_type;
+				}
+  ?></h2>
 			<?php $this->load->view($content_view) ?>
 			
 		</div>
-		<?php $this->load->view('reports/menus'); ?>
+		<?php $this -> load -> view('reports/menus'); ?>
 	</body>
 	
 </html>

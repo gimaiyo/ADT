@@ -132,64 +132,7 @@
 			$(this).removeClass("hovered");
 			$(this).find(".actions_panel").css("visibility", "hidden");
 		});
-		
-		//When clicked dialog form for new user pops up
-		$("#new_user").click(function(){ 
-			$("#user_form").dialog("open");
-		});
-		
-		//Dialog form for new user form
-		$("#user_form").dialog({
-			height : 420,
-			width : "41em",
-			modal : true,
-			autoOpen : false
-		});
-		
-		//Dialog form for edit user form
-		$("#edit_user").dialog({
-			height : 420,
-			width : "41em",
-			modal : true,
-			autoOpen : false
-		});
-		
-		//count to check which message to display
-        var count='<?php echo @$this -> session -> userdata['message_counter']?>';
-        var message='<?php echo @$this -> session -> userdata['message']?>';	
 	
-	if(count == 1) {
-	$(".passmessage").slideDown('slow', function() {
-
-	});
-	$(".passmessage").append(message);
-
-	var fade_out = function() {
-	$(".passmessage").fadeOut().empty();
-	}
-	setTimeout(fade_out, 5000);
-     <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
-     ?>
-
-	}
-	if(count == 2) {
-	$(".errormessage").slideDown('slow', function() {
-
-	});
-	$(".errormessage").append(message);
-
-	var fade_out = function() {
-	$(".errormessage").fadeOut().empty();
-	}
-	setTimeout(fade_out, 5000);
-     <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
-     ?>
-
-	}
 
 	//Ajax to edit a user
 	$(".edit_user").live('click',function(event){
@@ -207,8 +150,7 @@
 	    		
       			if (msg.hasOwnProperty(key)){
       				if(key=="users"){
-	      				for(var y in msg[key]) {
-	      					
+      					for(var y in msg[key]) {
 	      					if (msg[key].hasOwnProperty(y)) {
 	      						access_level=msg[key][y].Access_Level;
 	      						$("#e_facility").attr("value",msg[key][y].Facility_Code);
@@ -234,7 +176,7 @@
 	     			}
       			}
       		}
-      		$("#edit_user").dialog("open");
+      		//$("#edit_user").dialog("open");
 	    });
 	    request.fail(function(jqXHR, textStatus) {
 		  alert( "Could not retrieve user details: " + textStatus );
@@ -245,48 +187,37 @@
 	});
 
 </script>
-<div id="action_panel_parent" style="display:none">
-	<div class="actions_panel" style="visibility:hidden" >
-		<?php
-//Loop through all the actions passed on to this file
-foreach($actions as $action){
-		?>
-		<a class="link" link="<?php echo $this->router->class."/".$action[1]."/"?>"><?php echo $action[0]
-		?></a>
-		<?php }?>
-	</div>
-</div>
 
-	<button class="btn btn-large" type="button" id="new_user"><i class="icon-plus icon-black"></i>New User</button>
+<div id="view_content">
 	<div class="container-fluid">
-		
-	  <div class="row-fluid row">
+		<div class="row-fluid row">
 		 <!-- Side bar menus -->
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
-
-	    <div class=" span12 span-fixed-sidebar">
+		<div class="span12 span-fixed-sidebar">
 	      	<div class="hero-unit">
-	      		
-	      		<div class="passmessage"></div>
-				<div class="errormessage"></div>
-				<?php
+	      		<?php
 				echo $users;
 				?>
 	      	</div>
-	      	
+	      	<a href="#user_form" role="button" id="new_client" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New User</a>
 	    </div>
 	  </div>
 	</div>
 
-	<div id="user_form" title="New User">
-		<legend>User details</legend>
+	<div id="user_form" title="New User" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="label" aria-hidden="true">
+		
 			<?php
 			$attributes = array('class' => 'input_form','id'=>'fm_user');
 			echo form_open('user_management/save', $attributes);
 			echo validation_errors('<p class="error">', '</p>');
 			?>
-			<div><span class="error" id="msg_error">Fields with <i class="icon-star icon-black"></i> are compulsory</span></div>
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3 id="NewDrug">User details</h3>
+			</div>
+			<div class="modal-body">
+			<div class="msg error" id="msg_error">Fields with <i class="icon-star icon-black"></i> are compulsory</div>
 			<br>
 			<table style="margin:0 auto" class="table-striped" width="100%">
 				<tr><td><strong class="label">Usertype</strong> </td>
@@ -296,7 +227,8 @@ foreach($actions as $action){
 							<?php
 							foreach($user_types as $user_type){ 
 							if($user_type['Access']=="Pharmacist"){
-								$level_access="User";
+								//$level_access="User";
+								$level_access=$user_type['Access'];
 							}else{
 								$level_access=$user_type['Access'];
 							}					
@@ -308,7 +240,6 @@ foreach($actions as $action){
 					</td>
 					<td></td>
 				</tr>
-				
 				
 				<tr><td><strong class="label">Full Name</strong></td>
 					<td>
@@ -353,78 +284,89 @@ foreach($actions as $action){
 					</td>
 					<td></td>
 				</tr>
-				<tr>
-					<td align="left" colspan="3"><input type="submit" value="Save" id="btn_save_user" class=" btn"/></td>
-				</tr>
 			</table>
-			
+			</div>
+			<div class="modal-footer">
+			   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+			   <input type="submit" value="Save" class="btn btn-primary " />
+			</div>
 			</form>
+			
 		</div>
 
-		<div id="edit_user" title="Edit User" >
-			<legend>User details</legend>
+		<div id="edit_user" title="Edit User" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="label" aria-hidden="true">
 			<?php
 			$attributes = array('class' => 'input_form','id'=>'fm_edit_user');
 			echo form_open('user_management/update', $attributes);
 			echo validation_errors('<p class="error">', '</p>');
 			?>
-			<div><span class="_red" id="e_msg_error">Fields with <i class="icon-star icon-black"></i> are compulsory</span></div>
-			<table style="margin-top:10px" class="table-striped" width="100%">
-				<tr><td><strong class="label">Usertype</strong> </td>
-					<td>
-						<span class="add-on"><i class=" icon-chevron-down icon-black"></i></span>
-						<select class="input-xlarge" id="e_access_level" name="access_level">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3 id="NewDrug">User details</h3>
+			</div>
+			<div class="modal-body">
+				<div class="msg error" id="e_msg_error">Fields with <i class="icon-star icon-black"></i> are compulsory</div>
+				<table style="margin-top:10px" class="table-striped" width="100%">
+					<tr><td><strong class="label">Usertype</strong> </td>
+						<td>
+							<span class="add-on"><i class=" icon-chevron-down icon-black"></i></span>
+							<select class="input-xlarge" id="e_access_level" name="access_level">
+								
+							</select>
+						</td>
+					</tr>
+					<tr><td><strong class="label">Full Name</strong></td>
+						<td>
+							<input type="hidden" name="user_id" id="e_user_id" class="input" >
+							<div>
+								<span class="add-on"><i class="icon-user icon-black"></i></span>
+								<input type="text" name="fullname" id="e_fullname" class="input-xlarge">
+								<span class="add-on"><i class="icon-star icon-black"></i></span>
+							</div>
 							
-						</select>
-					</td>
-				</tr>
-				<tr><td><strong class="label">Full Name</strong></td>
-					<td>
-						<input type="hidden" name="user_id" id="e_user_id" class="input" >
-						<div>
-							<span class="add-on"><i class="icon-user icon-black"></i></span>
-							<input type="text" name="fullname" id="e_fullname" class="input-xlarge">
-							<span class="add-on"><i class="icon-star icon-black"></i></span>
-						</div>
+						</td>
+					</tr>
+					<tr><td><strong class="label">Username</strong></td>
+						<td>
+							<div >
+								<span class="add-on"><i class="icon-user icon-black"></i></span>
+								<input type="text" name="username" id="e_username" class="input-xlarge">
+								<span class="add-on"><i class="icon-star icon-black"></i></span>
+							</div>
+						</td></tr>
+					<tr><td><strong class="label">Phone number</strong></td>
+						<td>
+							<div >
+								<span class="add-on"><i class="icon-calendar icon-black"></i></span>
+								<input type="text" name="phone" id="e_phone" class="input-xlarge">
+								<span class="add-on"><i class="icon-star icon-black"></i></span>
+							</div>
+						</td></tr>
+					<tr><td><strong class="label">Email address</strong></td>
+						<td><div >
+							<span class="add-on"><i class="icon-envelope icon-black"></i></span>
+							<input type="text" name="email" id="e_email" class="input-xlarge">
+						</td></tr>
+					<tr><td><strong class="label">Facility</strong></td>
 						
-					</td>
-				</tr>
-				<tr><td><strong class="label">Username</strong></td>
-					<td>
-						<div >
-							<span class="add-on"><i class="icon-user icon-black"></i></span>
-							<input type="text" name="username" id="e_username" class="input-xlarge">
-							<span class="add-on"><i class="icon-star icon-black"></i></span>
-						</div>
-					</td></tr>
-				<tr><td><strong class="label">Phone number</strong></td>
-					<td>
-						<div >
-							<span class="add-on"><i class="icon-calendar icon-black"></i></span>
-							<input type="text" name="phone" id="e_phone" class="input-xlarge">
-							<span class="add-on"><i class="icon-star icon-black"></i></span>
-						</div>
-					</td></tr>
-				<tr><td><strong class="label">Email address</strong></td>
-					<td><div >
-						<span class="add-on"><i class="icon-envelope icon-black"></i></span>
-						<input type="text" name="email" id="e_email" class="input-xlarge">
-					</td></tr>
-				<tr><td><strong class="label">Facility</strong></td>
-					
-					<td>
-						<span class="add-on"><i class=" icon-chevron-down icon-black"></i></span>
-						<select name="facility" id="e_facility" class="input-xlarge">
-							<?php 
-							foreach($facilities as $facility){
-							?>]
-							<option value="<?php echo $facility['facilitycode'];?>"><?php echo $facility['name'];?></option>
-							<?php }?>
-						</select>
-					</td>
-				</tr>
-				<tr><td align="left" colspan="3"><input type="submit" value="Save" id="btn_save_edit_user" class="btn"/></td></tr>
-			</table>
+						<td>
+							<span class="add-on"><i class=" icon-chevron-down icon-black"></i></span>
+							<select name="facility" id="e_facility" class="input-xlarge">
+								<?php 
+								foreach($facilities as $facility){
+								?>]
+								<option value="<?php echo $facility['facilitycode'];?>"><?php echo $facility['name'];?></option>
+								<?php }?>
+							</select>
+						</td>
+					</tr>
+				</table>
+				<div class="modal-footer">
+				   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+				   <input type="submit" value="Save" class="btn btn-primary " />
+				</div>
+			</div>
+			
 			</form>
 		</div>
 

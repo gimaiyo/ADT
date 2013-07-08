@@ -479,7 +479,7 @@ fieldset {
 	margin-top: 20px;
 }
 /*NOTIFICATION MESSAGES*/
-.message {
+.message ,.msg{
 	display: block;
 	color: white;
 	padding: 1%;
@@ -743,12 +743,12 @@ ul li.last {
 }
 .dataTables_wrapper {
 	/*width: 80%;*/
-	
+
 	margin: 0 auto;
 	position: static;
 }
-table .dataTables{
-	font-size:15px;
+table .dataTables {
+	font-size: 15px;
 }
 .dataTables_scroll, .dataTables_scrollHead, .DataTables_sort_wrapper {
 	position: static;
@@ -1532,7 +1532,9 @@ table#history_table td {
 }
 
 .good {
-	color: #2D98F3;.notWhite{
+	color: #2D98F3;
+}
+.notWhite {
 	color: #999;
 }
 .settings {
@@ -1635,6 +1637,7 @@ tr.odd {
 	margin: 0 auto;
 }
 
+
 table thead tr{
 	background:#999;
->>>>>>> 99c4618fec264fc3a86d5a34b0abcfffba5e5521
+}

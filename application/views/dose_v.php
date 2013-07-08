@@ -3,68 +3,19 @@
 		width: 200px;
 		margin-top: 5px;
 	}
-	.hovered td {
-		background-color: #E5E5E5 !important;
-	}
-	a{
-		text-decoration: none;
-	}
-	.enable_user{
-		color:green;
-		font-weight:bold;
-	}
-	.disable_user{
-		color:red;
-		font-weight:bold;
-	}
-	.edit_user{
-		color:blue;
-		font-weight:bold;
-	}
-	.passmessage {
-
-		display: none;
-		background: #00CC33;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding:5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
-	.errormessage {
-
-		display: none;
-		background: #FF0000;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding:5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
-
-	#dose_mngt_setting_wrapper{
-		width: 55%;
-	}
-
 	#client_form{
 		background-color:#CCFFFF;
 	}
-
+	.dataTables_length{
+		width:50%;
+	}
+	.dataTables_info{
+		width:36%;
+	}
 </style>
 <script type="text/javascript">
 	$(document).ready(function() {
+		$(".setting_table").find("tr :first").css("min-width","300px");
 		//This loop goes through each table row in the page and applies the necessary modifications
 		$.each($(".table_row"), function(i, v) {
 			//First get the row id which will be used later
@@ -134,59 +85,10 @@
 		    
 		});
 		
-		//Dialog form for new user form
-		/*
-		$("#client_form").dialog({
-			height : 250,
-			width : 500,
-			modal : true,
-			autoOpen : false
-		});
-		$("#edit_form").dialog({
-			height : 250,
-			width : 500,
-			modal : true,
-			autoOpen : false
-		});
-		*/
 		//count to check which message to display
         var count='<?php echo @$this -> session -> userdata['message_counter']?>';
         var message='<?php echo @$this -> session -> userdata['message']?>';	
-	/*
-	if(count == 1) {
-	$(".passmessage").slideDown('slow', function() {
 
-	});
-	$(".passmessage").append(message);
-
-	var fade_out = function() {
-	$(".passmessage").fadeOut().empty();
-	}
-	setTimeout(fade_out, 5000);
-     <?php 
-     //$this -> session -> set_userdata('message_counter', "0");
-     //$this -> session -> set_userdata('message', " ");
-     ?>
-
-	}
-	*/
-	
-	if(count == 2) {
-	$(".errormessage").slideDown('slow', function() {
-
-	});
-	$(".errormessage").append(message);
-
-	var fade_out = function() {
-	$(".errormessage").fadeOut().empty();
-	}
-	setTimeout(fade_out, 5000);
-     <?php 
-     //$this -> session -> set_userdata('message_counter', "0");
-     //$this -> session -> set_userdata('message', " ");
-     ?>
-
-	}
 		
 	});
 
@@ -210,7 +112,7 @@ foreach($actions as $action){
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
 
-	    <div class="span12 span-fixed-sidebar">
+	    <div class="span8 span-fixed-sidebar">
 	      	<div class="hero-unit">
 				<div class="passmessage"></div>
 			    <div class="errormessage"></div>
@@ -304,7 +206,6 @@ foreach($actions as $action){
 					<input type="text" name="dose_frequency" id="edit_dose_frequency" class="input-xlarge" size="30">
 				</td>
 			</tr>
-			<tr><td><input type="submit" value="Save" class="btn btn-primary"/></td><td></td></tr>
 		</table>
 		<div class="modal-footer">
 		   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>

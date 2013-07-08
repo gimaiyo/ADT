@@ -63,7 +63,7 @@ class Regimen_Drug_Management extends MY_Controller {
 		$query = $this -> db -> query("UPDATE regimen_drug SET active='0'WHERE drugcode='$regimen_drug_id'");
 		$results = Drugcode::getDrugCode($regimen_drug_id);
 		//$this -> session -> set_userdata('message_counter', '2');
-		$this -> session -> set_userdata('msg_success', $results -> Drug . ' was disabled');
+		$this -> session -> set_userdata('msg_error', $results -> Drug . ' was disabled');
 		redirect('settings_management');
 	}
 

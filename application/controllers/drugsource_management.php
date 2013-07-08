@@ -5,6 +5,8 @@ if (!defined('BASEPATH'))
 class Drugsource_Management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
+		$this->session->set_userdata("link_id","index");
+		$this->session->set_userdata("linkSub","drugsource_management");
 		
 	}
 
@@ -20,13 +22,21 @@ class Drugsource_Management extends MY_Controller {
 		$this -> table -> set_heading('Id', 'Name','Options');
 
 		foreach ($sources as $source) {
+			$array_param=array(
+				'id'=>$source->id,
+				'role'=>'button',
+				'class'=>'edit_user',
+				'data-toggle'=>'modal',
+				'name'=>$source->Name
+			);
 			$links="";
 			if($source->Active==1){
-				$links = anchor('drugsource_management/edit/' .$source->id, 'Edit',array('class' => 'edit_user','id'=>$source->id,'name'=>$source->Name));
-				$links.=" | ";
+				//$links = anchor('drugsource_management/edit/' .$source->id, 'Edit',array('class' => 'edit_user','id'=>$source->id,'name'=>$source->Name));
+				$links .= anchor('#edit_form', 'Edit', $array_param);
+				
 			}
 			if($access_level=="system_administrator"){
-				
+				$links.=" | ";
 				if($source->Active==1){
 				$links .= anchor('drugsource_management/disable/' .$source->id, 'Disable',array('class' => 'disable_user'));	
 				}else{
@@ -55,8 +65,8 @@ class Drugsource_Management extends MY_Controller {
 		$source -> save();
 		
 		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$this -> input -> post('source_name').' was Added');
-		redirect('drugsource_management');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('source_name').' was Added');
+		redirect('settings_management');
 	}
 
 	public function edit($source_id) {
@@ -75,27 +85,27 @@ class Drugsource_Management extends MY_Controller {
 
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE drug_source SET Name='$source_name' WHERE id='$source_id'");
-		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$this -> input -> post('source_name').' was Updated');
-		redirect('drugsource_management');
+		//$this -> session -> set_userdata('message_counter','1');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('source_name').' was Updated');
+		redirect('settings_management');
 	}
 
 	public function enable($source_id) {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE drug_source SET Active='1'WHERE id='$source_id'");
 		$results=Drug_Source::getSource($source_id);
-		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$results->Name.' was enabled');
-		redirect('drugsource_management');
+		//$this -> session -> set_userdata('message_counter','1');
+		$this -> session -> set_userdata('msg_success',$results->Name.' was enabled');
+		redirect('settings_management');
 	}
 
 	public function disable($source_id) {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE drug_source SET Active='0'WHERE id='$source_id'");
 		$results=Drug_Source::getSource($source_id);
-		$this -> session -> set_userdata('message_counter','2');
-		$this -> session -> set_userdata('message',$results->Name.' was disabled');
-		redirect('drugsource_management');
+		//$this -> session -> set_userdata('message_counter','2');
+		$this -> session -> set_userdata('msg_error',$results->Name.' was disabled');
+		redirect('settings_management');
 	}
 
 	public function base_params($data) {
