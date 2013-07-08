@@ -11,6 +11,7 @@
 					<option class="annual_report" value="graph_patients_enrolled_in_year">Graph of Number of Patients Enrolled Per Month in a Given Year</option>
 					<option class="single_date_report" value="cumulative_patients">Cumulative Number of Patients to Date</option>
 					<option class="single_date_report" value="patient_active_byregimen">Number of Active Patients Receiving ART (by Regimen)</option>
+					<option class="date_range_report" value="getFamilyPlanning">Family Planning Summary</option>
 				</select>
 			</td>
 		</tr>
