@@ -2575,17 +2575,47 @@ class report_management extends MY_Controller {
 	public function patients_disclosure($start_date = "", $end_date = "") {
 		$data['from'] = $start_date;
 		$data['to'] = $end_date;
+		$heading = "Patient Disclosure Between $start_date and $end_date";
 		$start_date = date('Y-m-d', strtotime($start_date));
 		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
-		//$sql = "select * from patient where date_enrolled between '$start_date' and '$end_date'";
-		$sql="SELECT gender, disclosure, count( * ) AS total FROM `patient` WHERE partner_status = '2' AND gender != '' AND disclosure != '2' GROUP BY gender,disclosure";
+		$sql = "SELECT gender, disclosure, count( * ) AS total FROM `patient` where date_enrolled between '$start_date' and '$end_date' and partner_status = '2' AND gender != '' AND disclosure != '2' GROUP BY gender, disclosure";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
+		$strXML=array();
 		if ($results) {
+			//$strXML = "<chart caption='$heading'  pieSliceDepth='30' showBorder='0' formatNumberScale='0' showValues='1' showPercentageInLabel='1'  showPercentageValues='1' >";
 			foreach ($results as $result) {
-                 echo "Help";
+				if ($result['gender'] == '1' && $result['disclosure'] == 0) {
+					//$strXML .= "<set label='Male Disclosure(NO)' value='" . $result['total'] . "' />";
+					$strXML['Male Disclosure(NO)']=$result['total'];
+				} else if ($result['gender'] == '1' && $result['disclosure'] == 1) {
+					//$strXML .= "<set label='Male Disclosure(YES)' value='" . $result['total'] . "' />";
+					$strXML['Male Disclosure(YES)']=$result['total'];
+				} else if ($result['gender'] == '2' && $result['disclosure'] == 0) {
+					$strXML['Female Disclosure(NO)']=$result['total'];
+					//$strXML .= "<set label='Female Disclosure(NO)' value='" . $result['total'] . "' />";
+				} else if ($result['gender'] == '2' && $result['disclosure'] == 1) {
+					$strXML['Female Disclosure(YES)']=$result['total'];
+					//$strXML .= "<set label='Female Disclosure(YES)' value='" . $result['total'] . "' />";
+				}
+
 			}
+			echo json_encode($strXML);
+			/*
+			header('Content-type: text/xml');
+			$strXML .= "</chart>";
+			$data['dyn_table'] = $strXML;
+			$data['title'] = "webADT | Reports";
+			$data['hide_side_menu'] = 1;
+			$data['banner_text'] = "Facility Reports";
+			$data['selected_report_type_link'] = "visiting_patient_report_row";
+			$data['selected_report_type'] = "Patient Disclosure";
+			$data['report_title'] = "Patient Disclosure";
+			$data['facility_name'] = $this -> session -> userdata('facility_name');
+			$data['content_view'] = 'reports/patient_disclosure_v';
+			$this -> load -> view('template', $data);
+			 */
 		}
 	}
 
