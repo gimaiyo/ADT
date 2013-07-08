@@ -2578,7 +2578,7 @@ class report_management extends MY_Controller {
 		$start_date = date('Y-m-d', strtotime($start_date));
 		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
-		$sql="";
+		$sql="select * from patient where date_enrolled between '$start_date' and '$end_date'";
 	}
 
 	public function base_params($data) {
