@@ -257,7 +257,6 @@ foreach($actions as $action){
 	</div>
 </div>
 
-<div class="center-content">
 	<button class="btn btn-large" type="button" id="new_user"><i class="icon-plus icon-black"></i>New User</button>
 	<div class="container-fluid">
 		
@@ -266,7 +265,7 @@ foreach($actions as $action){
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
 
-	    <div class=" span-fixed-sidebar">
+	    <div class=" span12 span-fixed-sidebar">
 	      	<div class="hero-unit">
 	      		
 	      		<div class="passmessage"></div>

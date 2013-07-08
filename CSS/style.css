@@ -743,8 +743,12 @@ ul li.last {
 }
 .dataTables_wrapper {
 	/*width: 80%;*/
+	
 	margin: 0 auto;
 	position: static;
+}
+table .dataTables{
+	font-size:15px;
 }
 .dataTables_scroll, .dataTables_scrollHead, .DataTables_sort_wrapper {
 	position: static;

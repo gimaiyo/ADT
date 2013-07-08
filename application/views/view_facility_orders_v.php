@@ -2,6 +2,9 @@
 	.dataTables_wrapper{
 		width: 100%;
 	}
+	#DataTables_Table_0{
+		font-size:15px;
+	}
 </style>
 <script type="text/javascript">
 		var url = "";
@@ -102,7 +105,7 @@
 					<?php
 					}else{
 					?>
-					Days pending <span style="<?php if($days_pending=="Approval"){ ?> color:rgb(255, 167, 11);  <?php } elseif ($days_pending=="Dispatched") { ?> color:green; <?php } elseif ($days_pending=="Resubmission") { ?> color:red; <?php } elseif ($days_pending=="Delivery") { ?> color:rgb(1, 167, 146); <?php } ?>">(<?php echo $days_pending ?>)</span></th>	
+					Days pending <p style="<?php if($days_pending=="Approval"){ ?> color:rgb(255, 167, 11);  <?php } elseif ($days_pending=="Dispatched") { ?> color:green; <?php } elseif ($days_pending=="Resubmission") { ?> color:red; <?php } elseif ($days_pending=="Delivery") { ?> color:rgb(1, 167, 146); <?php } ?>">(<?php echo $days_pending ?>)</p></th>	
 					<?php } 
 				} ?>
 				
@@ -130,12 +133,12 @@
 				<td><?php echo date('d-M-Y',strtotime($period_begin));?></td>
 				<td><?php echo date('d-M-Y',strtotime($period_end));?></td>
 				<td align="center"><?php echo $numberDays; ?> Day (s)</td>
-				<td style="text-align: center"><div class='btn-group'><button class="btn"><a href="<?php echo base_url()."order_management/view_order/".$order->id;?>" >View</a></button>
+				<td style="text-align: center"><a href="<?php echo base_url()."order_management/view_order/".$order->id;?>" >View</a>
 					<?php if(($quick_link != 1 && $quick_link != 3) ||$quick_link == 2 ){?>
-					 <button class="btn"><a href="<?php echo base_url()."order_management/edit_order/".$order->id;?>">Edit</a></button>
+					 <a href="<?php echo base_url()."order_management/edit_order/".$order->id;?>">Edit</a>
 					<?php }?>
 					<?php if($quick_link == 0){?>
-					 <button class="btn btn-danger"><a order="<?php echo $order->id;?>" class="delete">Delete</a></button></div></td>
+					 <a order="<?php echo $order->id;?>" class="delete">Delete</a></div></td>
 					<?php }?>
 					
 			</tr>

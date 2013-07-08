@@ -128,7 +128,7 @@
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
 
-	    <div class="span10 span-fixed-sidebar">
+	    <div class="span12 span-fixed-sidebar">
 	      	<div class="hero-unit">
 				<div class="passmessage"></div>
 			    <div class="errormessage"></div>

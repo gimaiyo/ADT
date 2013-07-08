@@ -205,7 +205,7 @@
 					</ul>
 				</li>
 				<li class="dropdown">
-					<a class="dropdown-toggle" role="button" data-toggle="dropdown" id="dLabel" href="#">Download<b class="caret"></b></a>
+					<a class="dropdown-toggle" role="button" data-toggle="dropdown" id="dLabel" href="#">Others<b class="caret"></b></a>
 					<ul class="dropdown-menu setting_menus" role="menu" aria-labelledby="dLabel">
 						<li>
 							<a href="#" class="client_management">Client Sources</a>
