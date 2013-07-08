@@ -2717,6 +2717,32 @@ class report_management extends MY_Controller {
 		$start_date = date('Y-m-d', strtotime($start_date));
 		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
+		$sql = "select * from opportunistic_infection";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$total = 0;
+		if ($results) {
+			foreach ($results as $result) {
+				$indication = $result['indication'];
+				$indication_name = $result['name'];
+				$sql = "select ROUND(DATEDIFF(curdate(),p.dob)/360) as age,gender from patient_visit pv left join patient p on p.patient_number_ccc=pv.patient_id where pv.dispensing_date between '$start_date' and '$end_date' and pv.indication='$indication' and facility='$facility_code' group by pv.patient_id,pv.pv.indication";
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				if ($results) {
+					foreach ($results as $result) {
+						if ($result['age'] >= 15) {
+							if ($result['gender'] == 2) {
+
+							} else if ($result['gender'] == 2) {
+
+							} else if ($result['age'] < 15) {
+
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public function base_params($data) {
