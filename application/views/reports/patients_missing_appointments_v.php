@@ -1,36 +1,3 @@
-		<style>
-			
-			select.flt {
-				font-size: 14px;
-			}
-			h5 {
-				margin: 10px;
-			}
-			hr{
-				margin:0 auto;
-				
-			}
-			
-			.report_title {
-				color:rgb(34, 86, 253);
-				letter-spacing: 1px;
-			}
-			h2{
-				margin:0.5em;
-			}
-			h4{
-				font-size:18px;
-			}
-			
-			.odd {
-				background-color: rgb(226, 232, 255);
-			}
-			
-			 select.pgSlc{
-				height:30px;
-				width:60px;
-			}
-		</style>
 <div id="wrapperd">
 			
 	<div id="patient_enrolled_content" class="center-content">

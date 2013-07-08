@@ -1,26 +1,3 @@
-<style>
-	
-	#patient_listing td th {
-		padding: 10px;
-	}
-	#patient_listing td {
-		padding: 0.25em;
-	}
-	select.flt {
-		font-size: 14px;
-	}
-	h5 {
-		margin: 10px;
-	}
-	.report_title {
-		color: rgb(34, 86, 253);
-		letter-spacing: 1px;
-	}
-	h2 {
-		margin: 0.5em;
-	}
-	
-</style>
 <script type="text/javascript">
 	$(document).ready( function () {
 		

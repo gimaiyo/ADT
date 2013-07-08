@@ -200,13 +200,7 @@
 		chart.write("chartdiv");
 	});
 </script>
-<style>
-	#chartdiv {
-		width: 950px;
-		height: 450px;
-		margin: 0 auto;
-	}
-</style>
+
 <div id="wrapperd">
 	<div  class="center-content">
 		<?php $this->load->view("reports/reports_top_menus_v")
