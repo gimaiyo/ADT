@@ -1,0 +1,329 @@
+/**
+ * 	Reporting
+ */
+
+#patient_listing td {
+	text-align: justify;
+}
+
+.report_title {
+	color: rgb(34, 86, 253);
+	letter-spacing: 1px;
+}
+.tfoot {
+	background-color: #DDD;
+	font-weight: bold;
+	font-size: 16px;
+}
+table#patient_listing {
+	width: 80%;
+}
+#report_container {
+	padding: 1%;
+	height: 20%;
+	width: 100%;
+	background-color: rgb(243, 246, 247);
+}
+#top_reports {
+
+}
+#patient_listing {
+	margin: 0 auto;
+	font-size: 100%;
+	letter-spacing: 0.5px;
+	width: 80%;
+	border-collapse: collapse;
+}
+#patient_listing th {
+	background-color: #CFF;
+	text-transform: uppercase;
+	font-weight: bold;
+	font-size: 1.4em;
+}
+hr {
+	margin: 0 auto;
+}
+.dataTables_wrapper {
+	width: 80%;
+}
+table#patient_listing {
+	width: 100%;
+}
+table#patient_listing th {
+	font-size: 1em;
+}
+#percentage_patients, #percentage_retention, #percentage_lost_to_follow_up {
+	border: 1px solid #000;
+	border-collapse: collapse;
+}
+#percentage_patients {
+	margin: 0 auto;
+	font-size: 14px;
+}
+
+#percentage_retention {
+	margin: 0 auto;
+	font-size: 14px;
+}
+
+#percentage_lost_to_follow_up {
+	margin: 0 auto;
+	font-size: 14px;
+}
+
+.report_title {
+	color: rgb(34, 86, 253);
+	letter-spacing: 1px;
+}
+h3 {
+	text-align: center;
+	color: #0000FF;
+}
+#percentage_patients td, #retention_percentage td, #lost_to_follow_up_percentage td {
+	border: 1px solid #000;
+	padding: 4px;
+	font-weight: 800;
+}
+th {
+	background-color: #CCCCFF;
+	border: 1px solid #000;
+}
+.patient_percentage, .retention_percentage, .lost_to_follow_up_percentage {
+	width: 1050px;
+	font-size: 14px;
+	height: 160px;
+	border: 1px solid #000;
+	margin: 0 auto;
+}
+.patient_percentage {
+	border-radius: 5px 5px 0px 0px;
+}
+
+.lost_to_follow_up_percentage {
+	border-radius: 0px 0px 5px 5px;
+}
+.report_title {
+	font-size: 14px;
+}
+#date_range_report table td, #single_date table td, #donor_date_range_report table td, #year table td {
+	border: none;
+}
+
+#chartdiv {
+	width: 950px;
+	height: 450px;
+	margin: 0 auto;
+}
+#adult_enrollments {
+	border-bottom: 1px solid #000;
+}
+#child_enrollments {
+	margin-top: 30px;
+	border: 1px solid #FFF;
+}
+#patient_listing td th {
+	padding: 10px;
+}
+table#top_enrollments_panel {
+	width: 80%;
+	border-collapse: collapse;
+}
+.subcategory_title, .category_title {
+	margin-left: 0.2em;
+	text-align: center;
+	font-weight: bold;
+	height: 30px;
+}
+tr, td, table {
+	padding-left: 0 auto;
+	padding-right: 0 auto;
+}
+th {
+	background-color: rgb(192, 192, 192);
+}
+.category_title {
+	font-size: 16px;
+	background-color: #CCF;
+	border: 1px solid;
+	border-color: black;
+}
+.subcategory_title, .subcategory_title td {
+	font-size: 14px;
+	border-left: 1px solid;
+	border-right: 1px solid;
+}
+h4 {
+
+}
+.report_title {
+	color: rgb(34, 86, 253);
+	letter-spacing: 1px;
+}
+.male {
+
+}
+.female {
+	border-left: none;
+}
+#overall_adult_female_total, #overall_adult_male_total, #overall_child_female_total, #overall_child_male_total {
+	font-weight: bold;
+	color: rgb(45, 173, 13);
+}
+
+#patient_listing td {
+	text-align: justify;
+}
+#start_date, #end_date {
+	color: rgb(45, 173, 13);
+}
+.report_title {
+	color: rgb(34, 86, 253);
+	letter-spacing: 1px;
+}
+.tfoot {
+	background-color: #DDD;
+	font-weight: bold;
+	font-size: 16px;
+}
+hr {
+	margin: 0 auto;
+	margin-bottom: 10px;
+}
+table#patient_listing {
+	width: 80%;
+}
+
+#date_of_appointment {
+	color: rgb(45, 173, 13);
+	font-size: 14px;
+	border: none;
+	font-weight: 800;
+	width: 140px;
+	padding-bottom: 0px;
+	height: 25px;
+}
+#date_of_appointment:hover {
+	cursor: pointer;
+}
+
+select.flt {
+	font-size: 14px;
+}
+h5 {
+	margin: 10px;
+}
+.report_title {
+	color: rgb(34, 86, 253);
+	letter-spacing: 1px;
+}
+h4 {
+	font-size: 18px;
+}
+.odd {
+	background-color: rgb(226, 232, 255);
+}
+select.pgSlc {
+	height: 30px;
+}
+
+select.flt {
+	font-size: 14px;
+}
+h5 {
+	margin: 10px;
+}
+hr {
+	margin: 0 auto;
+}
+
+.report_title {
+	color: rgb(34, 86, 253);
+	letter-spacing: 1px;
+}
+h2 {
+	margin: 0.5em;
+}
+h4 {
+	font-size: 18px;
+}
+
+.odd {
+	background-color: rgb(226, 232, 255);
+}
+
+select.pgSlc {
+	height: 30px;
+	width: 60px;
+}
+#patient_listing td th {
+	padding: 10px;
+}
+#patient_listing td {
+	padding: 0.25em;
+}
+select.flt {
+	font-size: 14px;
+}
+h5 {
+	margin: 10px;
+}
+.report_title {
+	color: rgb(34, 86, 253);
+	letter-spacing: 1px;
+}
+h2 {
+	margin: 0.5em;
+}
+#patient_listing {
+	margin: 0 auto;
+	font-size: 14px;
+	letter-spacing: 0.5px;
+	width: 1200px;
+	border-collapse: collapse;
+}
+
+#patient_listing td {
+	text-align: justify;
+}
+
+.report_title {
+	color: rgb(34, 86, 253);
+	letter-spacing: 1px;
+}
+.tfoot {
+	background-color: #DDD;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+#patient_listing td th {
+	padding: 10px;
+}
+#patient_listing td {
+	padding: 0.25em;
+	text-align: left;
+}
+select.flt {
+	font-size: 14px;
+}
+h5 {
+	margin: 10px;
+}
+
+.report_title {
+	color: rgb(34, 86, 253);
+	letter-spacing: 1px;
+}
+h2 {
+	margin: 0.5em;
+}
+h4 {
+	font-size: 18px;
+}
+.odd {
+	background-color: rgb(226, 232, 255);
+}
+select.pgSlc {
+	height: 30px;
+	width: 60px;
+}
