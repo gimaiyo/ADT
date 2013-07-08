@@ -188,11 +188,11 @@ foreach($actions as $action){
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
 
-	    <div class="span9 span-fixed-sidebar">
+	    <div class="span12 span-fixed-sidebar">
 	      	<div class="hero-unit">
 				<div class="passmessage"></div>
 			    <div class="errormessage"></div>
-				<?php echo validation_errors('<p class="error">', '</p>');?>
+				<?php echo validation_errors('<p class="message error">', '</p>');?>
 				<?php echo $indications; ?>
 				<a href="#indication_form" role="button" id="new_indication" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Indication</a>
 			</div>

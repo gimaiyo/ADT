@@ -1,4 +1,3 @@
-
 <?php
 /**
  * Using Session Data
@@ -9,24 +8,24 @@ if (!$this -> session -> userdata('user_id')) {
 if (!isset($link)) {
 	$link = null;
 }
-$actual_page=$this->uri->segment(1);
+$actual_page = $this -> uri -> segment(1);
 
-if($this->uri->segment(2)){
-	$actual_page.="/".$this->uri->segment(2);
+if ($this -> uri -> segment(2)) {
+	$actual_page .= "/" . $this -> uri -> segment(2);
 }
-if($this->uri->segment(3)){
-	$actual_page.="/".$this->uri->segment(3);
+if ($this -> uri -> segment(3)) {
+	$actual_page .= "/" . $this -> uri -> segment(3);
 }
-if($this->uri->segment(4)){
-	$actual_page.="/".$this->uri->segment(4);
+if ($this -> uri -> segment(4)) {
+	$actual_page .= "/" . $this -> uri -> segment(4);
 }
-if($this->uri->segment(5)){
-	$actual_page.="/".$this->uri->segment(5);
-}		
-if($this->uri->segment(6)){
-	$actual_page.="/".$this->uri->segment(6);
+if ($this -> uri -> segment(5)) {
+	$actual_page .= "/" . $this -> uri -> segment(5);
 }
-$this->input->set_cookie("actual_page",$actual_page,3600);
+if ($this -> uri -> segment(6)) {
+	$actual_page .= "/" . $this -> uri -> segment(6);
+}
+$this -> input -> set_cookie("actual_page", $actual_page, 3600);
 //setcookie("actual_page",$actual_page,3600);
 
 $access_level = $this -> session -> userdata('user_indicator');
@@ -52,7 +51,7 @@ if ($access_level == "system_administrator") {
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title><?php echo $title;?></title>
+<title><?php echo $title; ?></title>
 <link rel="SHORTCUT ICON" href="<?php echo base_url().'Images/favicon.ico'?>">
 
 
@@ -88,45 +87,53 @@ if (isset($styles)) {
 ?> 
 
 <script>
-$(document).ready(function() {<?php 
-	if($user_is_pharmacist){
-		?>
-		$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>	');
-		$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
 
-		<?php
-		}
 
-		if($user_is_facility_administrator){
-		?>
-		$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
-			$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
 
-		<?php
+						$(document).ready(function() {<?php 
+			if($user_is_pharmacist){
+				?>
+				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>
+					');
+					$('#notification2').load('
+<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>
+					');
 
-		}
-		?>});
-</script>
- <script>
-	$(document).ready(function(){
-		$(".error").css("display","block");
-	})
-</script>
-     
+				<?php
+				}
+
+				if($user_is_facility_administrator){
+				?>
+				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>
+					');
+					$('#notification2').load('
+<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>
+					');
+
+				<?php
+
+				}
+				?>});</script>
+				 <script>
+					$(document).ready(function(){
+						$(".error").css("display","block");
+					})
+				</script>
+      
 <style>
-	.setting_table{
-		font-size:0.8em;
+	.setting_table {
+		font-size: 0.8em;
 	}
 </style>
 </head>
 
 <body>
-<div id="wrapper">
+
 
 	<div id="top-panel" style="margin:0px;">
 
 		<div class="logo">
-			<a class="logo" href="<?php echo base_url();?>" ></a> 
+			<a class="logo" href="<?php echo base_url(); ?>" ></a> 
 </div>
 
 
@@ -139,7 +146,7 @@ $(document).ready(function() {<?php
 					</div>
 						
 				</div>
-				<div class="banner_text"><?php echo $banner_text;?></div>
+				<div class="banner_text"><?php echo $banner_text; ?></div>
 				
  <div id="top_menu"> 
 
@@ -151,24 +158,24 @@ $(document).ready(function() {<?php
 	$counter = 0;
 	if($menus){
 ?>
- 	<a href="<?php  echo site_url('home_controller');?>" class="top_menu_link  first_link <?php
+ 	<a href="<?php  echo site_url('home_controller'); ?>" class="top_menu_link  first_link <?php
 	if ($current == "home_controller") {echo " top_menu_active ";
 	}
-?>">Home </a><?php }?>
+?>">Home </a><?php } ?>
 <?php
 if($menus){
 foreach($menus as $menu){?>
-	<a href = "<?php echo site_url($menu['url']);?>" class="top_menu_link <?php
+	<a href = "<?php echo site_url($menu['url']); ?>" class="top_menu_link <?php
 	if ($current == $menu['url'] || $menu['url'] == $link) {echo " top_menu_active ";
 	}
 ?>"><?php echo $menu['text']; if($menu['offline'] == "1"){?>
 	 <!-- Offline -->
 	 <span class=" red_"></span></a>
 	
-<?php } else{?>
+<?php } else{ ?>
 	<!-- Online -->
 	 <span class=" green_"></span></a>
-<?php }?>
+<?php } ?>
 
 
 
@@ -186,11 +193,11 @@ if($menus){
 	</ul>
 </div>
 <div class="welcome_msg">
-	<span>Welcome <b style="font-weight: bolder;font-size: 20px;"><?php echo $this -> session -> userdata('full_name');?></b>. <a href="<?php echo base_url().'user_management/logout' ?>">Logout</a></span>
+	<span>Welcome <b style="font-weight: bolder;font-size: 20px;"><?php echo $this -> session -> userdata('full_name'); ?></b>. <a href="<?php echo base_url().'user_management/logout' ?>">Logout</a></span>
 	<br>
 	<span class="date"><?php echo date('l, jS \of F Y') ?></span>
 </div>
-<?php }?>
+<?php } ?>
  </div>
 
 </div>
@@ -207,22 +214,19 @@ if(isset($reports)|| isset($report_title)){
 	?>
 
 
-<div id="main_wrapper"> 
-
-
 	<?php
 	if($this->session->userdata("message_user_update_success")){
 		?>
 		<script type="text/javascript">
-			setTimeout(function(){
+			setTimeout(function() {
 				$("#msg_user_update").fadeOut("2000");
-			},6000)
+			}, 6000)
 		</script>
-		<div id="msg_user_update"><?php  echo $this->session->userdata("message_user_update_success"); ?></div>
+		<div id="msg_user_update"><?php  echo $this -> session -> userdata("message_user_update_success"); ?></div>
 		<?php
-		$this->session->unset_userdata('message_user_update_success');
-	}
-	if(!isset($hide_side_menu)){
+		$this -> session -> unset_userdata('message_user_update_success');
+		}
+		if(!isset($hide_side_menu)){
 	?>
 	<div class="left-content" style="float: left">
 
@@ -275,15 +279,11 @@ if(isset($reports)|| isset($report_title)){
 	</div>
 	<?php
 	}
-	
-    $this -> load -> view($content_view);?>
- 
-    <div id="bottom_ribbon">
 
-        <div id="footer">
- <?php $this -> load -> view("footer_v");?>
-    </div>
-    </div>
+	$this -> load -> view($content_view);
+?>
+ 
+    
     <!-- Modal edit user profile-->
     <div id="edit_user_profile" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <form action="<?php echo base_url().'user_management/profile_update' ?>" method="post">
@@ -370,8 +370,8 @@ if(isset($reports)|| isset($report_title)){
 	  </div>
 	  </form>
 	</div>
-	
 	<!-- Modal edit change password end-->
     
 </body>
+
 </html>

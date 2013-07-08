@@ -2471,6 +2471,154 @@ class report_management extends MY_Controller {
 		$this -> load -> view('template', $data);
 	}
 
+	public function getFacilityConsumption($start_date = "", $end_date = "") {
+		$data['from'] = $start_date;
+		$data['to'] = $end_date;
+		$start_date = date('Y-m-d', strtotime($start_date));
+		$end_date = date('Y-m-d', strtotime($end_date));
+		$facility_code = $this -> session -> userdata('facility');
+		$consumption_totals = array();
+		$row_string = "";
+		$drug_total = 0;
+		$total = 0;
+		$overall_pharmacy_drug_qty = 0;
+		$overall_store_drug_qty = 0;
+		$pharmacy_drug_qty_percentage = "";
+		$store_drug_qty_percentage = "";
+		$drug_total_percentage = "";
+
+		//Select total consumption at facility
+		$sql = "select sum(quantity_out) as total from drug_stock_movement where transaction_date between '$start_date' and '$end_date' and facility='$facility_code' ";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			$total = $results[0]['total'];
+		}
+
+		//Select total consumption at facility per drug
+		$sql = "select dsm.drug,d.drug as Name,d.pack_size,du.Name as unit,sum(dsm.quantity_out) as qty from drug_stock_movement dsm left join drugcode d on dsm.drug=d.id left join drug_unit du on d.unit=du.id where dsm.transaction_date between '$start_date' and '$end_date' and dsm.facility='$facility_code' group by dsm.drug";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			$row_string .= "<table id='patient_listing' border='1' cellpadding='5'>
+			<tr>
+				<th >Drug</th>
+				<th >Unit</th>
+				<th >PackSize</th>
+				<th >Total(units)</th>
+				<th >%</th>
+				<th >Pharmacy(units)</th>
+				<th >%</th>
+				<th > Store(units)</th>
+				<th >%</th>
+			</tr>
+			";
+			foreach ($results as $result) {
+				$consumption_totals[$result['drug']] = $result['qty'];
+				$current_drug = $result['drug'];
+				$current_drugname = $result['Name'];
+				$unit = $result['unit'];
+				$pack_size = $result['pack_size'];
+				$drug_total = $result['qty'];
+				$drug_total_percentage = number_format(($drug_total / $total) * 100, 1);
+				$row_string .= "<tr><td><b>$current_drugname</b></td><td><b>$unit</b></td><td><b>$pack_size</b></td><td>" . number_format($drug_total) . "</td><td>$drug_total_percentage</td>";
+				//Select consumption at pharmacy
+				$sql = "select drug,sum(quantity_out) as qty from drug_stock_movement where transaction_date between '$start_date' and '$end_date' and facility='$facility_code' and source='$facility_code' and source=destination and drug='$current_drug' group by drug";
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				if ($results) {
+					foreach ($results as $result) {
+						$total_pharmacy_drug_qty = $result['qty'];
+						$overall_pharmacy_drug_qty += $total_pharmacy_drug_qty;
+						@$pharmacy_drug_qty_percentage = number_format((@$total_pharmacy_drug_qty / @$drug_total) * 100, 1);
+						if ($result['drug'] != null) {
+							$row_string .= "<td>" . number_format($total_pharmacy_drug_qty) . "</td><td>$pharmacy_drug_qty_percentage</td>";
+						}
+					}
+				} else {
+					$row_string .= "<td>-</td><td>-</td>";
+				}
+				//Select Consumption at store
+				$sql = "select drug,sum(quantity_out) as qty from drug_stock_movement where transaction_date between '$start_date' and '$end_date' and facility='$facility_code' and destination='$facility_code' and source !=destination and drug='$current_drug' group by drug";
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				if ($results) {
+					foreach ($results as $result) {
+						$total_store_drug_qty = $result['qty'];
+						$overall_store_drug_qty += $total_drug_qty;
+						$store_drug_qty_percentage = number_format(($total_store_drug_qty / $drug_total) * 100, 1);
+						if ($result['drug'] != null) {
+							$row_string .= "<td>$total_store_drug_qty</td><td>$store_drug_qty_percentage</td>";
+						}
+					}
+				} else {
+					$row_string .= "<td>-</td><td>-</td>";
+				}
+				$row_string .= "</tr>";
+			}
+			$row_string .= "<tr class='tfoot'><td colspan='3'><b>Totals(units):</b></td><td><b>" . number_format($total) . "</b></td><td><b>100</b></td><td><b>" . number_format($overall_pharmacy_drug_qty) . "</b></td><td><b>" . number_format(($overall_pharmacy_drug_qty / $total) * 100, 1) . "</b></td><td><b>" . number_format($overall_store_drug_qty) . "</b></td><td><b>" . number_format(($overall_store_drug_qty / $total) * 100, 1) . "</b></td></tr>";
+			$row_string .= "</table>";
+		}
+		$data['dyn_table'] = $row_string;
+		$data['title'] = "webADT | Reports";
+		$data['hide_side_menu'] = 1;
+		$data['banner_text'] = "Facility Reports";
+		$data['selected_report_type_link'] = "drug_inventory_report_row";
+		$data['selected_report_type'] = "Stock Consumption";
+		$data['report_title'] = "Stock Consumption";
+		$data['facility_name'] = $this -> session -> userdata('facility_name');
+		$data['content_view'] = 'reports/stock_consumption_v';
+		$this -> load -> view('template', $data);
+
+	}
+
+	public function patients_disclosure($start_date = "", $end_date = "") {
+		$data['from'] = $start_date;
+		$data['to'] = $end_date;
+		$heading = "Patient Disclosure Between $start_date and $end_date";
+		$start_date = date('Y-m-d', strtotime($start_date));
+		$end_date = date('Y-m-d', strtotime($end_date));
+		$facility_code = $this -> session -> userdata('facility');
+		$sql = "SELECT gender, disclosure, count( * ) AS total FROM `patient` where date_enrolled between '$start_date' and '$end_date' and partner_status = '2' AND gender != '' AND disclosure != '2' GROUP BY gender, disclosure";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$strXML=array();
+		if ($results) {
+			//$strXML = "<chart caption='$heading'  pieSliceDepth='30' showBorder='0' formatNumberScale='0' showValues='1' showPercentageInLabel='1'  showPercentageValues='1' >";
+			foreach ($results as $result) {
+				if ($result['gender'] == '1' && $result['disclosure'] == 0) {
+					//$strXML .= "<set label='Male Disclosure(NO)' value='" . $result['total'] . "' />";
+					$strXML['Male Disclosure(NO)']=$result['total'];
+				} else if ($result['gender'] == '1' && $result['disclosure'] == 1) {
+					//$strXML .= "<set label='Male Disclosure(YES)' value='" . $result['total'] . "' />";
+					$strXML['Male Disclosure(YES)']=$result['total'];
+				} else if ($result['gender'] == '2' && $result['disclosure'] == 0) {
+					$strXML['Female Disclosure(NO)']=$result['total'];
+					//$strXML .= "<set label='Female Disclosure(NO)' value='" . $result['total'] . "' />";
+				} else if ($result['gender'] == '2' && $result['disclosure'] == 1) {
+					$strXML['Female Disclosure(YES)']=$result['total'];
+					//$strXML .= "<set label='Female Disclosure(YES)' value='" . $result['total'] . "' />";
+				}
+
+			}
+			echo json_encode($strXML);
+			/*
+			header('Content-type: text/xml');
+			$strXML .= "</chart>";
+			$data['dyn_table'] = $strXML;
+			$data['title'] = "webADT | Reports";
+			$data['hide_side_menu'] = 1;
+			$data['banner_text'] = "Facility Reports";
+			$data['selected_report_type_link'] = "visiting_patient_report_row";
+			$data['selected_report_type'] = "Patient Disclosure";
+			$data['report_title'] = "Patient Disclosure";
+			$data['facility_name'] = $this -> session -> userdata('facility_name');
+			$data['content_view'] = 'reports/patient_disclosure_v';
+			$this -> load -> view('template', $data);
+			 */
+		}
+	}
+
 	public function base_params($data) {
 		$data['reports'] = true;
 		$data['title'] = "webADT | Reports";

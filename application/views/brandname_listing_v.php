@@ -62,7 +62,7 @@
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
 
-	    <div class="span-fixed-sidebar">
+	    <div class="span12 span-fixed-sidebar">
 	      <div class="hero-unit">
     		<?php echo validation_errors('<p class="error">', '</p>');?>
 	      	<table class="setting_table" id="brand_name_table">
