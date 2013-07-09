@@ -69,3 +69,8 @@ if(isset($reports)|| isset($report_title)){
 <script type="text/javascript" src="<?php echo base_url().'Scripts/menus.js'?>"></script>
 <script type="text/javascript" src="<?php echo base_url().'Scripts/jquery.blockUI.js'?>"></script>
 <script src="<?php echo base_url().'Scripts/amcharts/amcharts.js'?>" type="text/javascript"></script>
+<!-- Highcharts -->
+<script type="text/javascript" src="<?php echo base_url().'Scripts/highcharts/highcharts.js'?>"></script>
+<script type="text/javascript" src="<?php echo base_url().'Scripts/highcharts/highcharts-more.js'?>"></script>
+<script type="text/javascript" src="<?php echo base_url().'Scripts/highcharts/modules/exporting.js'?>"></script>
+<script type="text/javascript" src="<?php echo base_url().'Scripts/highcharts/modules/canvas-tools.js'?>"></script>
