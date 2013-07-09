@@ -33,7 +33,9 @@
 				echo "<p class='message error'>Invalid Credentials. Please try again " . @$login_attempt . "</p>";
 			} else if (isset($inactive)) {
 				echo "<p class='message error'>The Account is not active. Seek help from the Administrator</p>";
-			} else if (isset($expired)) {
+			}  else if (isset($unactivated)) {
+				echo "<p class='message error'>Your Account Has Not Been Activated.<br/>Please Check your Email to Activate Account</p>";
+			}else if (isset($expired)) {
 				echo "<p class='message error'>" . @$login_attempt . "</p>";
 			}
 		?>
