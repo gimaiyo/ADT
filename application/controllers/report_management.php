@@ -2583,41 +2583,40 @@ class report_management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$strXML = array();
+		$strXML['Male Disclosure(NO)'] = 0;
+		$strXML['Male Disclosure(YES)'] = 0;
+		$strXML['Female Disclosure(NO)'] = 0;
+		$strXML['Female Disclosure(YES)'] = 0;
 		if ($results) {
-			//$strXML = "<chart caption='$heading'  pieSliceDepth='30' showBorder='0' formatNumberScale='0' showValues='1' showPercentageInLabel='1'  showPercentageValues='1' >";
 			foreach ($results as $result) {
 				if ($result['gender'] == '1' && $result['disclosure'] == 0) {
-					//$strXML .= "<set label='Male Disclosure(NO)' value='" . $result['total'] . "' />";
 					$strXML['Male Disclosure(NO)'] = (int)$result['total'];
 				} else if ($result['gender'] == '1' && $result['disclosure'] == 1) {
-					//$strXML .= "<set label='Male Disclosure(YES)' value='" . $result['total'] . "' />";
 					$strXML['Male Disclosure(YES)'] = (int)$result['total'];
 				} else if ($result['gender'] == '2' && $result['disclosure'] == 0) {
 					$strXML['Female Disclosure(NO)'] = (int)$result['total'];
-					//$strXML .= "<set label='Female Disclosure(NO)' value='" . $result['total'] . "' />";
 				} else if ($result['gender'] == '2' && $result['disclosure'] == 1) {
 					$strXML['Female Disclosure(YES)'] = (int)$result['total'];
-					//$strXML .= "<set label='Female Disclosure(YES)' value='" . $result['total'] . "' />";
 				}
 
 			}
-			$nameArray = array('Male Disclosure(NO)', 'Male Disclosure(YES)', 'Female Disclosure(NO)', 'Female Disclosure(YES)');
-			$dataArray = array($strXML['Male Disclosure(NO)'], $strXML['Male Disclosure(YES)'], $strXML['Female Disclosure(NO)'], $strXML['Female Disclosure(YES)']);
-			$dataCount=0;
-			$resultArray = array();
-			foreach($nameArray as $val){
-				$resultArray[]=array('name' => $val,'data' => array($dataArray[$dataCount]));
-				$dataCount++;
-			}
-			$resultArray= json_encode($resultArray);
-			$data['chartType']='bar';
-			$data['chartTitle']='Patients Disclosure';
-			$data['yAxix']='Patients';
-			$data['categories']=$nameArray;
-			$data['resultArray']=$resultArray;
-			$this->load->view('chart_v',$data);
-			
 		}
+		$nameArray = array('Male Disclosure(NO)', 'Male Disclosure(YES)', 'Female Disclosure(NO)', 'Female Disclosure(YES)');
+		$dataArray = array($strXML['Male Disclosure(NO)'], $strXML['Male Disclosure(YES)'], $strXML['Female Disclosure(NO)'], $strXML['Female Disclosure(YES)']);
+		$dataCount = 0;
+		$resultArray = array();
+		foreach ($nameArray as $val) {
+			$resultArray[] = array('name' => $val, 'data' => array($dataArray[$dataCount]));
+			$dataCount++;
+		}
+		$resultArray = json_encode($resultArray);
+		$data['chartType'] = 'bar';
+		$data['chartTitle'] = 'Patients Disclosure';
+		$data['yAxix'] = 'Patients';
+		$data['categories'] = $nameArray;
+		$data['resultArray'] = $resultArray;
+		$this -> load -> view('chart_v', $data);
+
 	}
 
 	public function getTBPatients($start_date = "", $end_date = "") {
@@ -2837,6 +2836,9 @@ class report_management extends MY_Controller {
 		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
 		$total = 0;
+		$total_male_tb = 0;
+		$total_female_tb = 0;
+		$total_children_tb = 0;
 		$sql = "SELECT other_illnesses, ROUND( DATEDIFF( curdate( ) , dob ) /360 ) AS age,gender FROM patient WHERE date_enrolled BETWEEN '$start_date' AND '$end_date' AND gender != '' AND facility_code = '$facility_code' AND other_illnesses != '' AND other_illnesses != 'null' AND gender !=''";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
@@ -2935,9 +2937,63 @@ class report_management extends MY_Controller {
 					}
 				}
 			}
-			print_r($values);
 		}
-        $sql="";
+		//Get TB Numbers
+		$sql = "select ROUND( DATEDIFF( curdate( ) , dob ) /360 ) AS age,gender from patient WHERE date_enrolled BETWEEN '$start_date' AND '$end_date' AND gender != '' AND facility_code = '$facility_code' AND tb='1' AND dob !='' AND gender !=''";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			foreach ($results as $result) {
+				if ($result['age'] >= 15) {
+					if ($result['gender'] == 1) {
+						$total_male_tb++;
+					} else if ($result['gender'] == 2) {
+						$total_female_tb++;
+					}
+				} else if ($result['age'] < 15) {
+					$total_children_tb++;
+				}
+			}
+		}
+		//Initialize tb
+		$values['TB']['male'] = $total_male_tb;
+		$values['TB']['female'] = $total_female_tb;
+		$values['TB']['child'] = $total_children_tb;
+		
+		$overall_male=0;
+		$overall_female=0;
+		$overall_child=0;
+
+		$dyn_table = "<table id='patient_listing' border='1' cellpadding='5'><tr><th>Chronic Diseases</th><th>Adult Male</th><th>Adult Female</th><th>Children</th></tr>";
+
+		foreach ($values as $value => $indices) {
+			$dyn_table .= "<tr><td>$value</td>";
+			foreach ($indices as $index=>$newval) {
+				if ($index=="male") {
+					$overall_male+=$newval;
+				}else if($index=="female") {
+					$overall_female+=$newval;
+				}else if($index=="child") {
+					$overall_child+=$newval;
+				}
+				
+				$val = number_format($newval);
+				$dyn_table .= "<td>$val</td>";
+			}
+			$dyn_table .= "</tr>";
+		}
+		$dyn_table .= "<tr class='tfoot'><td><b>TOTALS</b></td><td><b>".number_format($overall_male)."</b></td><td><b>".number_format($overall_female)."</b></td><td><b>".number_format($overall_child)."</b></td></tr>";
+		$dyn_table .= "</table>";
+		$data['dyn_table'] = $dyn_table;
+		$data['title'] = "webADT | Reports";
+		$data['hide_side_menu'] = 1;
+		$data['banner_text'] = "Facility Reports";
+		$data['selected_report_type_link'] = "standard_report_row";
+		$data['selected_report_type'] = "Standard Reports";
+		$data['report_title'] = "Chronic Illnesses Summary";
+		$data['facility_name'] = $this -> session -> userdata('facility_name');
+		$data['content_view'] = 'reports/chronic_v';
+		$this -> load -> view('template', $data);
 	}
 
 	public function base_params($data) {

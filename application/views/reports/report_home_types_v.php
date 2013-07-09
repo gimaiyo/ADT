@@ -14,6 +14,7 @@
 				<option class="date_range_report" value="getFamilyPlanning">Family Planning Summary</option>
 				<option class="date_range_report" value="getIndications">Patient Indications Summary</option>
 				<option class="date_range_report" value="getTBPatients">TB Stages Summary</option>
+				<option class="date_range_report" value="getChronic">Chronic Illnesses Summary</option>
 			</select></td>
 		</tr>
 		<!-- Visiting patients reports -->
