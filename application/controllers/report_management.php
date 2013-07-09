@@ -2625,36 +2625,90 @@ class report_management extends MY_Controller {
 		$start_date = date('Y-m-d', strtotime($start_date));
 		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
-		$adult_male = 0;
-		$child_male = 0;
-		$adult_female = 0;
-		$child_female = 0;
-		$sql = "select gender,ROUND(DATEDIFF(curdate(),dob)/360) as age from patient where date_enrolled between '$start_date' and '$end_date' and facility_code='$facility_code' and gender !='' and tb='1'";
+		$one_adult_male = 0;
+		$one_child_male = 0;
+		$one_adult_female = 0;
+		$one_child_female = 0;
+		$two_adult_male = 0;
+		$two_child_male = 0;
+		$two_adult_female = 0;
+		$two_child_female = 0;
+		$three_adult_male = 0;
+		$three_child_male = 0;
+		$three_adult_female = 0;
+		$three_child_female = 0;
+
+		$sql = "update patient set tbphase='0' where tbphase='un' or tbphase=''";
+		$query = $this -> db -> query($sql);
+		$sql = "select gender,ROUND(DATEDIFF(curdate(),dob)/360) as age,tbphase from patient where date_enrolled between '$start_date' and '$end_date' and facility_code='$facility_code' and gender !='' and tb='1' and tbphase !='0'";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$strXML = array();
 		if ($results) {
 			foreach ($results as $result) {
-				if ($result['gender'] == 1) {
-					if ($result['age'] >= 15) {
-						$adult_male++;
-					} else if ($result['age'] < 15) {
-						$child_male++;
+				if ($result['tbphase'] == 1) {
+					if ($result['gender'] == 1) {
+						if ($result['age'] >= 15) {
+							$one_adult_male++;
+						} else if ($result['age'] < 15) {
+							$one_child_male++;
+						}
+					} else if ($result['gender'] == 2) {
+						if ($result['age'] >= 15) {
+							$one_adult_female++;
+						} else if ($result['age'] < 15) {
+							$one_child_female++;
+						}
 					}
-				} else if ($result['gender'] == 2) {
-					if ($result['age'] >= 15) {
-						$adult_male++;
-					} else if ($result['age'] < 15) {
-						$child_female++;
+				} else if ($result['tbphase'] == 2) {
+					if ($result['gender'] == 1) {
+						if ($result['age'] >= 15) {
+							$two_adult_male++;
+						} else if ($result['age'] < 15) {
+							$two_child_male++;
+						}
+					} else if ($result['gender'] == 2) {
+						if ($result['age'] >= 15) {
+							$two_adult_female++;
+						} else if ($result['age'] < 15) {
+							$two_child_female++;
+						}
+					}
+				} else if ($result['tbphase'] == 3) {
+					if ($result['gender'] == 1) {
+						if ($result['age'] >= 15) {
+							$three_adult_male++;
+						} else if ($result['age'] < 15) {
+							$three_child_male++;
+						}
+					} else if ($result['gender'] == 2) {
+						if ($result['age'] >= 15) {
+							$three_adult_female++;
+						} else if ($result['age'] < 15) {
+							$three_child_female++;
+						}
 					}
 				}
 			}
-			$strXML['adult_male'] = $adult_male;
-			$strXML['child_male'] = $child_male;
-			$strXML['adult_female'] = $adult_female;
-			$strXML['child_female'] = $child_female;
-			echo json_encode($strXML);
 		}
+		$dyn_table = "<table id='patient_listing' border='1' cellpadding='5'>
+			<tr><th>Stages</th><th colspan='2'>Adults</th><th colspan='2'>Children</th></tr>
+			<tr><th>----</th><th>No. of Males(TB)</th><th>No. of Females(TB)</th><th>No. of Males(TB)</th><th>No. of Females(TB)</th></tr>";
+		$dyn_table .= "<tr><td>Intensive</td><td>" . number_format($one_adult_male) . "</td><td>" . number_format($one_adult_female) . "</td><td>" . number_format($one_child_male) . "</td><td>" . number_format($one_child_female) . "</td></tr>";
+		$dyn_table .= "<tr><td>Continuation</td><td>" . number_format($two_adult_male) . "</td><td>" . number_format($two_adult_female) . "</td><td>" . number_format($two_child_male) . "</td><td>" . number_format($two_child_female) . "</td></tr>";
+		$dyn_table .= "<tr><td>Completed</td><td>" . number_format($three_adult_male) . "</td><td>" . number_format($three_adult_female) . "</td><td>" . number_format($three_child_male) . "</td><td>" . number_format($three_child_female) . "</td></tr>";
+		$dyn_table .= "<tr class='tfoot'><td><b>TOTALS</b></td><td><b>" . number_format($one_adult_male + $two_adult_male + $three_adult_male) . "</b></td><td><b>" . number_format($one_adult_female + $two_adult_female + $three_adult_female) . "</b></td><td><b>" . number_format($one_child_male + $two_child_male + $three_child_male) . "</b></td><td><b>" . number_format($one_child_female + $two_child_female + $three_child_female) . "</b></td></tr>";
+		$dyn_table .= "</table>";
+		$data['dyn_table'] = $dyn_table;
+		$data['title'] = "webADT | Reports";
+		$data['hide_side_menu'] = 1;
+		$data['banner_text'] = "Facility Reports";
+		$data['selected_report_type_link'] = "standard_report_row";
+		$data['selected_report_type'] = "Standard Reports";
+		$data['report_title'] = "TB Stages Summary";
+		$data['facility_name'] = $this -> session -> userdata('facility_name');
+		$data['content_view'] = 'reports/tb_stages_v';
+		$this -> load -> view('template', $data);
 	}
 
 	public function getFamilyPlanning($start_date = "", $end_date = "") {
@@ -2750,9 +2804,9 @@ class report_management extends MY_Controller {
 					}
 
 				} else {
-                     $adult_male=0;
-                     $adult_female=0;
-                     $children=0;
+					$adult_male = 0;
+					$adult_female = 0;
+					$children = 0;
 				}
 				$overall_adult_male += $adult_male;
 				$overall_adult_female += $adult_female;
@@ -2773,6 +2827,116 @@ class report_management extends MY_Controller {
 		$data['facility_name'] = $this -> session -> userdata('facility_name');
 		$data['content_view'] = 'reports/patient_indication_v';
 		$this -> load -> view('template', $data);
+	}
+
+	public function getChronic($start_date = "", $end_date = "") {
+		$data['from'] = $start_date;
+		$data['to'] = $end_date;
+		$start_date = date('Y-m-d', strtotime($start_date));
+		$end_date = date('Y-m-d', strtotime($end_date));
+		$facility_code = $this -> session -> userdata('facility');
+		$total = 0;
+		$sql = "SELECT other_illnesses, ROUND( DATEDIFF( curdate( ) , dob ) /360 ) AS age,gender FROM patient WHERE date_enrolled BETWEEN '$start_date' AND '$end_date' AND gender != '' AND facility_code = '$facility_code' AND other_illnesses != '' AND other_illnesses != 'null' AND gender !=''";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			foreach ($results as $result) {
+				if (trim(strtoupper($result['other_illnesses'])) != '' && trim(strtoupper($result['other_illnesses'])) != 'NULL') {
+
+					if (strstr($result['other_illnesses'], ',', true)) {
+						$values = explode(",", $result['other_illnesses']);
+						foreach ($values as $value) {
+							$arr[] = trim(strtoupper($value));
+						}
+					} else {
+						$arr[] = trim(strtoupper($result['other_illnesses']));
+					}
+					if ($result['gender'] == 1) {//Check Male
+						if ($result['age'] >= 15) {//Check Adult
+							if (strstr(trim($result['other_illnesses']), ',', true)) {
+								$values = explode(",", $result['other_illnesses']);
+								foreach ($values as $value) {
+									$adult_male[] = trim(strtoupper($value));
+								}
+							} else {
+								$adult_male[] = trim(strtoupper($result['other_illnesses']));
+							}
+						} else if ($result['age'] < 15) {//Check Child
+							if (strstr(trim($result['other_illnesses']), ',', true)) {
+								$values = explode(",", $result['other_illnesses']);
+								foreach ($values as $value) {
+									$child[] = trim(strtoupper($value));
+								}
+							} else {
+								$child[] = trim(strtoupper($result['other_illnesses']));
+							}
+						}
+
+					} else if ($result['gender'] == 2) {//Check Female
+						if ($result['age'] >= 15) {//Check Adult
+							if (strstr(trim($result['other_illnesses']), ',', true)) {
+								$values = explode(",", $result['other_illnesses']);
+								foreach ($values as $value) {
+									$adult_female[] = trim(strtoupper($value));
+								}
+							} else {
+								$adult_female[] = trim(strtoupper($result['other_illnesses']));
+							}
+						} else if ($result['age'] < 15) {//Check Child
+							if (strstr(trim($result['other_illnesses']), ',', true)) {
+								$values = explode(",", $result['other_illnesses']);
+								foreach ($values as $value) {
+									$child[] = trim(strtoupper($value));
+								}
+							} else {
+								$child[] = trim(strtoupper($result['other_illnesses']));
+							}
+						}
+					}
+
+				}
+			}
+			$other_illnesses = array_count_values($arr);
+			$other_illnesses_male = array_count_values($adult_male);
+			$other_illnesses_female = array_count_values($adult_female);
+			$other_illnesses_child = array_count_values($child);
+			$values = array();
+
+			foreach ($other_illnesses as $other_illness => $index) {
+				if (array_key_exists($other_illness, $other_illnesses_male)) {
+					$values[$other_illness]['male'] = $index;
+				} else {
+					$values[$other_illness]['male'] = 0;
+				}
+				if (array_key_exists($other_illness, $other_illnesses_female)) {
+					$values[$other_illness]['female'] = $index;
+				} else {
+					$values[$other_illness]['female'] = 0;
+				}
+				if (array_key_exists($other_illness, $other_illnesses_child)) {
+					$values[$other_illness]['child'] = $index;
+				} else {
+					$values[$other_illness]['child'] = 0;
+				}
+				$total += $index;
+			}
+			foreach ($values as $value => $index) {
+				foreach ($index as $key => $val) {
+					$sql = "select * from other_illnesses where indicator='$value'";
+					$query = $this -> db -> query($sql);
+					$results = $query -> result_array();
+					if ($results) {
+						foreach ($results as $result) {
+							$answer = strtoupper($result['name']);
+						}
+						$values[$answer][$key] = $val;
+						unset($values[$value]);
+					}
+				}
+			}
+			print_r($values);
+		}
+        $sql="";
 	}
 
 	public function base_params($data) {
