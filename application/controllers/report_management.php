@@ -2588,34 +2588,35 @@ class report_management extends MY_Controller {
 			foreach ($results as $result) {
 				if ($result['gender'] == '1' && $result['disclosure'] == 0) {
 					//$strXML .= "<set label='Male Disclosure(NO)' value='" . $result['total'] . "' />";
-					$strXML['Male Disclosure(NO)'] = $result['total'];
+					$strXML['Male Disclosure(NO)'] = (int)$result['total'];
 				} else if ($result['gender'] == '1' && $result['disclosure'] == 1) {
 					//$strXML .= "<set label='Male Disclosure(YES)' value='" . $result['total'] . "' />";
-					$strXML['Male Disclosure(YES)'] = $result['total'];
+					$strXML['Male Disclosure(YES)'] = (int)$result['total'];
 				} else if ($result['gender'] == '2' && $result['disclosure'] == 0) {
-					$strXML['Female Disclosure(NO)'] = $result['total'];
+					$strXML['Female Disclosure(NO)'] = (int)$result['total'];
 					//$strXML .= "<set label='Female Disclosure(NO)' value='" . $result['total'] . "' />";
 				} else if ($result['gender'] == '2' && $result['disclosure'] == 1) {
-					$strXML['Female Disclosure(YES)'] = $result['total'];
+					$strXML['Female Disclosure(YES)'] = (int)$result['total'];
 					//$strXML .= "<set label='Female Disclosure(YES)' value='" . $result['total'] . "' />";
 				}
 
 			}
-			echo json_encode($strXML);
-			/*
-			 header('Content-type: text/xml');
-			 $strXML .= "</chart>";
-			 $data['dyn_table'] = $strXML;
-			 $data['title'] = "webADT | Reports";
-			 $data['hide_side_menu'] = 1;
-			 $data['banner_text'] = "Facility Reports";
-			 $data['selected_report_type_link'] = "visiting_patient_report_row";
-			 $data['selected_report_type'] = "Patient Disclosure";
-			 $data['report_title'] = "Patient Disclosure";
-			 $data['facility_name'] = $this -> session -> userdata('facility_name');
-			 $data['content_view'] = 'reports/patient_disclosure_v';
-			 $this -> load -> view('template', $data);
-			 */
+			$nameArray = array('Male Disclosure(NO)', 'Male Disclosure(YES)', 'Female Disclosure(NO)', 'Female Disclosure(YES)');
+			$dataArray = array($strXML['Male Disclosure(NO)'], $strXML['Male Disclosure(YES)'], $strXML['Female Disclosure(NO)'], $strXML['Female Disclosure(YES)']);
+			$dataCount=0;
+			$resultArray = array();
+			foreach($nameArray as $val){
+				$resultArray[]=array('name' => $val,'data' => array($dataArray[$dataCount]));
+				$dataCount++;
+			}
+			$resultArray= json_encode($resultArray);
+			$data['chartType']='bar';
+			$data['chartTitle']='Patients Disclosure';
+			$data['yAxix']='Patients';
+			$data['categories']=$nameArray;
+			$data['resultArray']=$resultArray;
+			$this->load->view('chart_v',$data);
+			
 		}
 	}
 
