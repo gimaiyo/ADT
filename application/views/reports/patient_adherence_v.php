@@ -626,22 +626,30 @@
 		//Missed dose total
 		$("#missed_total_100").text(missed_total_100);
 		$("#missed_2_total_100").text(missed_2_total_100);
+		$("#missed_2_gt25_100avg").text((missed_total_100+missed_2_total_100)/2);
 		$("#missed_total_95").text(missed_total_95);
 		$("#missed_2_total_95").text(missed_2_total_95);
+		$("#missed_2_gt25_95avg").text((missed_total_95+missed_2_total_95)/2);
 		$("#missed_total_85").text(missed_total_85);
 		$("#missed_2_total_85").text(missed_2_total_85);
+		$("#missed_2_gt25_85avg").text((missed_total_85+missed_2_total_85)/2);
 		$("#missed_total_80").text(missed_total_80);
 		$("#missed_2_total_80").text(missed_2_total_80);
+		$("#missed_2_gt25_80avg").text((missed_total_80+missed_2_total_80)/2);
 
 		//Pill Count total
 		$("#pill_total_100").text(pill_total_100);
 		$("#pill_2_total_100").text(pill_2_total_100);
+		$("#pill_2_gt25_100avg").text((pill_total_100+pill_2_total_100)/2);
 		$("#pill_total_95").text(pill_total_95);
 		$("#pill_2_total_95").text(pill_2_total_95);
+		$("#pill_2_gt25_95avg").text((pill_total_95+pill_2_total_95)/2);
 		$("#pill_total_85").text(pill_total_85);
 		$("#pill_2_total_85").text(pill_2_total_85);
+		$("#pill_2_gt25_85avg").text((pill_total_85+pill_2_total_85)/2);
 		$("#pill_total_80").text(pill_total_80);
 		$("#pill_2_total_80").text(pill_2_total_80);
+		$("#pill_2_gt25_80avg").text((pill_total_80+pill_2_total_80)/2);
 
 		//Missed dose gender
 		$("#missed_1_male_100").text(missed_1_male_100);
@@ -758,6 +766,9 @@
 		 $("#error_count").text(errors_count);
 		 */
 		$("#total_count").text(count);
+		function numberWithCommas(x) {
+		   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		}
 	});
 </script>
 <style>
@@ -885,6 +896,7 @@
 						<th class="h1" rowspan="2">Total(2x) Dosing</th>
 						<th class="h1 _sex" colspan="2" >Sex</th>
 						<th class="h1 _age" colspan="3" >Age(years)</th>
+						<th class="h1" >Avg</th>
 					</tr>
 					<tr>
 						<th class="_sex">Male</th>
@@ -897,20 +909,21 @@
 						<th class="_age">&lt;14</th>
 						<th class="_age" width="45">15-24</th>
 						<th class="_age">&gt;24</th>
+						<th class="_age">(1x + 2x)/2</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td>100%</td><td>0 Doses</td><td class="_total" id="missed_total_100"></td><td id="missed_1_male_100"></td><td id="missed_1_female_100"></td><td id="missed_1_lt14_100"></td><td id="missed_1_15-24_100"></td><td id="missed_1_gt25_100"></td><td>0 Doses</td><td id="missed_2_total_100"></td><td id="missed_2_male_100"></td><td id="missed_2_female_100"></td><td id="missed_2_lt14_100"></td><td id="missed_2_15-24_100"></td><td id="missed_2_gt25_100"></td>
+						<td>100%</td><td>0 Doses</td><td class="_total" id="missed_total_100"></td><td id="missed_1_male_100"></td><td id="missed_1_female_100"></td><td id="missed_1_lt14_100"></td><td id="missed_1_15-24_100"></td><td id="missed_1_gt25_100"></td><td>0 Doses</td><td id="missed_2_total_100"></td><td id="missed_2_male_100"></td><td id="missed_2_female_100"></td><td id="missed_2_lt14_100"></td><td id="missed_2_15-24_100"></td><td id="missed_2_gt25_100"></td><td class="_total" id="missed_2_gt25_100avg"></td>
 					</tr>
 					<tr>
-						<td>&gt;=95%</td><td>&lt; 2 Doses</td><td class="_total" id="missed_total_95"></td><td id="missed_1_male_95"></td><td id="missed_1_female_95"></td><td id="missed_1_lt14_95"></td><td id="missed_1_15-24_95"></td><td id="missed_1_gt25_95"></td><td>&lt;=3 Doses</td><td id="missed_2_total_95"></td><td id="missed_2_male_95"></td><td id="missed_2_female_95"></td><td id="missed_2_lt14_95"></td><td id="missed_2_15-24_95"></td><td id="missed_2_gt25_95"></td>
+						<td>&gt;=95%</td><td>&lt; 2 Doses</td><td class="_total" id="missed_total_95"></td><td id="missed_1_male_95"></td><td id="missed_1_female_95"></td><td id="missed_1_lt14_95"></td><td id="missed_1_15-24_95"></td><td id="missed_1_gt25_95"></td><td>&lt;=3 Doses</td><td id="missed_2_total_95"></td><td id="missed_2_male_95"></td><td id="missed_2_female_95"></td><td id="missed_2_lt14_95"></td><td id="missed_2_15-24_95"></td><td id="missed_2_gt25_95"></td><td class="_total" id="missed_2_gt25_95avg"></td>
 					</tr>
 					<tr>
-						<td>85 - 94%</td><td>2 -4 Doses</td><td class="_total" id="missed_total_85"></td><td id="missed_1_male_85"></td><td id="missed_1_female_85"></td><td id="missed_1_lt14_85"></td><td id="missed_1_15-24_85"></td><td id="missed_1_gt25_85"></td><td>4 - 8 Doses</td><td id="missed_2_total_85"></td><td id="missed_2_male_85"></td><td id="missed_2_female_85"></td><td id="missed_2_lt14_85"></td><td id="missed_2_15-24_85"></td><td id="missed_2_gt25_85"></td>
+						<td>85 - 94%</td><td>2 -4 Doses</td><td class="_total" id="missed_total_85"></td><td id="missed_1_male_85"></td><td id="missed_1_female_85"></td><td id="missed_1_lt14_85"></td><td id="missed_1_15-24_85"></td><td id="missed_1_gt25_85"></td><td>4 - 8 Doses</td><td id="missed_2_total_85"></td><td id="missed_2_male_85"></td><td id="missed_2_female_85"></td><td id="missed_2_lt14_85"></td><td id="missed_2_15-24_85"></td><td id="missed_2_gt25_85"></td><td class="_total" id="missed_2_gt25_85avg"></td>
 					</tr>
 					<tr>
-						<td>&lt; 85%</td><td>&gt;= 5 Doses</td><td class="_total" id="missed_total_80"></td><td id="missed_1_male_80"></td><td id="missed_1_female_80"></td><td id="missed_1_lt14_80"></td><td id="missed_1_15-24_80"></td><td id="missed_1_gt25_80"></td><td>&gt; =9 Doses</td><td id="missed_2_total_80"></td><td id="missed_2_male_80"></td><td id="missed_2_female_80"></td><td id="missed_2_lt14_80"></td><td id="missed_2_15-24_80"></td><td id="missed_2_gt25_80"></td>
+						<td>&lt; 85%</td><td>&gt;= 5 Doses</td><td class="_total" id="missed_total_80"></td><td id="missed_1_male_80"></td><td id="missed_1_female_80"></td><td id="missed_1_lt14_80"></td><td id="missed_1_15-24_80"></td><td id="missed_1_gt25_80"></td><td>&gt; =9 Doses</td><td id="missed_2_total_80"></td><td id="missed_2_male_80"></td><td id="missed_2_female_80"></td><td id="missed_2_lt14_80"></td><td id="missed_2_15-24_80"></td><td  id="missed_2_gt25_80"></td><td class="_total" id="missed_2_gt25_80avg"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -929,6 +942,7 @@
 						<th class="h1" rowspan="2">Total(2x) Dosing</th>
 						<th class="h1 _sex" colspan="2" >Sex</th>
 						<th class="h1 _age" colspan="3" >Age(years)</th>
+						<th class="h1" >Avg</th>
 					</tr>
 					<tr>
 						<th class="_sex">Male</th>
@@ -941,20 +955,21 @@
 						<th class="_age">&lt;14</th>
 						<th class="_age" width="45">15-24</th>
 						<th class="_age">&gt;24</th>
+						<th class="_age">(1x + 2x)/2</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td>100%</td><td>0 Doses</td><td class="_total" id="pill_total_100"></td><td id="pill_1_male_100"></td><td id="pill_1_female_100"></td><td id="pill_1_lt14_100"></td><td id="pill_1_15-24_100"></td><td id="pill_1_gt25_100"></td><td>0 Doses</td><td id="pill_2_total_100"></td><td id="pill_2_male_100"></td><td id="pill_2_female_100"></td><td id="pill_2_lt14_100"></td><td id="pill_2_15-24_100"></td><td id="pill_2_gt25_100"></td>
+						<td>100%</td><td>0 Doses</td><td class="_total" id="pill_total_100"></td><td id="pill_1_male_100"></td><td id="pill_1_female_100"></td><td id="pill_1_lt14_100"></td><td id="pill_1_15-24_100"></td><td id="pill_1_gt25_100"></td><td>0 Doses</td><td id="pill_2_total_100"></td><td id="pill_2_male_100"></td><td id="pill_2_female_100"></td><td id="pill_2_lt14_100"></td><td id="pill_2_15-24_100"></td><td id="pill_2_gt25_100"></td><td class="_total" id="pill_2_gt25_100avg"></td>
 					</tr>
 					<tr>
-						<td>&gt;=95%</td><td>&lt; 2 Doses</td><td class="_total" id="pill_total_95"></td><td id="pill_1_male_95"></td><td id="pill_1_female_95"></td><td id="pill_1_lt14_95"></td><td id="pill_1_15-24_95"></td><td id="pill_1_gt25_95"></td><td>&lt;=3 Doses</td><td id="pill_2_total_95"></td><td id="pill_2_male_95"></td><td id="pill_2_female_95"></td><td id="pill_2_lt14_95"></td><td id="pill_2_15-24_95"></td><td id="pill_2_gt25_95"></td>
+						<td>&gt;=95%</td><td>&lt; 2 Doses</td><td class="_total" id="pill_total_95"></td><td id="pill_1_male_95"></td><td id="pill_1_female_95"></td><td id="pill_1_lt14_95"></td><td id="pill_1_15-24_95"></td><td id="pill_1_gt25_95"></td><td>&lt;=3 Doses</td><td id="pill_2_total_95"></td><td id="pill_2_male_95"></td><td id="pill_2_female_95"></td><td id="pill_2_lt14_95"></td><td id="pill_2_15-24_95"></td><td id="pill_2_gt25_95"></td><td class="_total"  id="pill_2_gt25_95avg"></td>
 					</tr>
 					<tr>
-						<td>85 - 94%</td><td>2 -4 Doses</td><td class="_total" id="pill_total_85"></td><td id="pill_1_male_85"></td><td id="pill_1_female_85"></td><td id="pill_1_lt14_85"></td><td id="pill_1_15-24_85"></td><td id="pill_1_gt25_85"></td><td>4 - 8 Doses</td><td id="pill_2_total_85"></td><td id="pill_2_male_85"></td><td id="pill_2_female_85"></td><td id="pill_2_lt14_85"></td><td id="pill_2_15-24_85"></td><td id="pill_2_gt25_85"></td>
+						<td>85 - 94%</td><td>2 -4 Doses</td><td class="_total" id="pill_total_85"></td><td id="pill_1_male_85"></td><td id="pill_1_female_85"></td><td id="pill_1_lt14_85"></td><td id="pill_1_15-24_85"></td><td id="pill_1_gt25_85"></td><td>4 - 8 Doses</td><td id="pill_2_total_85"></td><td id="pill_2_male_85"></td><td id="pill_2_female_85"></td><td id="pill_2_lt14_85"></td><td id="pill_2_15-24_85"></td><td id="pill_2_gt25_85"></td><td class="_total" id="pill_2_gt25_85avg"></td>
 					</tr>
 					<tr>
-						<td>&lt; 85%</td><td>&gt;= 5 Doses</td><td class="_total" id="pill_total_80"></td><td id="pill_1_male_80"></td><td id="pill_1_female_80"></td><td id="pill_1_lt14_80"></td><td id="pill_1_15-24_80"></td><td id="pill_1_gt25_80"></td><td>&gt; =9 Doses</td><td id="pill_2_total_80"></td><td id="pill_2_male_80"></td><td id="pill_2_female_80"></td><td id="pill_2_lt14_80"></td><td id="pill_2_15-24_80"></td><td id="pill_2_gt25_80"></td>
+						<td>&lt; 85%</td><td>&gt;= 5 Doses</td><td class="_total" id="pill_total_80"></td><td id="pill_1_male_80"></td><td id="pill_1_female_80"></td><td id="pill_1_lt14_80"></td><td id="pill_1_15-24_80"></td><td id="pill_1_gt25_80"></td><td>&gt; =9 Doses</td><td id="pill_2_total_80"></td><td id="pill_2_male_80"></td><td id="pill_2_female_80"></td><td id="pill_2_lt14_80"></td><td id="pill_2_15-24_80"></td><td id="pill_2_gt25_80"></td><td class="_total" id="pill_2_gt25_80avg"></td>
 					</tr>
 				</tbody>
 			</table>
