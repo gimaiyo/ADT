@@ -43,8 +43,6 @@ if(isset($reports)|| isset($report_title)){
 <script src="<?php echo base_url().'Scripts/jquery.form.js'?>" type="text/javascript"></script>
 <!-- Jquery UI -->
 <script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script>
-<!-- Jquery UI -->
-<script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script>
 <!-- Sortable JS -->
 <script type="text/javascript" src="<?php echo base_url().'Scripts/sorttable.js' ?>"></script>
 <!-- Datatables -->

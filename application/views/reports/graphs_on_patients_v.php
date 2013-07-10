@@ -80,7 +80,7 @@
 				"MONTH" : monthNames[k]
 			});
 
-			console.log(chartDta[k]);
+			//console.log(chartDta[k]);
 			chartDta_all = chartDta_all.concat(chartDta[k]);
 
 		}

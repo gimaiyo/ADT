@@ -2545,10 +2545,10 @@ class report_management extends MY_Controller {
 				if ($results) {
 					foreach ($results as $result) {
 						$total_store_drug_qty = $result['qty'];
-						$overall_store_drug_qty += $total_drug_qty;
+						$overall_store_drug_qty += $total_store_drug_qty;
 						$store_drug_qty_percentage = number_format(($total_store_drug_qty / $drug_total) * 100, 1);
 						if ($result['drug'] != null) {
-							$row_string .= "<td>$total_store_drug_qty</td><td>$store_drug_qty_percentage</td>";
+							$row_string .= "<td>" . number_format($total_store_drug_qty) . "</td><td>$store_drug_qty_percentage</td>";
 						}
 					}
 				} else {
@@ -3069,15 +3069,17 @@ class report_management extends MY_Controller {
 		if ($stock_type == 1) {
 			//Main Store
 			$facilty_value = "dsm.source!=dsm.destination";
+			$data['transaction_type'] = "Main Store";
 
 		} else if ($stock_type == 2) {
 			//Pharmacy
 			$facilty_value = "dsm.source=dsm.destination";
+			$data['transaction_type'] = "Pharmacy";
 		}
 		$sql = "select d.drug,du.Name as unit,d.pack_size,SUM(dsm.quantity_out) as total from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON du.id=d.unit where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' AND t.name LIKE '%Issued To%' GROUP BY d.drug";
 		$query = $this -> db -> query($sql);
 		$dyn_table = "<table id='patient_listing' border='1' cellpadding='5'>";
-		$dyn_table .= "<tr><th>Drug Name</th><th>Drug Unit</th><th> Drug PackSize</th><th>Quantity</th></tr>";
+		$dyn_table .= "<tr><th>Drug Name</th><th>Drug Unit</th><th> Drug PackSize</th><th>Quantity(units)</th></tr>";
 		$results = $query -> result_array();
 		if ($results) {
 			foreach ($results as $result) {
@@ -3087,7 +3089,16 @@ class report_management extends MY_Controller {
 			$dyn_table .= "<tr><td colspan='4'>No Data Available</td></tr>";
 		}
 		$dyn_table .= "</table>";
-		echo $dyn_table;
+		$data['dyn_table'] = $dyn_table;
+		$data['title'] = "webADT | Reports";
+		$data['hide_side_menu'] = 1;
+		$data['banner_text'] = "Facility Reports";
+		$data['selected_report_type_link'] = "drug_inventory_report_row";
+		$data['selected_report_type'] = "Stock Consumption";
+		$data['report_title'] = "Stock Consumption";
+		$data['facility_name'] = $this -> session -> userdata('facility_name');
+		$data['content_view'] = 'reports/drugissued_v';
+		$this -> load -> view('template', $data);
 	}
 
 	public function getDrugsReceived($stock_type, $start_date = "", $end_date = "") {
@@ -3100,15 +3111,17 @@ class report_management extends MY_Controller {
 		if ($stock_type == 1) {
 			//Main Store
 			$facilty_value = "dsm.source!=dsm.destination";
+			$data['transaction_type'] = "Main Store";
 
 		} else if ($stock_type == 2) {
 			//Pharmacy
 			$facilty_value = "dsm.source=dsm.destination";
+			$data['transaction_type'] = "Pharmacy";
 		}
 		$sql = "select d.drug,du.Name as unit,d.pack_size,SUM(dsm.quantity) as total from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON du.id=d.unit where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' AND t.name LIKE '%Received from%' GROUP BY d.drug";
 		$query = $this -> db -> query($sql);
 		$dyn_table = "<table id='patient_listing' border='1' cellpadding='5'>";
-		$dyn_table .= "<tr><th>Drug Name</th><th>Drug Unit</th><th> Drug PackSize</th><th>Quantity</th></tr>";
+		$dyn_table .= "<tr><th>Drug Name</th><th>Drug Unit</th><th> Drug PackSize</th><th>Quantity(units)</th></tr>";
 		$results = $query -> result_array();
 		if ($results) {
 			foreach ($results as $result) {
@@ -3118,16 +3131,404 @@ class report_management extends MY_Controller {
 			$dyn_table .= "<tr><td colspan='4'>No Data Available</td></tr>";
 		}
 		$dyn_table .= "</table>";
+		$data['dyn_table'] = $dyn_table;
+		$data['title'] = "webADT | Reports";
+		$data['hide_side_menu'] = 1;
+		$data['banner_text'] = "Facility Reports";
+		$data['selected_report_type_link'] = "drug_inventory_report_row";
+		$data['selected_report_type'] = "Stock Consumption";
+		$data['report_title'] = "Stock Consumption";
+		$data['facility_name'] = $this -> session -> userdata('facility_name');
+		$data['content_view'] = 'reports/drugreceived_v';
+		$this -> load -> view('template', $data);
+
+	}
+
+	public function getDailyConsumption($start_date = "", $end_date = "") {
+		$data['from'] = $start_date;
+		$data['to'] = $end_date;
+		$start_date = date('Y-m-d', strtotime($start_date));
+		$end_date = date('Y-m-d', strtotime($end_date));
+		$facility_code = $this -> session -> userdata('facility');
+		$consumption_totals = array();
+		$row_string = "";
+		$drug_total = 0;
+		$total = 0;
+		$overall_pharmacy_drug_qty = 0;
+		$overall_store_drug_qty = 0;
+		$pharmacy_drug_qty_percentage = "";
+		$store_drug_qty_percentage = "";
+		$drug_total_percentage = "";
+
+		//Select total consumption at facility
+		$sql = "select sum(quantity_out) as total from drug_stock_movement where transaction_date between '$start_date' and '$end_date' and facility='$facility_code' ";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			$total = $results[0]['total'];
+		}
+
+		//Select total consumption at facility per drug per day
+		$sql = "select dsm.transaction_date,dsm.drug,d.drug as Name,d.pack_size,du.Name as unit,sum(dsm.quantity_out) as qty from drug_stock_movement dsm left join drugcode d on dsm.drug=d.id left join drug_unit du on d.unit=du.id where dsm.transaction_date between '$start_date' and '$end_date' and dsm.facility='$facility_code' GROUP BY dsm.transaction_date, dsm.drug ORDER BY dsm.transaction_date";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$row_string .= "<table id='patient_listing' border='1' cellpadding='5'>
+			<tr>
+			    <th >Date</th>
+				<th >Drug</th>
+				<th >Unit</th>
+				<th >PackSize</th>
+				<th >Total(units)</th>
+				<th >%</th>
+				<th >Pharmacy(units)</th>
+				<th >%</th>
+				<th > Store(units)</th>
+				<th >%</th>
+			</tr>";
+		if ($results) {
+			foreach ($results as $result) {
+				$consumption_totals[$result['drug']] = $result['qty'];
+				$current_date = date('d-M-Y', strtotime($result['transaction_date']));
+				$current_drug = $result['drug'];
+				$current_drugname = $result['Name'];
+				$unit = $result['unit'];
+				$pack_size = $result['pack_size'];
+				$drug_total = $result['qty'];
+				$drug_total_percentage = number_format(($drug_total / $total) * 100, 1);
+				$row_string .= "<tr><td>$current_date</td><td><b>$current_drugname</b></td><td><b>$unit</b></td><td><b>$pack_size</b></td><td>" . number_format($drug_total) . "</td><td>$drug_total_percentage</td>";
+				//Select consumption at pharmacy
+				$sql = "select transaction_date,drug,sum(quantity_out) as qty from drug_stock_movement where transaction_date between '$start_date' and '$end_date' and facility='$facility_code' and source='$facility_code' and source=destination and drug='$current_drug' GROUP BY transaction_date,drug ORDER BY transaction_date";
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				if ($results) {
+					foreach ($results as $result) {
+						$total_pharmacy_drug_qty = $result['qty'];
+						$overall_pharmacy_drug_qty += $total_pharmacy_drug_qty;
+						@$pharmacy_drug_qty_percentage = number_format((@$total_pharmacy_drug_qty / @$drug_total) * 100, 1);
+						if ($result['drug'] != null) {
+							$row_string .= "<td>" . number_format($total_pharmacy_drug_qty) . "</td><td>$pharmacy_drug_qty_percentage</td>";
+						}
+					}
+				} else {
+					$row_string .= "<td>-</td><td>-</td>";
+				}
+				//Select Consumption at store
+				$sql = "select transaction_date,drug,sum(quantity_out) as qty from drug_stock_movement where transaction_date between '$start_date' and '$end_date' and facility='$facility_code' and destination='$facility_code' and source !=destination and drug='$current_drug' GROUP BY transaction_date,drug ORDER BY transaction_date";
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				if ($results) {
+					foreach ($results as $result) {
+						$total_store_drug_qty = $result['qty'];
+						$overall_store_drug_qty += $total_drug_qty;
+						$store_drug_qty_percentage = number_format(($total_store_drug_qty / $drug_total) * 100, 1);
+						if ($result['drug'] != null) {
+							$row_string .= "<td>$total_store_drug_qty</td><td>$store_drug_qty_percentage</td>";
+						}
+					}
+				} else {
+					$row_string .= "<td>-</td><td>-</td>";
+				}
+				$row_string .= "</tr>";
+			}
+			$row_string .= "<tr class='tfoot'><td colspan='4'><b>Totals(units):</b></td><td><b>" . number_format($total) . "</b></td><td><b>100</b></td><td><b>" . number_format($overall_pharmacy_drug_qty) . "</b></td><td><b>" . number_format(($overall_pharmacy_drug_qty / $total) * 100, 1) . "</b></td><td><b>" . number_format($overall_store_drug_qty) . "</b></td><td><b>" . number_format(($overall_store_drug_qty / $total) * 100, 1) . "</b></td></tr>";
+
+		} else {
+			$row_string .= "<tr><td colspan='11'>No Data Available</td></tr>";
+		}
+		$row_string .= "</table>";
+		$data['dyn_table'] = $row_string;
+		$data['title'] = "webADT | Reports";
+		$data['hide_side_menu'] = 1;
+		$data['banner_text'] = "Facility Reports";
+		$data['selected_report_type_link'] = "drug_inventory_report_row";
+		$data['selected_report_type'] = "Stock Consumption";
+		$data['report_title'] = "Stock Consumption";
+		$data['facility_name'] = $this -> session -> userdata('facility_name');
+		$data['content_view'] = 'reports/daily_consumption_v';
+		$this -> load -> view('template', $data);
+	}
+
+	public function getBMI($start_date = "") {
+		/*
+		 Formula BMI= weight(kg)/(height(m)*height(m))
+
+		 Stages of Obesity
+		 --------------------
+		 * Very Severely Underweight <15.0
+		 * Severely Underweight 15.0-16
+		 * Underweight 16.0-18.5
+		 * Normal 18.5-25.0
+		 * Overweight 25.0-30.0
+		 * Obese Class 1(Moderately Obese) 30.0-35.0
+		 * Obese Class 2(Severely Obese) 35.0-40.0
+		 * Obese Class 3(Very Severely Obese) >40.0
+		 */
+		$data['from'] = $start_date;
+		$start_date = date('Y-m-d', strtotime($start_date));
+		$facility_code = $this -> session -> userdata('facility');
+		$bmi_temp = array();
+
+		$sql = "select gender,rst.Name,ROUND((((weight)*10000)/(height*height)),1) AS BMI from patient p LEFT JOIN gender g ON g.id=p.gender LEFT JOIN regimen_service_type rst ON rst.id=p.service LEFT JOIN patient_status ps ON ps.id=p.current_status where p.date_enrolled<='$start_date' and p.current_status='1' and p.facility_code='13050' AND ps.Name like '%active%' group by patient_number_ccc";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+
+		$bmi_temp['ART']['Very Severely Underweight']['Male'] = 0;
+		$bmi_temp['ART']['Severely Underweight']['Male'] = 0;
+		$bmi_temp['ART']['Underweight']['Male'] = 0;
+		$bmi_temp['ART']['Normal']['Male'] = 0;
+		$bmi_temp['ART']['Overweight']['Male'] = 0;
+		$bmi_temp['ART']['Moderately Obese']['Male'] = 0;
+		$bmi_temp['ART']['Severely Obese']['Male'] = 0;
+		$bmi_temp['ART']['Very Severely Obese']['Male'] = 0;
+
+		$bmi_temp['ART']['Very Severely Underweight']['Female'] = 0;
+		$bmi_temp['ART']['Severely Underweight']['Female'] = 0;
+		$bmi_temp['ART']['Underweight']['Female'] = 0;
+		$bmi_temp['ART']['Normal']['Female'] = 0;
+		$bmi_temp['ART']['Overweight']['Female'] = 0;
+		$bmi_temp['ART']['Moderately Obese']['Female'] = 0;
+		$bmi_temp['ART']['Severely Obese']['Female'] = 0;
+		$bmi_temp['ART']['Very Severely Obese']['Female'] = 0;
+
+		$bmi_temp['PEP']['Very Severely Underweight']['Male'] = 0;
+		$bmi_temp['PEP']['Severely Underweight']['Male'] = 0;
+		$bmi_temp['PEP']['Underweight']['Male'] = 0;
+		$bmi_temp['PEP']['Normal']['Male'] = 0;
+		$bmi_temp['PEP']['Overweight']['Male'] = 0;
+		$bmi_temp['PEP']['Moderately Obese']['Male'] = 0;
+		$bmi_temp['PEP']['Severely Obese']['Male'] = 0;
+		$bmi_temp['PEP']['Very Severely Obese']['Male'] = 0;
+
+		$bmi_temp['PEP']['Very Severely Underweight']['Female'] = 0;
+		$bmi_temp['PEP']['Severely Underweight']['Female'] = 0;
+		$bmi_temp['PEP']['Underweight']['Female'] = 0;
+		$bmi_temp['PEP']['Normal']['Female'] = 0;
+		$bmi_temp['PEP']['Overweight']['Female'] = 0;
+		$bmi_temp['PEP']['Moderately Obese']['Female'] = 0;
+		$bmi_temp['PEP']['Severely Obese']['Female'] = 0;
+		$bmi_temp['PEP']['Very Severely Obese']['Female'] = 0;
+
+		$bmi_temp['PMTCT']['Very Severely Underweight']['Male'] = 0;
+		$bmi_temp['PMTCT']['Severely Underweight']['Male'] = 0;
+		$bmi_temp['PMTCT']['Underweight']['Male'] = 0;
+		$bmi_temp['PMTCT']['Normal']['Male'] = 0;
+		$bmi_temp['PMTCT']['Overweight']['Male'] = 0;
+		$bmi_temp['PMTCT']['Moderately Obese']['Male'] = 0;
+		$bmi_temp['PMTCT']['Severely Obese']['Male'] = 0;
+		$bmi_temp['PMTCT']['Very Severely Obese']['Male'] = 0;
+
+		$bmi_temp['PMTCT']['Very Severely Underweight']['Female'] = 0;
+		$bmi_temp['PMTCT']['Severely Underweight']['Female'] = 0;
+		$bmi_temp['PMTCT']['Underweight']['Female'] = 0;
+		$bmi_temp['PMTCT']['Normal']['Female'] = 0;
+		$bmi_temp['PMTCT']['Overweight']['Female'] = 0;
+		$bmi_temp['PMTCT']['Moderately Obese']['Female'] = 0;
+		$bmi_temp['PMTCT']['Severely Obese']['Female'] = 0;
+		$bmi_temp['PMTCT']['Very Severely Obese']['Female'] = 0;
+
+		$bmi_temp['OI']['Very Severely Underweight']['Male'] = 0;
+		$bmi_temp['OI']['Severely Underweight']['Male'] = 0;
+		$bmi_temp['OI']['Underweight']['Male'] = 0;
+		$bmi_temp['OI']['Normal']['Male'] = 0;
+		$bmi_temp['OI']['Overweight']['Male'] = 0;
+		$bmi_temp['OI']['Moderately Obese']['Male'] = 0;
+		$bmi_temp['OI']['Severely Obese']['Male'] = 0;
+		$bmi_temp['OI']['Very Severely Obese']['Male'] = 0;
+
+		$bmi_temp['OI']['Very Severely Underweight']['Female'] = 0;
+		$bmi_temp['OI']['Severely Underweight']['Female'] = 0;
+		$bmi_temp['OI']['Underweight']['Female'] = 0;
+		$bmi_temp['OI']['Normal']['Female'] = 0;
+		$bmi_temp['OI']['Overweight']['Female'] = 0;
+		$bmi_temp['OI']['Moderately Obese']['Female'] = 0;
+		$bmi_temp['OI']['Severely Obese']['Female'] = 0;
+		$bmi_temp['OI']['Very Severely Obese']['Female'] = 0;
+
+		if ($results) {
+			foreach ($results as $result) {
+				$temp_string = strtoupper($result['Name']);
+				//Check if ART
+				$art_check = strpos(strtoupper("art"), $temp_string);
+				//Check if PEP
+				$pep_check = strpos(strtoupper("pep"), $temp_string);
+				//Check if PMTCT
+				$pmtct_check = strpos(strtoupper("pmtct"), $temp_string);
+				//Check if OI
+				$oi_check = strpos(strtoupper("oi"), $temp_string);
+
+				if ($art_check !== false) {
+					if ($result['gender'] == 1) {
+						if ($result['BMI'] >= 0 && $result['BMI'] < 15) {
+							$bmi_temp['ART']['Very Severely Underweight']['Male']++;
+						} else if ($result['BMI'] >= 15 && $result['BMI'] < 16) {
+							$bmi_temp['ART']['Severely Underweight']['Male']++;
+						} else if ($result['BMI'] >= 16 && $result['BMI'] < 18.5) {
+							$bmi_temp['ART']['Underweight']['Male']++;
+						} else if ($result['BMI'] >= 18.5 && $result['BMI'] < 25) {
+							$bmi_temp['ART']['Normal']['Male']++;
+						} else if ($result['BMI'] >= 25 && $result['BMI'] < 30) {
+							$bmi_temp['ART']['Overweight']['Male']++;
+						} else if ($result['BMI'] >= 30 && $result['BMI'] < 35) {
+							$bmi_temp['ART']['Moderately Obese']['Male']++;
+						} else if ($result['BMI'] >= 35 && $result['BMI'] < 40) {
+							$bmi_temp['ART']['Severely Obese']['Male']++;
+						} else if ($result['BMI'] >= 40) {
+							$bmi_temp['ART']['Very Severely Obese']['Male']++;
+						}
+
+					} else if ($result['gender'] == 2) {
+						if ($result['BMI'] >= 0 && $result['BMI'] < 15) {
+							$bmi_temp['ART']['Very Severely Underweight']['Female']++;
+						} else if ($result['BMI'] >= 15 && $result['BMI'] < 16) {
+							$bmi_temp['ART']['Severely Underweight']['Female']++;
+						} else if ($result['BMI'] >= 16 && $result['BMI'] < 18.5) {
+							$bmi_temp['ART']['Underweight']['Female']++;
+						} else if ($result['BMI'] >= 18.5 && $result['BMI'] < 25) {
+							$bmi_temp['ART']['Normal']['Female']++;
+						} else if ($result['BMI'] >= 25 && $result['BMI'] < 30) {
+							$bmi_temp['ART']['Overweight']['Female']++;
+						} else if ($result['BMI'] >= 30 && $result['BMI'] < 35) {
+							$bmi_temp['ART']['Moderately Obese']['Female']++;
+						} else if ($result['BMI'] >= 35 && $result['BMI'] < 40) {
+							$bmi_temp['ART']['Severely Obese']['Female']++;
+						} else if ($result['BMI'] >= 40) {
+							$bmi_temp['ART']['Very Severely Obese']['Female']++;
+						}
+					}
+				} else if ($pep_check !== false) {
+					if ($result['gender'] == 1) {
+						if ($result['BMI'] >= 0 && $result['BMI'] < 15) {
+							$bmi_temp['PEP']['Very Severely Underweight']['Male']++;
+						} else if ($result['BMI'] >= 15 && $result['BMI'] < 16) {
+							$bmi_temp['PEP']['Severely Underweight']['Male']++;
+						} else if ($result['BMI'] >= 16 && $result['BMI'] < 18.5) {
+							$bmi_temp['PEP']['Underweight']['Male']++;
+						} else if ($result['BMI'] >= 18.5 && $result['BMI'] < 25) {
+							$bmi_temp['PEP']['Normal']['Male']++;
+						} else if ($result['BMI'] >= 25 && $result['BMI'] < 30) {
+							$bmi_temp['PEP']['Overweight']['Male'] = $result['BMI'];
+						} else if ($result['BMI'] >= 30 && $result['BMI'] < 35) {
+							$bmi_temp['PEP']['Moderately Obese']['Male']++;
+						} else if ($result['BMI'] >= 35 && $result['BMI'] < 40) {
+							$bmi_temp['PEP']['Severely Obese']['Male']++;
+						} else if ($result['BMI'] >= 40) {
+							$bmi_temp['PEP']['Very Severely Obese']['Male']++;
+						}
+					} else if ($result['gender'] == 2) {
+						if ($result['BMI'] >= 0 && $result['BMI'] < 15) {
+							$bmi_temp['PEP']['Very Severely Underweight']['Female']++;
+						} else if ($result['BMI'] >= 15 && $result['BMI'] < 16) {
+							$bmi_temp['PEP']['Severely Underweight']['Female']++;
+						} else if ($result['BMI'] >= 16 && $result['BMI'] < 18.5) {
+							$bmi_temp['PEP']['Underweight']['Female']++;
+						} else if ($result['BMI'] >= 18.5 && $result['BMI'] < 25) {
+							$bmi_temp['PEP']['Normal']['Female']++;
+						} else if ($result['BMI'] >= 25 && $result['BMI'] < 30) {
+							$bmi_temp['PEP']['Overweight']['Female']++;
+						} else if ($result['BMI'] >= 30 && $result['BMI'] < 35) {
+							$bmi_temp['PEP']['Moderately Obese']['Female']++;
+						} else if ($result['BMI'] >= 35 && $result['BMI'] < 40) {
+							$bmi_temp['PEP']['Severely Obese']['Female']++;
+						} else if ($result['BMI'] >= 40) {
+							$bmi_temp['PEP']['Very Severely Obese']['Female']++;
+						}
+					}
+				} else if ($pmtct_check !== false) {
+					if ($result['gender'] == 1) {
+						if ($result['BMI'] >= 0 && $result['BMI'] < 15) {
+							$bmi_temp['PMTCT']['Very Severely Underweight']['Male']++;
+						} else if ($result['BMI'] >= 15 && $result['BMI'] < 16) {
+							$bmi_temp['PMTCT']['Severely Underweight']['Male']++;
+						} else if ($result['BMI'] >= 16 && $result['BMI'] < 18.5) {
+							$bmi_temp['PMTCT']['Underweight']['Male']++;
+						} else if ($result['BMI'] >= 18.5 && $result['BMI'] < 25) {
+							$bmi_temp['PMTCT']['Normal']['Male']++;
+						} else if ($result['BMI'] >= 25 && $result['BMI'] < 30) {
+							$bmi_temp['PMTCT']['Overweight']['Male']++;
+						} else if ($result['BMI'] >= 30 && $result['BMI'] < 35) {
+							$bmi_temp['PMTCT']['Moderately Obese']['Male']++;
+						} else if ($result['BMI'] >= 35 && $result['BMI'] < 40) {
+							$bmi_temp['PMTCT']['Severely Obese']['Male']++;
+						} else if ($result['BMI'] >= 40) {
+							$bmi_temp['PMTCT']['Very Severely Obese']['Male']++;
+						}
+					} else if ($result['gender'] == 2) {
+						if ($result['BMI'] >= 0 && $result['BMI'] < 15) {
+							$bmi_temp['PMTCT']['Very Severely Underweight']['Female']++;
+						} else if ($result['BMI'] >= 15 && $result['BMI'] < 16) {
+							$bmi_temp['PMTCT']['Severely Underweight']['Female']++;
+						} else if ($result['BMI'] >= 16 && $result['BMI'] < 18.5) {
+							$bmi_temp['PMTCT']['Underweight']['Female']++;
+						} else if ($result['BMI'] >= 18.5 && $result['BMI'] < 25) {
+							$bmi_temp['PMTCT']['Normal']['Female']++;
+						} else if ($result['BMI'] >= 25 && $result['BMI'] < 30) {
+							$bmi_temp['PMTCT']['Overweight']['Female']++;
+						} else if ($result['BMI'] >= 30 && $result['BMI'] < 35) {
+							$bmi_temp['PMTCT']['Moderately Obese']['Female']++;
+						} else if ($result['BMI'] >= 35 && $result['BMI'] < 40) {
+							$bmi_temp['PMTCT']['Severely Obese']['Female']++;
+						} else if ($result['BMI'] >= 40) {
+							$bmi_temp['PMTCT']['Very Severely Obese']['Female']++;
+						}
+					}
+				} else if ($oi_check !== false) {
+					if ($result['gender'] == 1) {
+						if ($result['BMI'] >= 0 && $result['BMI'] < 15) {
+							$bmi_temp['OI']['Very Severely Underweight']['Male']++;
+						} else if ($result['BMI'] >= 15 && $result['BMI'] < 16) {
+							$bmi_temp['OI']['Severely Underweight']['Male']++;
+						} else if ($result['BMI'] >= 16 && $result['BMI'] < 18.5) {
+							$bmi_temp['OI']['Underweight']['Male']++;
+						} else if ($result['BMI'] >= 18.5 && $result['BMI'] < 25) {
+							$bmi_temp['OI']['Normal']['Male']++;
+						} else if ($result['BMI'] >= 25 && $result['BMI'] < 30) {
+							$bmi_temp['OI']['Overweight']['Male']++;
+						} else if ($result['BMI'] >= 30 && $result['BMI'] < 35) {
+							$bmi_temp['OI']['Moderately Obese']['Male']++;
+						} else if ($result['BMI'] >= 35 && $result['BMI'] < 40) {
+							$bmi_temp['OI']['Severely Obese']['Male']++;
+						} else if ($result['BMI'] >= 40) {
+							$bmi_temp['OI']['Very Severely Obese']['Male']++;
+						}
+					} else if ($result['gender'] == 2) {
+						if ($result['BMI'] >= 0 && $result['BMI'] < 15) {
+							$bmi_temp['OI']['Very Severely Underweight']['Female']++;
+						} else if ($result['BMI'] >= 15 && $result['BMI'] < 16) {
+							$bmi_temp['OI']['Severely Underweight']['Female']++;
+						} else if ($result['BMI'] >= 16 && $result['BMI'] < 18.5) {
+							$bmi_temp['OI']['Underweight']['Female']++;
+						} else if ($result['BMI'] >= 18.5 && $result['BMI'] < 25) {
+							$bmi_temp['OI']['Normal']['Female']++;
+						} else if ($result['BMI'] >= 25 && $result['BMI'] < 30) {
+							$bmi_temp['OI']['Overweight']['Female']++;
+						} else if ($result['BMI'] >= 30 && $result['BMI'] < 35) {
+							$bmi_temp['OI']['Moderately Obese']['Female']++;
+						} else if ($result['BMI'] >= 35 && $result['BMI'] < 40) {
+							$bmi_temp['OI']['Severely Obese']['Female']++;
+						} else if ($result['BMI'] >= 40) {
+							$bmi_temp['OI']['Very Severely Obese']['Female']++;
+						}
+					}
+				}
+
+			}
+		}
+		$dyn_table = "<table id='patient_listing' border='1' cellpadding='5'><thead>";
+		$dyn_table .= "<tr><th rowspan='2'>Type of Service</th><th colspan='2'>Very Severely Underweight</th><th colspan='2'>Severely Underweight</th><th colspan='2'>Underweight</th><th colspan='2'>Normal</th><th colspan='2'>Overweight</th><th colspan='2'>Moderately Obese</th><th colspan='2'>Severely Obese</th><th colspan='2'>Very Severely Obese</th></tr>";
+		$dyn_table .= "<tr><th>Male</th><th>Female</th><th>Male</th><th>Female</th><th>Male</th><th>Female</th><th>Male</th><th>Female</th><th>Male</th><th>Female</th><th>Male</th><th>Female</th><th>Male</th><th>Female</th><th>Male</th><th>Female</th></tr><tbody>";
+		foreach ($bmi_temp as $temp_values => $temp_value) {
+			$dyn_table .= "<tr><td>$temp_values</td>";
+			foreach ($temp_value as $temp_data => $temp_code) {
+				foreach ($temp_code as $code) {
+					$dyn_table .= "<td>$code</td>";
+				}
+			}
+			$dyn_table .= "</tr>";
+		}
+		$dyn_table .= "<tr class='tfoot'><td><b>TOTALS</b></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+		$dyn_table .= "</tbody></table>";
 		echo $dyn_table;
-
-	}
-
-	public function getDailyConsumption($stock_type, $start_date = "", $end_date = "") {
-
-	}
-
-	public function getBMI($start_date = "", $end_date = "") {
-
+		//End
 	}
 
 	public function base_params($data) {
