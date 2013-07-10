@@ -616,16 +616,6 @@ hr {
 		background-color: rgb(235, 236, 238);
 	}
 }
-#patient_listing, #drug_listing, #drug_summary {
-	margin: 0 auto;
-	font-size: 13px;
-	letter-spacing: 0.8px;
-	border: 1px solid #000;
-}
-#patient_listing td, #patient_listing th {
-	padding: 0.25em;
-	border: 1px solid #000;
-}
 tr th {
 	cursor: pointer;
 }
@@ -823,6 +813,9 @@ table.dataTable tr.odd td sorting_1 {
 	margin-top: 5px;
 	font-weight: bold;
 	font-size: 1.1em;
+}
+.full-content #facility_name{
+	font-size:1.5em;
 }
 #synchronize_button {
 	display: none;
@@ -1232,67 +1225,7 @@ input[readonly] {
 .mid-row:nth-child(even) {
 	float: right;
 }
-/*
- * Report Styling
- */
-#reports_container {
-	width: 90%;
-	margin: 0 auto;
-	font-size: 14px;
-}
-.report {
-	display: block;
-	height: auto;
-	line-height: 30px;
-	background-color: #F1F1F1;
-	margin: 2px;
-	font-size: 12px;
-	text-decoration: none;
-	font-weight: bold;
-	letter-spacing: 1px;
-	color: #036;
-	padding: 2px;
-}
-.report:hover {
-	background-color: #E5E5E5;
-}
-.report_category {
-	width: 48%;
-	float: left;
-	margin: 5px;
-	min-height: 200px;
-	padding: 5px;
-}
-.report_category:nth-child(even) {
-	float: right;
-}
-.category_title {
-	letter-spacing: 2px;
-	font-weight: bold;
-	padding: 2px;
-}
-.active_report {
-	padding: 1%;
-	color: #666;
-	font-size: 14px;
-}
-.active_report:nth-child(odd) {
-	background: #ccc;
-}
-.reports_panel {
-	overflow: hidden;
-}
-a:hover {
-	text-decoration: none;
-}
-legend {
-	font-size: 20px;
-	margin-top: 20px;
-}
-.title {
-	font-size: 22px;
-	color: rgb(0, 197, 0);
-}
+
 /**
  * 	Users Styling
  */
@@ -1386,7 +1319,7 @@ legend {
 #patient_listing {
 	margin: 0 auto;
 	width: 100%;
-	border-top: 1px solid #B9B9B9;
+	border:none;
 	font-size: 13px;
 	letter-spacing: 0.8px;
 }

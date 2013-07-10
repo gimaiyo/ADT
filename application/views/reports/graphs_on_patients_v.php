@@ -202,7 +202,7 @@
 </script>
 
 <div id="wrapperd">
-	<div  class="center-content">
+	<div  class="full-content">
 		<?php $this->load->view("reports/reports_top_menus_v")
 		?>
 		<h4 style="text-align: center">Listing of Patients Enrolled for the Year <span style="width:50px;" id="display_year"><?php echo $year;?></span>

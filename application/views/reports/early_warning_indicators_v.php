@@ -1,6 +1,6 @@
 <div id="wrapperd">
 			
-	<div id="patient_enrolled_content" class="center-content">
+	<div id="patient_enrolled_content" class="full-content">
 		<?php $this->load->view("reports/reports_top_menus_v") ?>
 		<h4 style="text-align: center">Listing of HIV Drugs Resistance Early Warning Indicators Between <span class="green"><?php echo $from; ?></span> And <span class="green"><?php echo $to; ?></span></h4>
 		<hr size="1" style="width:80%">
