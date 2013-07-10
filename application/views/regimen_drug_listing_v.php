@@ -1,12 +1,4 @@
 <script type="text/javascript" src="<?php echo base_url().'Scripts/datatable/jquery.dataTables.rowGrouping.js'?>"></script>
-<script type="text/javascript">
-	$(document).ready(function() {
-		
-	});
-		
-
-</script>
-
 <script>
 	$(document).ready(function() {
 		
@@ -15,43 +7,7 @@
 			navigation : true
 		});
 		
-		//count to check which message to display
-        var count='<?php echo @$this -> session -> userdata['message_counter']?>';
-        var message='<?php echo @$this -> session -> userdata['message']?>';	
-	
-		if(count == 1) {
-		$(".passmessage").slideDown('slow', function() {
-
-		});
-		$(".passmessage").append(message);
-
-		var fade_out = function() {
-		$(".passmessage").fadeOut().empty();
-		}
-		setTimeout(fade_out, 5000);
-	     <?php 
-	     $this -> session -> set_userdata('message_counter', "0");
-	     $this -> session -> set_userdata('message', " ");
-	     ?>
-
-		}
-		if(count == 2) {
-		$(".errormessage").slideDown('slow', function() {
-
-		});
-		$(".errormessage").append(message);
-
-		var fade_out = function() {
-		$(".errormessage").fadeOut().empty();
-		}
-		setTimeout(fade_out, 5000);
-	     <?php 
-	     $this -> session -> set_userdata('message_counter', "0");
-	     $this -> session -> set_userdata('message', " ");
-	     ?>
-
-		}
-		});
+	});
 
 </script>
 <style>
@@ -74,41 +30,6 @@
 		color: blue;
 		font-weight: bold;
 	}
-	.passmessage {
-
-		display: none;
-		background: #00CC33;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding: 5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
-	.errormessage {
-
-		display: none;
-		background: #FF0000;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding: 5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
-	#entry_form{
-		background-color:#CCFFFF;
-	}
 
 </style>
 <div id="view_content">
@@ -117,11 +38,9 @@
 		 <!-- Side bar menus -->
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
-
+		<a href="#entry_form" role="button" id="new_regimen_drug" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Regimen Drug</a>	
 	    <div class="span12 span-fixed-sidebar">
 	      	<div class="hero-unit">
-				<div class="passmessage"></div>
-			    <div class="errormessage"></div>
 				<?php echo validation_errors('<p class="error">', '</p>');?>
 				<table class="setting_table" id="brand_name_table">
 		        	<thead>
@@ -142,7 +61,7 @@
 		        		?>
 		        		<?php
 		        		if($drug -> Drug ->id !=""){
-		        			if($access_level!="system_administrator"){
+		        			if($access_level!="facility_administrator"){
 								if($drug -> Active == 1){
 							
 					        		?>
@@ -183,7 +102,7 @@
 		        		} ?>
 		        	</tbody>
 		        </table>
-		        <a href="#entry_form" role="button" id="new_regimen_drug" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Regimen Drug</a>	
+		        
     		</div>
 	    </div><!--/span-->
 	  </div><!--/row-->

@@ -129,14 +129,12 @@ foreach($actions as $action){
 		 <!-- Side bar menus -->
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
-
+		<a href="#regimenchange_form" role="button" id="new_regimenchange" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Regimen Change Reason</a>
 		<div class="span12 span-fixed-sidebar">
 	      	<div class="hero-unit">
-				<div class="passmessage"></div>
-			    <div class="errormessage"></div>
 				<?php echo validation_errors('<p class="error">', '</p>');?>
 				<?php echo $sources;?>
-				<a href="#regimenchange_form" role="button" id="new_regimenchange" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Regimen Change Reason</a>
+				
 			</div>
 	    </div><!--/span-->
 	  </div><!--/row-->

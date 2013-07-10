@@ -4,6 +4,7 @@ class brandname_management extends MY_Controller {
 		parent::__construct();
 		$this->session->set_userdata("link_id","index");
 		$this->session->set_userdata("linkSub","brandname_management");
+		$this->session->set_userdata("linkTitle","Brand Name Management");
 	}
 
 	public function index() {

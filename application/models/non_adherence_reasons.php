@@ -23,7 +23,7 @@ class Non_Adherence_Reasons extends Doctrine_Record {
 	}
 	
 	public function getThemAll($access_level="") {
-		if($access_level="" || $access_level=="system_administrator"){
+		if($access_level="" || $access_level=="facility_administrator"){
 			$query = Doctrine_Query::create() -> select("*") -> from("Non_Adherence_Reasons");
 		}
 		else{

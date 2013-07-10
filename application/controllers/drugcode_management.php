@@ -4,6 +4,7 @@ class Drugcode_management extends MY_Controller {
 		parent::__construct();
 		$this->session->set_userdata("link_id","index");
 		$this->session->set_userdata("linkSub","drugcode_management");
+		$this->session->set_userdata("linkTitle","DrugCode Management");
 		ini_set("max_execution_time", "100000");
 	}
 
@@ -40,13 +41,13 @@ class Drugcode_management extends MY_Controller {
 			}
 			
 			$drug = $drugcode['id'];
-			if ($drugcode['Enabled'] == 1 && $access_level=="system_administrator") {
+			if ($drugcode['Enabled'] == 1 && $access_level=="facility_administrator") {
 				$links .= " | ";
 				$links .= anchor('drugcode_management/disable/' . $drugcode['id'], 'Disable', array('class' => 'disable_user'));
 				
-				$links .= "<a href='#' class='merge_drug' id='$drug'>Merge</a>";
-			} elseif($access_level=="system_administrator") {
-				$links .= " | ";
+				//$links .= "<a href='#' class='merge_drug' id='$drug'>Merge</a>";
+			} elseif($access_level=="facility_administrator") {
+				//$links .= " | ";
 				$links .= anchor('drugcode_management/enable/' . $drugcode['id'], 'Enable', array('class' => 'enable_user'));
 
 			}
@@ -58,16 +59,21 @@ class Drugcode_management extends MY_Controller {
 			}
 			 * *
 			 */
-			//if (@$drugcode['Merged_To']) {
-				if($access_level == "system_administrator"){
+			 /*
+			if (@$drugcode['Merged_To']) {
+				if($access_level == "facility_administrator"){
 					$links .= " | ";
 					$links .= anchor('drugcode_management/unmerge/' . $drugcode['id'], 'Unmerge', array('class' => 'unmerge_drug'));
 				}
+			  */
+			   
 				$checkbox = "<input type='checkbox' name='drugcodes' id='drugcodes' value='$drug' disabled/>";
-
-			//} else {
-			//	$checkbox = "<input type='checkbox' name='drugcodes' id='drugcodes' value='$drug'/>";
-			//}
+/*
+			} else {
+			$checkbox = "<input type='checkbox' name='drugcodes' id='drugcodes' value='$drug'/>";
+			}
+			  *
+			  */
 			$this -> table -> add_row($drugcode['id'], $checkbox . "&nbsp;" . $drugcode['Drug'], $drugcode['Pack_Size'], $drugcode['Safety_Quantity'], $drugcode['Quantity'], $drugcode['Duration'], $links);
 		}
 
@@ -134,7 +140,7 @@ class Drugcode_management extends MY_Controller {
 
 			$drugcode -> save();
 			//$this -> session -> set_userdata('message_counter', '1');
-			$this -> session -> set_userdata('msg_success', $this -> input -> post('drugname') . ' was added.');
+			$this -> session -> set_userdata('msg_success', $this -> input -> post('drugname') . ' was successfully Added!');
 			redirect('settings_management');
 		}
 
@@ -199,7 +205,7 @@ class Drugcode_management extends MY_Controller {
 		$query = $this -> db -> query("UPDATE drugcode SET Enabled='1'WHERE id='$drugcode_id'");
 		$results = Drugcode::getDrugCode($drugcode_id);
 		//$this -> session -> set_userdata('message_counter', '1');
-		$this -> session -> set_userdata('msg_success', $results['Drug'] . ' was enabled');
+		$this -> session -> set_userdata('msg_success', $results['Drug'] . ' was enabled!');
 		
 		redirect('settings_management');
 	}
@@ -209,7 +215,7 @@ class Drugcode_management extends MY_Controller {
 		$query = $this -> db -> query("UPDATE drugcode SET Enabled='0'WHERE id='$drugcode_id'");
 		$results = Drugcode::getDrugCode($drugcode_id);
 		$this -> session -> set_userdata('message_counter', '2');
-		$this -> session -> set_userdata('msg_success', $results['Drug'] . ' was disabled');
+		$this -> session -> set_userdata('msg_success', $results['Drug'] . ' was disabled!');
 		redirect('settings_management');
 	}
 
@@ -252,9 +258,9 @@ class Drugcode_management extends MY_Controller {
 		$this -> db -> query($the_query);
 		
 		$results = Drugcode::getDrugCode($drugcode);
-		$this -> session -> set_userdata('message_counter', '2');
-		$this -> session -> set_userdata('message', $results -> Drug . ' was unmerged');
-		redirect('drugcode_management');
+		//$this -> session -> set_userdata('message_counter', '2');
+		$this -> session -> set_userdata('msg_error', $results -> Drug . ' was unmerged!');
+		redirect('settings_management');
 
 	}
 

@@ -28,7 +28,7 @@ class Clientsupport extends Doctrine_Record {
 		return $sources;
 	}
 	public function getThemAll($access_level="") {
-		if($access_level="" || $access_level=="system_administrator"){
+		if($access_level="" || $access_level=="facility_administrator"){
 			$query = Doctrine_Query::create() -> select("*") -> from("supporter") ;
 		}
 		else{

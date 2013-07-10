@@ -35,7 +35,7 @@ class Drugcode extends Doctrine_Record {
 	}
 
 	public function getAll($source = 0,$access_level="") {
-		if($access_level=="" || $access_level=="system_administrator"){
+		if($access_level=="" || $access_level=="facility_administrator"){
 			$displayed_enabled="Source='0' or Source !='0'";
 		}
 		else{

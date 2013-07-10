@@ -7,6 +7,7 @@ class Client_Management extends MY_Controller {
 		parent::__construct();
 		$this->session->set_userdata("link_id","index");
 		$this->session->set_userdata("linkSub","client_management");
+		$this->session->set_userdata("linkTitle","Patient Source Management");
 	}
 
 	public function index() {
@@ -33,10 +34,10 @@ class Client_Management extends MY_Controller {
 				//$links = anchor('client_management/edit/' .$source->id, 'Edit',array('class' => 'edit_user','id'=>$source->id,'name'=>$source->Name));
 				$links .= anchor('#edit_form', 'Edit', $array_param);
 			}
-			if($access_level=="system_administrator" ){
-				$links.=" | ";
-				if($source->Active==1){
+			if($access_level=="facility_administrator" ){
 				
+				if($source->Active==1){
+				$links.=" | ";
 				$links .= anchor('client_management/disable/' .$source->id, 'Disable',array('class' => 'disable_user'));	
 				}
 				else{
