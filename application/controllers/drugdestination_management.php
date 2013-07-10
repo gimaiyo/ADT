@@ -7,6 +7,7 @@ class Drugdestination_Management extends MY_Controller {
 		parent::__construct();
 		$this->session->set_userdata("link_id","index");
 		$this->session->set_userdata("linkSub","drugdestination_management");
+		$this->session->set_userdata("linkTitle","Drug Destination Management");
 	}
 
 	public function index() {
@@ -33,9 +34,10 @@ class Drugdestination_Management extends MY_Controller {
 				//$links = anchor('drugdestination_management/edit/' .$source->id, 'Edit',array('class' => 'edit_user','id'=>$source->id,'name'=>$source->Name));
 				$links .= anchor('#edit_form', 'Edit', $array_param);
 			}
-			if($access_level=="system_administrator"){
-				$links.=" | ";
+			if($access_level=="facility_administrator"){
+				
 				if($source->Active==1){
+				$links.=" | ";
 				$links .= anchor('drugdestination_management/disable/' .$source->id, 'Disable',array('class' => 'disable_user'));	
 				}else{
 				$links .= anchor('drugdestination_management/enable/' .$source->id, 'Enable',array('class' => 'enable_user'));	
@@ -63,7 +65,7 @@ class Drugdestination_Management extends MY_Controller {
 		$source -> save();
 		
 		//$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('msg_success',$this -> input -> post('source_name').' was Added');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('source_name').' was successfully Added!');
 		redirect('settings_management');
 	}
 
@@ -84,7 +86,7 @@ class Drugdestination_Management extends MY_Controller {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE drug_destination SET Name='$source_name' WHERE id='$source_id'");
 		//$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('msg_success',$this -> input -> post('source_name').' was Updated');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('source_name').' was Updated!');
 		redirect('settings_management');
 	}
 
@@ -102,7 +104,7 @@ class Drugdestination_Management extends MY_Controller {
 		$query = $this -> db -> query("UPDATE drug_destination SET Active='0'WHERE id='$source_id'");
 		$results=Drug_Destination::getSource($source_id);
 		//$this -> session -> set_userdata('message_counter','2');
-		$this -> session -> set_userdata('msg_error',$results->Name.' was disabled');
+		$this -> session -> set_userdata('msg_error',$results->Name.' was disabled!');
 		redirect('settings_management');
 	}
 

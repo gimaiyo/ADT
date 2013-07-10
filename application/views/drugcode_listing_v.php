@@ -326,11 +326,11 @@
 	    <!-- Side bar menus -->
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
-
+		<a href="#new_drugcode" role="button" id="btn_new_drugcode" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Drug Code</a>
 	    <div class="span12 span-fixed-sidebar">
 	      <div class="hero-unit">
 	      	<?php echo $drugcodes;?>
-	      	<a href="#new_drugcode" role="button" id="btn_new_drugcode" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Drug Code</a>
+	      	
 	      </div>
 
 	      

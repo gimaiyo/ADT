@@ -6,6 +6,7 @@ class User_Management extends MY_Controller {
 		parent::__construct();
 		$this->session->set_userdata("link_id","index");
 		$this->session->set_userdata("linkSub","user_management");
+		$this->session->set_userdata("linkTitle","Users Management");
 		$this -> load -> library('encrypt');
 		$this -> load -> helper('geoiploc');
 		ini_set("SMTP",'ssl://smtp.googlemail.com');

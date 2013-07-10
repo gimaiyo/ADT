@@ -192,6 +192,7 @@
 	<div class="container-fluid">
 		<div class="row-fluid row">
 		 <!-- Side bar menus -->
+		 <a href="#user_form" role="button" id="new_client" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New User</a>
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
 		<div class="span12 span-fixed-sidebar">
@@ -200,7 +201,7 @@
 				echo $users;
 				?>
 	      	</div>
-	      	<a href="#user_form" role="button" id="new_client" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New User</a>
+	      	
 	    </div>
 	  </div>
 	</div>

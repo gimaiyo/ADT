@@ -6,6 +6,7 @@ class genericname_management extends MY_Controller {
 		parent::__construct();
 		$this->session->set_userdata("link_id","index");
 		$this->session->set_userdata("linkSub","genericname_management");
+		$this->session->set_userdata("linkTitle","Generic Name Management");
 	}
 
 	public function index() {
@@ -33,7 +34,7 @@ class genericname_management extends MY_Controller {
 				$links .= anchor('#edit_form', 'Edit', $array_param);
 			}
 			//Check if user is an admin
-			if($access_level=="system_administrator"){
+			if($access_level=="facility_administrator"){
 				
 				if ($generic['Active'] == 1) {
 					$links .= " | ";

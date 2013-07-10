@@ -202,27 +202,21 @@
 	
 	<div class="container-fluid">
 	  <div class="row-fluid row">
-
+		<a href="#entry_form" role="button" id="new_regimen" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Regimen</a>
+	
 	    <!-- Side bar menus -->
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
 
 	    <div class="span12 span-fixed-sidebar">
 	      <div class="hero-unit">
-	      	
 	        <?php echo $regimens;?>
 	      </div>
-
-	      
 	    </div><!--/span-->
 	  </div><!--/row-->
 
 
 	</div><!--/.fluid-container-->
-
-
-	
-	<a href="#entry_form" role="button" id="new_regimen" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Regimen</a>
 	
 	<div id="entry_form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="NewRegimen" aria-hidden="true">
 		<?php

@@ -13,7 +13,7 @@ class Dose extends Doctrine_Record {
 	}
 
 	public function getAll($access_level="") {
-		if($access_level="" || $access_level=="system_administrator"){
+		if($access_level="" || $access_level=="facility_administrator"){
 			$query = Doctrine_Query::create() -> select("*") -> from("dose");
 		}
 		else{

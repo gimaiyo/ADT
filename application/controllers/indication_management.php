@@ -7,7 +7,7 @@ class Indication_Management extends MY_Controller {
 		parent::__construct();
 		$this->session->set_userdata("link_id","index");
 		$this->session->set_userdata("linkSub","indication_management");
-		
+		$this->session->set_userdata("linkTitle","Drug Indication Management");
 	}
 
 	public function index() {
@@ -35,9 +35,10 @@ class Indication_Management extends MY_Controller {
 				//$links = anchor('indication_management/edit/' .$infection->id, 'Edit',array('class' => 'edit_user','id'=>$infection->id,'name'=>$infection->Name));
 				$links .= anchor('#edit_form', 'Edit', $array_param);
 			}
-			if($access_level=="system_administrator"){
-				$links.=" | ";
+			if($access_level=="facility_administrator"){
+				
 				if($infection->Active==1){
+				$links.=" | ";
 				$links .= anchor('indication_management/disable/' .$infection->id, 'Disable',array('class' => 'disable_user'));	
 				}else{
 				$links .= anchor('indication_management/enable/' .$infection->id, 'Enable',array('class' => 'enable_user'));	

@@ -40,7 +40,7 @@ class Opportunistic_Infection extends Doctrine_Record {
 		return $ois[0];
 	}
 	public function getThemAll($access_level="") {
-		if($access_level="" || $access_level=="system_administrator"){
+		if($access_level="" || $access_level=="facility_administrator"){
 			$query = Doctrine_Query::create() -> select("*") -> from("Opportunistic_Infection");
 		}
 		else{

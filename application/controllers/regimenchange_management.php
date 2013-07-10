@@ -7,6 +7,7 @@ class Regimenchange_Management extends MY_Controller {
 		parent::__construct();
 		$this->session->set_userdata("link_id","index");
 		$this->session->set_userdata("linkSub","regimenchange_management");
+		$this->session->set_userdata("linkTitle","Regimen Change Reason Management");
 	}
 
 	public function index() {
@@ -33,9 +34,10 @@ class Regimenchange_Management extends MY_Controller {
 				//$links = anchor('regimenchange_management/edit/' .$source->id, 'Edit',array('id'=>$source->id,'class' => 'edit_user','name'=>$source->Name));
 				$links .= anchor('#edit_form', 'Edit', $array_param);
 			}
-			if($access_level=="system_administrator" ){
-				$links.=" | ";
+			if($access_level=="facility_administrator" ){
+				
 				if($source->Active==1){
+				$links.=" | ";
 				$links .= anchor('regimenchange_management/disable/' .$source->id, 'Disable',array('class' => 'disable_user'));	
 				}
 				else{
@@ -66,7 +68,7 @@ class Regimenchange_Management extends MY_Controller {
 		
 		//$this -> session -> set_userdata('message_counter','1');
 		$this -> session -> set_userdata('msg_success',$this -> input -> post('regimenchange_name').' was Added');
-		redirect('setting_management');
+		redirect('settings_management');
 	}
 
 	public function edit($source_id) {
@@ -95,7 +97,7 @@ class Regimenchange_Management extends MY_Controller {
 		$results=Regimen_change_purpose::getSource($regimenchange_id);
 		//$this -> session -> set_userdata('message_counter','1');
 		$this -> session -> set_userdata('msg_success',$results->Name.' was enabled');
-		redirect('setting_management');
+		redirect('settings_management');
 	}
 
 	public function disable($regimenchange_id) {
@@ -103,8 +105,8 @@ class Regimenchange_Management extends MY_Controller {
 		$query = $this -> db -> query("UPDATE Regimen_Change_Purpose SET Active='0'WHERE id='$regimenchange_id'");
 		$results=Regimen_change_purpose::getSource($regimenchange_id);
 		$this -> session -> set_userdata('message_counter','2');
-		$this -> session -> set_userdata('msg_success',$results->Name.' was disabled');
-		redirect('setting_management');
+		$this -> session -> set_userdata('msg_error',$results->Name.' was disabled');
+		redirect('settings_management');
 	}
 
 	public function base_params($data) {

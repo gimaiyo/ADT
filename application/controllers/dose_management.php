@@ -7,6 +7,7 @@ class Dose_Management extends MY_Controller {
 		parent::__construct();
 		$this->session->set_userdata("link_id","index");
 		$this->session->set_userdata("linkSub","dose_management");
+		$this->session->set_userdata("linkTitle","Drug Dose Management");
 		
 	}
 
@@ -33,9 +34,10 @@ class Dose_Management extends MY_Controller {
 				//$links = anchor('','Edit',array('class' => 'edit_user','id'=>$dose->id,'name'=>$dose->Name));
 				$links .= anchor('#edit_dose', 'Edit', $array_param);
 			}
-			if($access_level=="system_administrator"){
-				$links.=" | ";
+			if($access_level=="facility_administrator"){
+				
 				if($dose->Active==1){
+					$links.=" | ";
 					$links .= anchor('dose_management/disable/' .$dose->id, 'Disable',array('class' => 'disable_user'));	
 				}else{
 					$links .= anchor('dose_management/enable/' .$dose->id, 'Enable',array('class' => 'enable_user'));	
@@ -64,7 +66,7 @@ class Dose_Management extends MY_Controller {
 		$dose -> save();
 		
 		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('msg_success',$this -> input -> post('dose_name').' was Added');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('dose_name').' was succesfully Added!');
 		redirect('settings_management');
 	}
 
@@ -82,8 +84,8 @@ class Dose_Management extends MY_Controller {
 
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE dose SET Name='$dose_name',Value='$dose_value',Frequency='$dose_frequency' WHERE id='$dose_id'");
-		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('msg_success',$this -> input -> post('dose_name').' was Updated');
+		//$this -> session -> set_userdata('message_counter','1');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('dose_name').' was Updated!');
 		redirect('settings_management');
 	}
 
@@ -91,18 +93,18 @@ class Dose_Management extends MY_Controller {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE dose SET Active='1' WHERE id='$dose_id'");
 		$results=Dose::getDose($dose_id);
-		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('message',$results->Name.' was enabled');
-		redirect('dose_management');
+		//$this -> session -> set_userdata('message_counter','1');
+		$this -> session -> set_userdata('msg_success',$results->Name.' was enabled!');
+		redirect('settings_management');
 	}
 
 	public function disable($dose_id) {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE dose SET Active='0' WHERE id='$dose_id'");
 		$results=Dose::getDose($dose_id);
-		$this -> session -> set_userdata('message_counter','2');
-		$this -> session -> set_userdata('message',$results->Name.' was disabled');
-		redirect('dose_management');
+		//$this -> session -> set_userdata('message_counter','2');
+		$this -> session -> set_userdata('msg_error',$results->Name.' was disabled!');
+		redirect('settings_management');
 	}
 
 	public function base_params($data) {
