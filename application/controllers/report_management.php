@@ -3059,15 +3059,35 @@ class report_management extends MY_Controller {
 		$this -> load -> view('template', $data);
 	}
 
-	public function getDrugsIssued($stock_type,$start_date = "", $end_date = "") {
-            echo $stock_type."/".$start_date."/".$end_date;
+	public function getDrugsIssued($stock_type, $start_date = "", $end_date = "") {
+		$data['from'] = $start_date;
+		$data['to'] = $end_date;
+		$start_date = date('Y-m-d', strtotime($start_date));
+		$end_date = date('Y-m-d', strtotime($end_date));
+		$facility_code = $this -> session -> userdata('facility');
+		$facilty_value = "";
+		if ($stock_type == 1) {
+			//Main Store
+			$facilty_value = "dsm.source!=dsm.destination";
+
+		} else if ($stock_type == 2) {
+			//Pharmacy
+			$facilty_value = "dsm.source=dsm.destination";
+		}
+		echo $sql = "select * from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON du.id=d.unit where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' and t.name like '%Issued To%'";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			foreach ($results as $result) {
+			}
+		}
 	}
 
-	public function getDrugsReceived($stock_type,$start_date = "", $end_date = "") {
+	public function getDrugsReceived($stock_type, $start_date = "", $end_date = "") {
 
 	}
 
-	public function getDailyConsumption($stock_type,$start_date = "", $end_date = "") {
+	public function getDailyConsumption($stock_type, $start_date = "", $end_date = "") {
 
 	}
 

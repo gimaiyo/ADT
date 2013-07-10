@@ -30,7 +30,8 @@ class Indication_Management extends MY_Controller {
 					'role'=>'button',
 					'class'=>'edit_user',
 					'data-toggle'=>'modal',
-					'name'=>$infection->Name
+					'name'=>$infection->Name,
+					'title'=>$infection->Indication
 				);
 				//$links = anchor('indication_management/edit/' .$infection->id, 'Edit',array('class' => 'edit_user','id'=>$infection->id,'name'=>$infection->Name));
 				$links .= anchor('#edit_form', 'Edit', $array_param);
@@ -44,7 +45,11 @@ class Indication_Management extends MY_Controller {
 				$links .= anchor('indication_management/enable/' .$infection->id, 'Enable',array('class' => 'enable_user'));	
 				}
 			}
-			$this -> table -> add_row($infection->id, $infection->Name,$links);
+			$infection_temp="";
+			if($infection->Name){
+				$infection_temp=" | ".$infection->Name;
+			}
+			$this -> table -> add_row($infection->id,$infection->Indication.$infection_temp,$links);
 		}
 
 		$data['indications'] = $this -> table -> generate();
@@ -62,11 +67,12 @@ class Indication_Management extends MY_Controller {
 
 		$indication = new Opportunistic_Infection();
 		$indication -> Name = $this -> input -> post('indication_name');
+		$indication -> Indication = $this -> input -> post('indication_code');
 		$indication -> Active = "1";
 		$indication -> save();
 		
 		//$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('msg_success',$this -> input -> post('indication_name').' was Added');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('indication_code').' was Added');
 		redirect('settings_management');
 	}
 
@@ -82,12 +88,13 @@ class Indication_Management extends MY_Controller {
 	public function update() {
 		$indication_id = $this -> input -> post('indication_id');
 		$indication_name = $this -> input -> post('indication_name');
+		$indication_code = $this -> input -> post('indication_code');
 		
 
 		$this -> load -> database();
-		$query = $this -> db -> query("UPDATE opportunistic_infection SET Name='$indication_name' WHERE id='$indication_id'");
+		$query = $this -> db -> query("UPDATE opportunistic_infection SET Name='$indication_name',Indication='$indication_code' WHERE id='$indication_id'");
 		//$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('msg_success',$this -> input -> post('indication_name').' was Updated');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('indication_code').' was Updated');
 		redirect('settings_management');
 	}
 
@@ -96,7 +103,7 @@ class Indication_Management extends MY_Controller {
 		$query = $this -> db -> query("UPDATE opportunistic_infection SET Active='1'WHERE id='$indication_id'");
 		$results=Opportunistic_Infection::getIndication($indication_id);
 		//$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('msg_success',$results->Name.' was enabled');
+		$this -> session -> set_userdata('msg_success',$results->Indication.' was enabled');
 		redirect('settings_management');
 	}
 
@@ -105,7 +112,7 @@ class Indication_Management extends MY_Controller {
 		$query = $this -> db -> query("UPDATE opportunistic_infection SET Active='0'WHERE id='$indication_id'");
 		$results=Opportunistic_Infection::getIndication($indication_id);
 		//$this -> session -> set_userdata('message_counter','2');
-		$this -> session -> set_userdata('msg_success',$results->Name.' was disabled');
+		$this -> session -> set_userdata('msg_error',$results->Indication.' was disabled');
 		redirect('settings_management');
 	}
 

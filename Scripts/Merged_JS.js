@@ -65,7 +65,7 @@
 						var report = $(".select_report:visible").attr("value");
 						var from = $("#date_range_from").attr("value");
 						var to = $("#date_range_to").attr("value");
-						if($(".report_type:visible")){
+						if($(".report_type").is(":visible")){
 							report=report+"/"+$(".report_type:visible").attr("value");
 						}
 						
