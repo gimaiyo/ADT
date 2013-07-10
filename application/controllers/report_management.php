@@ -3074,7 +3074,7 @@ class report_management extends MY_Controller {
 			//Pharmacy
 			$facilty_value = "dsm.source=dsm.destination";
 		}
-		$sql = "select * from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' and t.name like '%Issued To%'";
+		echo $sql = "select * from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON du.id=d.unit where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' and t.name like '%Issued To%'";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {

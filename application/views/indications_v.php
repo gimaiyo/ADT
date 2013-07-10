@@ -109,6 +109,7 @@
 		$(".edit_user").live('click',function(event){
 			event.preventDefault();
 			$('#edit_indication_id').val(this.id);
+			$('#edit_indication_code').val(this.title);
 			$('#edit_indication_name').val(this.name);
 			//$("#edit_form").dialog("open");
 		});
@@ -187,6 +188,7 @@ foreach($actions as $action){
 		 <!-- Side bar menus -->
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
+				<a href="#indication_form" role="button" id="new_indication" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Indication</a>
 
 	    <div class="span12 span-fixed-sidebar">
 	      	<div class="hero-unit">
@@ -194,7 +196,6 @@ foreach($actions as $action){
 			    <div class="errormessage"></div>
 				<?php echo validation_errors('<p class="message error">', '</p>');?>
 				<?php echo $indications; ?>
-				<a href="#indication_form" role="button" id="new_indication" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Indication</a>
 			</div>
 	    </div><!--/span-->
 	  </div><!--/row-->
@@ -210,6 +211,10 @@ foreach($actions as $action){
 		    <h3 id="NewDrug">Drug details</h3>
 		</div>
 		<div class="modal-body">
+			<label>
+				<strong class="label">Indication Code</strong>
+				<input type="text" name="indication_code" id="indication_code" class="input-xlarge">
+			</label>
 			<label>
 				<strong class="label">Indication Name</strong>
 				<input type="text" name="indication_name" id="indication_name" class="input-xlarge">
@@ -235,6 +240,10 @@ foreach($actions as $action){
 		</div>
 		<div class="modal-body">
 			<label>
+				<strong class="label">Indication Code</strong>
+				<input type="text" name="indication_code" id="edit_indication_code" class="input-xlarge">
+			</label>
+				<label>
 				<strong class="label">Indication Name</strong>
 				<input type="hidden" name="indication_id" id="edit_indication_id" class="input-xlarge">
 				<input type="text" name="indication_name" id="edit_indication_name" class="input-xlarge">
