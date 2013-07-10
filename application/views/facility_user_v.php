@@ -27,41 +27,8 @@
 		color:blue;
 		font-weight:bold;
 	}
-	.passmessage {
-
-		display: none;
-		background: #00CC33;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding:5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
-	.errormessage {
-
-		display: none;
-		background: #FF0000;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding:5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
+	
 	#facility_form(
-	    width: 300px;
-		height:150px;
 		margin-top: 5px;
 		border:1px solid #DDD;
 		padding:20px;
@@ -82,43 +49,6 @@ $("#facility_type").attr("value","<?php echo @$facility['facilitytype'];?>");
 $("#district").attr("value","<?php echo @$facility['district'];?>");
 $("#central_site").attr("value","<?php echo @$facility['parent'];?>");
 		
-//count to check which message to display
- var count='<?php echo @$this -> session -> userdata['message_counter']?>';
- var message='<?php echo @$this -> session -> userdata['message']?>';	
-	
-	if(count == 1) {
-	$(".passmessage").slideDown('slow', function() {
-
-	});
-	$(".passmessage").append(message);
-
-	var fade_out = function() {
-	$(".passmessage").fadeOut().empty();
-	}
-	setTimeout(fade_out, 5000);
-     <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
-     ?>
-
-	}
-	if(count == 2) {
-	$(".errormessage").slideDown('slow', function() {
-
-	});
-	$(".errormessage").append(message);
-
-	var fade_out = function() {
-	$(".errormessage").fadeOut().empty();
-	}
-	setTimeout(fade_out, 5000);
-     <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
-     ?>
-
-	}
-		
 	});
 
 	
@@ -131,22 +61,7 @@ $("#central_site").attr("value","<?php echo @$facility['parent'];?>");
 	    <!-- SIde bar menus end -->
 
 	    <div class="span12 span-fixed-sidebar" >
-
-	    	<div id="action_panel_parent" style="display:none">
-				<div class="actions_panel" style="visibility:hidden" >
-					<?php
-			//Loop through all the actions passed on to this file
-			foreach($actions as $action){
-					?>
-					<a class="link" link="<?php echo $this->router->class."/".$action[1]."/"?>"><?php echo $action[0]
-					?></a>
-					<?php }?>
-				</div>
-			</div>
-
 	      	<div class="hero-unit" style="padding:10px;background: rgb(184, 255, 184);">
-				<div class="passmessage"></div>
-			    <div class="errormessage"></div>
 				<?php echo validation_errors('<p class="error">', '</p>');?>
 				
 
@@ -276,7 +191,7 @@ $("#central_site").attr("value","<?php echo @$facility['parent'];?>");
 					
 				</div>
 				<div class="span3" style="padding-top: 2em;">
-					<input type="submit" class="btn btn-medium" value="Save" style="padding-left: 2em; padding-right: 2em;">
+					<input type="submit" class="btn " value="Save" style="padding-left: 2em; padding-right: 2em;">
 				</div>
 	    		</form>
 

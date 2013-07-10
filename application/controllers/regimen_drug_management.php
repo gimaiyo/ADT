@@ -4,6 +4,7 @@ class Regimen_Drug_Management extends MY_Controller {
 		parent::__construct();
 		$this->session->set_userdata("link_id","index");
 		$this->session->set_userdata("linkSub","regimen_drug_management");
+		$this->session->set_userdata("linkTitle","Regimen Drug Management");
 	}
 
 	public function index() {
@@ -42,7 +43,7 @@ class Regimen_Drug_Management extends MY_Controller {
 			$regimen_drug -> save();
 			$regimen_drug_id=$this -> input -> post('drugid');
 			$results = Drugcode::getDrugCode($regimen_drug_id);
-			$this -> session -> set_userdata('msg_success',$results->Drug.' was Added');
+			$this -> session -> set_userdata('msg_success',$results->Drug.' was successfully Added!');
 		
 		}
 		redirect('settings_management');
@@ -54,7 +55,7 @@ class Regimen_Drug_Management extends MY_Controller {
 		$query = $this -> db -> query("UPDATE regimen_drug SET active='1'WHERE drugcode='$regimen_drug_id'");
 		$results = Drugcode::getDrugCode($regimen_drug_id);
 		//$this -> session -> set_userdata('message_counter', '1');
-		$this -> session -> set_userdata('msg_success', $results -> Drug  . ' was enabled');
+		$this -> session -> set_userdata('msg_success', $results -> Drug  . ' was enabled!');
 		redirect('settings_management');
 	}
 
@@ -63,7 +64,7 @@ class Regimen_Drug_Management extends MY_Controller {
 		$query = $this -> db -> query("UPDATE regimen_drug SET active='0'WHERE drugcode='$regimen_drug_id'");
 		$results = Drugcode::getDrugCode($regimen_drug_id);
 		//$this -> session -> set_userdata('message_counter', '2');
-		$this -> session -> set_userdata('msg_error', $results -> Drug . ' was disabled');
+		$this -> session -> set_userdata('msg_error', $results -> Drug . ' was disabled!');
 		redirect('settings_management');
 	}
 

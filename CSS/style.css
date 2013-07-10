@@ -298,6 +298,9 @@ input[type =
 	background-image: -webkit-linear-gradient(top,#46EB59,#36D148);
 	background-image: -moz-linear-gradient(top,#46EB59,#36D148);
 }
+.f_left{
+	float:left;
+}
 .action_button {
 
 	width: 150px;
@@ -593,11 +596,11 @@ hr {
 	margin: 0 auto;
 }
 .navbar {
-	width: 1000px;
+	width: 500px;
 	position: static;
 	top: 5px;
-	margin: 0 auto;
 	margin-bottom: 20px;
+	float:left;
 }
 @media print {
 	#inf_patient_listing, #inf_drug_listing, #inf_drug_summary {
@@ -1539,15 +1542,13 @@ table#history_table td {
 }
 .settings {
 	width: 95%;
-	height: 57%;
+	height: 54%;
 	overflow: auto;
 }
-body .modal {
-
-	/* new custom width */
-	width: 800px;
-	/* must be half of the width, minus scrollbar on the left (30px) */
-	margin-left: -280px;
+.settings_title{
+	margin-left:40px;
+	margin-bottom:10px;
+	width:500px;
 }
 
 /**

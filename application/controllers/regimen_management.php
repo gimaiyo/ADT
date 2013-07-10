@@ -4,6 +4,7 @@ class Regimen_management extends MY_Controller {
 		parent::__construct();
 		$this->session->set_userdata("link_id","index");
 		$this->session->set_userdata("linkSub","regimen_management");
+		$this->session->set_userdata("linkTitle","Regimen Management");
 		$this -> load -> database();
 	}
 
@@ -36,7 +37,8 @@ class Regimen_management extends MY_Controller {
 			$drug = $regimen['id'];
 			$type_of_service=$regimen['Regimen_Service_Type'];
 
-			if($type_of_service!="ART" && $access_level!="system_administrator"){
+			//if($type_of_service!="ART" && $access_level!="system_administrator"){
+			if($access_level!="facility_administrator"){
 				$array_param=array(
 					'id'=>$regimen['id'],
 					'role'=>'button',
@@ -49,7 +51,7 @@ class Regimen_management extends MY_Controller {
 				}
 				
 			}
-			elseif($access_level=="system_administrator"){
+			elseif($access_level=="facility_administrator"){
 				//href="#entry_form" role="button" id="new_regimen" class="btn" data-toggle="modal"
 				$array_param=array(
 					'id'=>$regimen['id'],
@@ -69,16 +71,17 @@ class Regimen_management extends MY_Controller {
 		
 			} 
 
-			if ($regimen['Enabled'] == 1 && @$regimen['Merged_To']=="" && $access_level == "system_administrator") {
+			if ($regimen['Enabled'] == 1 && @$regimen['Merged_To']=="" && $access_level == "facility_administrator") {
+				$links .= " | ";	
 				$links .= anchor('regimen_management/disable/' . $regimen['id'], 'Disable', array('class' => 'disable_user'));
-				$links .= " | ";
-				$links .= "<a href='#' class='merge_drug' id='$drug'>Merge</a>";
+				//$links .= " | ";
+				//$links .= "<a href='#' class='merge_drug' id='$drug'>Merge</a>";
 			}
-			if ($regimen['Enabled'] == 0 && $access_level == "system_administrator"){
+			if ($regimen['Enabled'] == 0 && $access_level == "facility_administrator"){
 				$links .= anchor('regimen_management/enable/' . $regimen['id'], 'Enable', array('class' => 'enable_user'));
 			}
 			if (@$regimen['Merged_To']) {
-				if($access_level == "system_administrator"){
+				if($access_level == "facility_administrator"){
 					$links .= " | ";
 					$links .= anchor('regimen_management/unmerge/' . $regimen['id'], 'Unmerge', array('class' => 'unmerge_drug'));
 				}
@@ -235,7 +238,7 @@ class Regimen_management extends MY_Controller {
 	public function base_params($data) {
 		$data['quick_link'] = "regimen";
 		$data['title'] = "Regimens";
-		$data['banner_text'] = "Regimen Management";
+		$data['page_title'] = "Regimen Management";
 		$data['link'] = "settings_management";
 		$this -> load -> view('regimen_listing_v', $data);
 	}

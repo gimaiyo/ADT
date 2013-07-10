@@ -61,7 +61,7 @@
 	    <!-- Side bar menus -->
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
-
+		<a href="#client_form" role="button" id="new_client" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Brand Name</a>	
 	    <div class="span12 span-fixed-sidebar">
 	      <div class="hero-unit">
     		<?php echo validation_errors('<p class="error">', '</p>');?>
@@ -85,7 +85,7 @@
 	        		} ?>
 	        	</tbody>
 	        </table>
-	        <a href="#client_form" role="button" id="new_client" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Supporter</a>	
+	        
 	      </div>
 	    </div><!--/span-->
 	  </div><!--/row-->

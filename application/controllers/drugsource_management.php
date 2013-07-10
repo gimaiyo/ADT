@@ -7,7 +7,7 @@ class Drugsource_Management extends MY_Controller {
 		parent::__construct();
 		$this->session->set_userdata("link_id","index");
 		$this->session->set_userdata("linkSub","drugsource_management");
-		
+		$this->session->set_userdata("linkTitle","Drug Source Management");
 	}
 
 	public function index() {
@@ -35,9 +35,10 @@ class Drugsource_Management extends MY_Controller {
 				$links .= anchor('#edit_form', 'Edit', $array_param);
 				
 			}
-			if($access_level=="system_administrator"){
-				$links.=" | ";
+			if($access_level=="facility_administrator"){
+				
 				if($source->Active==1){
+				$links.=" | ";
 				$links .= anchor('drugsource_management/disable/' .$source->id, 'Disable',array('class' => 'disable_user'));	
 				}else{
 				$links .= anchor('drugsource_management/enable/' .$source->id, 'Enable',array('class' => 'enable_user'));	
@@ -65,7 +66,7 @@ class Drugsource_Management extends MY_Controller {
 		$source -> save();
 		
 		$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('msg_success',$this -> input -> post('source_name').' was Added');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('source_name').' was successfully Added!');
 		redirect('settings_management');
 	}
 
@@ -86,7 +87,7 @@ class Drugsource_Management extends MY_Controller {
 		$this -> load -> database();
 		$query = $this -> db -> query("UPDATE drug_source SET Name='$source_name' WHERE id='$source_id'");
 		//$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('msg_success',$this -> input -> post('source_name').' was Updated');
+		$this -> session -> set_userdata('msg_success',$this -> input -> post('source_name').' was Updated!');
 		redirect('settings_management');
 	}
 
@@ -95,7 +96,7 @@ class Drugsource_Management extends MY_Controller {
 		$query = $this -> db -> query("UPDATE drug_source SET Active='1'WHERE id='$source_id'");
 		$results=Drug_Source::getSource($source_id);
 		//$this -> session -> set_userdata('message_counter','1');
-		$this -> session -> set_userdata('msg_success',$results->Name.' was enabled');
+		$this -> session -> set_userdata('msg_success',$results->Name.' was enabled!');
 		redirect('settings_management');
 	}
 
@@ -104,7 +105,7 @@ class Drugsource_Management extends MY_Controller {
 		$query = $this -> db -> query("UPDATE drug_source SET Active='0'WHERE id='$source_id'");
 		$results=Drug_Source::getSource($source_id);
 		//$this -> session -> set_userdata('message_counter','2');
-		$this -> session -> set_userdata('msg_error',$results->Name.' was disabled');
+		$this -> session -> set_userdata('msg_error',$results->Name.' was disabled!');
 		redirect('settings_management');
 	}
 

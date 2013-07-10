@@ -24,7 +24,9 @@
 	#edit_form, #client_form,#entry_form{
 		background-color:#CCFFFF;
 	}
-
+	.hero-unit{
+		margin-bottom:0px;
+	}
 </style>
 <script>
 	
@@ -34,13 +36,18 @@
 		},6000);
 		//What happens when editing/updating/disabling/enabling
 		<?php
+		//Check if the session for a page load already exists
 		if($this->session->userdata('link_id') and $this->session->userdata('linkSub')){
 		?>
+		$(".settings_title").fadeIn("1000");
 		$(".settings").css("display","none");
 		$("#loadingDiv").css("display","block");
 		link_id='#'+'<?php echo $this->session->userdata('link_id')?>';
 		linkSub='<?php echo $this->session->userdata('linkSub')?>';
 		linkIdUrl=link_id.substr(link_id.indexOf('#')+1,(link_id.indexOf('_li')-1));
+		linkTitle='<?php echo @$this->session->userdata('linkTitle')?>';
+		//Change the page title value
+		$("#actual_page").html(linkTitle);
 		$(".settings").load('<?php echo base_url();?>'+linkSub+'/'+linkIdUrl,function(){
 			$("#loadingDiv").css("display","none");
 			$(".settings").css("display","block");
@@ -103,12 +110,17 @@
 		
 		//so which link was clicked?
 			  $('.setting_menus li').on('click',function(){
+			  	$(".settings_title").fadeIn("1000");
 			  	$(".settings").css("display","none");
 			  	$("#loadingDiv").css("display","block");
 			  	var linkDomain=" ";
 				link_id='#'+$(this).find('a').attr('id');
 				linkSub=$(this).find('a').attr('class');
 				linkIdUrl=link_id.substr(link_id.indexOf('#')+1,(link_id.indexOf('_li')-1));
+				//Get actual page title
+				linkTitle=$(this).find('a').attr('title');
+				//Change the page title value
+				$("#actual_page").html(linkTitle);
 				
 				$(".settings").load('<?php echo base_url();?>'+linkSub+'/'+linkIdUrl,function(){
 					$("#loadingDiv").css("display","none");
@@ -194,87 +206,84 @@
 					<a class="dropdown-toggle" role="button" data-toggle="dropdown" id="dLabel" href="#">Regimens<b class="caret"></b></a>
 					<ul class="dropdown-menu setting_menus" role="menu" aria-labelledby="dLabel">
 						<li>
-							<a href="#" class="regimen_management" id="index">View Regimens</a>
+							<a href="#" class="regimen_management" title="Regimen Management" id="index">View Regimens</a>
 						</li>
 						<li>
-							<a href="#" class="regimen_drug_management" id="index">Regimen Drugs</a>
+							<a href="#" class="regimen_drug_management" title="Regimen Drug Management" id="index">Regimen Drugs</a>
 						</li>
 						<li>
-							<a href="#" class="regimenchange_management" id="index">Regimen change reasons</a>
+							<a href="#" class="regimenchange_management" title="Regimen Change Reason Management" id="index">Regimen change reasons</a>
 						</li>
 					</ul>
 				</li>
+				<li class="divider-vertical"></li>
 				<li class="dropdown">
 					<a class="dropdown-toggle" role="button" data-toggle="dropdown" id="dLabel" href="#">Drugs<b class="caret"></b></a>
 					<ul class="dropdown-menu setting_menus" role="menu" aria-labelledby="dLabel">
 						<li>
-							<a href="#" class="drugcode_management">Drug Codes</a>
+							<a href="#" class="drugcode_management" title="Drug Code Management">Drug Codes</a>
 						</li>
 						<li>
-							<a href="#" class="dose_management">Drug Doses</a>
+							<a href="#" class="dose_management" title="Drug Dose Management">Drug Doses</a>
 						</li>
 						<li>
-							<a href="#" class="indication_management">Drug Indications</a>
+							<a href="#" class="indication_management" title="Drug Indication Management">Drug Indications</a>
 						</li>
 						<li>
-							<a href="#" class="drugsource_management">Drug Sources</a>
+							<a href="#" class="drugsource_management" title="Drug Source Management">Drug Sources</a>
 						</li>
 						<li>
-							<a href="#" class="drugdestination_management">Drug Destinations</a>
+							<a href="#" class="drugdestination_management" title="Drug Destination Management">Drug Destinations</a>
 						</li>
 					</ul>
 				</li>
+				<li class="divider-vertical"></li>
 				<li class="dropdown">
 					<a class="dropdown-toggle" role="button" data-toggle="dropdown" id="dLabel" href="#">Others<b class="caret"></b></a>
 					<ul class="dropdown-menu setting_menus" role="menu" aria-labelledby="dLabel">
 						<li>
-							<a href="#" class="client_management">Client Sources</a>
+							<a href="#" class="genericname_management" title="Generic Name Management" >Generic Names</a>
 						</li>
 						<li>
-							<a href="#" class="client_support">Supported By</a>
+							<a href="#" class="brandname_management" title="Brand Name Management"> Brand Names</a>
 						</li>
 						<li>
-							<a href="#" class="nonadherence_management">Non Adherence reasons</a>
+							<a href="#" class="nonadherence_management" title="Non Adherence Reason Management">Non Adherence reasons</a>
 						</li>
 					</ul>
 				</li>
-				<li class="dropdown">
-					<a class="dropdown-toggle" role="button" data-toggle="dropdown" id="dLabel" href="#">Names<b class="caret"></b></a>
-					<ul class="dropdown-menu setting_menus" role="menu" aria-labelledby="dLabel">
-						<li>
-							<a href="#" class="genericname_management" >Generic Names</a>
-						</li>
-						<li>
-							<a href="#" class="brandname_management">Brand Names</a>
-						</li>
-					</ul>
-				</li>
+				<li class="divider-vertical"></li>
 				<li class="dropdown">
 					<a class="dropdown-toggle" role="button" data-toggle="dropdown" id="dLabel" href="#">Facility<b class="caret"></b></a>
 					<ul class="dropdown-menu setting_menus" role="menu" aria-labelledby="dLabel">
 						<li>
-							<a href="#" class="facility_management">Facility Info</a>
+							<a href="#" class="facility_management" title="Facility Details Management">Facility details</a>
 						</li>
 						<li>
-							<a href="#" class="auto_management">Export Patient Master File</a>
+							<a href="#" class="client_management" title="Patient Source Management">Patient Sources</a>
 						</li>
 						<li>
-							<a href="#" class="upload_management">Import</a>
+							<a href="#" class="client_support" title="Facility Supporters Management">Facility Supporters</a>
 						</li>
 						<li>
-							<a href="#" class="user_management">Users</a>
+							<a href="#" class="auto_management" title="Export Patient Master File">Export Patient Master File</a>
+						</li>
+						<li>
+							<a href="#" class="user_management" title="Users Management">Users</a>
 						</li>
 					</ul>
 				</li>
 
 			</ul>
-
-			<ul>
-
-			</ul>
 		</div>
+		
 	</div>
-
+	<div class="f_left settings_title" style="display:none">
+		<ul class="breadcrumb">
+		  <li><a href="<?php echo site_url().'settings_management' ?>">Settings</a> <span class="divider">/</span></li>
+		  <li class="active" id="actual_page"></li>
+		</ul>
+	</div>
 	<div class="settings well"></div>
 	<div id="loadingDiv" style="display: none"><img style="width: 30px" src="<?php echo base_url().'Images/loading_spin.gif' ?>"</div>
 </div>

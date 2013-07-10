@@ -37,10 +37,10 @@
 
 	<div class="container-fluid">
 	  <div class="row-fluid row">
-
 	    <!-- Side bar menus -->
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
+	    <a href="#client_form" role="button" id="new_client" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Generic Name</a>
 		<div class="span12 span-fixed-sidebar">
 	      <div class="hero-unit">
 	      	
@@ -48,7 +48,7 @@
 	      		echo validation_errors('<p class="error">', '</p>');
 				echo @$generic_names;
 	        ?>
-	        <a href="#client_form" role="button" id="new_client" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Generic Name</a>
+	        
 	      </div>
 
 	      

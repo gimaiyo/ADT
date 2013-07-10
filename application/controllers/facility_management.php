@@ -7,6 +7,7 @@ class Facility_Management extends MY_Controller {
 		parent::__construct();
 		$this->session->set_userdata("link_id","index");
 		$this->session->set_userdata("linkSub","facility_management");
+		$this->session->set_userdata("linkTitle","Facility Details Management");
 	}
 
 	public function index() {

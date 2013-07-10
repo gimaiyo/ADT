@@ -56,30 +56,18 @@
 	});
 
 </script>
-<div id="action_panel_parent" style="display:none">
-	<div class="actions_panel" style="visibility:hidden" >
-		<?php
-//Loop through all the actions passed on to this file
-foreach($actions as $action){
-		?>
-		<a class="link" link="<?php echo $this->router->class."/".$action[1]."/"?>"><?php echo $action[0]
-		?></a>
-		<?php }?>
-	</div>
-</div>
 <div id="view_content">
 	<div class="container-fluid">
 	  <div class="row-fluid row">
 		 <!-- Side bar menus -->
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
+	    <a href="#client_form" role="button" id="new_client" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Drug Destination</a>
 		<div class="span12 span-fixed-sidebar">
 	      	<div class="hero-unit">
-				<div class="passmessage"></div>
-			    <div class="errormessage"></div>
 				<?php echo validation_errors('<p class="error">', '</p>');?>
 		        <?php echo $sources;?>
-		        <a href="#client_form" role="button" id="new_client" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Drug Destination</a>
+		        
 			</div>
 	    </div><!--/span-->
 	  </div><!--/row-->
