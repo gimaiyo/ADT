@@ -771,65 +771,9 @@
 		}
 	});
 </script>
-<style>
-			#patient_listing {
-				margin: 0 auto;
-				border-top: 1px solid #B9B9B9;
-				font-size: 14px;
-				letter-spacing: 1px;
-				border: 1px solid #000;
-			}
-			#appointment_listing, #missed_doses, #pill_count {
-				margin: 0 auto;
-				border-top: 1px solid #B9B9B9;
-				font-size: 14px;
-				letter-spacing: 1px;
-				border: 1px solid #000;
-				width: 1100px;
-			}
-			#patient_listing td, th {
-				letter-spacing: 1px;
-				padding: 5px;
-				font-family: Times;
-			}
-			.report_title {
-				color: rgb(34, 86, 253);
-				letter-spacing: 1px;
-				padding: 5px;
-				font-size: 14px;
-				font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-			}
-			#adherence_form {
-				margin: 0 auto;
-				display: block;
-			}
-			table {
-				border-collapse: collapse;
-			}
-			td {
-				padding: 7px;
-			}
-			tr th {
-				font-size: 16px;
-			}
-			thead th {
-				background-color: rgb(214, 238, 238);
-			}
-			._status {
-				color: rgb(6, 133, 233);
-			}
-			._age {
-				color: rgb(0, 190, 46);
-			}
-			._sex {
-				color: rgb(169, 0, 248);
-			}
-			._total {
-				font-weight: bold;
-			}
-		</style>
+
 <div id="wrapperd">
-	<div  class="center-content">
+	<div  class="full-content">
 		<?php $this->load->view("reports/reports_top_menus_v")
 		?>
 		<h4 style="text-align: center">Patients Adherence Summary
@@ -846,7 +790,7 @@
 			<div style="text-align: center;	width:75%;margin:0 auto;">
 				<h3>Adherence By Appointment</h3>
 			</div>
-			<table id="appointment_listing" border="1" cellpadding="3" cellspacing="5">
+			<table id="appointment_listing"  cellpadding="3" cellspacing="5" align="center">
 				<thead>
 					<tr>
 						<th class="h1" rowspan="2">No of Days Missed</th>
@@ -884,7 +828,7 @@
 			<div style="text-align: center;	width:75%;margin:0 auto;">
 				<h3>Adherence By Missed Doses</h3>
 			</div>
-			<table id="missed_doses" border="1" cellpadding="3" cellspacing="5">
+			<table id="missed_doses"  cellpadding="3" cellspacing="5">
 				<thead>
 					<tr>
 						<th class="h1" rowspan="2">Percentage (%)</th>
@@ -930,7 +874,7 @@
 			<div style="text-align: center;	width:75%;margin:0 auto;">
 				<h3>Adherence By Pill Count</h3>
 			</div>
-			<table id="pill_count" border="1" cellpadding="3" cellspacing="5">
+			<table id="pill_count"  cellpadding="3" cellspacing="5">
 				<thead>
 					<tr>
 						<th class="h1" rowspan="2">Percentage (%)</th>
