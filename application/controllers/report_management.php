@@ -3344,6 +3344,23 @@ class report_management extends MY_Controller {
 		$bmi_temp['OI']['Severely Obese']['Female'] = 0;
 		$bmi_temp['OI']['Very Severely Obese']['Female'] = 0;
 
+		$male_Very_Severely_Underweight = 0;
+		$female_Very_Severely_Underweight = 0;
+		$male_Severely_Underweight = 0;
+		$female_Severely_Underweight = 0;
+		$male_Underweight = 0;
+		$female_Underweight = 0;
+		$male_Normal = 0;
+		$female_Normal = 0;
+		$male_Overweight = 0;
+		$female_Overweight = 0;
+		$male_Moderately_Obese = 0;
+		$female_Moderately_Obese = 0;
+		$male_Severely_Obese = 0;
+		$female_Severely_Obese = 0;
+		$male_Very_Severely_Obese = 0;
+		$female_Very_Severely_Obese = 0;
+
 		if ($results) {
 			foreach ($results as $result) {
 				$temp_string = strtoupper($result['Name']);
@@ -3360,153 +3377,217 @@ class report_management extends MY_Controller {
 					if ($result['gender'] == 1) {
 						if ($result['BMI'] >= 0 && $result['BMI'] < 15) {
 							$bmi_temp['ART']['Very Severely Underweight']['Male']++;
+							$male_Very_Severely_Underweight++;
 						} else if ($result['BMI'] >= 15 && $result['BMI'] < 16) {
 							$bmi_temp['ART']['Severely Underweight']['Male']++;
+							$male_Severely_Underweight++;
 						} else if ($result['BMI'] >= 16 && $result['BMI'] < 18.5) {
 							$bmi_temp['ART']['Underweight']['Male']++;
+							$male_Underweight++;
 						} else if ($result['BMI'] >= 18.5 && $result['BMI'] < 25) {
 							$bmi_temp['ART']['Normal']['Male']++;
+							$male_Normal++;
 						} else if ($result['BMI'] >= 25 && $result['BMI'] < 30) {
 							$bmi_temp['ART']['Overweight']['Male']++;
+							$male_Overweight++;
 						} else if ($result['BMI'] >= 30 && $result['BMI'] < 35) {
 							$bmi_temp['ART']['Moderately Obese']['Male']++;
+							$male_Moderately_Obese++;
 						} else if ($result['BMI'] >= 35 && $result['BMI'] < 40) {
 							$bmi_temp['ART']['Severely Obese']['Male']++;
+							$male_Severely_Obese++;
 						} else if ($result['BMI'] >= 40) {
 							$bmi_temp['ART']['Very Severely Obese']['Male']++;
+							$male_Very_Severely_Obese++;
 						}
 
 					} else if ($result['gender'] == 2) {
 						if ($result['BMI'] >= 0 && $result['BMI'] < 15) {
 							$bmi_temp['ART']['Very Severely Underweight']['Female']++;
+							$female_Very_Severely_Underweight++;
 						} else if ($result['BMI'] >= 15 && $result['BMI'] < 16) {
 							$bmi_temp['ART']['Severely Underweight']['Female']++;
+							$female_Severely_Underweight++;
 						} else if ($result['BMI'] >= 16 && $result['BMI'] < 18.5) {
 							$bmi_temp['ART']['Underweight']['Female']++;
+							$female_Underweight++;
 						} else if ($result['BMI'] >= 18.5 && $result['BMI'] < 25) {
 							$bmi_temp['ART']['Normal']['Female']++;
+							$female_Normal++;
 						} else if ($result['BMI'] >= 25 && $result['BMI'] < 30) {
 							$bmi_temp['ART']['Overweight']['Female']++;
+							$female_Overweight++;
 						} else if ($result['BMI'] >= 30 && $result['BMI'] < 35) {
 							$bmi_temp['ART']['Moderately Obese']['Female']++;
+							$female_Moderately_Obese++;
 						} else if ($result['BMI'] >= 35 && $result['BMI'] < 40) {
 							$bmi_temp['ART']['Severely Obese']['Female']++;
+							$female_Severely_Obese++;
 						} else if ($result['BMI'] >= 40) {
 							$bmi_temp['ART']['Very Severely Obese']['Female']++;
+							$female_Very_Severely_Obese++;
 						}
 					}
 				} else if ($pep_check !== false) {
 					if ($result['gender'] == 1) {
 						if ($result['BMI'] >= 0 && $result['BMI'] < 15) {
 							$bmi_temp['PEP']['Very Severely Underweight']['Male']++;
+							$male_Very_Severely_Underweight++;
 						} else if ($result['BMI'] >= 15 && $result['BMI'] < 16) {
 							$bmi_temp['PEP']['Severely Underweight']['Male']++;
+							$male_Severely_Underweight++;
 						} else if ($result['BMI'] >= 16 && $result['BMI'] < 18.5) {
 							$bmi_temp['PEP']['Underweight']['Male']++;
+							$male_Underweight++;
 						} else if ($result['BMI'] >= 18.5 && $result['BMI'] < 25) {
 							$bmi_temp['PEP']['Normal']['Male']++;
+							$male_Normal++;
 						} else if ($result['BMI'] >= 25 && $result['BMI'] < 30) {
 							$bmi_temp['PEP']['Overweight']['Male'] = $result['BMI'];
+							$male_Overweight++;
 						} else if ($result['BMI'] >= 30 && $result['BMI'] < 35) {
 							$bmi_temp['PEP']['Moderately Obese']['Male']++;
+							$male_Moderately_Obese++;
 						} else if ($result['BMI'] >= 35 && $result['BMI'] < 40) {
 							$bmi_temp['PEP']['Severely Obese']['Male']++;
+							$male_Severely_Obese++;
 						} else if ($result['BMI'] >= 40) {
 							$bmi_temp['PEP']['Very Severely Obese']['Male']++;
+							$male_Very_Severely_Obese++;
 						}
 					} else if ($result['gender'] == 2) {
 						if ($result['BMI'] >= 0 && $result['BMI'] < 15) {
 							$bmi_temp['PEP']['Very Severely Underweight']['Female']++;
+							$female_Very_Severely_Underweight++;
 						} else if ($result['BMI'] >= 15 && $result['BMI'] < 16) {
 							$bmi_temp['PEP']['Severely Underweight']['Female']++;
+							$female_Severely_Underweight++;
 						} else if ($result['BMI'] >= 16 && $result['BMI'] < 18.5) {
 							$bmi_temp['PEP']['Underweight']['Female']++;
+							$female_Underweight++;
 						} else if ($result['BMI'] >= 18.5 && $result['BMI'] < 25) {
 							$bmi_temp['PEP']['Normal']['Female']++;
+							$female_Normal++;
 						} else if ($result['BMI'] >= 25 && $result['BMI'] < 30) {
 							$bmi_temp['PEP']['Overweight']['Female']++;
+							$female_Overweight++;
 						} else if ($result['BMI'] >= 30 && $result['BMI'] < 35) {
 							$bmi_temp['PEP']['Moderately Obese']['Female']++;
+							$female_Moderately_Obese++;
 						} else if ($result['BMI'] >= 35 && $result['BMI'] < 40) {
 							$bmi_temp['PEP']['Severely Obese']['Female']++;
+							$female_Severely_Obese++;
 						} else if ($result['BMI'] >= 40) {
 							$bmi_temp['PEP']['Very Severely Obese']['Female']++;
+							$female_Very_Severely_Obese++;
 						}
 					}
 				} else if ($pmtct_check !== false) {
 					if ($result['gender'] == 1) {
 						if ($result['BMI'] >= 0 && $result['BMI'] < 15) {
 							$bmi_temp['PMTCT']['Very Severely Underweight']['Male']++;
+							$male_Very_Severely_Underweight++;
 						} else if ($result['BMI'] >= 15 && $result['BMI'] < 16) {
 							$bmi_temp['PMTCT']['Severely Underweight']['Male']++;
+							$male_Severely_Underweight++;
 						} else if ($result['BMI'] >= 16 && $result['BMI'] < 18.5) {
 							$bmi_temp['PMTCT']['Underweight']['Male']++;
+							$male_Underweight++;
 						} else if ($result['BMI'] >= 18.5 && $result['BMI'] < 25) {
 							$bmi_temp['PMTCT']['Normal']['Male']++;
+							$male_Normal++;
 						} else if ($result['BMI'] >= 25 && $result['BMI'] < 30) {
 							$bmi_temp['PMTCT']['Overweight']['Male']++;
+							$male_Overweight++;
 						} else if ($result['BMI'] >= 30 && $result['BMI'] < 35) {
 							$bmi_temp['PMTCT']['Moderately Obese']['Male']++;
+							$male_Moderately_Obese++;
 						} else if ($result['BMI'] >= 35 && $result['BMI'] < 40) {
 							$bmi_temp['PMTCT']['Severely Obese']['Male']++;
+							$male_Severely_Obese++;
 						} else if ($result['BMI'] >= 40) {
 							$bmi_temp['PMTCT']['Very Severely Obese']['Male']++;
+							$male_Very_Severely_Obese++;
 						}
 					} else if ($result['gender'] == 2) {
 						if ($result['BMI'] >= 0 && $result['BMI'] < 15) {
 							$bmi_temp['PMTCT']['Very Severely Underweight']['Female']++;
+							$female_Very_Severely_Underweight++;
 						} else if ($result['BMI'] >= 15 && $result['BMI'] < 16) {
 							$bmi_temp['PMTCT']['Severely Underweight']['Female']++;
+							$female_Severely_Underweight++;
 						} else if ($result['BMI'] >= 16 && $result['BMI'] < 18.5) {
 							$bmi_temp['PMTCT']['Underweight']['Female']++;
+							$female_Underweight++;
 						} else if ($result['BMI'] >= 18.5 && $result['BMI'] < 25) {
 							$bmi_temp['PMTCT']['Normal']['Female']++;
+							$female_Normal++;
 						} else if ($result['BMI'] >= 25 && $result['BMI'] < 30) {
 							$bmi_temp['PMTCT']['Overweight']['Female']++;
+							$female_Overweight++;
 						} else if ($result['BMI'] >= 30 && $result['BMI'] < 35) {
 							$bmi_temp['PMTCT']['Moderately Obese']['Female']++;
+							$female_Moderately_Obese++;
 						} else if ($result['BMI'] >= 35 && $result['BMI'] < 40) {
 							$bmi_temp['PMTCT']['Severely Obese']['Female']++;
+							$female_Severely_Obese++;
 						} else if ($result['BMI'] >= 40) {
 							$bmi_temp['PMTCT']['Very Severely Obese']['Female']++;
+							$female_Very_Severely_Obese++;
 						}
 					}
 				} else if ($oi_check !== false) {
 					if ($result['gender'] == 1) {
 						if ($result['BMI'] >= 0 && $result['BMI'] < 15) {
 							$bmi_temp['OI']['Very Severely Underweight']['Male']++;
+							$male_Very_Severely_Underweight++;
 						} else if ($result['BMI'] >= 15 && $result['BMI'] < 16) {
 							$bmi_temp['OI']['Severely Underweight']['Male']++;
+							$male_Severely_Underweight++;
 						} else if ($result['BMI'] >= 16 && $result['BMI'] < 18.5) {
 							$bmi_temp['OI']['Underweight']['Male']++;
+							$male_Underweight++;
 						} else if ($result['BMI'] >= 18.5 && $result['BMI'] < 25) {
 							$bmi_temp['OI']['Normal']['Male']++;
+							$male_Underweight++;
 						} else if ($result['BMI'] >= 25 && $result['BMI'] < 30) {
 							$bmi_temp['OI']['Overweight']['Male']++;
+							$male_Normal++;
 						} else if ($result['BMI'] >= 30 && $result['BMI'] < 35) {
 							$bmi_temp['OI']['Moderately Obese']['Male']++;
+							$male_Moderately_Obese++;
 						} else if ($result['BMI'] >= 35 && $result['BMI'] < 40) {
 							$bmi_temp['OI']['Severely Obese']['Male']++;
+							$male_Severely_Obese++;
 						} else if ($result['BMI'] >= 40) {
 							$bmi_temp['OI']['Very Severely Obese']['Male']++;
+							$male_Very_Severely_Obese++;
 						}
 					} else if ($result['gender'] == 2) {
 						if ($result['BMI'] >= 0 && $result['BMI'] < 15) {
 							$bmi_temp['OI']['Very Severely Underweight']['Female']++;
+							$female_Very_Severely_Underweight++;
 						} else if ($result['BMI'] >= 15 && $result['BMI'] < 16) {
 							$bmi_temp['OI']['Severely Underweight']['Female']++;
+							$female_Severely_Underweight++;
 						} else if ($result['BMI'] >= 16 && $result['BMI'] < 18.5) {
 							$bmi_temp['OI']['Underweight']['Female']++;
+							$female_Underweight++;
 						} else if ($result['BMI'] >= 18.5 && $result['BMI'] < 25) {
 							$bmi_temp['OI']['Normal']['Female']++;
+							$female_Normal++;
 						} else if ($result['BMI'] >= 25 && $result['BMI'] < 30) {
 							$bmi_temp['OI']['Overweight']['Female']++;
+							$female_Overweight++;
 						} else if ($result['BMI'] >= 30 && $result['BMI'] < 35) {
 							$bmi_temp['OI']['Moderately Obese']['Female']++;
+							$female_Moderately_Obese++;
 						} else if ($result['BMI'] >= 35 && $result['BMI'] < 40) {
 							$bmi_temp['OI']['Severely Obese']['Female']++;
+							$female_Severely_Obese++;
 						} else if ($result['BMI'] >= 40) {
 							$bmi_temp['OI']['Very Severely Obese']['Female']++;
+							$female_Very_Severely_Obese++;
 						}
 					}
 				}
@@ -3525,9 +3606,20 @@ class report_management extends MY_Controller {
 			}
 			$dyn_table .= "</tr>";
 		}
-		$dyn_table .= "<tr class='tfoot'><td><b>TOTALS</b></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+		$dyn_table .= "<tr class='tfoot'><td><b>TOTALS</b></td><td><b>" . number_format($male_Very_Severely_Underweight) . "</b></td><td><b>" . number_format($female_Very_Severely_Underweight) . "</b></td><td><b>" . number_format($male_Severely_Underweight) . "</b></td><td><b>" . number_format($female_Severely_Underweight) . "</b></td><td><b>" . number_format($male_Underweight) . "</b></td><td><b>" . number_format($female_Underweight) . "</b></td><td><b>" . number_format($male_Normal) . "</b></td><td><b>" . number_format($female_Normal) . "</b></td><td><b>" . number_format($male_Overweight) . "</b></td><td><b>" . number_format($female_Overweight) . "</b></td><td><b>" . number_format($male_Moderately_Obese) . "</b></td><td><b>" . number_format($female_Moderately_Obese) . "</b></td><td><b>" . number_format($male_Severely_Obese) . "</b></td><td><b>" . number_format($female_Severely_Obese) . "</b></td><td><b>" . number_format($male_Very_Severely_Obese) . "</b></td><td><b>" . number_format($female_Very_Severely_Obese) . "</b></td></tr>";
 		$dyn_table .= "</tbody></table>";
-		echo $dyn_table;
+
+		$data['overall'] = $male_Very_Severely_Underweight + $female_Very_Severely_Underweight + $male_Severely_Underweight + $female_Severely_Underweight + $male_Underweight + $female_Underweight + $male_Normal + $female_Normal + $male_Overweight + $female_Overweight + $male_Moderately_Obese + $female_Moderately_Obese + $male_Severely_Obese + $female_Severely_Obese + $male_Very_Severely_Obese + $female_Very_Severely_Obese;
+		$data['dyn_table'] = $dyn_table;
+		$data['title'] = "webADT | Reports";
+		$data['hide_side_menu'] = 1;
+		$data['banner_text'] = "Facility Reports";
+		$data['selected_report_type_link'] = "early_warning_report_select";
+		$data['selected_report_type'] = "Early Warning Indicators";
+		$data['report_title'] = "Patient BMI Summary";
+		$data['facility_name'] = $this -> session -> userdata('facility_name');
+		$data['content_view'] = 'reports/patient_bmi_v';
+		$this -> load -> view('template', $data);
 		//End
 	}
 
