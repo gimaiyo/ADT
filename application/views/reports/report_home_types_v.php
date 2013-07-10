@@ -16,6 +16,7 @@
 				<option class="date_range_report" value="getTBPatients">TB Stages Summary</option>
 				<option class="date_range_report" value="getChronic">Chronic Illnesses Summary</option>
 				<option class="date_range_report" value="getADR">Patient Allergy Summary</option>
+				<option class="date_range_report" value="getBMI">Patient BMI Summary</option>
 			</select></td>
 		</tr>
 		<!-- Visiting patients reports -->
@@ -56,6 +57,9 @@
 				<option id="expiring_drugs" class="no_filter" value="expiring_drugs">Short Dated Stocks &lt;6 Months to Expiry</option>
 				<option id="expired_drugs" class="no_filter" value="expired_drugs">List of Expired Drugs</option>
 				<option id="getFacilityConsumption" class="date_range_report" value="getFacilityConsumption">Stock Consumption</option>
+				<option id="getDailyConsumption" class="date_range_report" value="getDailyConsumption">Daily Drug Consumption</option>
+				<option id="getDrugsIssued" class="date_range_report" value="getDrugsIssued">Drugs Issued To</option>
+				<option id="getDrugsReceived" class="date_range_report" value="getDrugsReceived">Drugs Received From</option>
 			</select></td>
 		</tr>
 		<tr>

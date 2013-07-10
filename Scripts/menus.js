@@ -113,7 +113,7 @@ $(document).ready(function() {
 			$(".select_types").css("display","none");
 			$("#date_range_report").css("display","block");
 			//If report is drug_consumption report, display select report type
-			if(get_id=='drug_stock_on_hand' || get_id=='expiring_drugs' || get_id=='expired_drugs'){
+			if(get_id=='drug_stock_on_hand' || get_id=='expiring_drugs' || get_id=='expired_drugs' || get_id=='getDrugsIssued' || get_id=='getDrugsReceived'){
 				$(".show_report_type").show();
 			}
 			else{

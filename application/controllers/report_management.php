@@ -3059,6 +3059,22 @@ class report_management extends MY_Controller {
 		$this -> load -> view('template', $data);
 	}
 
+	public function getDrugsIssued($stock_type,$start_date = "", $end_date = "") {
+            echo $stock_type."/".$start_date."/".$end_date;
+	}
+
+	public function getDrugsReceived($stock_type,$start_date = "", $end_date = "") {
+
+	}
+
+	public function getDailyConsumption($stock_type,$start_date = "", $end_date = "") {
+
+	}
+
+	public function getBMI($start_date = "", $end_date = "") {
+
+	}
+
 	public function base_params($data) {
 		$data['reports'] = true;
 		$data['title'] = "webADT | Reports";

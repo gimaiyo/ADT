@@ -21,6 +21,7 @@
 		 */
 		
 		$(".generate_btn").live('click', function() {
+			
 			var base_url=$("#base_url").val();
 			if($(".input-medium").is(":visible") || $(".report_type").is(":visible") || $(".report_type_1").is(":visible") || $(".input_year").is(":visible") || $(".input_dates").is(":visible") || $(".donor_input_dates_from").is(":visible") || $(".input_dates_from").is(":visible") || $(".donor_input_dates_to").is(":visible") || $(".input_dates_to").is(":visible")) {
 
@@ -49,25 +50,26 @@
 				}
 
 				//Dropdown not chosen
-				else if($(".report_type").is(":visible") && $(".input-large").val() == 0) {
-
-					if($("#commodity_summary_report_type").is(":visible") && $("#commodity_summary_report_type").val() == 0) {
+				else if($("#commodity_summary_report_type").is(":visible") && $("#commodity_summary_report_type").val() == 0) {
 						alert("Please select the report type");
-					} else if($("#commodity_summary_report_type_1").is(":visible") && $("#commodity_summary_report_type_1").val() == 0) {
+				}
+				else if($("#commodity_summary_report_type_1").is(":visible") && $("#commodity_summary_report_type_1").val() == 0) {
 						alert("Please select the report type");
-					}
-
 				}
 				//If everything is ok,generatea report
 				else {
 
 					var id = $(this).attr("id");
 					if(id == "generate_date_range_report") {
-
+						
 						var report = $(".select_report:visible").attr("value");
 						var from = $("#date_range_from").attr("value");
 						var to = $("#date_range_to").attr("value");
-						var report_url =base_url+ "report_management/" + report + "/" + from + "/" + to;
+						if($(".report_type:visible")){
+							report=report+"/"+$(".report_type:visible").attr("value");
+						}
+						
+						var report_url =base_url+ "report_management/" + report+"/" + from + "/" + to;
 						window.location = report_url;
 					} else if(id == "generate_single_date_report") {
 						var report = $(".select_report:visible").attr("value");
