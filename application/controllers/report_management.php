@@ -1437,7 +1437,7 @@ class report_management extends MY_Controller {
 		$sql = "select count(*) as total, r.regimen_desc,r.regimen_code,p.start_regimen from patient p,gender g,regimen_service_type rs,regimen r where start_regimen_date between '$from' and '$to' and p.gender=g.id and p.service=rs.id and p.start_regimen=r.id and p.service='1' and p.facility_code='$facility_code' group by p.start_regimen ORDER BY r.regimen_code ASC";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		$row_string = "<table   id='patient_listing' border='1' cellpadding='5'>
+		$row_string = "<table   id='patient_listing'  cellpadding='5'>
 			<tr class='table_title'>
 				<th rowspan='3'>Regimen</th>
 				<th colspan='2'>Total</th>
@@ -1577,7 +1577,7 @@ class report_management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
-			$row_string .= "<table id='patient_listing' border='1' cellpadding='5'>
+			$row_string .= "<table id='patient_listing'  cellpadding='5'>
 			<tr>
 				<th rowspan='3'>Regimen</th>
 				<th colspan='2'>Total</th>
@@ -1720,7 +1720,7 @@ class report_management extends MY_Controller {
 		$results = $query -> result_array();
 		$patient_total = $results[0]['total'];
 
-		$row_string = "<table id='patient_listing' border='1' cellpadding='5'>
+		$row_string = "<table id='patient_listing'  cellpadding='5'>
 			<tr>
 				<th rowspan='3'>Current Status</th>
 				<th colspan='2'>Total</th>
@@ -2500,7 +2500,7 @@ class report_management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
-			$row_string .= "<table id='patient_listing' border='1' cellpadding='5'>
+			$row_string .= "<table id='patient_listing'  cellpadding='5'>
 			<tr>
 				<th >Drug</th>
 				<th >Unit</th>
@@ -2693,7 +2693,7 @@ class report_management extends MY_Controller {
 				}
 				$total += $index;
 			}
-			$dyn_str = "<table id='patient_listing' border='1' cellpadding='5'><tr><th>Method</th><th>No. Of Women on Method</th><th>Percentage Proportion(%)</th></tr>";
+			$dyn_str = "<table id='patient_listing'  cellpadding='5'><tr><th>Method</th><th>No. Of Women on Method</th><th>Percentage Proportion(%)</th></tr>";
 			foreach ($family as $farm => $index) {
 				$dyn_str .= "<tr><td>" . $farm . "</td><td>" . $index . "</td><td>" . number_format(($index / $total) * 100, 1) . "%</td></tr>";
 			}

@@ -1,6 +1,6 @@
 <div id="wrapperd">
 			
-	<div id="patient_enrolled_content" class="center-content">
+	<div id="patient_enrolled_content" class="full-content">
 		<?php $this->load->view("reports/reports_top_menus_v") ?>
 		
 		
@@ -17,10 +17,10 @@
 			</tr>
 			<tr class="subcategory_title">
 				<td>Male</td><td>Female</td>
-			</tr>
+			</tr></br>
 			<tr>
 				<td>
-				<table class="male" width="100%"  border="1" cellpadding="1" style="border-collapse:collapse;">
+				<table class="male" width="100%"   cellpadding="1" style="border-collapse:collapse;">
 					<tr>
 						<th>Source</th>
 						<th>ART</th>
@@ -86,7 +86,7 @@
 					</tr>
 				</table></td>
 				<td>
-				<table class="female" width="100%"  border="1" cellpadding="1" style="border-collapse:collapse;">
+				<table class="female" width="100%"   cellpadding="1" style="border-collapse:collapse;">
 					<tr>
 						<th>Source</th>
 						<th>ART</th>
@@ -166,10 +166,10 @@
 			</tr>
 			<tr class="subcategory_title">
 				<td>Male</td><td>Female</td>
-			</tr>
+			</tr></br>
 			<tr>
 				<td>
-				<table class="male" width="100%"  border="1" cellpadding="1" style="border-collapse:collapse;">
+				<table class="male" width="100%"   cellpadding="1" style="border-collapse:collapse;">
 					<tr>
 						<th>Source</th>
 						<th>ART</th>
@@ -244,7 +244,7 @@
 					</tr>
 				</table></td>
 				<td>
-				<table class="female" width="100%"  border="1" cellpadding="1" style="border-collapse:collapse;">
+				<table class="female" width="100%"   cellpadding="1" style="border-collapse:collapse;">
 					<tr>
 						<th>Source</th>
 						<th>ART</th>
