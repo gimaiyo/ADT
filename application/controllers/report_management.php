@@ -825,6 +825,7 @@ class report_management extends MY_Controller {
 				</thead>
 				<tbody>";
 		if ($results) {
+			echo "Help";
 			foreach ($results as $result) {
 				$patient = $result['patient'];
 				$appointment = $result['appointment'];
@@ -877,7 +878,7 @@ class report_management extends MY_Controller {
 			}
 
 		} else {
-			//$row_string .= "<tr><td colspan='8'>No Data Available</td></tr>";
+			$row_string .= "<tr><td colspan='8'>No Data Available</td></tr>";
 		}
 		$row_string .= "</tbody></table>";
 		$data['from'] = date('d-M-Y', strtotime($from));
@@ -1035,10 +1036,12 @@ class report_management extends MY_Controller {
 		$child_female_oi_htc = 0;
 		$child_female_oi_other = 0;
 
+
 		$sql = "select patient,appointment from patient_appointment where appointment between '$from' and '$to' and facility='$facility_code' group by patient,appointment";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		$row_string .= "<table border='1' id='patient_listing'>
+		$row_string .= "<table border='1' id='patient_listing'  class='dataTables'>
+		<thead>
 			<tr>
 				<th> ART ID </th>
 				<th> Patient Name</th>
@@ -1046,7 +1049,11 @@ class report_management extends MY_Controller {
 				<th> Contacts/Address </th>
 				<th> Appointment Date </th>
 				<th> Late by (days)</th>
-			</tr>";
+			</tr>
+		</thead>
+		 <tbody>";
+		$patient = 0;
+		$appointment = "";
 		if ($results) {
 			foreach ($results as $result) {
 				$patient = $result['patient'];
@@ -1069,12 +1076,16 @@ class report_management extends MY_Controller {
 							$days_late_by = $result['days_late'];
 							$row_string .= "<tr><td>$patient_no</td><td>$patient_name</td><td>$gender</td><td>$address</td><td>$appointment</td><td>$days_late_by</td></tr>";
 						}
-						$overall_total++;
+						
 					}
+					$overall_total++;
 				}
 
 			}
+		} else {
+			echo "<tr><td colspan='6'></td></tr>";
 		}
+		$row_string.="</tbody></table>";
 
 		//Push to array
 		$data = array();
@@ -1270,21 +1281,24 @@ class report_management extends MY_Controller {
 		$data['total_child_female_htc'] = $child_female_art_htc + $child_female_pep_htc + $child_female_pmtct_htc + $child_female_oi_htc;
 		$data['total_child_female_other'] = $child_female_art_other + $child_female_pep_other + $child_female_pmtct_other + $child_female_oi_other;
 
+
 		//Overall Total
-		$data['overall_total'] = $data['overall_line_adult_female'] + $data['overall_line_adult_male'] + $data['overall_line_child_female'] + $data['overall_line_child_male'];
-		$data['from'] = date('d-M-Y', strtotime($from));
-		$data['to'] = date('d-M-Y', strtotime($to));
-		$data['title'] = "webADT | Reports";
-		$data['dyn_table'] = $row_string;
-		$data['hide_side_menu'] = 1;
-		$data['banner_text'] = "Facility Reports";
-		$data['selected_report_type_link'] = "visiting_patient_report_row";
-		$data['selected_report_type'] = "Patients Missing Appointments";
-		$data['report_title'] = "Patients Missing Appointments";
-		$data['facility_name'] = $this -> session -> userdata('facility_name');
-		$data['dyn_table'] = $row_string;
-		$data['content_view'] = 'reports/patients_missing_appointments_v';
-		$this -> load -> view('template', $data);
+	
+		 $data['overall_total'] =$overall_total;
+		 $data['from'] = date('d-M-Y', strtotime($from));
+		 $data['to'] = date('d-M-Y', strtotime($to));
+		 $data['title'] = "webADT | Reports";
+		 $data['dyn_table'] = $row_string;
+		 $data['hide_side_menu'] = 1;
+		 $data['banner_text'] = "Facility Reports";
+		 $data['selected_report_type_link'] = "visiting_patient_report_row";
+		 $data['selected_report_type'] = "Patients Missing Appointments";
+		 $data['report_title'] = "Patients Missing Appointments";
+		 $data['facility_name'] = $this -> session -> userdata('facility_name');
+		 $data['dyn_table'] = $row_string;
+		 $data['content_view'] = 'reports/patients_missing_appointments_v';
+		 $this -> load -> view('template', $data);
+		
 	}
 
 	public function getPatientsStartedonDate($from = "", $to = "") {
@@ -1915,7 +1929,7 @@ class report_management extends MY_Controller {
 	public function drug_consumption($year = "2012") {
 		$data['year'] = $year;
 		//Create table to store data
-		$tmpl = array('table_open' => '<table border='1' class="table table-bordered"  id="drug_listing">');
+		$tmpl = array('table_open' => '<table border="1" class="table table-bordered"  id="drug_listing">');
 		$this -> table -> set_template($tmpl);
 		$this -> table -> set_heading('', 'Drug', 'Unit', 'Jan', 'Feb', 'Mar', 'Apr', 'May', "Jun", 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
 
