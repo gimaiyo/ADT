@@ -80,14 +80,14 @@
 				"MONTH" : monthNames[k]
 			});
 
-			//console.log(chartDta[k]);
+			console.log(chartDta[k]);
 			chartDta_all = chartDta_all.concat(chartDta[k]);
 
 		}
 
 		// SERIAL CHART
 		chart = new AmCharts.AmSerialChart();
-		chart.pathToImages = "../Scripts/amcharts/images/";
+		chart.pathToImages = "../../Scripts/amcharts/images/";
 		chart.dataProvider = chartDta_all;
 		chart.categoryField = "MONTH";
 		chart.zoomOutButton = {
@@ -200,7 +200,15 @@
 		chart.write("chartdiv");
 	});
 </script>
+<style>
+	#chartdiv {
+		width: 80%;
+		height: 450px;
+		margin: 0 auto;
+	}
 
+
+</style>
 <div id="wrapperd">
 	<div  class="full-content">
 		<?php $this->load->view("reports/reports_top_menus_v")

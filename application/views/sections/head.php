@@ -66,7 +66,7 @@ if(isset($reports)|| isset($report_title)){
 <!-- Menus -->
 <script type="text/javascript" src="<?php echo base_url().'Scripts/menus.js'?>"></script>
 <script type="text/javascript" src="<?php echo base_url().'Scripts/jquery.blockUI.js'?>"></script>
-<script src="<?php echo base_url().'Scripts/amcharts/amcharts.js'?>" type="text/javascript"></script>
+<script type="text/javascript" src="<?php echo base_url().'Scripts/amcharts/amcharts.js'?>" ></script>
 <!-- Highcharts -->
 <script type="text/javascript" src="<?php echo base_url().'Scripts/highcharts/highcharts.js'?>"></script>
 <script type="text/javascript" src="<?php echo base_url().'Scripts/highcharts/highcharts-more.js'?>"></script>
