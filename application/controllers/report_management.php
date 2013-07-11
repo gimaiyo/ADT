@@ -1054,6 +1054,7 @@ class report_management extends MY_Controller {
 		 <tbody>";
 		$patient = 0;
 		$appointment = "";
+
 		if ($results) {
 			foreach ($results as $result) {
 				$patient = $result['patient'];
