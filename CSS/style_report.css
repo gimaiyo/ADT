@@ -20,7 +20,6 @@
 	text-align: center;
 }
 #patient_listing {
-	width: 80%;
 	border: solid 1px #999;
 }
 #patient_listing .tfoot {
