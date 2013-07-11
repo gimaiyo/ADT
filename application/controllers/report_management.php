@@ -809,7 +809,7 @@ class report_management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$row_string = "
-			<table id='patient_listing' >
+			<table border='1' id='patient_listing' >
 				<thead >
 					<tr>
 						<th> Patient No </th>
@@ -1038,7 +1038,7 @@ class report_management extends MY_Controller {
 		$sql = "select patient,appointment from patient_appointment where appointment between '$from' and '$to' and facility='$facility_code' group by patient,appointment";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		$row_string .= "<table id='patient_listing'>
+		$row_string .= "<table border='1' id='patient_listing'>
 			<tr>
 				<th> ART ID </th>
 				<th> Patient Name</th>
@@ -1296,7 +1296,7 @@ class report_management extends MY_Controller {
 		$sql = "SELECT p.patient_number_ccc as art_no,UPPER(p.first_name) as first_name,UPPER(p.last_name) as last_name,UPPER(p.other_name)as other_name, p.dob, IF(p.gender=1,'Male','Female') as gender, p.weight, r.regimen_desc,r.regimen_code,p.start_regimen_date, t.name AS service_type, s.name AS supported_by from patient p,regimen r,regimen_service_type t,supporter s where p.start_regimen_date between '$from' and '$to' and p.facility_code='$facility_code' and p.start_regimen =r.id and p.service=t.id and p.supported_by =s.id group by p.patient_number_ccc";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		$row_string = "<table id='patient_listing' width='100%'>
+		$row_string = "<table border='1' id='patient_listing' width='100%'>
 				<thead>
 				<tr>
 					<th> Patient No </th>
@@ -1354,7 +1354,7 @@ class report_management extends MY_Controller {
 		$sql = "SELECT pv.patient_id as art_no,pv.dispensing_date, t.name AS service_type, s.name AS supported_by,UPPER(p.first_name) as first_name ,UPPER(p.other_name) as other_name ,UPPER(p.last_name)as last_name,ROUND(DATEDIFF('$today',p.dob)/360) as age, pv.current_weight as weight, IF(p.gender=1,'Male','Female')as gender, r.regimen_desc,r.regimen_code from patient_visit pv,patient p,supporter s,regimen_service_type t,regimen r where pv.dispensing_date between '$from' and '$to' and pv.patient_id=p.patient_number_ccc and s.id = p.supported_by and t.id = p.service and r.id = pv.regimen and pv.visit_purpose =  '2' and p.current_status =  '1' and pv.facility =  '$facility_code' and p.facility_code = pv.facility group by pv.patient_id,pv.dispensing_date";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		$row_string = "<table   id='patient_listing'>
+		$row_string = "<table border='1'   id='patient_listing'>
 			<thead>
 			<tr>
 				<th> Patient No </th>
@@ -1437,7 +1437,7 @@ class report_management extends MY_Controller {
 		$sql = "select count(*) as total, r.regimen_desc,r.regimen_code,p.start_regimen from patient p,gender g,regimen_service_type rs,regimen r where start_regimen_date between '$from' and '$to' and p.gender=g.id and p.service=rs.id and p.start_regimen=r.id and p.service='1' and p.facility_code='$facility_code' group by p.start_regimen ORDER BY r.regimen_code ASC";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		$row_string = "<table   id='patient_listing'  cellpadding='5'>
+		$row_string = "<table border='1'   id='patient_listing'  cellpadding='5'>
 			<tr class='table_title'>
 				<th rowspan='3'>Regimen</th>
 				<th colspan='2'>Total</th>
@@ -1577,7 +1577,7 @@ class report_management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
-			$row_string .= "<table id='patient_listing'  cellpadding='5'>
+			$row_string .= "<table border='1' id='patient_listing'  cellpadding='5'>
 			<tr>
 				<th rowspan='3'>Regimen</th>
 				<th colspan='2'>Total</th>
@@ -1720,7 +1720,7 @@ class report_management extends MY_Controller {
 		$results = $query -> result_array();
 		$patient_total = $results[0]['total'];
 
-		$row_string = "<table id='patient_listing'  cellpadding='5'>
+		$row_string = "<table border='1' id='patient_listing'  cellpadding='5'>
 			<tr>
 				<th rowspan='3'>Current Status</th>
 				<th colspan='2'>Total</th>
@@ -1915,7 +1915,7 @@ class report_management extends MY_Controller {
 	public function drug_consumption($year = "2012") {
 		$data['year'] = $year;
 		//Create table to store data
-		$tmpl = array('table_open' => '<table class="table table-bordered"  id="drug_listing">');
+		$tmpl = array('table_open' => '<table border='1' class="table table-bordered"  id="drug_listing">');
 		$this -> table -> set_template($tmpl);
 		$this -> table -> set_heading('', 'Drug', 'Unit', 'Jan', 'Feb', 'Mar', 'Apr', 'May', "Jun", 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
 
@@ -2500,7 +2500,7 @@ class report_management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
-			$row_string .= "<table id='patient_listing'  cellpadding='5'>
+			$row_string .= "<table border='1' id='patient_listing'  cellpadding='5'>
 			<tr>
 				<th >Drug</th>
 				<th >Unit</th>
@@ -2691,7 +2691,7 @@ class report_management extends MY_Controller {
 				}
 			}
 		}
-		$dyn_table = "<table id='patient_listing' border='1' cellpadding='5'>
+		$dyn_table = "<table border='1' id='patient_listing' border='1' cellpadding='5'>
 			<tr><th>Stages</th><th colspan='2'>Adults</th><th colspan='2'>Children</th></tr>
 			<tr><th>----</th><th>No. of Males(TB)</th><th>No. of Females(TB)</th><th>No. of Males(TB)</th><th>No. of Females(TB)</th></tr>";
 		$dyn_table .= "<tr><td>Intensive</td><td>" . number_format($one_adult_male) . "</td><td>" . number_format($one_adult_female) . "</td><td>" . number_format($one_child_male) . "</td><td>" . number_format($one_child_female) . "</td></tr>";
@@ -2746,7 +2746,7 @@ class report_management extends MY_Controller {
 				}
 				$total += $index;
 			}
-			$dyn_str = "<table id='patient_listing'  cellpadding='5'><tr><th>Method</th><th>No. Of Women on Method</th><th>Percentage Proportion(%)</th></tr>";
+			$dyn_str = "<table border='1' id='patient_listing'  cellpadding='5'><tr><th>Method</th><th>No. Of Women on Method</th><th>Percentage Proportion(%)</th></tr>";
 			foreach ($family as $farm => $index) {
 				$dyn_str .= "<tr><td>" . $farm . "</td><td>" . $index . "</td><td>" . number_format(($index / $total) * 100, 1) . "%</td></tr>";
 			}
@@ -2783,7 +2783,7 @@ class report_management extends MY_Controller {
 		$overall_children = 0;
 		$dyn_table = "";
 		if ($results) {
-			$dyn_table .= "<table id='patient_listing' border='1' cellpadding='5'><tr><th>Indication</th><th>Adult Male</th><th>Adult Female</th><th>Children</th></tr>";
+			$dyn_table .= "<table border='1' id='patient_listing' border='1' cellpadding='5'><tr><th>Indication</th><th>Adult Male</th><th>Adult Female</th><th>Children</th></tr>";
 			foreach ($results as $result) {
 				$indication = $result['indication'];
 				$indication_name = $result['name'];
@@ -2967,7 +2967,7 @@ class report_management extends MY_Controller {
 		$overall_female = 0;
 		$overall_child = 0;
 
-		$dyn_table = "<table id='patient_listing' border='1' cellpadding='5'><tr><th>Chronic Diseases</th><th>Adult Male</th><th>Adult Female</th><th>Children</th></tr>";
+		$dyn_table = "<table border='1' id='patient_listing' border='1' cellpadding='5'><tr><th>Chronic Diseases</th><th>Adult Male</th><th>Adult Female</th><th>Children</th></tr>";
 
 		foreach ($values as $value => $indices) {
 			$dyn_table .= "<tr><td><b>$value</b></td>";
@@ -3043,7 +3043,7 @@ class report_management extends MY_Controller {
 		$percentage_adr = (($male_adr + $female_adr) / ($male_adr + $female_adr + $male_noadr + $female_noadr)) * 100;
 		$percentage_noadr = (($male_noadr + $female_noadr) / ($male_adr + $female_adr + $male_noadr + $female_noadr)) * 100;
 
-		$dyn_table = "<table id='patient_listing' border='1' cellpadding='5'><tr><th colspan='2'>Patients with Allergy</th><th colspan='2'>Patients without Allergy</th><th>Percentage with Allergy</th><th>Percentage without Allergy</th></tr>";
+		$dyn_table = "<table border='1' id='patient_listing' border='1' cellpadding='5'><tr><th colspan='2'>Patients with Allergy</th><th colspan='2'>Patients without Allergy</th><th>Percentage with Allergy</th><th>Percentage without Allergy</th></tr>";
 		$dyn_table .= "<tr><th>Male</th><th>Female</th><th>Male</th><th>Female</th><th>((Male +Female)/total)*100%</th><th>((Male +Female)/total)*100%</th></tr>";
 		$dyn_table .= "<tr><td>" . number_format($male_adr) . "</td><td>" . number_format($female_adr) . "</td><td>" . number_format($male_noadr) . "</td><td>" . number_format($female_noadr) . "</td><td>" . number_format($percentage_adr, 1) . "%</td><td>" . number_format($percentage_noadr, 1) . "%</td></tr>";
 		$dyn_table .= "</table>";
