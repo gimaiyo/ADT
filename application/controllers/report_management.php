@@ -1038,7 +1038,8 @@ class report_management extends MY_Controller {
 		$sql = "select patient,appointment from patient_appointment where appointment between '$from' and '$to' and facility='$facility_code' group by patient,appointment";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		$row_string .= "<table border='1' id='patient_listing'>
+		$row_string .= "<table border='1' id='patient_listing' class='dataTables'>
+		<thead>
 			<tr>
 				<th> ART ID </th>
 				<th> Patient Name</th>
@@ -1046,7 +1047,8 @@ class report_management extends MY_Controller {
 				<th> Contacts/Address </th>
 				<th> Appointment Date </th>
 				<th> Late by (days)</th>
-			</tr>";
+			</tr>
+			</thead>";
 		if ($results) {
 			foreach ($results as $result) {
 				$patient = $result['patient'];
@@ -1915,7 +1917,7 @@ class report_management extends MY_Controller {
 	public function drug_consumption($year = "2012") {
 		$data['year'] = $year;
 		//Create table to store data
-		$tmpl = array('table_open' => '<table border='1' class="table table-bordered"  id="drug_listing">');
+		$tmpl = array('table_open' => '<table border="1" class="table table-bordered"  id="drug_listing">');
 		$this -> table -> set_template($tmpl);
 		$this -> table -> set_heading('', 'Drug', 'Unit', 'Jan', 'Feb', 'Mar', 'Apr', 'May', "Jun", 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
 
