@@ -1174,37 +1174,37 @@ class report_management extends MY_Controller {
 		$data['child_female_pmtct_htc'] = $child_female_pmtct_htc;
 		$data['child_female_pmtct_other'] = $child_female_pmtct_other;
 
-		$data['adult_male_oi_outpatient'] = @$adult_male_oi_outpatient;
-		$data['adult_male_oi_inpatient'] = @$adult_male_oi_inpatient;
-		$data['adult_male_oi_transferin'] = @$adult_male_oi_transferin;
-		$data['adult_male_oi_casualty'] = @$adult_male_oi_casualty;
-		$data['adult_male_oi_transit'] = @$adult_male_oi_transit;
-		$data['adult_male_oi_htc'] = @$adult_male_oi_htc;
-		$data['adult_male_oi_other'] = @$adult_male_oi_other;
+		$data['adult_male_oi_outpatient'] = $adult_male_oi_outpatient;
+		$data['adult_male_oi_inpatient'] = $adult_male_oi_inpatient;
+		$data['adult_male_oi_transferin'] = $adult_male_oi_transferin;
+		$data['adult_male_oi_casualty'] = $adult_male_oi_casualty;
+		$data['adult_male_oi_transit'] = $adult_male_oi_transit;
+		$data['adult_male_oi_htc'] = $adult_male_oi_htc;
+		$data['adult_male_oi_other'] = $adult_male_oi_other;
 
-		$data['child_male_oi_outpatient'] = @$child_male_oi_outpatient;
-		$data['child_male_oi_inpatient'] = @$child_male_oi_inpatient;
-		$data['child_male_oi_transferin'] = @$child_male_oi_transferin;
-		$data['child_male_oi_casualty'] = @$child_male_oi_casualty;
-		$data['child_male_oi_transit'] = @$child_male_oi_transit;
-		$data['child_male_oi_htc'] = @$child_male_oi_htc;
-		$data['child_male_oi_other'] = @$child_male_oi_other;
+		$data['child_male_oi_outpatient'] = $child_male_oi_outpatient;
+		$data['child_male_oi_inpatient'] = $child_male_oi_inpatient;
+		$data['child_male_oi_transferin'] = $child_male_oi_transferin;
+		$data['child_male_oi_casualty'] = $child_male_oi_casualty;
+		$data['child_male_oi_transit'] = $child_male_oi_transit;
+		$data['child_male_oi_htc'] = $child_male_oi_htc;
+		$data['child_male_oi_other'] = $child_male_oi_other;
 
-		$data['adult_female_oi_outpatient'] = @$adult_female_oi_outpatient;
-		$data['adult_female_oi_inpatient'] = @$adult_female_oi_inpatient;
-		$data['adult_female_oi_transferin'] = @$adult_female_oi_transferin;
-		$data['adult_female_oi_casualty'] = @$adult_female_oi_casualty;
-		$data['adult_female_oi_transit'] = @$adult_female_oi_transit;
-		$data['adult_female_oi_htc'] = @$adult_female_oi_htc;
-		$data['adult_female_oi_other'] = @$adult_female_oi_other;
+		$data['adult_female_oi_outpatient'] = $adult_female_oi_outpatient;
+		$data['adult_female_oi_inpatient'] = $adult_female_oi_inpatient;
+		$data['adult_female_oi_transferin'] = $adult_female_oi_transferin;
+		$data['adult_female_oi_casualty'] = $adult_female_oi_casualty;
+		$data['adult_female_oi_transit'] = $adult_female_oi_transit;
+		$data['adult_female_oi_htc'] = $adult_female_oi_htc;
+		$data['adult_female_oi_other'] = $adult_female_oi_other;
 
-		$data['child_female_oi_outpatient'] = @$child_female_oi_outpatient;
-		$data['child_female_oi_inpatient'] = @$child_female_oi_inpatient;
-		$data['child_female_oi_transferin'] = @$child_female_oi_transferin;
-		$data['child_female_oi_casualty'] = @$child_female_oi_casualty;
-		$data['child_female_oi_transit'] = @$child_female_oi_transit;
-		$data['child_female_oi_htc'] = @$child_female_oi_htc;
-		$data['child_female_oi_other'] = @$child_female_oi_other;
+		$data['child_female_oi_outpatient'] = $child_female_oi_outpatient;
+		$data['child_female_oi_inpatient'] = $child_female_oi_inpatient;
+		$data['child_female_oi_transferin'] = $child_female_oi_transferin;
+		$data['child_female_oi_casualty'] = $child_female_oi_casualty;
+		$data['child_female_oi_transit'] = $child_female_oi_transit;
+		$data['child_female_oi_htc'] = $child_female_oi_htc;
+		$data['child_female_oi_other'] = $child_female_oi_other;
 
 		//Totals for Service Lines(Adult Male)
 		$data['total_adult_male_art'] = $adult_male_art_outpatient + $adult_male_art_inpatient + $adult_male_art_transferin + $adult_male_art_casualty + $adult_male_art_transit + $adult_male_art_htc + $adult_male_art_other;
@@ -1279,8 +1279,8 @@ class report_management extends MY_Controller {
 		$data['hide_side_menu'] = 1;
 		$data['banner_text'] = "Facility Reports";
 		$data['selected_report_type_link'] = "visiting_patient_report_row";
-		$data['selected_report_type'] = "Visiting Patients";
-		$data['report_title'] = "List of Patients Visited For Refill";
+		$data['selected_report_type'] = "Patients Missing Appointments";
+		$data['report_title'] = "Patients Missing Appointments";
 		$data['facility_name'] = $this -> session -> userdata('facility_name');
 		$data['dyn_table'] = $row_string;
 		$data['content_view'] = 'reports/patients_missing_appointments_v';
