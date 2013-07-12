@@ -147,9 +147,12 @@ class report_management extends MY_Controller {
 					$dyn_table .= "<td>-</td><td>-</td>";
 				}
 			}
+			$dyn_table .= "</tbody><tfoot><tr><td><b>Totals:</b></td><td><b>$total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $total) * 100, 1) . "</b></td></tr>";
+			$dyn_table .= "</tfoot></table>";
+		} else {
+			$dyn_table = "<h4 style='text-align: center'><span >No Data Available</span></h4>";
 		}
-		$dyn_table .= "<tr class='tfoot'><td><b>Totals:</b></td><td><b>$total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $total) * 100, 1) . "</b></td></tr>";
-		$dyn_table .= "</tbody></table>";
+
 		$data['dyn_table'] = $dyn_table;
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['to'] = date('d-M-Y', strtotime($to));
@@ -184,7 +187,7 @@ class report_management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$row_string = "
-			<table border='1' id='patient_listing' >
+			<table border='1' id='patient_listing'>
 				<thead >
 					<tr>
 						<th> Patient No </th>
@@ -679,6 +682,7 @@ class report_management extends MY_Controller {
 		$overall_total = 0;
 		$facility_code = $this -> session -> userdata("facility");
 		$from = date('Y-m-d', strtotime($from));
+		$to = date('Y-m-d', strtotime($to));
 
 		$sql = "SELECT p.patient_number_ccc as art_no,UPPER(p.first_name) as first_name,UPPER(p.last_name) as last_name,UPPER(p.other_name)as other_name, p.dob, IF(p.gender=1,'Male','Female') as gender, p.weight, r.regimen_desc,r.regimen_code,p.start_regimen_date, t.name AS service_type, s.name AS supported_by from patient p,regimen r,regimen_service_type t,supporter s where p.start_regimen_date between '$from' and '$to' and p.facility_code='$facility_code' and p.start_regimen =r.id and p.service=t.id and p.supported_by =s.id group by p.patient_number_ccc";
 		$query = $this -> db -> query($sql);
@@ -693,7 +697,7 @@ class report_management extends MY_Controller {
 					<th> Sex</th>
 					<th> Start Regimen Date </th>
 					<th> Regimen </th>
-					<th> Current Weight </th>
+					<th> Current Weight (Kg)</th>
 				</tr>
 				</thead>
 				<tbody>";
@@ -737,6 +741,7 @@ class report_management extends MY_Controller {
 		$today = date('Y-m-d');
 		$facility_code = $this -> session -> userdata("facility");
 		$from = date('Y-m-d', strtotime($from));
+		$to = date('Y-m-d', strtotime($to));
 
 		$sql = "SELECT pv.patient_id as art_no,pv.dispensing_date, t.name AS service_type, s.name AS supported_by,UPPER(p.first_name) as first_name ,UPPER(p.other_name) as other_name ,UPPER(p.last_name)as last_name,ROUND(DATEDIFF('$today',p.dob)/360) as age, pv.current_weight as weight, IF(p.gender=1,'Male','Female')as gender, r.regimen_desc,r.regimen_code from patient_visit pv,patient p,supporter s,regimen_service_type t,regimen r where pv.dispensing_date between '$from' and '$to' and pv.patient_id=p.patient_number_ccc and s.id = p.supported_by and t.id = p.service and r.id = pv.regimen and pv.visit_purpose =  '2' and p.current_status =  '1' and pv.facility =  '$facility_code' and p.facility_code = pv.facility group by pv.patient_id,pv.dispensing_date";
 		$query = $this -> db -> query($sql);
@@ -752,7 +757,7 @@ class report_management extends MY_Controller {
 				<th> Sex</th>
 				<th> Regimen </th>
 				<th> Visit Date</th>
-				<th> Current Weight </th>
+				<th> Current Weight (Kg) </th>
 			</tr>
 			</thead>
 			<tbody>";
@@ -922,11 +927,12 @@ class report_management extends MY_Controller {
 				}
 				$row_string .= "</tr>";
 			}
-			$row_string .= "<tr class='tfoot'><td><b>Totals:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $patient_total) * 100, 1) . "</b></td></tr>";
+			$row_string .= "</tbody><tfoot><tr><td><b>Totals:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $patient_total) * 100, 1) . "</b></td></tr>";
+			$row_string .= "</tfoot></table>";
 		} else {
-			$row_string .= "<tr><td colspan='11'>No Data Available</td></tr>";
+			$row_string = "<h4 style='text-align: center'><span >No Data Available</span></h4>";
 		}
-		$row_string .= "</tbody></table>";
+
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['to'] = date('d-M-Y', strtotime($to));
 		$data['dyn_table'] = $row_string;
@@ -1062,8 +1068,8 @@ class report_management extends MY_Controller {
 				}
 				$row_string .= "</tr>";
 			}
-			$row_string .= "<tr class='tfoot'><td><b>Totals:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $patient_total) * 100, 1) . "</b></td></tr>";
-			$row_string .= "</tbody></table>";
+			$row_string .= "</tbody><tfoot><tr><td><b>Totals:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $patient_total) * 100, 1) . "</b></td></tr>";
+			$row_string .= "</tfoot></table>";
 
 		}
 		$data['from'] = date('d-M-Y', strtotime($from));
@@ -1283,8 +1289,8 @@ class report_management extends MY_Controller {
 				}
 				$row_string .= "</tr>";
 			}
-			$row_string .= "<tr class='tfoot'><td><b>Total:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$total_adult_male_art</b></td><td><b>$total_adult_male_pep</b></td><td><b>$total_adult_male_oi</b></td><td><b>$total_adult_female_art</b></td><td><b>$total_adult_female_pep</b></td><td><b>$total_adult_female_pmtct</b></td><td><b>$total_adult_female_oi</b></td><td><b>$total_child_male_art</b></td><td><b>$total_child_male_pep</b></td><td><b>$total_child_male_pmtct</b></td><td><b>$total_child_male_oi</b></td><td><b>$total_child_female_art</b></td><td><b>$total_child_female_pep</b></td><td><b>$total_child_female_pmtct</b></td><td><b>$total_child_female_oi</b></td></tr>";
-			$row_string .= "</tbody></table>";
+			$row_string .= "</tbody><tfoot><tr class='tfoot'><td><b>Total:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$total_adult_male_art</b></td><td><b>$total_adult_male_pep</b></td><td><b>$total_adult_male_oi</b></td><td><b>$total_adult_female_art</b></td><td><b>$total_adult_female_pep</b></td><td><b>$total_adult_female_pmtct</b></td><td><b>$total_adult_female_oi</b></td><td><b>$total_child_male_art</b></td><td><b>$total_child_male_pep</b></td><td><b>$total_child_male_pmtct</b></td><td><b>$total_child_male_oi</b></td><td><b>$total_child_female_art</b></td><td><b>$total_child_female_pep</b></td><td><b>$total_child_female_pmtct</b></td><td><b>$total_child_female_oi</b></td></tr>";
+			$row_string .= "</tfoot></table>";
 
 		}
 		$data['from'] = date('d-M-Y', strtotime($from));
@@ -1683,14 +1689,14 @@ class report_management extends MY_Controller {
 	}
 
 	public function patients_who_changed_regimen($start_date = "", $end_date = "") {
+		$data['from'] = $start_date;
+		$data['to'] = $end_date;
 		$facility_code = $this -> session -> userdata('facility');
 		$start_date = date('Y-m-d', strtotime($start_date));
 		$end_date = date('Y-m-d', strtotime($end_date));
-		$patient_sql = $this -> db -> query("SELECT DISTINCT p.patient_number_ccc,UPPER(p.first_name) as first_name,UPPER(p.other_name) as other_name ,UPPER(p.last_name) as last_name, p.service, pv.dispensing_date, r1.regimen_desc AS current_regimen, r2.regimen_desc AS last_regimen, pv.comment, pv.regimen_change_reason FROM patient p LEFT JOIN patient_visit pv ON pv.patient_id = p.patient_number_ccc LEFT JOIN regimen r1 ON r1.id = pv.regimen LEFT JOIN regimen r2 ON r2.id = pv.last_regimen WHERE pv.last_regimen !=  '' AND pv.regimen != pv.last_regimen AND DATE( pv.dispensing_date ) BETWEEN DATE('" . $start_date . "' ) AND DATE( '" . $end_date . "' ) AND p.current_status =  '1' AND pv.facility =  '" . $facility_code . "' AND pv.facility=p.facility_code ORDER BY last_regimen");
+		$patient_sql = $this -> db -> query("SELECT DISTINCT p.patient_number_ccc,UPPER(p.first_name) as first_name,UPPER(p.other_name) as other_name ,UPPER(p.last_name) as last_name, rst.name as service, pv.dispensing_date, r1.regimen_desc AS current_regimen, r2.regimen_desc AS last_regimen, pv.comment, pv.regimen_change_reason FROM patient p LEFT JOIN patient_visit pv ON pv.patient_id = p.patient_number_ccc LEFT JOIN regimen r1 ON r1.id = pv.regimen LEFT JOIN regimen r2 ON r2.id = pv.last_regimen LEFT JOIN regimen_service_type rst ON rst.id=p.service WHERE pv.last_regimen !=  '' AND pv.regimen != pv.last_regimen AND DATE( pv.dispensing_date ) BETWEEN DATE('" . $start_date . "' ) AND DATE( '" . $end_date . "' ) AND p.current_status =  '1' AND pv.facility =  '" . $facility_code . "' AND pv.facility=p.facility_code GROUP BY patient_number_ccc,pv.dispensing_date ORDER BY last_regimen");
 		$data['patients'] = $patient_sql -> result_array();
 		$data['total'] = count($data['patients']);
-		$data['from'] = $start_date;
-		$data['to'] = $end_date;
 		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu'] = 1;
 		$data['banner_text'] = "Facility Reports";
@@ -1703,14 +1709,14 @@ class report_management extends MY_Controller {
 	}
 
 	public function patients_starting($start_date = "", $end_date = "") {
+		$data['from'] = $start_date;
+		$data['to'] = $end_date;
 		$start_date = date('Y-m-d', strtotime($start_date));
 		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
-		$patient_sql = $this -> db -> query("SELECT distinct r.regimen_desc AS Regimen,p.first_name As First,p.last_name AS Last,p.patient_number_ccc AS Patient_Id FROM patient p LEFT JOIN regimen r ON r.id = p.start_regimen WHERE DATE(p.start_regimen_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "') and p.facility_code='" . $facility_code . "' ORDER BY Patient_Id DESC");
+		$patient_sql = $this -> db -> query("SELECT distinct r.regimen_desc AS Regimen,UPPER(p.first_name)As First,UPPER(p.last_name) AS Last,p.patient_number_ccc AS Patient_Id FROM patient p LEFT JOIN regimen r ON r.id = p.start_regimen WHERE DATE(p.start_regimen_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "') and p.facility_code='" . $facility_code . "' ORDER BY Patient_Id DESC");
 		$data['patients'] = $patient_sql -> result_array();
 		$data['total'] = count($data['patients']);
-		$data['from'] = $start_date;
-		$data['to'] = $end_date;
 		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu'] = 1;
 		$data['banner_text'] = "Facility Reports";
@@ -1723,6 +1729,8 @@ class report_management extends MY_Controller {
 	}
 
 	public function early_warning_indicators($start_date = "", $end_date = "") {
+		$data['from'] = $start_date;
+		$data['to'] = $end_date;
 		$facility_code = $this -> session -> userdata('facility');
 		$start_date = date('Y-m-d', strtotime($start_date));
 		$end_date = date('Y-m-d', strtotime($end_date));
@@ -1744,7 +1752,7 @@ class report_management extends MY_Controller {
 			$percentage_firstline = 0;
 			$percentage_onotherline = 0;
 		} else {
-			$percentage_firstline = ($first_line / $total_patients) * 100;
+			$percentage_firstline = ($first_line / $tot_patients) * 100;
 			$percentage_onotherline = 100 - $percentage_firstline;
 		}
 
@@ -1793,18 +1801,14 @@ class report_management extends MY_Controller {
 		} else {
 			$percentage_lost_to_follow = ($lost_to_follow / $total_before_period) * 100;
 		}
-		$data['from'] = $start_date;
-		$data['to'] = $end_date;
-
 		$data['tot_patients'] = $tot_patients;
 		$data['first_line'] = number_format($first_line, 1);
 		$data['percentage_firstline'] = $percentage_firstline;
 		$data['percentage_onotherline'] = $percentage_onotherline;
-
+		$data['total_patients'] = $tot_patients;
 		$data['total_from_period'] = $total_from_period;
 		$data['stil_in_first_line'] = $stil_in_first_line;
 		$data['percentage_stillfirstline'] = number_format($percentage_stillfirstline, 1);
-
 		$data['total_before_period'] = $total_before_period;
 		$data['lost_to_follow'] = $lost_to_follow;
 		$data['percentage_lost_to_follow'] = number_format($percentage_lost_to_follow, 1);
@@ -2005,6 +2009,7 @@ class report_management extends MY_Controller {
 		$data['yAxix'] = 'Patients';
 		$data['categories'] = $categories;
 		$data['resultArray'] = $resultArray;
+		$data['container'] = "chart1";
 		$this -> load -> view('chart_v', $data);
 
 	}
@@ -2082,13 +2087,13 @@ class report_management extends MY_Controller {
 			}
 		}
 		$dyn_table = "<table border='1' id='patient_listing' border='1' cellpadding='5' class='dataTables'><thead>
-			<tr><th>Stages</th><th colspan='2'>Adults</th><th colspan='2'>Children</th></tr>
-			<tr><th>----</th><th>No. of Males(TB)</th><th>No. of Females(TB)</th><th>No. of Males(TB)</th><th>No. of Females(TB)</th></tr></thead><tbody>";
+			<tr><th rowspan='2'>Stages</th><th colspan='2'>Adults</th><th colspan='2'>Children</th></tr>
+			<tr><th>No. of Males(TB)</th><th>No. of Females(TB)</th><th>No. of Males(TB)</th><th>No. of Females(TB)</th></tr></thead><tbody>";
 		$dyn_table .= "<tr><td>Intensive</td><td>" . number_format($one_adult_male) . "</td><td>" . number_format($one_adult_female) . "</td><td>" . number_format($one_child_male) . "</td><td>" . number_format($one_child_female) . "</td></tr>";
 		$dyn_table .= "<tr><td>Continuation</td><td>" . number_format($two_adult_male) . "</td><td>" . number_format($two_adult_female) . "</td><td>" . number_format($two_child_male) . "</td><td>" . number_format($two_child_female) . "</td></tr>";
 		$dyn_table .= "<tr><td>Completed</td><td>" . number_format($three_adult_male) . "</td><td>" . number_format($three_adult_female) . "</td><td>" . number_format($three_child_male) . "</td><td>" . number_format($three_child_female) . "</td></tr>";
-		$dyn_table .= "<tr class='tfoot'><td><b>TOTALS</b></td><td><b>" . number_format($one_adult_male + $two_adult_male + $three_adult_male) . "</b></td><td><b>" . number_format($one_adult_female + $two_adult_female + $three_adult_female) . "</b></td><td><b>" . number_format($one_child_male + $two_child_male + $three_child_male) . "</b></td><td><b>" . number_format($one_child_female + $two_child_female + $three_child_female) . "</b></td></tr>";
-		$dyn_table .= "</tbody></table>";
+		$dyn_table .= "</tbody><tfoot><tr><td><b>TOTALS</b></td><td><b>" . number_format($one_adult_male + $two_adult_male + $three_adult_male) . "</b></td><td><b>" . number_format($one_adult_female + $two_adult_female + $three_adult_female) . "</b></td><td><b>" . number_format($one_child_male + $two_child_male + $three_child_male) . "</b></td><td><b>" . number_format($one_child_female + $two_child_female + $three_child_female) . "</b></td></tr>";
+		$dyn_table .= "</tfoot></table>";
 		$data['dyn_table'] = $dyn_table;
 		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu'] = 1;
@@ -2142,9 +2147,9 @@ class report_management extends MY_Controller {
 			foreach ($family as $farm => $index) {
 				$dyn_str .= "<tr><td>" . $farm . "</td><td>" . $index . "</td><td>" . number_format(($index / $total) * 100, 1) . "%</td></tr>";
 			}
-			$dyn_str .= "<tr class='tfoot'><td><b>TOTALS</b></td><td><b>$total</b></td><td><b>100%</b></td></tr>";
-			$dyn_str .= "</tbody></table>";
-		} else {			
+			$dyn_str .= "</tbody><tfoot><tr><td><b>TOTALS</b></td><td><b>$total</b></td><td><b>100%</b></td></tr>";
+			$dyn_str .= "</tfoot></table>";
+		} else {
 			$dyn_str = "<h4 style='text-align: center'><span >No Data Available</span></h4>";
 		}
 
@@ -2179,7 +2184,7 @@ class report_management extends MY_Controller {
 		$overall_children = 0;
 		$dyn_table = "";
 		if ($results) {
-			$dyn_table .= "<table border='1' id='patient_listing' border='1' cellpadding='5' class='dataTables'><thead><tr><th>Indication</th><th>Adult Male</th><th>Adult Female</th><th>Children</th></tr></thead><tbody>";
+			$dyn_table .= "<table border='1' id='patient_listing'  cellpadding='5' class='dataTables'><thead><tr><th>Indication</th><th>Adult Male</th><th>Adult Female</th><th>Children</th></tr></thead><tbody>";
 			foreach ($results as $result) {
 				$indication = $result['indication'];
 				$indication_name = $result['name'];
@@ -2210,8 +2215,8 @@ class report_management extends MY_Controller {
 				$dyn_table .= "<tr><td><b>$indication | $indication_name <b></td><td>" . number_format($adult_male) . "</td><td>" . number_format($adult_female) . "</td><td>" . number_format($children) . "</td></tr>";
 
 			}
-			$dyn_table .= "<tr class='tfoot'><td><b>TOTALS</b></td><td><b>" . number_format($overall_adult_male) . "</b></td><td><b>" . number_format($overall_adult_female) . "</b></td><td><b>" . number_format($overall_children) . "</b></td></tr>";
-			$dyn_table .= "<tbody></table>";
+			$dyn_table .= "</tbody><tfoot><tr><td><b>TOTALS</b></td><td><b>" . number_format($overall_adult_male) . "</b></td><td><b>" . number_format($overall_adult_female) . "</b></td><td><b>" . number_format($overall_children) . "</b></td></tr>";
+			$dyn_table .= "</tfoot></table>";
 		}
 		$data['dyn_table'] = $dyn_table;
 		$data['title'] = "webADT | Reports";
@@ -2363,7 +2368,8 @@ class report_management extends MY_Controller {
 		$overall_female = 0;
 		$overall_child = 0;
 
-		$dyn_table = "<table border='1' id='patient_listing' border='1' cellpadding='5' class='dataTables'><thead><tr><th>Chronic Diseases</th><th>Adult Male</th><th>Adult Female</th><th>Children</th></tr><thead><tbody>";
+		$dyn_table = "<table border='1' id='patient_listing'  cellpadding='5' class='dataTables'>
+		<thead><tr><th>Chronic Diseases</th><th>Adult Male</th><th>Adult Female</th><th>Children</th></tr></thead><tbody>";
 
 		foreach ($values as $value => $indices) {
 			$dyn_table .= "<tr><td><b>$value</b></td>";
@@ -2381,8 +2387,8 @@ class report_management extends MY_Controller {
 			}
 			$dyn_table .= "</tr>";
 		}
-		$dyn_table .= "<tr class='tfoot'><td><b>TOTALS</b></td><td><b>" . number_format($overall_male) . "</b></td><td><b>" . number_format($overall_female) . "</b></td><td><b>" . number_format($overall_child) . "</b></td></tr>";
-		$dyn_table .= "</tbody></table>";
+		$dyn_table .= "</tbody><tfoot><tr><td><b>TOTALS</b></td><td><b>" . number_format($overall_male) . "</b></td><td><b>" . number_format($overall_female) . "</b></td><td><b>" . number_format($overall_child) . "</b></td></tr>";
+		$dyn_table .= "</tfoot></table>";
 		$data['dyn_table'] = $dyn_table;
 		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu'] = 1;
@@ -2990,7 +2996,7 @@ class report_management extends MY_Controller {
 
 			}
 		}
-		$dyn_table = "<table id='patient_listing' border='1' cellpadding='5'><thead>";
+		$dyn_table = "<table id='patient_listing' border='1' cellpadding='5' class='dataTables'><thead>";
 		$dyn_table .= "<tr><th rowspan='2'>Type of Service</th><th colspan='2'>Very Severely Underweight</th><th colspan='2'>Severely Underweight</th><th colspan='2'>Underweight</th><th colspan='2'>Normal</th><th colspan='2'>Overweight</th><th colspan='2'>Moderately Obese</th><th colspan='2'>Severely Obese</th><th colspan='2'>Very Severely Obese</th></tr>";
 		$dyn_table .= "<tr><th>Male</th><th>Female</th><th>Male</th><th>Female</th><th>Male</th><th>Female</th><th>Male</th><th>Female</th><th>Male</th><th>Female</th><th>Male</th><th>Female</th><th>Male</th><th>Female</th><th>Male</th><th>Female</th></tr><tbody>";
 		foreach ($bmi_temp as $temp_values => $temp_value) {
@@ -3002,8 +3008,8 @@ class report_management extends MY_Controller {
 			}
 			$dyn_table .= "</tr>";
 		}
-		$dyn_table .= "<tr class='tfoot'><td><b>TOTALS</b></td><td><b>" . number_format($male_Very_Severely_Underweight) . "</b></td><td><b>" . number_format($female_Very_Severely_Underweight) . "</b></td><td><b>" . number_format($male_Severely_Underweight) . "</b></td><td><b>" . number_format($female_Severely_Underweight) . "</b></td><td><b>" . number_format($male_Underweight) . "</b></td><td><b>" . number_format($female_Underweight) . "</b></td><td><b>" . number_format($male_Normal) . "</b></td><td><b>" . number_format($female_Normal) . "</b></td><td><b>" . number_format($male_Overweight) . "</b></td><td><b>" . number_format($female_Overweight) . "</b></td><td><b>" . number_format($male_Moderately_Obese) . "</b></td><td><b>" . number_format($female_Moderately_Obese) . "</b></td><td><b>" . number_format($male_Severely_Obese) . "</b></td><td><b>" . number_format($female_Severely_Obese) . "</b></td><td><b>" . number_format($male_Very_Severely_Obese) . "</b></td><td><b>" . number_format($female_Very_Severely_Obese) . "</b></td></tr>";
-		$dyn_table .= "</tbody></table>";
+		$dyn_table .= "</tbody><tfoot><tr class='tfoot'><td><b>TOTALS</b></td><td><b>" . number_format($male_Very_Severely_Underweight) . "</b></td><td><b>" . number_format($female_Very_Severely_Underweight) . "</b></td><td><b>" . number_format($male_Severely_Underweight) . "</b></td><td><b>" . number_format($female_Severely_Underweight) . "</b></td><td><b>" . number_format($male_Underweight) . "</b></td><td><b>" . number_format($female_Underweight) . "</b></td><td><b>" . number_format($male_Normal) . "</b></td><td><b>" . number_format($female_Normal) . "</b></td><td><b>" . number_format($male_Overweight) . "</b></td><td><b>" . number_format($female_Overweight) . "</b></td><td><b>" . number_format($male_Moderately_Obese) . "</b></td><td><b>" . number_format($female_Moderately_Obese) . "</b></td><td><b>" . number_format($male_Severely_Obese) . "</b></td><td><b>" . number_format($female_Severely_Obese) . "</b></td><td><b>" . number_format($male_Very_Severely_Obese) . "</b></td><td><b>" . number_format($female_Very_Severely_Obese) . "</b></td></tr>";
+		$dyn_table .= "</tfoot></table>";
 
 		$data['overall'] = $male_Very_Severely_Underweight + $female_Very_Severely_Underweight + $male_Severely_Underweight + $female_Severely_Underweight + $male_Underweight + $female_Underweight + $male_Normal + $female_Normal + $male_Overweight + $female_Overweight + $male_Moderately_Obese + $female_Moderately_Obese + $male_Severely_Obese + $female_Severely_Obese + $male_Very_Severely_Obese + $female_Very_Severely_Obese;
 		$data['dyn_table'] = $dyn_table;
@@ -3017,6 +3023,10 @@ class report_management extends MY_Controller {
 		$data['content_view'] = 'reports/patient_bmi_v';
 		$this -> load -> view('template', $data);
 		//End
+	}
+
+	public function service_statistics($start_date = "", $end_date = "") {
+
 	}
 
 	public function base_params($data) {

@@ -787,10 +787,10 @@
 		<hr size="1" style="width:80%">
 		<h5 class="report_title" style="text-align: center">Number Of Patients: <span id="total_count"></span></h5>
 		<div id="adherence_form">
-			<div style="text-align: center;	width:75%;margin:0 auto;">
+			<div style="text-align: center;	width:100%;margin:0 auto;">
 				<h3>Adherence By Appointment</h3>
 			</div>
-			<table class="listing_table" border="1" id="appointment_listing"  cellpadding="3" cellspacing="5" align="center">
+			<table class="listing_table" border="1" id="appointment_listing"  cellpadding="3" cellspacing="5" align="center" width="100%">
 				<thead>
 					<tr>
 						<th class="h1" rowspan="2">No of Days Missed</th>
@@ -825,7 +825,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<div style="text-align: center;	width:75%;margin:0 auto;">
+			<div style="text-align: center;	width:100%;margin:0 auto;">
 				<h3>Adherence By Missed Doses</h3>
 			</div>
 			<table class="listing_table" border="1" id="missed_doses"  cellpadding="3" cellspacing="5">
@@ -871,7 +871,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<div style="text-align: center;	width:75%;margin:0 auto;">
+			<div style="text-align: center;	width:100%;margin:0 auto;">
 				<h3>Adherence By Pill Count</h3>
 			</div>
 			<table class="listing_table" border="1" id="pill_count"  cellpadding="3" cellspacing="5">

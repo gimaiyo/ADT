@@ -1,9 +1,11 @@
+
 <?php
 $this->load->view('sections/head');
 ?>
 <script>
 $(function () {
         $('<?php echo "#".$container; ?>').highcharts({
+
             chart: {
                 type: '<?php echo $chartType ?>'
             },

@@ -178,8 +178,10 @@ if($this->session->userdata("changed_password")){
 
 <script type="text/javascript">
 		$(document).ready(function() {
+
 		    
 	        $('#chart_area').load("<?php echo base_url().'facilitydashboard_management/getExpiringDrugs/2';?>");
+
 	        $('#table1').load('<?php echo base_url().'facilitydashboard_management/stock_notification'?>',function(){
 	        
 				$('#stock_level').dataTable( {
