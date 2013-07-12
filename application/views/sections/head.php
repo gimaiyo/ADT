@@ -38,8 +38,6 @@
 <script src="<?php echo base_url().'Scripts/jquery.form.js'?>" type="text/javascript"></script>
 <!-- Jquery UI -->
 <script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script>
-<!-- Jquery UI -->
-<script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script>
 <!-- Sortable JS -->
 <script type="text/javascript" src="<?php echo base_url().'Scripts/sorttable.js' ?>"></script>
 <!-- Datatables -->
@@ -63,7 +61,7 @@
 <!-- Menus -->
 <script type="text/javascript" src="<?php echo base_url().'Scripts/menus.js'?>"></script>
 <script type="text/javascript" src="<?php echo base_url().'Scripts/jquery.blockUI.js'?>"></script>
-<script src="<?php echo base_url().'Scripts/amcharts/amcharts.js'?>" type="text/javascript"></script>
+<script type="text/javascript" src="<?php echo base_url().'Scripts/amcharts/amcharts.js'?>" ></script>
 <!-- Highcharts -->
 <script type="text/javascript" src="<?php echo base_url().'Scripts/highcharts/highcharts.js'?>"></script>
 <script type="text/javascript" src="<?php echo base_url().'Scripts/highcharts/highcharts-more.js'?>"></script>

@@ -16,7 +16,6 @@
 				<option class="date_range_report" value="getTBPatients">TB Stages Summary</option>
 				<option class="date_range_report" value="getChronic">Chronic Illnesses Summary</option>
 				<option class="date_range_report" value="getADR">Patient Allergy Summary</option>
-				<option class="date_range_report" value="getBMI">Patient BMI Summary</option>
 			</select></td>
 		</tr>
 		<!-- Visiting patients reports -->
@@ -43,6 +42,7 @@
 				<option class="date_range_report" value="patients_starting">List of Patients Starting (By Regimen)</option>
 				<option class="date_range_report" value="early_warning_indicators">HIV Early Warning Indicators</option>
 				<option class="date_range_report" value="service_statistics">Service Statistics (By Regimen)</option>
+				<option class="single_date_report" value="getBMI">Patient BMI Summary</option>
 			</select></td>
 		</tr>
 		<!-- Drug inventory reports -->

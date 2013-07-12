@@ -21,41 +21,7 @@
 		color:blue;
 		font-weight:bold;
 	}
-	.passmessage {
-
-		display: none;
-		background: #00CC33;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding:5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
-	.errormessage {
-
-		display: none;
-		background: #FF0000;
-		color: black;
-		text-align: center;
-		height: 20px;
-		padding:5px;
-		font: bold 1px;
-		border-radius: 8px;
-		width: 30%;
-		margin-left: 30%;
-		margin-right: 10%;
-		font-size: 16px;
-		font-weight: bold;
-	}
-	#indication_form, #edit_form{
-		background-color:#CCFFFF;
-	}
+	
 	.dataTables_info{
 		width:40%;
 	}
@@ -109,6 +75,7 @@
 		$(".edit_user").live('click',function(event){
 			event.preventDefault();
 			$('#edit_indication_id').val(this.id);
+			$('#edit_indication_code').val(this.title);
 			$('#edit_indication_name').val(this.name);
 			//$("#edit_form").dialog("open");
 		});
@@ -129,75 +96,25 @@
 		});
 		*/
 		
-		//count to check which message to display
-        var count='<?php echo @$this -> session -> userdata['message_counter']?>';
-        var message='<?php echo @$this -> session -> userdata['message']?>';	
 	
-	if(count == 1) {
-	$(".passmessage").slideDown('slow', function() {
-
-	});
-	$(".passmessage").append(message);
-
-	var fade_out = function() {
-	$(".passmessage").fadeOut().empty();
-	}
-	setTimeout(fade_out, 5000);
-     <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
-     ?>
-
-	}
-	if(count == 2) {
-	$(".errormessage").slideDown('slow', function() {
-
-	});
-	$(".errormessage").append(message);
-
-	var fade_out = function() {
-	$(".errormessage").fadeOut().empty();
-	}
-	setTimeout(fade_out, 5000);
-     <?php 
-     $this -> session -> set_userdata('message_counter', "0");
-     $this -> session -> set_userdata('message', " ");
-     ?>
-
-	}
 		
 	});
 
 </script>
-<div id="action_panel_parent" style="display:none">
-	<div class="actions_panel" style="visibility:hidden" >
-		<?php
-//Loop through all the actions passed on to this file
-foreach($actions as $action){
-		?>
-		<a class="link" link="<?php echo $this->router->class."/".$action[1]."/"?>"><?php echo $action[0]
-		?></a>
-		<?php }?>
-	</div>
-</div>
-
 <div id="view_content">
 	<div class="container-fluid">
 	  <div class="row-fluid row">
 		 <!-- Side bar menus -->
 	    <?php echo $this->load->view('settings_side_bar_menus_v.php'); ?>
 	    <!-- SIde bar menus end -->
-
-	    <div class="span12 span-fixed-sidebar">
+	    
+		<a href="#indication_form" role="button" id="new_indication" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Indication</a>
+		<div class="span12 span-fixed-sidebar">
 	      	<div class="hero-unit">
-				<div class="passmessage"></div>
-			    <div class="errormessage"></div>
 				<?php echo validation_errors('<p class="message error">', '</p>');?>
 				<?php echo $indications; ?>
-				<a href="#indication_form" role="button" id="new_indication" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Indication</a>
-			</div>
-	    </div><!--/span-->
-	  </div><!--/row-->
+			</div><!--/span-->
+	    </div><!--/row-->
 	</div><!--/.fluid-container-->
 	<div id="indication_form" title="New Drug Indication" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="NewDrug" aria-hidden="true">
 		<?php
@@ -210,6 +127,10 @@ foreach($actions as $action){
 		    <h3 id="NewDrug">Drug details</h3>
 		</div>
 		<div class="modal-body">
+			<label>
+				<strong class="label">Indication Code</strong>
+				<input type="text" name="indication_code" id="indication_code" class="input-xlarge">
+			</label>
 			<label>
 				<strong class="label">Indication Name</strong>
 				<input type="text" name="indication_name" id="indication_name" class="input-xlarge">
@@ -235,6 +156,10 @@ foreach($actions as $action){
 		</div>
 		<div class="modal-body">
 			<label>
+				<strong class="label">Indication Code</strong>
+				<input type="text" name="indication_code" id="edit_indication_code" class="input-xlarge">
+			</label>
+				<label>
 				<strong class="label">Indication Name</strong>
 				<input type="hidden" name="indication_id" id="edit_indication_id" class="input-xlarge">
 				<input type="text" name="indication_name" id="edit_indication_name" class="input-xlarge">

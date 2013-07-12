@@ -264,14 +264,14 @@
 						<select class="input-xlarge" id="type_of_service" name="type_of_service">
 							<?php 
 								foreach($regimen_service_types as $regimen_service_type){
-								if($access_level!="system_administrator"){
+								if($access_level!="facility_administrator"){
 									if($regimen_service_type -> Name!="ART"){
 									?>
 									<option value="<?php echo $regimen_service_type -> id;?>"><?php echo $regimen_service_type -> Name;?></option>
 									<?php  
 									}
 								}
-								elseif($access_level=="system_administrator") {
+								elseif($access_level=="facility_administrator") {
 									?>
 									<option value="<?php echo $regimen_service_type -> id;?>"><?php echo $regimen_service_type -> Name;?></option>
 									<?php

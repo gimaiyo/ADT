@@ -49,6 +49,7 @@
 		//Change the page title value
 		$("#actual_page").html(linkTitle);
 		$(".settings").load('<?php echo base_url();?>'+linkSub+'/'+linkIdUrl,function(){
+			$("input[type='text']").attr("required","required");
 			$("#loadingDiv").css("display","none");
 			$(".settings").css("display","block");
 				if(linkSub=="regimen_drug_management" || linkSub=="brandname_management"){
@@ -123,6 +124,7 @@
 				$("#actual_page").html(linkTitle);
 				
 				$(".settings").load('<?php echo base_url();?>'+linkSub+'/'+linkIdUrl,function(){
+					$("input[type='text']").attr("required","required");
 					$("#loadingDiv").css("display","none");
 					$(".settings").css("display","block");
 						if(linkSub=="regimen_drug_management"){

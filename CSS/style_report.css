@@ -3,7 +3,7 @@
 	border-bottom:1px solid #000;
 	background: #4e4e4e;
 	color:white;
-	fint-size:1.4em;
+	font-size:1.2em;
 }
 
 #patient_listing th:first-child, .listing th:first-child,.dataTable th:first-child {
@@ -19,6 +19,7 @@
 	text-align: center;
 }
 #patient_listing {
+	width: 100%;
 	border: solid 1px #999;
 }
 #patient_listing .tfoot {

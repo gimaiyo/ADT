@@ -351,7 +351,7 @@
 		    <h3 id="NewDrug">Drug details</h3>
 		</div>
 		<div class="modal-body">
-		<div class="span12">
+		<div class="span5">
 			
 			<table style="margin-top:54px">
 				<tr><td>
