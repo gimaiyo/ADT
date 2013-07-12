@@ -1,8 +1,7 @@
 <div id="top_reports">
 	<ul class="breadcrumb">
 	  <li><?php echo anchor('report_management','Reports') ?><span class="divider">/</span></li>
-	  <li><?php echo anchor('report_management/'.$selected_report_type_link,$selected_report_type) ?> <span class="divider">/</span></li>
-	  <li class="active"><?php echo $report_title ?></li>
+	  <li class="active"><?php echo $selected_report_type.' - '.$report_title ?></li>
 	</ul>
 	
 	<ul class="nav nav-tabs">  

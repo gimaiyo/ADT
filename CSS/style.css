@@ -645,7 +645,7 @@ tr th {
 }
 .left-content {
 	padding: 9.5% 0.5% 0.5% 1%;
-	width: 15%;
+	width: 15.3%;
 	float: left;
 	margin-bottom: 2%;
 }
@@ -659,7 +659,7 @@ tr th {
 	float: right;
 	padding: 10% 1% 1% 1%;
 	width: 80%;
-	margin: 0 0 0 1.5%;
+	margin: 0 0 0 1%;
 	padding-bottom: 5%;
 	display: inline-block;
 }
