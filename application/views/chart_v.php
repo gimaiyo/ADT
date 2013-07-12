@@ -1,11 +1,6 @@
-<head>
-	<?php
-	$this->load->view('sections/head');
-	?>
-</head>
 <script>
 $(function () {
-        $('#container').highcharts({
+        $("<?php echo '#'.$container; ?>").highcharts({
             chart: {
                 type: '<?php echo $chartType ?>'
             },
@@ -54,4 +49,4 @@ $(function () {
         });
     });
     </script>
-    <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div
+    <div id="<?php echo $container; ?>" style="width:100%; height:100%; margin: 0 auto"></div

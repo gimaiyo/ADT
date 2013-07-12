@@ -19,7 +19,7 @@
 				<td colspan="2"><h5 class="report_title" style="text-align:center;font-size:14px;">Number of patients: <span id="whole_total"><?php echo $total; ?></span></h5></td>
 			</tr>
 		</table>
-		<table  id="patient_listing">
+		<table  id="patient_listing" border='1'>
 			<thead >
 				<tr>
 					<th> Patient No </th>

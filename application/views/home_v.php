@@ -180,7 +180,7 @@ if($this->session->userdata("changed_password")){
 		$(document).ready(function() {
 		    var chart= new FusionCharts("<?php echo base_url().'Scripts/FusionCharts/MSBar2D.swf';?>","ChartId","80%","100%","0","0");	
 	        chart.setDataURL("<?php echo base_url().'facilitydashboard_management/getExpiringDrugs/2';?>");
-	        chart.render("chart_area");	
+	        //chart.render("chart_area");	
 	        
 	        var chart1= new FusionCharts("<?php echo base_url().'Scripts/FusionCharts/StackedColumn2D.swf';?>","ChartId","80%","100%","0","0");	
 	        chart1.setDataURL("<?php echo base_url().'facilitydashboard_management/getPatientEnrolled/2013-03-17/2013-03-24';?>");
@@ -190,6 +190,8 @@ if($this->session->userdata("changed_password")){
 	        chart2.setDataURL("<?php echo base_url().'facilitydashboard_management/getExpectedPatients/2013-03-17/2013-03-24';?>");
 	        chart2.render("chart_area3");	
 	        
+	        //Loading Highcharts
+	        $("#chart_area").load("<?php echo base_url().'report_management/patients_disclosure/01-Jun-2011/01-Jun-2013' ?>");
 	      
 	        
 	        

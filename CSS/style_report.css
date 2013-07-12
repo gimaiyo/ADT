@@ -16,7 +16,14 @@
 	background: #bbb;
 }
 #patient_listing td+ td,.listing_table td+ td,.dataTable td+ td  {
-	text-align: center;
+	text-align: left;
+}
+.listing_table{
+	margin:0 auto;
+	width:100%;
+}
+.listing_table td+ td{
+	text-align:center;
 }
 #patient_listing {
 	width: 100%;
@@ -36,4 +43,10 @@
 .male, .female {
 	border: 1px solid #999;
 	margin: 1em 0 0.5em 0;
+}
+#start_date{
+	width:150px;
+}
+#end_date{
+	width:150px;
 }
