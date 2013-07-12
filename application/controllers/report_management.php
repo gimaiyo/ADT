@@ -2,6 +2,7 @@
 class report_management extends MY_Controller {
 
 	var $counter = 0;
+	var $drug_array=array();
 	function __construct() {
 		parent::__construct();
 		$this -> load -> database();
@@ -660,8 +661,8 @@ class report_management extends MY_Controller {
 		$data['overall_total'] = $overall_total;
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['to'] = date('d-M-Y', strtotime($to));
-		$data['title'] = "webADT | Reports";
 		$data['dyn_table'] = $row_string;
+		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu'] = 1;
 		$data['banner_text'] = "Facility Reports";
 		$data['selected_report_type_link'] = "visiting_patient_report_row";
@@ -1375,7 +1376,6 @@ class report_management extends MY_Controller {
 		$data['selected_report_type'] = "Drug Inventory";
 		$data['banner_text'] = "Facility Reports";
 		$data['report_title'] = "Drug Consumption Report";
-		$data['title'] = "Reports";
 		$data['content_view'] = 'reports/drugconsumption_v';
 		$this -> load -> view('template', $data);
 	}
@@ -1384,14 +1384,21 @@ class report_management extends MY_Controller {
 		$data['facility_name'] = $this -> session -> userdata('facility_name');
 		$data['base_url'] = base_url();
 		$data['stock_type'] = $stock_type;
+		$data['title'] = "webADT | Reports";
+		$data['selected_report_type'] = "Drug Inventory";
+		$data['hide_side_menu'] = 1;
+		$data['banner_text'] = "Facility Reports";
+		
 		if ($report_type == "drug_stock_on_hand") {
-			$data['content_view'] = 'drugstock_on_hand_v';
+			$data['report_title'] = "Drug Stock On Hand";
+			$data['content_view'] = 'reports/drugstock_on_hand_v';
 		} else if ($report_type == "expiring_drug") {
-			$data['content_view'] = 'expiring_drugs_v';
+			$data['report_title'] = "Expiring Drugs";
+			$data['content_view'] = 'reports/expiring_drugs_v';
 		}
 
 		$data['title'] = "Reports";
-		$this -> load -> view('template_report', $data);
+		$this -> load -> view('template', $data);
 	}
 
 	public function drug_stock_on_hand($stock_type) {
@@ -1578,9 +1585,14 @@ class report_management extends MY_Controller {
 		$d = 0;
 		$drugs_array = $this -> drug_array;
 		$data['drug_details'] = $drugs_array;
+		$data['title'] = "webADT | Reports";
+		$data['hide_side_menu'] = 1;
+		$data['banner_text'] = "Facility Reports";
+		$data['selected_report_type'] = "Drug Inventory";
+		$data['report_title'] = "Expiring Drugs within 6 months";
 		$data['title'] = "Reports";
-		$data['content_view'] = 'expiring_drugs_v';
-		$this -> load -> view('template_report', $data);
+		$data['content_view'] = 'reports/expiring_drugs_v';
+		$this -> load -> view('template', $data);
 
 	}
 
@@ -1603,9 +1615,14 @@ class report_management extends MY_Controller {
 		$d = 0;
 		$drugs_array = $this -> drug_array;
 		$data['drug_details'] = $drugs_array;
+		$data['title'] = "webADT | Reports";
+		$data['hide_side_menu'] = 1;
+		$data['banner_text'] = "Facility Reports";
+		$data['selected_report_type'] = "Drug Inventory";
+		$data['report_title'] = "Expired Drugs";
 		$data['title'] = "Reports";
-		$data['content_view'] = 'expired_drugs_v';
-		$this -> load -> view('template_report', $data);
+		$data['content_view'] = 'reports/expired_drugs_v';
+		$this -> load -> view('template', $data);
 	}
 
 	public function getBatchInfo($drug, $batch, $drug_unit, $drug_name, $expiry_date, $expired_days, $drug_id, $pack_size, $stock_type, $facility_code) {
@@ -1670,7 +1687,14 @@ class report_management extends MY_Controller {
 
 							$expired_days = $expired_days;
 						}
-						$batch_stock = $batch_balance / $pack_size;
+						//If pack size is zero or null
+						if($pack_size=="" or $pack_size==0){
+							$batch_stock=$batch_balance;
+						}
+						else{
+							$batch_stock = $batch_balance / $pack_size;
+						}
+						
 						$expired_days_display = number_format($expired_days);
 
 						$stocks_display = number_format($batch_stock, 1);
@@ -1900,7 +1924,8 @@ class report_management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
-			$row_string .= "<table border='1' id='patient_listing'  cellpadding='5'>
+			$row_string .= "<table border='1' id='patient_listing'  cellpadding='5' class='dataTables'>
+			<thead>
 			<tr>
 				<th >Drug</th>
 				<th >Unit</th>
@@ -1912,6 +1937,8 @@ class report_management extends MY_Controller {
 				<th > Store(units)</th>
 				<th >%</th>
 			</tr>
+			</thead>
+			<tbody>
 			";
 			foreach ($results as $result) {
 				$consumption_totals[$result['drug']] = $result['qty'];
@@ -1946,7 +1973,14 @@ class report_management extends MY_Controller {
 					foreach ($results as $result) {
 						$total_store_drug_qty = $result['qty'];
 						$overall_store_drug_qty += $total_store_drug_qty;
-						$store_drug_qty_percentage = number_format(($total_store_drug_qty / $drug_total) * 100, 1);
+						//If drug total ==0
+						if($drug_total==0){
+							$store_drug_qty_percentage="";
+						}
+						else{
+							$store_drug_qty_percentage = number_format(($total_store_drug_qty / $drug_total) * 100, 1);
+						}
+						
 						if ($result['drug'] != null) {
 							$row_string .= "<td>" . number_format($total_store_drug_qty) . "</td><td>$store_drug_qty_percentage</td>";
 						}
@@ -1956,7 +1990,7 @@ class report_management extends MY_Controller {
 				}
 				$row_string .= "</tr>";
 			}
-			$row_string .= "<tr class='tfoot'><td colspan='3'><b>Totals(units):</b></td><td><b>" . number_format($total) . "</b></td><td><b>100</b></td><td><b>" . number_format($overall_pharmacy_drug_qty) . "</b></td><td><b>" . number_format(($overall_pharmacy_drug_qty / $total) * 100, 1) . "</b></td><td><b>" . number_format($overall_store_drug_qty) . "</b></td><td><b>" . number_format(($overall_store_drug_qty / $total) * 100, 1) . "</b></td></tr>";
+			$row_string .= "</tbody><tr class='tfoot'><td colspan='3'><b>Totals(units):</b></td><td><b>" . number_format($total) . "</b></td><td><b>100</b></td><td><b>" . number_format($overall_pharmacy_drug_qty) . "</b></td><td><b>" . number_format(($overall_pharmacy_drug_qty / $total) * 100, 1) . "</b></td><td><b>" . number_format($overall_store_drug_qty) . "</b></td><td><b>" . number_format(($overall_store_drug_qty / $total) * 100, 1) . "</b></td></tr>";
 			$row_string .= "</table>";
 		}
 		$data['dyn_table'] = $row_string;
@@ -2094,7 +2128,7 @@ class report_management extends MY_Controller {
 				}
 			}
 		}
-		$dyn_table = "<table border='1' id='patient_listing' border='1' cellpadding='5' class='dataTables'><thead>
+		$dyn_table = "<table  id='patient_listing' border='1' cellpadding='5' class='dataTables'><thead>
 			<tr><th rowspan='2'>Stages</th><th colspan='2'>Adults</th><th colspan='2'>Children</th></tr>
 			<tr><th>No. of Males(TB)</th><th>No. of Females(TB)</th><th>No. of Males(TB)</th><th>No. of Females(TB)</th></tr></thead><tbody>";
 		$dyn_table .= "<tr><td>Intensive</td><td>" . number_format($one_adult_male) . "</td><td>" . number_format($one_adult_female) . "</td><td>" . number_format($one_child_male) . "</td><td>" . number_format($one_child_female) . "</td></tr>";
@@ -2582,7 +2616,8 @@ class report_management extends MY_Controller {
 		$sql = "select dsm.transaction_date,dsm.drug,d.drug as Name,d.pack_size,du.Name as unit,sum(dsm.quantity_out) as qty from drug_stock_movement dsm left join drugcode d on dsm.drug=d.id left join drug_unit du on d.unit=du.id where dsm.transaction_date between '$start_date' and '$end_date' and dsm.facility='$facility_code' GROUP BY dsm.transaction_date, dsm.drug ORDER BY dsm.transaction_date";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		$row_string .= "<table id='patient_listing' border='1' cellpadding='5'>
+		$row_string .= "<table  id='patient_listing' border='1' cellpadding='5'>
+			<thead>
 			<tr>
 			    <th >Date</th>
 				<th >Drug</th>
@@ -2594,7 +2629,9 @@ class report_management extends MY_Controller {
 				<th >%</th>
 				<th > Store(units)</th>
 				<th >%</th>
-			</tr>";
+			</tr>
+			</thead>
+			<tbody>";
 		if ($results) {
 			foreach ($results as $result) {
 				$consumption_totals[$result['drug']] = $result['qty'];
@@ -2643,9 +2680,9 @@ class report_management extends MY_Controller {
 			$row_string .= "<tr class='tfoot'><td colspan='4'><b>Totals(units):</b></td><td><b>" . number_format($total) . "</b></td><td><b>100</b></td><td><b>" . number_format($overall_pharmacy_drug_qty) . "</b></td><td><b>" . number_format(($overall_pharmacy_drug_qty / $total) * 100, 1) . "</b></td><td><b>" . number_format($overall_store_drug_qty) . "</b></td><td><b>" . number_format(($overall_store_drug_qty / $total) * 100, 1) . "</b></td></tr>";
 
 		} else {
-			$row_string .= "<tr><td colspan='11'>No Data Available</td></tr>";
+			//$row_string .= "<tr><td colspan='11'>No Data Available</td></tr>";
 		}
-		$row_string .= "</table>";
+		$row_string .= "</tbody></table>";
 		$data['dyn_table'] = $row_string;
 		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu'] = 1;

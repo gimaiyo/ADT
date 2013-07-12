@@ -740,7 +740,7 @@ ul li.last {
 	position: static;
 }
 table .dataTables {
-	font-size: 15px;
+	font-size: 0.8em;
 }
 .dataTables_scroll, .dataTables_scrollHead, .DataTables_sort_wrapper {
 	position: static;

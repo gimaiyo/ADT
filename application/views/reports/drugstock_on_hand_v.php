@@ -23,15 +23,20 @@
 	} );
 
 </script>
-<h4 style="text-align: center">Report on Inventory Status as of <span><?php echo date('d-M-Y') ?></span></h4>
-<hr size="1" style="width:80%">
-
-<table id="drug_table" class="table table-bordered table-striped listing_table" style="font-size:0.8em">
-	<thead>
-		<tr>
-			<th style="min-width: 300px">Drug</th><th>Unit</th><th>Pack Size</th><th>SOH (Units)</th><th>SOH (Packs)</th><th>Safety Stock</th><th>Stock Status</th>
-		</tr>
-	</thead>
-	<tbody>
-	</tbody>
-</table>
+<div id="wrapperd">
+	<div id="drugstock_on_hand" class="full-content">
+		<?php $this->load->view("reports/reports_top_menus_v") ?>
+		<h4 style="text-align: center">Report on Inventory Status as of <span><?php echo date('d-M-Y') ?></span> - <?php if($stock_type==1){echo "Main Store";} elseif($stock_type==2){echo "Pharmacy";}; ?></h4>
+		<hr size="1" style="width:80%">
+		
+		<table id="drug_table" class="table table-bordered table-striped listing_table" style="font-size:0.8em">
+			<thead>
+				<tr>
+					<th style="min-width: 300px">Drug</th><th>Unit</th><th>Pack Size</th><th>SOH (Units)</th><th>SOH (Packs)</th><th>Safety Stock</th><th>Stock Status</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+</div>
