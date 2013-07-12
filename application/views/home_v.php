@@ -178,9 +178,25 @@ if($this->session->userdata("changed_password")){
 
 <script type="text/javascript">
 		$(document).ready(function() {
+      var period;
+      var location;
+      
+	  $(".loadingDiv").show();
+       $('#chart_area').load("<?php echo base_url().'facilitydashboard_management/getExpiringDrugs/30/2'?>");
+       
+		    $('.generate').click(function(){
 
-		    
-	        $('#chart_area').load("<?php echo base_url().'facilitydashboard_management/getExpiringDrugs/2';?>");
+		
+		    	 period = $('.period').val();
+		    	 location = $('.location').val();
+		    	 alert(period+'   '+location);
+		    	 	        $('#chart_area').load("<?php echo base_url().'facilitydashboard_management/getExpiringDrugs/';?>"+period+'/'+location,function(){
+		    	 	        	$(".loadingDiv").show();
+		    	 	        	});
+
+		    	 });
+	        
+	    
 
 	        $('#table1').load('<?php echo base_url().'facilitydashboard_management/stock_notification'?>',function(){
 	        
@@ -380,9 +396,7 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
   #bottom_ribbon{
   	margin-top:120px;
   }
-#chart_area,#chart_area2,#chart_area3,#table1{
-	height:80%;
-}
+
 .dataTables_wrapper{
 	width:100%;
 }
@@ -415,8 +429,25 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 		<div id="expDiv>"></div>
 	<div class="tile-half">
 		<div class="tile">
-			<h3>Summary of Drugs Expiring in 30 Days</h3>
-			<div id="chart_area"></div>
+			<h3>Summary of Drugs Expiring in 
+				<select style="width:auto" class="period">
+					<option valuue="7">7 Days</option>
+					<option value="14">14 Days</option>
+				   <option value="30" selected=selected>1 Month</option>
+				   <option value="90">3 Months</option>
+				   <option value="180">6 Months</option>
+			</select> at
+			<select style="width:auto" class="location">
+				   <option value="1">Main Store</option>
+				   <option  selected=selected value="2">Pharmacy</option>
+			</select> 
+			<button class="generate btn">Generate</button>
+			</h3>
+			
+			<div id="chart_area">
+				<div class="loadingDiv" style="width:100%;height:100%" ><img style="width: 30px;margin-left:50%" src="<?php echo base_url().'Images/loading_spin.gif' ?>"></div>
+			</div>
+			
 		</div>
 
 		<div class="tile">
