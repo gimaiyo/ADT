@@ -88,7 +88,7 @@
 	
 </script>
 <div class="center-content">
-<table class="dataTables">
+<table class="dataTables" border="1">
 	<thead>
 		<tr>
 			<th width="80px">Order No</th>

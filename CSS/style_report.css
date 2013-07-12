@@ -1,22 +1,21 @@
-#patient_listing th, #top_enrollments_panel th {
+#patient_listing th, #top_enrollments_panel th, .listing_table th, .dataTable th {
 	border: 1px solid white;
-	background: #999;
+	border-bottom:1px solid #000;
+	background: #4e4e4e;
+	color:white;
+	fint-size:1.4em;
 }
-#patient_listing th, #top_enrollments_panel th, #patient_listing td, #top_enrollments_panel td, #appointment_listing td,#appointment_listing th {
-	padding: 5px;
-}
-#patient_listing th:first-child {
-	border: 1px solid white;
+
+#patient_listing th:first-child, .listing th:first-child,.dataTable th:first-child {
 	border-left: 1px solid #999;
-	background: #999;
 }
-#patient_listing th:lastchild {
+#patient_listing th:lastchild,.dataTable th:last-child,listing th:last-child {
 	border-right: 1px solid #999;
 }
-#patient_listing tr:nth-child(odd), .male tr:nth-child(odd), .female tr:nth-child(odd), #missed_doses tbody tr:nth-child(even), #pill_count tbody tr:nth-child(even), #appointment_listing tbody tr:nth-child(even) {
+.dataTable tr:hover,.listing_table tr:hover, .male tr:nth-child(odd), .female tr:nth-child(odd), #missed_doses tbody tr:nth-child(even), #pill_count tbody tr:nth-child(even), #appointment_listing tbody tr:nth-child(even) {
 	background: #bbb;
 }
-#patient_listing td+ td {
+#patient_listing td+ td,.listing_table td+ td,.dataTable td+ td  {
 	text-align: center;
 }
 #patient_listing {

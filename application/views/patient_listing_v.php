@@ -119,7 +119,7 @@ if ($access_level == "facility_administrator") {
 			?>
 		</div>
 		
-		<table class="table table-hover table-bordered table-striped listing_table" style="font-size:0.8em">
+		<table class="listing_table" id="patient_listing" border="1" style="font-size:0.8em">
 			<thead>
 				<tr>
 					<th style="width: 45px">CCC No</th><th>Patient Name</th><th>Contact</th><th style="width: 100px">Date Enrolled</th><th style="width: 100px">Next Appointment</th><th>Current Regimen</th><th style="width:150px">Status</th><th style="width: 140px">Action</th>

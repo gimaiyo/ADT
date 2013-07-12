@@ -790,7 +790,7 @@
 			<div style="text-align: center;	width:75%;margin:0 auto;">
 				<h3>Adherence By Appointment</h3>
 			</div>
-			<table id="appointment_listing"  cellpadding="3" cellspacing="5" align="center">
+			<table class="listing_table" border="1" id="appointment_listing"  cellpadding="3" cellspacing="5" align="center">
 				<thead>
 					<tr>
 						<th class="h1" rowspan="2">No of Days Missed</th>
@@ -828,7 +828,7 @@
 			<div style="text-align: center;	width:75%;margin:0 auto;">
 				<h3>Adherence By Missed Doses</h3>
 			</div>
-			<table id="missed_doses"  cellpadding="3" cellspacing="5">
+			<table class="listing_table" border="1" id="missed_doses"  cellpadding="3" cellspacing="5">
 				<thead>
 					<tr>
 						<th class="h1" rowspan="2">Percentage (%)</th>
@@ -874,7 +874,7 @@
 			<div style="text-align: center;	width:75%;margin:0 auto;">
 				<h3>Adherence By Pill Count</h3>
 			</div>
-			<table id="pill_count"  cellpadding="3" cellspacing="5">
+			<table class="listing_table" border="1" id="pill_count"  cellpadding="3" cellspacing="5">
 				<thead>
 					<tr>
 						<th class="h1" rowspan="2">Percentage (%)</th>

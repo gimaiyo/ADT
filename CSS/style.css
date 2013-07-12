@@ -12,7 +12,6 @@ font-face {
 	font-style: normal;
 }
 body {
-
 	margin: 0;
 	padding: 0;
 	font-family: "Helvetica";
@@ -755,12 +754,7 @@ table.setting_table {
 
 	max-width: 300px;
 }
-table.dataTable tr.odd {
-	background-color: rgb(234,255,232);
-}
-table.dataTable tr.odd td sorting_1 {
-	background-color: rgb(234,255,232);
-}
+
 .sidebar-nav-fixed {
 	/*/*padding: 9px 0;**/
 	position: fixed;
@@ -866,12 +860,8 @@ table.setting_table {
 	background: #2B597E;
 	color: #fff;
 }
-table.dataTable tr.odd {
-	background-color: rgb(235, 236, 238);
-}
-table.dataTable tr.odd td sorting_1 {
-	background-color: rgb(234,255,232);
-}
+
+
 .btn .caret {
 	margin: 0 auto;
 	vertical-align: middle;
@@ -1514,9 +1504,7 @@ table#history_table td {
 .big-table td.number {
 	text-align: center;
 }
-th div {
-	font-size: 10px;
-}
+
 .button {
 	width: 100px;
 	margin: 10px;
@@ -1551,9 +1539,7 @@ td {
 #commodity-table tbody tr {
 	font-size: 14px;
 }
-tr.odd {
-	background-color: rgb(244, 255, 240);
-}
+
 .regimen-table tbody td {
 	font-size: 13px;
 	color: #000;
