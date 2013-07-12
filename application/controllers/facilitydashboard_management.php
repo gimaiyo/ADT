@@ -141,10 +141,12 @@ class Facilitydashboard_Management extends MY_Controller {
 		$this -> load -> view("drug_below_safety_v");
 	}
 
-	public function getExpiringDrugs($stock_type = 1) {
+	public function getExpiringDrugs($period=30,$stock_type = 1) {
+		$expiryArray[]='';
+		$stockArray[]='';
 		$count = 0;
 		$facility_code = $this -> session -> userdata('facility');
-		$drugs_sql = "SELECT s.id AS id,s.drug AS Drug_Id,d.drug AS Drug_Name,d.pack_size AS pack_size, u.name AS Unit, s.batch_number AS Batch,s.expiry_date AS Date_Expired,DATEDIFF(s.expiry_date,CURDATE()) AS Days_Since_Expiry FROM drugcode d LEFT JOIN drug_unit u ON d.unit = u.id LEFT JOIN drug_stock_movement s ON d.id = s.drug LEFT JOIN transaction_type t ON t.id=s.transaction_type WHERE t.effect=1 AND DATEDIFF(s.expiry_date,CURDATE()) <=30 AND DATEDIFF(s.expiry_date,CURDATE())>=0 AND d.enabled=1 AND s.facility ='" . $facility_code . "' GROUP BY Batch ORDER BY Days_Since_Expiry asc";
+		$drugs_sql = "SELECT s.id AS id,s.drug AS Drug_Id,d.drug AS Drug_Name,d.pack_size AS pack_size, u.name AS Unit, s.batch_number AS Batch,s.expiry_date AS Date_Expired,DATEDIFF(s.expiry_date,CURDATE()) AS Days_Since_Expiry FROM drugcode d LEFT JOIN drug_unit u ON d.unit = u.id LEFT JOIN drug_stock_movement s ON d.id = s.drug LEFT JOIN transaction_type t ON t.id=s.transaction_type WHERE t.effect=1 AND DATEDIFF(s.expiry_date,CURDATE()) <='$period' AND DATEDIFF(s.expiry_date,CURDATE())>=0 AND d.enabled=1 AND s.facility ='" . $facility_code . "' GROUP BY Batch ORDER BY Days_Since_Expiry asc";
 		$drugs = $this -> db -> query($drugs_sql);
 		$results = $drugs -> result_array();
 		//Get all expiring drugs
@@ -162,11 +164,11 @@ class Facilitydashboard_Management extends MY_Controller {
 		$nameArray = array();
 		$dataArray = array();
 		foreach($drugs_array as $drug){
-			$nameArray[]=$drug['drug_name'];
-			$dataArray[]=array((int)$drug['expired_days_display'],(int)$drug['stocks_display']);
-			
+			$nameArray[]=$drug['drug_name'].'('.$drug['batch'].')';
+			$expiryArray[]=(int)$drug['expired_days_display'];	
+			$stockArray[]=(int)$drug['stocks_display'];			
 		}
-		$resultArray[]=array('data'=>$dataArray);
+		$resultArray=array(array('name'=>'Expiry','data'=>$expiryArray),array('name'=>'Stock','data'=>$stockArray));
 		$resultArray=json_encode($resultArray);
 		$categories=$nameArray;
 		$categories=json_encode($categories);
@@ -240,7 +242,7 @@ class Facilitydashboard_Management extends MY_Controller {
 
 							$expired_days = $expired_days;
 						}
-						$batch_stock = $batch_balance / $pack_size;
+						@$batch_stock = $batch_balance / @$pack_size;
 						$expired_days_display = number_format($expired_days);
 
 						$stocks_display = number_format($batch_stock, 1);

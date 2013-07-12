@@ -1,7 +1,4 @@
 
-<?php
-$this->load->view('sections/head');
-?>
 <script>
 $(function () {
         $('<?php echo "#".$container; ?>').highcharts({
@@ -40,7 +37,6 @@ $(function () {
                 }
             },
             legend: {
-            	enabled:false,
                 layout: 'vertical',
                 align: 'right',
                 verticalAlign: 'top',
@@ -56,4 +52,9 @@ $(function () {
         });
     });
     </script>
-    <div id="<?php echo $container?>" style="width:100%;height:100%"></div
+    <div class="graph">
+    	<div id="<?php echo $container?>"  style="width:100%;height:600px"  '></div>
+    </div>
+    
+    
+    
