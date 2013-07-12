@@ -180,18 +180,21 @@ if($this->session->userdata("changed_password")){
 		$(document).ready(function() {
       var period;
       var location;
-      
+    
 	  $(".loadingDiv").show();
        $('#chart_area').load("<?php echo base_url().'facilitydashboard_management/getExpiringDrugs/30/2'?>");
+       $('#chart_area2').load("<?php echo base_url().'facilitydashboard_management/getPatientEnrolled/2012-02-02/2012-02-07'?>");
+       
+       $('#chart_area3').load("<?php echo base_url().'facilitydashboard_management/getExpectedPatients/2013-03-17/2013-03-22'?>");
+       
        
 		    $('.generate').click(function(){
 
 		
 		    	 period = $('.period').val();
 		    	 location = $('.location').val();
-		    	 alert(period+'   '+location);
 		    	 	        $('#chart_area').load("<?php echo base_url().'facilitydashboard_management/getExpiringDrugs/';?>"+period+'/'+location,function(){
-		    	 	        	$(".loadingDiv").show();
+		    	 	        	
 		    	 	        	});
 
 		    	 });

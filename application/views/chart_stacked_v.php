@@ -19,6 +19,7 @@
 		title: {
 		text: '<?php echo $chartTitle; ?>'
 		},
+		
 		xAxis:
 		{
 		categories:  <?php echo $categories; ?>,
@@ -40,11 +41,9 @@
 		valueSuffix: ''
 		},
 		plotOptions: {
-		bar: {
-		dataLabels: {
-		enabled: true
-		}
-		}
+			series: {
+                    stacking: 'normal'
+               }
 		},
 		legend: {
 		layout: 'horizontal',
