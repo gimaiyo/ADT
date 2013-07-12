@@ -415,22 +415,19 @@ class report_management extends MY_Controller {
 
 		$sql = "select patient,appointment from patient_appointment where appointment between '$from' and '$to' and facility='$facility_code' group by patient,appointment";
 		$query = $this -> db -> query($sql);
-		$results = $query -> result_array();
-		$row_string .= "<table border='1' id='patient_listing'  class='dataTables'>
-		<thead>
-			<tr>
-				<th> ART ID </th>
-				<th> Patient Name</th>
-				<th> Sex </th>
-				<th> Contacts/Address </th>
-				<th> Appointment Date </th>
-				<th> Late by (days)</th>
-			</tr>
-		</thead>
-		 <tbody>";
-		$patient = 0;
-		$appointment = "";
 
+		$results = $query -> result_array();
+		$row_string .= "<table border='1' id='patient_listing' class='dataTables'>
+			<thead>
+				<tr>
+					<th> ART ID </th>
+					<th> Patient Name</th>
+					<th> Sex </th>
+					<th> Contacts/Address </th>
+					<th> Appointment Date </th>
+					<th> Late by (days)</th>
+				</tr>
+			</thead>";
 		if ($results) {
 			foreach ($results as $result) {
 				$patient = $result['patient'];
