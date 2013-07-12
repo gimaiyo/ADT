@@ -1997,11 +1997,13 @@ class report_management extends MY_Controller {
 			$resultArray[] = array('name' => $val, 'data' => array($dataArray[$dataCount]));
 			$dataCount++;
 		}
+		$categories=json_encode($nameArray);
 		$resultArray = json_encode($resultArray);
+		$data['container']="chart_div";
 		$data['chartType'] = 'bar';
 		$data['chartTitle'] = 'Patients Disclosure';
 		$data['yAxix'] = 'Patients';
-		$data['categories'] = $nameArray;
+		$data['categories'] = $categories;
 		$data['resultArray'] = $resultArray;
 		$this -> load -> view('chart_v', $data);
 

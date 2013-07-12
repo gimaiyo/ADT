@@ -1,19 +1,18 @@
-<head>
-	<?php
-	$this->load->view('sections/head');
-	?>
-</head>
+<?php
+$this->load->view('sections/head');
+?>
 <script>
 $(function () {
-        $('#container').highcharts({
+        $('<?php echo "#".$container; ?>').highcharts({
             chart: {
                 type: '<?php echo $chartType ?>'
             },
             title: {
                 text: '<?php echo $chartTitle;?>'
             },
-            xAxis: {
-            	categories:<?php echo  json_encode($categories);?>,
+            xAxis:            
+             {
+             	categories: <?php echo $categories; ?>,
                 title: {
                     text: null
                 }
@@ -39,6 +38,7 @@ $(function () {
                 }
             },
             legend: {
+            	enabled:false,
                 layout: 'vertical',
                 align: 'right',
                 verticalAlign: 'top',
@@ -54,4 +54,4 @@ $(function () {
         });
     });
     </script>
-    <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div
+    <div id="<?php echo $container?>" style="width:100%;height:100%"></div

@@ -178,21 +178,8 @@ if($this->session->userdata("changed_password")){
 
 <script type="text/javascript">
 		$(document).ready(function() {
-		    var chart= new FusionCharts("<?php echo base_url().'Scripts/FusionCharts/MSBar2D.swf';?>","ChartId","80%","100%","0","0");	
-	        chart.setDataURL("<?php echo base_url().'facilitydashboard_management/getExpiringDrugs/2';?>");
-	        chart.render("chart_area");	
-	        
-	        var chart1= new FusionCharts("<?php echo base_url().'Scripts/FusionCharts/StackedColumn2D.swf';?>","ChartId","80%","100%","0","0");	
-	        chart1.setDataURL("<?php echo base_url().'facilitydashboard_management/getPatientEnrolled/2013-03-17/2013-03-24';?>");
-	        chart1.render("chart_area2");
-	        
-	         var chart2= new FusionCharts("<?php echo base_url().'Scripts/FusionCharts/MSBar2D.swf';?>","ChartId","80%","100%","0","0");	
-	        chart2.setDataURL("<?php echo base_url().'facilitydashboard_management/getExpectedPatients/2013-03-17/2013-03-24';?>");
-	        chart2.render("chart_area3");	
-	        
-	      
-	        
-	        
+		    
+	        $('#chart_area').load("<?php echo base_url().'facilitydashboard_management/getExpiringDrugs/2';?>");
 	        $('#table1').load('<?php echo base_url().'facilitydashboard_management/stock_notification'?>',function(){
 	        
 				$('#stock_level').dataTable( {
