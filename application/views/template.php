@@ -371,7 +371,11 @@ if(isset($reports)|| isset($report_title)){
 	  </form>
 	</div>
 	<!-- Modal edit change password end-->
-    
+ <div id="bottom_ribbon">
+ 	<div id="footer">
+ 		<?php $this->load->view('footer_v');?>
+ 	</div>
+ </div>   
 </body>
 
 </html>

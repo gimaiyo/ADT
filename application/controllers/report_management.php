@@ -147,9 +147,12 @@ class report_management extends MY_Controller {
 					$dyn_table .= "<td>-</td><td>-</td>";
 				}
 			}
+			$dyn_table .= "</tbody><tfoot><tr><td><b>Totals:</b></td><td><b>$total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $total) * 100, 1) . "</b></td></tr>";
+			$dyn_table .= "</tfoot></table>";
+		} else {
+			$dyn_table = "<h4 style='text-align: center'><span >No Data Available</span></h4>";
 		}
-		$dyn_table .= "<tr class='tfoot'><td><b>Totals:</b></td><td><b>$total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $total) * 100, 1) . "</b></td></tr>";
-		$dyn_table .= "</tbody></table>";
+
 		$data['dyn_table'] = $dyn_table;
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['to'] = date('d-M-Y', strtotime($to));
@@ -922,11 +925,12 @@ class report_management extends MY_Controller {
 				}
 				$row_string .= "</tr>";
 			}
-			$row_string .= "<tr class='tfoot'><td><b>Totals:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $patient_total) * 100, 1) . "</b></td></tr>";
+			$row_string .= "</tbody><tfoot><tr><td><b>Totals:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $patient_total) * 100, 1) . "</b></td></tr>";
+			$row_string .= "</tfoot></table>";
 		} else {
-			$row_string .= "<tr><td colspan='11'>No Data Available</td></tr>";
+			$row_string = "<h4 style='text-align: center'><span >No Data Available</span></h4>";
 		}
-		$row_string .= "</tbody></table>";
+
 		$data['from'] = date('d-M-Y', strtotime($from));
 		$data['to'] = date('d-M-Y', strtotime($to));
 		$data['dyn_table'] = $row_string;
@@ -1062,8 +1066,8 @@ class report_management extends MY_Controller {
 				}
 				$row_string .= "</tr>";
 			}
-			$row_string .= "<tr class='tfoot'><td><b>Totals:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $patient_total) * 100, 1) . "</b></td></tr>";
-			$row_string .= "</tbody></table>";
+			$row_string .= "</tbody><tfoot><tr><td><b>Totals:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$overall_adult_male</b></td><td><b>" . number_format(($overall_adult_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_adult_female</b></td><td><b>" . number_format(($overall_adult_female / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_male</b></td><td><b>" . number_format(($overall_child_male / $patient_total) * 100, 1) . "</b></td><td><b>$overall_child_female</b></td><td><b>" . number_format(($overall_child_female / $patient_total) * 100, 1) . "</b></td></tr>";
+			$row_string .= "</tfoot></table>";
 
 		}
 		$data['from'] = date('d-M-Y', strtotime($from));
@@ -1283,8 +1287,8 @@ class report_management extends MY_Controller {
 				}
 				$row_string .= "</tr>";
 			}
-			$row_string .= "<tr class='tfoot'><td><b>Total:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$total_adult_male_art</b></td><td><b>$total_adult_male_pep</b></td><td><b>$total_adult_male_oi</b></td><td><b>$total_adult_female_art</b></td><td><b>$total_adult_female_pep</b></td><td><b>$total_adult_female_pmtct</b></td><td><b>$total_adult_female_oi</b></td><td><b>$total_child_male_art</b></td><td><b>$total_child_male_pep</b></td><td><b>$total_child_male_pmtct</b></td><td><b>$total_child_male_oi</b></td><td><b>$total_child_female_art</b></td><td><b>$total_child_female_pep</b></td><td><b>$total_child_female_pmtct</b></td><td><b>$total_child_female_oi</b></td></tr>";
-			$row_string .= "</tbody></table>";
+			$row_string .= "</tbody><tfoot><tr class='tfoot'><td><b>Total:</b></td><td><b>$patient_total</b></td><td><b>100</b></td><td><b>$total_adult_male_art</b></td><td><b>$total_adult_male_pep</b></td><td><b>$total_adult_male_oi</b></td><td><b>$total_adult_female_art</b></td><td><b>$total_adult_female_pep</b></td><td><b>$total_adult_female_pmtct</b></td><td><b>$total_adult_female_oi</b></td><td><b>$total_child_male_art</b></td><td><b>$total_child_male_pep</b></td><td><b>$total_child_male_pmtct</b></td><td><b>$total_child_male_oi</b></td><td><b>$total_child_female_art</b></td><td><b>$total_child_female_pep</b></td><td><b>$total_child_female_pmtct</b></td><td><b>$total_child_female_oi</b></td></tr>";
+			$row_string .= "</tfoot></table>";
 
 		}
 		$data['from'] = date('d-M-Y', strtotime($from));
@@ -2142,7 +2146,7 @@ class report_management extends MY_Controller {
 			}
 			$dyn_str .= "<tr class='tfoot'><td><b>TOTALS</b></td><td><b>$total</b></td><td><b>100%</b></td></tr>";
 			$dyn_str .= "</tbody></table>";
-		} else {			
+		} else {
 			$dyn_str = "<h4 style='text-align: center'><span >No Data Available</span></h4>";
 		}
 
