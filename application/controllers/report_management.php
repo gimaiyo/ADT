@@ -1303,21 +1303,25 @@ class report_management extends MY_Controller {
 		$this -> load -> view('template', $data);
 	}
 
-	public function drug_consumption($year = "2012") {
+	public function drug_consumption($year = "") {
 		$data['year'] = $year;
 		//Create table to store data
-		$tmpl = array('table_open' => '<table border="1" class="table table-bordered"  id="drug_listing">');
-		$this -> table -> set_template($tmpl);
-		$this -> table -> set_heading('', 'Drug', 'Unit', 'Jan', 'Feb', 'Mar', 'Apr', 'May', "Jun", 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
+		$row_string='<table border="1" class="dataTables"  id="drug_listing">';
+		$row_string.='<thead>
+						<tr><th>Drug</th><th>Unit</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th></tr>
+					  </thead>
+					  <tbody>';
+		//$tmpl = array('table_open' => '<table border="1" class="dataTables"  id="drug_listing">');
+		//$this -> table -> set_template($tmpl);
+		//$this -> table -> set_heading('', 'Drug', 'Unit', 'Jan', 'Feb', 'Mar', 'Apr', 'May', "Jun", 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
 
 		$facility_code = $this -> session -> userdata("facility");
 		$facility_name = $this -> session -> userdata('facility_name');
-		$drugs_sql = "select d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id LIMIT 5";
+		$drugs_sql = "select d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id";
 		$drugs = $this -> db -> query($drugs_sql);
 		$drugs_array = $drugs -> result_array();
 		$counter = 0;
 		foreach ($drugs_array as $parent_row) {
-
 			$sql = "select '" . $parent_row['drug'] . "' as drug_name,'" . $parent_row['pack_size'] . "' as pack_size,'" . $parent_row['name'] . "' as unit,month(date(dispensing_date)) as month, sum(quantity) as total_consumed from patient_visit where drug_id = '" . $parent_row['id'] . "' and dispensing_date like '%" . $year . "%' and facility='" . $facility_code . "' group by month(date(dispensing_date)) order by month(date(dispensing_date)) asc";
 			$drug_details_sql = $this -> db -> query($sql);
 			$sql_array = $drug_details_sql -> result_array();
@@ -1341,32 +1345,39 @@ class report_management extends MY_Controller {
 					$drug_consumption[$month] = $row['total_consumed'];
 				}
 
-				//$row_string = "<tr><td>" .$drug_name . "</td><td>" . $unit . "</td>";
-				$columns[] = $drug_name;
-				$columns[] = $drug_name;
-				$columns[] = $unit;
+				$row_string.= "<tr><td>" .$drug_name . "</td><td>" . $unit . "</td>";
+				//$columns[] = $drug_name;
+				//$columns[] = $drug_name;
+				//$columns[] = $unit;
 				//Loop untill 12; check if there is a result for each month
 				for ($i = 1; $i <= 12; $i++) {
+					
 					if (isset($drug_consumption[$i]) and isset($pack_size) and $pack_size != 0) {
-						//$row_string += "<td>" + ceil($drug_consumption[$i] / $pack_size) + "</td>";
-						$columns[] = ceil($drug_consumption[$i] / $pack_size);
+						$row_string.= "<td>".ceil($drug_consumption[$i] / $pack_size)."</td>";
+						//$columns[] = ceil($drug_consumption[$i] / $pack_size);
 					} else {
-						//$row_string += "<td>-</td>";
-						$columns[] = '-';
+						$row_string.= "<td>-</td>";
+						//$columns[] = '-';
 					}
 				}
 
-				//$row_string += "</tr>";
-				$this -> table -> add_row($columns);
+				$row_string.= "</tr>";
+				//$this -> table -> add_row($columns);
 
 			}
 
 		}
-		$drug_display = $this -> table -> generate();
-		$data['drug_listing'] = $drug_display;
+		$row_string.= "</tbody></table>";
+		//$drug_display = $this -> table -> generate();
+		$data['drug_listing'] = $row_string;
+		$data['title'] = "webADT | Reports";
+		$data['hide_side_menu'] = 1;
+		$data['selected_report_type'] = "Drug Inventory";
+		$data['banner_text'] = "Facility Reports";
+		$data['report_title'] = "Drug Consumption Report";
 		$data['title'] = "Reports";
-		$data['content_view'] = 'drugconsumption_v';
-		$this -> load -> view('template_report', $data);
+		$data['content_view'] = 'reports/drugconsumption_v';
+		$this -> load -> view('template', $data);
 	}
 
 	public function stock_report($report_type, $stock_type) {

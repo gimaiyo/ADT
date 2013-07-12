@@ -11,11 +11,11 @@
 	 */
 	$(document).ready(function() {
 		   $('.dataTables').dataTable( {
-			"bProcessing": true,
-			"bServerSide": false,
-	        "bJQueryUI": true,
-	        "sPaginationType": "full_numbers"
-		} );
+				"bProcessing": true,
+				"bServerSide": false,
+		        "bJQueryUI": true,
+		        "sPaginationType": "full_numbers"
+			});
 		/*
 		 * Reports generation
 		 */
@@ -27,6 +27,7 @@
 
 				if($(".input_year").is(":visible") && $(".input_year").val() == "") {
 					alert("Please enter the year");
+					return;
 				}
 				//Dates not selected
 				if($(".input_dates").is(":visible") && $(".input_dates").val() == "") {

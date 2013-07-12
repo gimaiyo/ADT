@@ -47,6 +47,23 @@ $(document).ready(function() {
            $("#donor_date_range_from").datepicker("option","maxDate", selected)
         }
 	});
+	$( "#single_year_filter" ).datepicker({
+        changeMonth: false,
+        changeYear: true,
+        dateFormat: 'yy',
+        showButtonPanel: true,
+        onClose: function(dateText, inst) { 
+            var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+            $(this).datepicker('setDate', new Date(year, 1));
+        }
+	    
+    });
+    $("#single_year_filter").focus(function () {
+        $(".ui-datepicker-month").hide();
+         $(".ui-datepicker-calendar").hide();
+    });
+    
+    
 
 	$(".reports_types").css("display","none");
 	$("#standard_report_row").css("display","block");
