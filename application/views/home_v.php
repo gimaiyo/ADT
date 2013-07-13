@@ -454,13 +454,22 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 		</div>
 
 		<div class="tile">
-			<h3>Weekly Summary of Patient Enrolment</h3>
+			<h3>Weekly Summary of Patient Enrolment from
+				<input type="text" placeholder="Start" class="input-mini hasDatepicker"/> to
+				<input type="text" placeholder="End" class=" input-mini hasDatepicker"/>
+				<button class="btn generate btn-mini">Generate</button>
+				 </h3>
 			<div id="chart_area2"></div>
 		</div>
 	</div>
 	<div class="tile-half">
 		<div class="tile">
-			<h3>Weekly Summary of Patient Appointments</h3>
+			<h3>Weekly Summary of Patient Appointments
+				from
+				<input type="text" placeholder="Start" class="input-mini hasDatepicker"/> to
+				<input type="text" placeholder="End" class=" input-mini hasDatepicker"/>
+				<button class="btn-mini generate btn">Generate</button>
+				</h3>
 			<div id="chart_area3"></div>
 		</div>
 		<div class="tile">
