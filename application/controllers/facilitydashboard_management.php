@@ -141,9 +141,9 @@ class Facilitydashboard_Management extends MY_Controller {
 		$this -> load -> view("drug_below_safety_v");
 	}
 
-	public function getExpiringDrugs($period=30,$stock_type = 1) {
-		$expiryArray[]='';
-		$stockArray[]='';
+	public function getExpiringDrugs($period = 30, $stock_type = 1) {
+		$expiryArray=array();
+		$stockArray=array();
 		$count = 0;
 		$facility_code = $this -> session -> userdata('facility');
 		$drugs_sql = "SELECT s.id AS id,s.drug AS Drug_Id,d.drug AS Drug_Name,d.pack_size AS pack_size, u.name AS Unit, s.batch_number AS Batch,s.expiry_date AS Date_Expired,DATEDIFF(s.expiry_date,CURDATE()) AS Days_Since_Expiry FROM drugcode d LEFT JOIN drug_unit u ON d.unit = u.id LEFT JOIN drug_stock_movement s ON d.id = s.drug LEFT JOIN transaction_type t ON t.id=s.transaction_type WHERE t.effect=1 AND DATEDIFF(s.expiry_date,CURDATE()) <='$period' AND DATEDIFF(s.expiry_date,CURDATE())>=0 AND d.enabled=1 AND s.facility ='" . $facility_code . "' GROUP BY Batch ORDER BY Days_Since_Expiry asc";
@@ -160,28 +160,28 @@ class Facilitydashboard_Management extends MY_Controller {
 		}
 		$d = 0;
 		$drugs_array = $this -> drug_array;
-		
+
 		$nameArray = array();
 		$dataArray = array();
-		foreach($drugs_array as $drug){
-			$nameArray[]=$drug['drug_name'].'('.$drug['batch'].')';
-			$expiryArray[]=(int)$drug['expired_days_display'];	
-			$stockArray[]=(int)$drug['stocks_display'];			
+		foreach ($drugs_array as $drug) {
+			$nameArray[] = $drug['drug_name'] . '(' . $drug['batch'] . ')';
+			$expiryArray[] = (int)$drug['expired_days_display'];
+			$stockArray[] = (int)$drug['stocks_display'];
 		}
-		$resultArray=array(array('name'=>'Expiry','data'=>$expiryArray),array('name'=>'Stock','data'=>$stockArray));
-		$resultArray=json_encode($resultArray);
-		$categories=$nameArray;
-		$categories=json_encode($categories);
+		$resultArray = array( array('name' => 'Expiry', 'data' => $expiryArray), array('name' => 'Stock', 'data' => $stockArray));
+		$resultArray = json_encode($resultArray);
+		$categories = $nameArray;
+		$categories = json_encode($categories);
 		//Load Data Variables
-		$data['container']='chart_div';
-		$data['chartType']='bar';
-		$data['title']='Chart';
-		$data['chartTitle']='Expired Drugs';
-		$data['categories']=$categories;
-		$data['yAxix']='Drugs';
-		$data['resultArray']=$resultArray;
-		$this->load->view('chart_v',$data);
-		
+		$data['container'] = 'chart_div';
+		$data['chartType'] = 'bar';
+		$data['title'] = 'Chart';
+		$data['chartTitle'] = 'Expired Drugs';
+		$data['categories'] = $categories;
+		$data['yAxix'] = 'Drugs';
+		$data['resultArray'] = $resultArray;
+		$this -> load -> view('chart_v', $data);
+
 	}
 
 	public function getBatchInfo($drug, $batch, $drug_unit, $drug_name, $expiry_date, $expired_days, $drug_id, $pack_size, $stock_type, $facility_code) {
@@ -378,32 +378,25 @@ class Facilitydashboard_Management extends MY_Controller {
 			}
 
 		}
-
-		$strXML = "<chart useroundedges='1' bgcolor='ffffff' showborder='0' yAxisName='Enrollments' showvalues='1' showsum='1' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='9' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1' exportEnabled='1' exportHandler='" . base_url() . "Scripts/FusionCharts/ExportHandlers/PHP/FCExporter.php' exportAtClient='0' exportAction='download'>";
-
-		$stradultmale = "<dataset seriesName='Adult Male' showValues= '0' >";
-		$stradultfemale = "<dataset seriesName='Adult Female' showValues= '0' >";
-		$strchildmale = "<dataset seriesName='Child Male' showValues= '0' >";
-		$strchildfemale = "<dataset seriesName='Child Female' showValues= '0' >";
-		$strCAT = "<categories>";
-		foreach ($patients_array as $patients) {
-
-			$strCAT .= "<category label='" . date('D M d,Y', strtotime($patients['date_enrolled'])) . "'/>";
-
-			$stradultmale .= "<set value='" . $patients['total_male_adult'] . "' />";
-			$stradultfemale .= "<set value='" . $patients['total_female_adult'] . "' />";
-			$strchildmale .= "<set value='" . $patients['total_male_child'] . "' />";
-			$strchildfemale .= "<set value='" . $patients['total_female_child'] . "' />";
+		$categories = array('Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday');
+		foreach($patients_array as $key =>$value){
+			$maleAdult[]=(int)$value['total_male_adult'];
+			$femaleAdult[]=(int)$value['total_female_adult'];
+			$maleChild[]=(int)$value['total_male_child'];
+			$femaleChild[]=(int)$value['total_female_child'];
 		}
-		$strCAT .= "</categories>";
-		$stradultmale .= "</dataset>";
-		$stradultfemale .= "</dataset>";
-		$strchildmale .= "</dataset>";
-		$strchildfemale .= "</dataset>";
-		$strXML .= $strCAT . $stradultmale . $stradultfemale . $strchildmale . $strchildfemale;
-
-		header('Content-type: text/xml');
-		echo $strXML .= "</chart>";
+		$resultArray=array(array('name'=>'Male Adult','data'=>$maleAdult),array('name'=>'Female Adult','data'=>$femaleAdult),array('name'=>'Male Child','data'=>$maleChild),array('name'=>'Female Child','data'=>$femaleChild));
+		$resultArray = json_encode($resultArray);
+		$categories = json_encode($categories);
+		
+		$data['container']="chart_div";
+		$data['chartType'] = 'bar';
+		$data['chartTitle'] = 'Patients Enrollment';
+		$data['yAxix'] = 'Patients';
+		$data['categories'] = $categories;
+		$data['resultArray'] = $resultArray;
+		$data['container'] = "chart1";
+		$this -> load -> view('chart_stacked_v', $data);
 
 	}
 
@@ -498,23 +491,22 @@ class Facilitydashboard_Management extends MY_Controller {
 
 		}
 
-		$strXML = "<chart useroundedges='1' showsum='1' yAxisName='Enrollments' bgcolor='ffffff' showborder='0' showvalues='1' areaOverColumns='0' showPercentValues='1' baseFont='Arial' baseFontSize='11' palette='2' rotateNames='1' animation='1'  labelDisplay='Rotate' slantLabels='1' exportEnabled='1' exportHandler='" . base_url() . "Scripts/FusionCharts/ExportHandlers/PHP/FCExporter.php' exportAtClient='0' exportAction='download'>";
-		$strtotalvisited = "<dataset seriesName='Visited' showValues= '1' >";
-		$strtotalnotvisited = "<dataset seriesName='Missed' showValues= '1' >";
-		$strCAT = "<categories>";
-		foreach ($patients_array as $patients) {
-			$strCAT .= "<category label='" . date('D M d,Y', strtotime($patients['date_appointment'])) . "'/>";
-
-			$strtotalvisited .= "<set value='" . $patients['patient_visited'] . "' />";
-			$strtotalnotvisited .= "<set value='" . $patients['patient_not_visited'] . "' />";
+$categories = array('Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday');
+		foreach($patients_array as $key =>$value){
+			$visited[]=(int)$value['patient_visited'];
+			$missed[]=(int)$value['patient_not_visited'];
 		}
-		$strCAT .= "</categories>";
-		$strtotalvisited .= "</dataset>";
-		$strtotalnotvisited .= "</dataset>";
-		$strXML .= $strCAT . $strtotalvisited . $strtotalnotvisited;
-
-		header('Content-type: text/xml');
-		echo $strXML .= "</chart>";
+		$resultArray=array(array('name'=>'Visited','data'=>$visited),array('name'=>'Missed','data'=>$missed));
+		$resultArray = json_encode($resultArray);
+		$categories = json_encode($categories);
+		
+		$data['container']="chart_div5";
+		$data['chartType'] = 'bar';
+		$data['chartTitle'] = 'Patients Expected';
+		$data['yAxix'] = 'Patients';
+		$data['categories'] = $categories;
+		$data['resultArray'] = $resultArray;
+		$this -> load -> view('chart_v', $data);
 
 	}
 
