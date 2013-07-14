@@ -10,11 +10,18 @@
 	 *Change password validation 
 	 */
 	$(document).ready(function() {
+		var base_url=$("#base_url").val();
 		   $('.dataTables').dataTable( {
-				"bProcessing": true,
+		   		"sDom": 'T<"clear">lfrtip',
+		   		"oTableTools": {
+					"sSwfPath": base_url+"scripts/datatable/copy_csv_xls_pdf.swf",
+					"aButtons": [ "copy", "print","xls","pdf" ]
+				},
+		   		"bProcessing": true,
 				"bServerSide": false,
 		        "bJQueryUI": true,
 		        "sPaginationType": "full_numbers"
+		        
 			});
 		/*
 		 * Reports generation
