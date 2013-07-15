@@ -30,6 +30,8 @@ class Patient_Visit extends Doctrine_Record {
 		$this -> hasColumn('Non_Adherence_Reason', 'varchar', 255);
 		$this -> hasColumn('Merged_From', 'varchar', 50);
 		$this -> hasColumn('Regimen_Merged_From', 'varchar', 20);
+		$this -> hasColumn('Last_Regimen_Merged_From', 'varchar', 20);
+		
 	}
 
 	public function setUp() {

@@ -19,7 +19,6 @@ if($resultArraySize>25){
 	$chartSize='2100';
 }
 ?>
-
 <script>
 		$(function () {
 	$('<?php echo "#" . $container; ?>').highcharts({
@@ -36,12 +35,13 @@ if($resultArraySize>25){
 		'#a6c96a'
 		],
 		chart: {
-			height:<?php echo $chartSize;?>,
+		height:<?php echo $chartSize;?>,
 		type: '<?php echo $chartType ?>'
 		},
 		title: {
 		text: '<?php echo $chartTitle; ?>'
 		},
+		
 		xAxis:
 		{
 		categories:  <?php echo $categories; ?>,
@@ -63,11 +63,9 @@ if($resultArraySize>25){
 		valueSuffix: ''
 		},
 		plotOptions: {
-		bar: {
-		dataLabels: {
-		enabled: true
-		}
-		}
+			series: {
+                    stacking: 'normal'
+               }
 		},
 		legend: {
 		layout: 'horizontal',

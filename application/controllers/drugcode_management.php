@@ -2,9 +2,9 @@
 class Drugcode_management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
-		$this->session->set_userdata("link_id","index");
-		$this->session->set_userdata("linkSub","drugcode_management");
-		$this->session->set_userdata("linkTitle","DrugCode Management");
+		$this -> session -> set_userdata("link_id", "index");
+		$this -> session -> set_userdata("linkSub", "drugcode_management");
+		$this -> session -> set_userdata("linkTitle", "DrugCode Management");
 		ini_set("max_execution_time", "100000");
 	}
 
@@ -19,61 +19,40 @@ class Drugcode_management extends MY_Controller {
 			$source = $this -> session -> userdata('facility');
 		}
 		$data = array();
-		$drugcodes = Drugcode::getAll($source,$access_level);
-		$tmpl = array ( 'table_open'  => '<table id="drugcode_setting" class="setting_table">' );
-		$this -> table ->set_template($tmpl);
+		$drugcodes = Drugcode::getAll($source, $access_level);
+		$tmpl = array('table_open' => '<table id="drugcode_setting" class="setting_table">');
+		$this -> table -> set_template($tmpl);
 		$this -> table -> set_heading('id', 'Drug', 'Pack Size', 'Safety Quantity', 'Quantity', 'Duration', 'Options');
 
-
 		foreach ($drugcodes as $drugcode) {
-			$array_param=array(
-				'id'=>$drugcode['id'],
-				'role'=>'button',
-				'class'=>'edit_user',
-				'data-toggle'=>'modal'
-			);
-			
-			$links="";
-			if($drugcode['Enabled'] == 1){
+			$array_param = array('id' => $drugcode['id'], 'role' => 'button', 'class' => 'edit_user', 'data-toggle' => 'modal');
+
+			$links = "";
+			if ($drugcode['Enabled'] == 1) {
 				//$links = anchor('#edit_drugcode', 'Edit', array('class' => 'edit_user','id'=>$drugcode['id']));
 				$links .= anchor('#edit_drugcode', 'Edit', $array_param);
-				
+
 			}
-			
+
 			$drug = $drugcode['id'];
-			if ($drugcode['Enabled'] == 1 && $access_level=="facility_administrator") {
+			if ($drugcode['Enabled'] == 1 && $access_level == "facility_administrator") {
 				$links .= " | ";
 				$links .= anchor('drugcode_management/disable/' . $drugcode['id'], 'Disable', array('class' => 'disable_user'));
-				
-				//$links .= "<a href='#' class='merge_drug' id='$drug'>Merge</a>";
-			} elseif($access_level=="facility_administrator") {
-				//$links .= " | ";
+				$links .= " | ";
+				$links .= "<a href='#' class='merge_drug' id='$drug'>Merge</a>";
+			} elseif ($access_level == "facility_administrator") {
 				$links .= anchor('drugcode_management/enable/' . $drugcode['id'], 'Enable', array('class' => 'enable_user'));
 
 			}
-			/*
-			if ($drugcode['Supplied'] == 1) {
-				$supplied = "ART Program";
-			} else {
-				$supplied = "Non-ART Program";
-			}
-			 * *
-			 */
-			 /*
-			if (@$drugcode['Merged_To']) {
-				if($access_level == "facility_administrator"){
+			if ($drugcode['Merged_To'] != '') {
+				if ($access_level == "facility_administrator") {
 					$links .= " | ";
 					$links .= anchor('drugcode_management/unmerge/' . $drugcode['id'], 'Unmerge', array('class' => 'unmerge_drug'));
 				}
-			  */
-			   
 				$checkbox = "<input type='checkbox' name='drugcodes' id='drugcodes' value='$drug' disabled/>";
-/*
 			} else {
-			$checkbox = "<input type='checkbox' name='drugcodes' id='drugcodes' value='$drug'/>";
+				$checkbox = "<input type='checkbox' name='drugcodes' id='drugcodes' value='$drug'/>";
 			}
-			  *
-			  */
 			$this -> table -> add_row($drugcode['id'], $checkbox . "&nbsp;" . $drugcode['Drug'], $drugcode['Pack_Size'], $drugcode['Safety_Quantity'], $drugcode['Quantity'], $drugcode['Duration'], $links);
 		}
 
@@ -95,59 +74,59 @@ class Drugcode_management extends MY_Controller {
 	}
 
 	public function save() {
-		
+
 		$valid = $this -> _submit_validate();
 		//if ($valid == false) {
-			//$this -> add();
+		//$this -> add();
 		//} else {
-			
-			$access_level = $this -> session -> userdata('user_indicator');
-			$source = 0;
-			if ($access_level == "pharmacist") {
-				$source = $this -> session -> userdata('facility');
-			}
-			$non_arv=0;
-			$tb_drug=0;
-			$drug_in_use=0;
-			$supplied=0;
-			if($this -> input -> post('none_arv')=="on"){
-				$non_arv=1;
-			}
-			if($this -> input -> post('tb_drug')=="on"){
-				$tb_drug=1;
-			}
-			if($this -> input -> post('drug_in_use')=="on"){
-				$drug_in_use=1;
-			}
-			
-			$drugcode = new Drugcode();
-			$drugcode -> Drug = $this -> input -> post('drugname');
-			$drugcode -> Unit = $this -> input -> post('drugunit');
-			$drugcode -> Pack_Size = $this -> input -> post('packsize');
-			$drugcode -> Safety_Quantity = $this -> input -> post('safety_quantity');
-			$drugcode -> Generic_Name = $this -> input -> post('genericname');
-			$drugcode -> Supported_By = $this -> input -> post('supplied_by');
-			$drugcode -> classification = $this -> input -> post('classification');
-			$drugcode -> none_arv =$non_arv ;
-			$drugcode -> Tb_Drug = $tb_drug;
-			$drugcode -> Drug_In_Use = $drug_in_use;
-			$drugcode -> Comment = $this -> input -> post('comments');
-			$drugcode -> Dose = $this -> input -> post('dose_frequency');
-			$drugcode -> Duration = $this -> input -> post('duration');
-			$drugcode -> Quantity = $this -> input -> post('quantity');
-			$drugcode -> Strength = $this -> input -> post('dose_strength');
-			$drugcode -> Source = $source;
 
-			$drugcode -> save();
-			//$this -> session -> set_userdata('message_counter', '1');
-			$this -> session -> set_userdata('msg_success', $this -> input -> post('drugname') . ' was successfully Added!');
-			redirect('settings_management');
+		$access_level = $this -> session -> userdata('user_indicator');
+		$source = 0;
+		if ($access_level == "pharmacist") {
+			$source = $this -> session -> userdata('facility');
 		}
+		$non_arv = 0;
+		$tb_drug = 0;
+		$drug_in_use = 0;
+		$supplied = 0;
+		if ($this -> input -> post('none_arv') == "on") {
+			$non_arv = 1;
+		}
+		if ($this -> input -> post('tb_drug') == "on") {
+			$tb_drug = 1;
+		}
+		if ($this -> input -> post('drug_in_use') == "on") {
+			$drug_in_use = 1;
+		}
+
+		$drugcode = new Drugcode();
+		$drugcode -> Drug = $this -> input -> post('drugname');
+		$drugcode -> Unit = $this -> input -> post('drugunit');
+		$drugcode -> Pack_Size = $this -> input -> post('packsize');
+		$drugcode -> Safety_Quantity = $this -> input -> post('safety_quantity');
+		$drugcode -> Generic_Name = $this -> input -> post('genericname');
+		$drugcode -> Supported_By = $this -> input -> post('supplied_by');
+		$drugcode -> classification = $this -> input -> post('classification');
+		$drugcode -> none_arv = $non_arv;
+		$drugcode -> Tb_Drug = $tb_drug;
+		$drugcode -> Drug_In_Use = $drug_in_use;
+		$drugcode -> Comment = $this -> input -> post('comments');
+		$drugcode -> Dose = $this -> input -> post('dose_frequency');
+		$drugcode -> Duration = $this -> input -> post('duration');
+		$drugcode -> Quantity = $this -> input -> post('quantity');
+		$drugcode -> Strength = $this -> input -> post('dose_strength');
+		$drugcode -> Source = $source;
+
+		$drugcode -> save();
+		//$this -> session -> set_userdata('message_counter', '1');
+		$this -> session -> set_userdata('msg_success', $this -> input -> post('drugname') . ' was successfully Added!');
+		redirect('settings_management');
+	}
 
 	//}
 
 	public function edit() {
-		$drugcode_id=$this -> input -> post('drugcode_id');
+		$drugcode_id = $this -> input -> post('drugcode_id');
 		$data['generic_names'] = Generic_Name::getAllActive();
 		$data['drug_units'] = Drug_Unit::getThemAll();
 		$data['doses'] = Dose::getAllActive();
@@ -158,40 +137,25 @@ class Drugcode_management extends MY_Controller {
 	}
 
 	public function update() {
-		$non_arv="0";
-		$tb_drug="0";
-		$drug_in_use="0";
-		$supplied=0;
-		if($this -> input -> post('none_arv')=="on"){
-			$non_arv="1";
+		$non_arv = "0";
+		$tb_drug = "0";
+		$drug_in_use = "0";
+		$supplied = 0;
+		if ($this -> input -> post('none_arv') == "on") {
+			$non_arv = "1";
 		}
-		if($this -> input -> post('tb_drug')=="on"){
-			
-			$tb_drug="1";
+		if ($this -> input -> post('tb_drug') == "on") {
+
+			$tb_drug = "1";
 		}
-		if($this -> input -> post('drug_in_use')=="on"){
-			$drug_in_use="1";
+		if ($this -> input -> post('drug_in_use') == "on") {
+			$drug_in_use = "1";
 		}
-		
+
 		$source_id = $this -> input -> post('drugcode_id');
-		
-		$data = array('Drug' => $this -> input -> post('drugname'), 
-					  'Unit' => $this -> input -> post('drugunit'), 
-					  'Pack_Size' => $this -> input -> post('packsize'), 
-					  'Safety_Quantity' => $this -> input -> post('safety_quantity'), 
-					  'Generic_Name' => $this -> input -> post('genericname'), 
-					  'Supported_By' => $this -> input -> post('supplied_by'), 
-					  'classification' => $this -> input -> post('classification'), 
-					  'none_arv' => $non_arv, 
-					  'tb_drug' => $tb_drug, 
-					  'Drug_In_Use' => $drug_in_use, 
-					  'Comment' => $this -> input -> post('comments'), 
-					  'Dose' => $this -> input -> post('dose_frequency'), 
-					  'Duration' => $this -> input -> post('duration'), 
-					  'Quantity' => $this -> input -> post('quantity'), 
-					  'Strength' => $this -> input -> post('dose_strength')
-					  );
-					 
+
+		$data = array('Drug' => $this -> input -> post('drugname'), 'Unit' => $this -> input -> post('drugunit'), 'Pack_Size' => $this -> input -> post('packsize'), 'Safety_Quantity' => $this -> input -> post('safety_quantity'), 'Generic_Name' => $this -> input -> post('genericname'), 'Supported_By' => $this -> input -> post('supplied_by'), 'classification' => $this -> input -> post('classification'), 'none_arv' => $non_arv, 'tb_drug' => $tb_drug, 'Drug_In_Use' => $drug_in_use, 'Comment' => $this -> input -> post('comments'), 'Dose' => $this -> input -> post('dose_frequency'), 'Duration' => $this -> input -> post('duration'), 'Quantity' => $this -> input -> post('quantity'), 'Strength' => $this -> input -> post('dose_strength'));
+
 		$this -> load -> database();
 		$this -> db -> where('id', $source_id);
 		$this -> db -> update('drugcode', $data);
@@ -206,7 +170,7 @@ class Drugcode_management extends MY_Controller {
 		$results = Drugcode::getDrugCode($drugcode_id);
 		//$this -> session -> set_userdata('message_counter', '1');
 		$this -> session -> set_userdata('msg_success', $results['Drug'] . ' was enabled!');
-		
+
 		redirect('settings_management');
 	}
 
@@ -239,7 +203,8 @@ class Drugcode_management extends MY_Controller {
 		$the_query = "UPDATE regimen_drug SET merged_from=drugcode,drugcode='$primary_drugcode_id' WHERE drugcode IN($drugcodes_to_remove);";
 		$this -> db -> query($the_query);
 		$results = Drugcode::getDrugCode($primary_drugcode_id);
-		echo $results -> Drug . ' was merged';
+		$this -> session -> set_userdata('message_counter', '1');
+		$this -> session -> set_userdata('msg_success', $results -> Drug . ' was Merged!');
 	}
 
 	public function unmerge($drugcode) {
@@ -256,9 +221,9 @@ class Drugcode_management extends MY_Controller {
 		//Final Query that updates regimen_drug table to unmerge all drug id's that match the merged_from column
 		$the_query = "UPDATE regimen_drug SET drugcode='$drugcode',merged_from='' WHERE merged_from='$drugcode';";
 		$this -> db -> query($the_query);
-		
+
 		$results = Drugcode::getDrugCode($drugcode);
-		//$this -> session -> set_userdata('message_counter', '2');
+		$this -> session -> set_userdata('message_counter', '1');
 		$this -> session -> set_userdata('msg_error', $results -> Drug . ' was unmerged!');
 		redirect('settings_management');
 

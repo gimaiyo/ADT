@@ -970,6 +970,11 @@ table.setting_table {
 	height: 50%;
 	display: block;
 }
+.graph{
+	height:100%;
+	overflow-x:hidden;
+	overflow-y:auto;
+}
 /**
  * 	Styling for Dashboard
  */

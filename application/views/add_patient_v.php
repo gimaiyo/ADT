@@ -26,10 +26,10 @@
 					maxDate : "0D",
 					dateFormat : $.datepicker.ATOM,
 					changeMonth : true,
-					changeYear : true
+					changeYear : true,
 			});
-			
-			
+
+					
 			//Function to calculate age in years and months
 			$("#dob").change(function() {
 					var dob = $(this).val();
