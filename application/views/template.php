@@ -119,7 +119,21 @@ if (isset($styles)) {
 						$(".error").css("display","block");
 					})
 				</script>
-      
+
+<?php 
+//Load tableTools for datatables printing and exporting
+if(isset($report_title)){
+	?>
+	<style type="text/css" title="currentStyle">
+		@import "../../media/css/demo_page.css";
+		@import "../../media/css/demo_table.css";
+		@import "<?php echo base_url().'css/datatable/TableTools.css' ?>";
+	</style>
+	<script type="text/javascript" charset="utf-8" src="<?php echo base_url().'Scripts/datatable/ZeroClipboard.js' ?>"></script>
+	<script type="text/javascript" charset="utf-8"  src="<?php echo base_url().'Scripts/datatable/TableTools.js' ?>"></script>
+	<?php
+}
+?>      
 <style>
 	.setting_table {
 		font-size: 0.8em;
@@ -144,9 +158,9 @@ if (isset($styles)) {
 					<div id="facility_name">							
 						<span><?php echo $this -> session -> userdata('facility_name'); ?></span>
 					</div>
-						
+					
 				</div>
-				<div class="banner_text"><?php echo $banner_text; ?></div>
+				<div class="banner_text"><?php echo $banner_text; ?></div>	
 				
  <div id="top_menu"> 
 

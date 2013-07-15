@@ -14,7 +14,7 @@
 		<?php $this->load->view("reports/reports_top_menus_v") ?>
 		<h4 style="text-align: center">Listing of Patients Expected to Visit Between <span id="start_date"><?php echo $from; ?></span> And <span id="end_date"><?php echo $to; ?></span></h4>
 		<hr size="1" style="width:80%">
-         <table align='center'  width='50%' style="font-size:16px; margin-bottom: 10px">
+         <table align='center'  width='50%' style="margin-bottom: 10px">
 			<tr>
 				<td colspan="3"><h5 class="report_title" style="text-align:center;font-size:14px;">Number of patients: <span id="total_count"><?php echo $all_count;?></span></h5></td>
 			</tr>

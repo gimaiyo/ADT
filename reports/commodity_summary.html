@@ -107,7 +107,8 @@
 													}
 												}
 											});
-										} else {
+										} 
+										else {
 											
 											batch_stock_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out ) ) AS stock_levels, '" + physical_row['counter'] + "' AS counter, ds.batch_number FROM drug_stock_movement ds WHERE ds.drug =  '" + drug + "' AND ds.expiry_date > '"+start_date+"'AND facility='" + facility + "' "+stock_param+" AND date(ds.transaction_date) <= date('"+start_date+"') AND ds.batch_number='" + physical_row['batch'] + "'";
 											//console.log(batch_stock_sql)
@@ -159,7 +160,7 @@
 							var row_string = "";
 							SQLExecuteAbstraction(sql, function(transaction, results) {
 								var first_row = results.rows.item(0);
-
+								
 								var default_total = first_row['TOTAL'];
 								if(default_total == null) {
 									default_total = 0;

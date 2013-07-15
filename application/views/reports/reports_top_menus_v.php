@@ -15,4 +15,4 @@
 		<?php echo $this->load->view('reports/report_home_types_v'); ?>
 	</div>	
 </div>
-<h2 id="facility_name" style="text-align: center"><?php if(isset($facility_name)){echo $facility_name;}if(isset($stock_type)){ echo ' - '.$stock_type;}  ?></h2>
+<h2 id="facility_name" style="text-align: center"><?php if(isset($facility_name)){echo $facility_name;}  ?></h2>
