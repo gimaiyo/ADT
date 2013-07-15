@@ -30,25 +30,23 @@ if ($access_level == "nascop_staff") {
 		<script type="text/javascript">
 			$(document).ready(function(){
 				$("#default").load('<?php $today=date('d-M-Y'); echo base_url().'report_management/cumulative_patients/'.$today.'/2';?>',function(){
-							   $('.dataTables').dataTable({  		
-		   		"bProcessing": true,
-				"bServerSide": false,
-		        "bJQueryUI": true,
-		        "sPaginationType": "full_numbers",
-		        "sDom": 'T<"clear">lfrtip',
-		        "oTableTools": {
+			   $('.dataTables').dataTable( {
+		   		"bJQueryUI": true,
+	        	"sPaginationType": "full_numbers",
+		        "sDom": '<"H"Tfr>t<"F"ip>',
+		   		"oTableTools": {
 					"sSwfPath": base_url+"scripts/datatable/copy_csv_xls_pdf.swf",
 					"aButtons": [ "copy", "print","xls","pdf" ]
-				}		        
+				},
+		   		"bProcessing": true,
+				"bServerSide": false,
 			});
 				});
 			});
 		</script>
 		
 		<style type="text/css">
-			.center-content{
-				width:76%;
-			}
+		  .full-content{padding:0;}
 		</style>
 	</head>
 	<body>
