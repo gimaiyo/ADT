@@ -1,3 +1,8 @@
+<style>
+	select{
+		width:auto;
+	}
+</style>
 <div id="standard_report_sub">
 	<table >
 		<!-- Standard reports -->
