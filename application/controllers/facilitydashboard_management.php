@@ -355,7 +355,7 @@ class Facilitydashboard_Management extends MY_Controller {
 					$patients_array[$counter]['total_male_child'] = $total_male_child;
 					$patients_array[$counter]['total_female_adult'] = $total_female_adult;
 					$patients_array[$counter]['total_female_child'] = $total_female_child;
-					
+
 				} else {
 					$total_male_child++;
 					$patients_array[$counter]['total_male_adult'] = $total_male_adult;
@@ -381,11 +381,14 @@ class Facilitydashboard_Management extends MY_Controller {
 					$patients_array[$counter]['total_female_child'] = $total_female_child;
 				}
 			}
-			
-			
+
 		}
-$resultArraySize=5;
-		$categories = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday');
+		$resultArraySize = 5;
+		$categories = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday','Saturday');
+		$maleAdult[] =0;
+		$femaleAdult[] =0;
+		$maleChild[] = 0;
+		$femaleChild[] = 0;
 		foreach ($patients_array as $key => $value) {
 			$maleAdult[] = (int)$value['total_male_adult'];
 			$femaleAdult[] = (int)$value['total_female_adult'];
@@ -396,7 +399,7 @@ $resultArraySize=5;
 		$resultArray = json_encode($resultArray);
 		$categories = json_encode($categories);
 
-        $data['resultArraySize']=$resultArraySize;
+		$data['resultArraySize'] = $resultArraySize;
 		$data['container'] = "chart_div";
 		$data['chartType'] = 'bar';
 		$data['chartTitle'] = 'Patients Enrollment';
@@ -443,7 +446,7 @@ $resultArraySize=5;
 		$patients_expected_sql = "select distinct pa.patient,pa.appointment,UPPER(p.first_name) as first_name from patient_appointment pa, patient p where pa.appointment between '" . $start_date . "' and '" . $end_date . "'  and pa.patient = p.patient_number_ccc and p.facility_code='" . $facility_code . "' AND pa.facility=p.facility_code GROUP BY pa.patient,pa.appointment ORDER BY pa.appointment";
 		$res = $this -> db -> query($patients_expected_sql);
 		$results = $res -> result_array();
-		$resultArraySize=0;
+		$resultArraySize = 0;
 		$counter = 0;
 		$x = 0;
 		$y = 0;
@@ -500,7 +503,7 @@ $resultArraySize=5;
 
 		}
 
-		$categories = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday');
+		$categories = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday','Saturday');
 		foreach ($patients_array as $key => $value) {
 			$visited[] = (int)$value['patient_visited'];
 			$missed[] = (int)$value['patient_not_visited'];
@@ -509,7 +512,7 @@ $resultArraySize=5;
 		$resultArray = array( array('name' => 'Visited', 'data' => $visited), array('name' => 'Missed', 'data' => $missed));
 		$resultArray = json_encode($resultArray);
 		$categories = json_encode($categories);
- $data['resultArraySize']=$resultArraySize;
+		$data['resultArraySize'] = $resultArraySize;
 		$data['container'] = "chart_div5";
 		$data['chartType'] = 'bar';
 		$data['chartTitle'] = 'Patients Expected';

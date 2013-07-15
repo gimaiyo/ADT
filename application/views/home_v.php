@@ -178,26 +178,60 @@ if($this->session->userdata("changed_password")){
 
 <script type="text/javascript">
 		$(document).ready(function() {
-      var period;
-      var location;
+      var period=30;
+      var location=2;
+      
+      
+      //Get Today's Date and Upto Saturday
+      var someDate = new Date();
+      var dd = ("0" + someDate.getDate()).slice(-2);
+      var mm = ("0" + (someDate.getMonth() + 1)).slice(-2);
+      var y = someDate.getFullYear();
+      var fromDate =y+'-'+mm+'-'+dd;
+      
+      var numberOfDaysToAdd = 5;
+      var to_date=new Date(someDate.setDate(someDate.getDate() + numberOfDaysToAdd)); 
+      var dd = ("0" + to_date.getDate()).slice(-2);
+      var mm = ("0" + (to_date.getMonth() + 1)).slice(-2);
+      var y = to_date.getFullYear();
+      var endDate =y+'-'+mm+'-'+dd;
+      
+      $("#enrollment_start").val(fromDate);
+      $("#enrollment_end").val(endDate);
+      
+      $("#visit_start").val(fromDate);
+      $("#visit_end").val(endDate);
     
-	  $(".loadingDiv").show();
-       $('#chart_area').load("<?php echo base_url().'facilitydashboard_management/getExpiringDrugs/30/2'?>");
-       $('#chart_area2').load("<?php echo base_url().'facilitydashboard_management/getPatientEnrolled/2012-02-02/2012-02-07'?>");
+	   $(".loadingDiv").show();
+	   var expiry_link="<?php echo base_url().'facilitydashboard_management/getExpiringDrugs/';?>"+period+'/'+location;
+	   var enrollment_link="<?php echo base_url().'facilitydashboard_management/getPatientEnrolled/';?>"+fromDate+'/'+endDate;
+	   var visits_link="<?php echo base_url().'facilitydashboard_management/getExpectedPatients/';?>"+fromDate+'/'+endDate;
+       $('#chart_area').load(expiry_link);
+       $('#chart_area2').load(enrollment_link);
+       $('#chart_area3').load(visits_link);
        
-       $('#chart_area3').load("<?php echo base_url().'facilitydashboard_management/getExpectedPatients/2013-03-17/2013-03-22'?>");
+       
        
        
 		    $('.generate').click(function(){
-
-		
-		    	 period = $('.period').val();
-		    	 location = $('.location').val();
-		    	 	        $('#chart_area').load("<?php echo base_url().'facilitydashboard_management/getExpiringDrugs/';?>"+period+'/'+location,function(){
-		    	 	        	
-		    	 	        	});
-
-		    	 });
+                 var button_id=$(this).attr("id");
+                 if(button_id=="expiry_btn"){
+                 	 period = $('.period').val();
+		    	     location = $('.location').val();
+		    	     var expiry_link="<?php echo base_url().'facilitydashboard_management/getExpiringDrugs/';?>"+period+'/'+location;
+		    	 	 $('#chart_area').load(expiry_link);           	
+                 }else if(button_id=="enrollment_btn"){
+                 	 var from_date=$("#enrollment_start").val();
+                 	 var to_date=$("#enrollment_end").val();
+                 	 var enrollment_link="<?php echo base_url().'facilitydashboard_management/getPatientEnrolled/';?>"+from_date+'/'+to_date;
+                 	 $('#chart_area2').load(enrollment_link);
+                 }else if(button_id=="appointment_btn"){
+                 	 var from_date=$("#visit_start").val();
+                 	 var to_date=$("#visit_end").val();
+                 	 var visits_link="<?php echo base_url().'facilitydashboard_management/getExpectedPatients/';?>"+from_date+'/'+to_date;
+                     $('#chart_area3').load(visits_link);
+                 }		
+            });
 	        
 	    
 
@@ -444,7 +478,7 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 				   <option value="1">Main Store</option>
 				   <option  selected=selected value="2">Pharmacy</option>
 			</select> 
-			<button class="generate btn">Generate</button>
+			<button class="generate btn" id="expiry_btn">Generate</button>
 			</h3>
 			
 			<div id="chart_area">
@@ -457,7 +491,7 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 			<h3>Weekly Summary of Patient Enrollment from
 				<input type="text" placeholder="Start" class="input-mini" id="enrollment_start"/> to
 				<input type="text" placeholder="End" class=" input-mini" id="enrollment_end" readonly="readonly"/>
-				<button class="btn generate btn-mini">Generate</button>
+				<button class="btn generate btn-mini" id="enrollment_btn">Generate</button>
 				 </h3>
 			<div id="chart_area2"></div>
 		</div>
@@ -468,7 +502,7 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 				from
 				<input type="text" placeholder="Start" class="input-mini" id="visit_start"/> to
 				<input type="text" placeholder="End" class=" input-mini" id="visit_end" readonly="readonly" />
-				<button class="btn-mini generate btn">Generate</button>
+				<button class="btn-mini generate btn" id="appointment_btn">Generate</button>
 				</h3>
 			<div id="chart_area3"></div>
 		</div>
@@ -511,20 +545,7 @@ $(document).ready(function(){
                                    var day = date.getDay(); 
                                    return [day == 1];
                                    }
-			});
-			
-			 $("#enrollment_end").datepicker({
-					yearRange : "-120:+0",
-					maxDate : "0D",
-					dateFormat : $.datepicker.ATOM,
-					changeMonth : true,
-					changeYear : true,
-					beforeShowDay: function(date){ 
-                                   var day = date.getDay(); 
-                                   return [day == 6];
-                                   }
-			});
-			
+			});			
 			
 			$("#visit_start").datepicker({
 					yearRange : "-120:+0",
@@ -537,20 +558,7 @@ $(document).ready(function(){
                                    return [day == 1];
                                    }
 			});
-			
-			 $("#visit_end").datepicker({
-					yearRange : "-120:+0",
-					maxDate : "0D",
-					dateFormat : $.datepicker.ATOM,
-					changeMonth : true,
-					changeYear : true,
-					beforeShowDay: function(date){ 
-                                   var day = date.getDay(); 
-                                   return [day == 6];
-                                   }
-			});
-			
-			
+						
 			//Visit Onchange Events
 			$("#visit_start").change(function(){
 				var from_date=$(this).val();
