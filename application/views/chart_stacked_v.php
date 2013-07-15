@@ -1,3 +1,24 @@
+<?php
+$chartSize=0;
+if($resultArraySize<=5){
+	$chartSize='300';
+}
+if($resultArraySize>5){
+	$chartSize='600';
+}
+if($resultArraySize>10){
+	$chartSize='900';
+}
+if($resultArraySize>15){
+	$chartSize='1200';
+}
+if($resultArraySize>20){
+	$chartSize='1500';
+}
+if($resultArraySize>25){
+	$chartSize='2100';
+}
+?>
 <script>
 		$(function () {
 	$('<?php echo "#" . $container; ?>').highcharts({
@@ -14,6 +35,7 @@
 		'#a6c96a'
 		],
 		chart: {
+		height:<?php echo $chartSize;?>,
 		type: '<?php echo $chartType ?>'
 		},
 		title: {
@@ -62,7 +84,7 @@
 		});
 </script>
 <div class="graph">
-	<div id="<?php echo $container?>"  style="width:100%;height:600px"  '>
+	<div id="<?php echo $container?>"  style="width:100%"  '>
 </div>
 </div>
 

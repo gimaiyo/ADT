@@ -355,6 +355,7 @@ class Facilitydashboard_Management extends MY_Controller {
 					$patients_array[$counter]['total_male_child'] = $total_male_child;
 					$patients_array[$counter]['total_female_adult'] = $total_female_adult;
 					$patients_array[$counter]['total_female_child'] = $total_female_child;
+					
 				} else {
 					$total_male_child++;
 					$patients_array[$counter]['total_male_adult'] = $total_male_adult;
@@ -380,8 +381,10 @@ class Facilitydashboard_Management extends MY_Controller {
 					$patients_array[$counter]['total_female_child'] = $total_female_child;
 				}
 			}
-			$resultArraySize++;
+			
+			
 		}
+$resultArraySize=5;
 		$categories = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday');
 		foreach ($patients_array as $key => $value) {
 			$maleAdult[] = (int)$value['total_male_adult'];
