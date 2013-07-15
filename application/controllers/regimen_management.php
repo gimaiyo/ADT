@@ -74,8 +74,8 @@ class Regimen_management extends MY_Controller {
 			if ($regimen['Enabled'] == 1 && @$regimen['Merged_To']=="" && $access_level == "facility_administrator") {
 				$links .= " | ";	
 				$links .= anchor('regimen_management/disable/' . $regimen['id'], 'Disable', array('class' => 'disable_user'));
-				//$links .= " | ";
-				//$links .= "<a href='#' class='merge_drug' id='$drug'>Merge</a>";
+				$links .= " | ";
+				$links .= "<a href='#' class='merge_drug' id='$drug'>Merge</a>";
 			}
 			if ($regimen['Enabled'] == 0 && $access_level == "facility_administrator"){
 				$links .= anchor('regimen_management/enable/' . $regimen['id'], 'Enable', array('class' => 'enable_user'));
