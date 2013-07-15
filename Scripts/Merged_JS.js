@@ -11,16 +11,16 @@
 	 */
 	$(document).ready(function() {
 		var base_url=$("#base_url").val();
-		   $('.dataTables').dataTable({  		
-		   		"bProcessing": true,
-				"bServerSide": false,
-		        "bJQueryUI": true,
-		        "sPaginationType": "full_numbers",
-		        "sDom": 'T<"clear">lfrtip',
-		        "oTableTools": {
+		   $('.dataTables').dataTable( {
+		   		"bJQueryUI": true,
+	        	"sPaginationType": "full_numbers",
+		        "sDom": '<"H"Tfr>t<"F"ip>',
+		   		"oTableTools": {
 					"sSwfPath": base_url+"scripts/datatable/copy_csv_xls_pdf.swf",
 					"aButtons": [ "copy", "print","xls","pdf" ]
-				}		        
+				},
+		   		"bProcessing": true,
+				"bServerSide": false,
 			});
 		/*
 		 * Reports generation
