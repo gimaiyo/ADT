@@ -5,6 +5,11 @@
 		var stock_type=<?php echo $stock_type; ?>;
 		var _url=<?php echo "'".$base_url."report_management/drug_stock_on_hand/".$stock_type."'"; ?>;
 		$('#drug_table').dataTable( {
+			"sDom": 'T<"clear">lfrtip',
+	   		"oTableTools": {
+				"sSwfPath": base_url+"scripts/datatable/copy_csv_xls_pdf.swf",
+				"aButtons": [ "copy", "print","xls","pdf" ]
+			},
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": _url,

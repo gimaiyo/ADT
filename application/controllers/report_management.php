@@ -1727,7 +1727,8 @@ class report_management extends MY_Controller {
 		$end_date=date('Y-m-d',strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
 		$data['facility_name'] = $this -> session -> userdata('facility_name');
-		$get_facility_sql = $this -> db -> query("SELECT '$facility_code' as facility,d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id where d.Enabled=1 LIMIT 10");
+
+		$get_facility_sql = $this -> db -> query("SELECT '$facility_code' as facility,d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id where d.Enabled=1 limit 10");
 		$get_commodity_array=$get_facility_sql->result_array();
 		foreach ($get_commodity_array as $parent_row) {
 			$this->getDrugInfo($facility_code, $parent_row['id'], $parent_row['drug'], $parent_row['name'], $parent_row['pack_size'],$start_date, $end_date, $stock_type="2");
@@ -1741,7 +1742,7 @@ class report_management extends MY_Controller {
 		$data['banner_text'] = "Facility Reports";
 		$data['selected_report_type'] = "Drug Inventory";
 		$data['report_title'] = "Facility Commodity Summary";
-		$data['content_view'] = 'reports/commodity_summary';
+		$data['content_view'] = 'reports/commodity_summary_v';
 		$this -> load -> view('template', $data);
 		
 	}
@@ -2136,8 +2137,8 @@ class report_management extends MY_Controller {
 				}
 				$row_string .= "</tr>";
 			}
-			$row_string .= "</tbody><tfoot><tr><td colspan='3'><b>Totals(units):</b></td><td><b>" . number_format($total) . "</b></td><td><b>100</b></td><td><b>" . number_format($overall_pharmacy_drug_qty) . "</b></td><td><b>" . number_format(($overall_pharmacy_drug_qty / $total) * 100, 1) . "</b></td><td><b>" . number_format($overall_store_drug_qty) . "</b></td><td><b>" . number_format(($overall_store_drug_qty / $total) * 100, 1) . "</b></td></tr>";
-			$row_string .= "</tfoot></table>";
+			$row_string .= "</tbody><tfoot><tr><td colspan='3'><b>Totals(units):</b></td><td><b>" . number_format($total) . "</b></td><td><b>100</b></td><td><b>" . number_format($overall_pharmacy_drug_qty) . "</b></td><td><b>" . number_format(($overall_pharmacy_drug_qty / $total) * 100, 1) . "</b></td><td><b>" . number_format($overall_store_drug_qty) . "</b></td><td><b>" . number_format(($overall_store_drug_qty / $total) * 100, 1) . "</b></td></tr></tfoot>";
+			$row_string .= "</table>";
 		}
 		$data['dyn_table'] = $row_string;
 		$data['title'] = "webADT | Reports";
