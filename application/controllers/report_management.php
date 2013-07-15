@@ -1531,7 +1531,7 @@ class report_management extends MY_Controller {
 
 				//If current stock balance is less than minimum consumption
 				if ($stock_level < $minimum_consumption) {
-					$stock_status = "LOW";
+					$stock_status = "<span class='red'>LOW</span>";
 					if ($minimum_consumption < 0) {
 						$minimum_consumption = 0;
 					}
@@ -1553,13 +1553,13 @@ class report_management extends MY_Controller {
 					$row[] = number_format($aRow['stock_level']);
 					//SOH IN Packs
 					if (is_numeric($aRow['pack_size']) and $aRow['pack_size'] > 0) {
-						$row[] = ceil($aRow['stock_level'] / $aRow['pack_size']);
+						$row[] = number_format(ceil($aRow['stock_level'] / $aRow['pack_size']));
 					} else {
 						$row[] = " - ";
 					}
 
 					//Safety Stock
-					$row[] = ceil($minimum_consumption);
+					$row[] = number_format(ceil($minimum_consumption));
 					$row[] = $stock_status;
 
 				}
@@ -1727,7 +1727,7 @@ class report_management extends MY_Controller {
 		$end_date=date('Y-m-d',strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
 		$data['facility_name'] = $this -> session -> userdata('facility_name');
-		$get_facility_sql = $this -> db -> query("SELECT '$facility_code' as facility,d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id where d.Enabled=1 ");
+		$get_facility_sql = $this -> db -> query("SELECT '$facility_code' as facility,d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id where d.Enabled=1 LIMIT 10");
 		$get_commodity_array=$get_facility_sql->result_array();
 		foreach ($get_commodity_array as $parent_row) {
 			$this->getDrugInfo($facility_code, $parent_row['id'], $parent_row['drug'], $parent_row['name'], $parent_row['pack_size'],$start_date, $end_date, $stock_type="2");
@@ -2136,8 +2136,8 @@ class report_management extends MY_Controller {
 				}
 				$row_string .= "</tr>";
 			}
-			$row_string .= "</tbody><tr class='tfoot'><td colspan='3'><b>Totals(units):</b></td><td><b>" . number_format($total) . "</b></td><td><b>100</b></td><td><b>" . number_format($overall_pharmacy_drug_qty) . "</b></td><td><b>" . number_format(($overall_pharmacy_drug_qty / $total) * 100, 1) . "</b></td><td><b>" . number_format($overall_store_drug_qty) . "</b></td><td><b>" . number_format(($overall_store_drug_qty / $total) * 100, 1) . "</b></td></tr>";
-			$row_string .= "</table>";
+			$row_string .= "</tbody><tfoot><tr><td colspan='3'><b>Totals(units):</b></td><td><b>" . number_format($total) . "</b></td><td><b>100</b></td><td><b>" . number_format($overall_pharmacy_drug_qty) . "</b></td><td><b>" . number_format(($overall_pharmacy_drug_qty / $total) * 100, 1) . "</b></td><td><b>" . number_format($overall_store_drug_qty) . "</b></td><td><b>" . number_format(($overall_store_drug_qty / $total) * 100, 1) . "</b></td></tr>";
+			$row_string .= "</tfoot></table>";
 		}
 		$data['dyn_table'] = $row_string;
 		$data['title'] = "webADT | Reports";
@@ -2723,8 +2723,6 @@ class report_management extends MY_Controller {
 			foreach ($results as $result) {
 				$dyn_table .= "<tr><td>" . $result['drug'] . "</td><td>" . $result['unit'] . "</td><td>" . $result['pack_size'] . "</td><td>" . number_format($result['total']) . "</td></tr>";
 			}
-		} else {
-			$dyn_table .= "<tr><td colspan='4'>No Data Available</td></tr>";
 		}
 		$dyn_table .= "</tbody></table>";
 		$data['dyn_table'] = $dyn_table;
@@ -2755,6 +2753,7 @@ class report_management extends MY_Controller {
 		$pharmacy_drug_qty_percentage = "";
 		$store_drug_qty_percentage = "";
 		$drug_total_percentage = "";
+		$total_drug_qty=0;
 
 		//Select total consumption at facility
 		$sql = "select sum(quantity_out) as total from drug_stock_movement where transaction_date between '$start_date' and '$end_date' and facility='$facility_code' ";
@@ -2791,6 +2790,7 @@ class report_management extends MY_Controller {
 				$current_drug = $result['drug'];
 				$current_drugname = $result['Name'];
 				$unit = $result['unit'];
+				$drug_total=0;
 				$pack_size = $result['pack_size'];
 				$drug_total = $result['qty'];
 				$drug_total_percentage = number_format(($drug_total / $total) * 100, 1);
@@ -2803,7 +2803,7 @@ class report_management extends MY_Controller {
 					foreach ($results as $result) {
 						$total_pharmacy_drug_qty = $result['qty'];
 						$overall_pharmacy_drug_qty += $total_pharmacy_drug_qty;
-						@$pharmacy_drug_qty_percentage = number_format((@$total_pharmacy_drug_qty / @$drug_total) * 100, 1);
+						$pharmacy_drug_qty_percentage = number_format(($total_pharmacy_drug_qty / $drug_total) * 100, 1);
 						if ($result['drug'] != null) {
 							$row_string .= "<td>" . number_format($total_pharmacy_drug_qty) . "</td><td>$pharmacy_drug_qty_percentage</td>";
 						}
@@ -2818,10 +2818,10 @@ class report_management extends MY_Controller {
 				if ($results) {
 					foreach ($results as $result) {
 						$total_store_drug_qty = $result['qty'];
-						$overall_store_drug_qty += $total_drug_qty;
+						$overall_store_drug_qty += $total_store_drug_qty;
 						$store_drug_qty_percentage = number_format(($total_store_drug_qty / $drug_total) * 100, 1);
 						if ($result['drug'] != null) {
-							$row_string .= "<td>$total_store_drug_qty</td><td>$store_drug_qty_percentage</td>";
+							$row_string .= "<td>".number_format($total_store_drug_qty)."</td><td>$store_drug_qty_percentage</td>";
 						}
 					}
 				} else {
@@ -2829,12 +2829,12 @@ class report_management extends MY_Controller {
 				}
 				$row_string .= "</tr>";
 			}
-			$row_string .= "<tr class='tfoot'><td colspan='4'><b>Totals(units):</b></td><td><b>" . number_format($total) . "</b></td><td><b>100</b></td><td><b>" . number_format($overall_pharmacy_drug_qty) . "</b></td><td><b>" . number_format(($overall_pharmacy_drug_qty / $total) * 100, 1) . "</b></td><td><b>" . number_format($overall_store_drug_qty) . "</b></td><td><b>" . number_format(($overall_store_drug_qty / $total) * 100, 1) . "</b></td></tr>";
+			$row_string .= "</tbody><tfoot><tr><td colspan='4'><b>Totals(units):</b></td><td><b>" . number_format($total) . "</b></td><td><b>100</b></td><td><b>" . number_format($overall_pharmacy_drug_qty) . "</b></td><td><b>" . number_format(($overall_pharmacy_drug_qty / $total) * 100, 1) . "</b></td><td><b>" . number_format($overall_store_drug_qty) . "</b></td><td><b>" . number_format(($overall_store_drug_qty / $total) * 100, 1) . "</b></td></tr>";
 
 		} else {
 			//$row_string .= "<tr><td colspan='11'>No Data Available</td></tr>";
 		}
-		$row_string .= "</tbody></table>";
+		$row_string .= "</tfoot></table>";
 		$data['dyn_table'] = $row_string;
 		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu'] = 1;
