@@ -2,20 +2,20 @@
 class Regimen_management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
-		$this->session->set_userdata("link_id","index");
-		$this->session->set_userdata("linkSub","regimen_management");
-		$this->session->set_userdata("linkTitle","Regimen Management");
+		$this -> session -> set_userdata("link_id", "index");
+		$this -> session -> set_userdata("linkSub", "regimen_management");
+		$this -> session -> set_userdata("linkTitle", "Regimen Management");
 		$this -> load -> database();
 	}
 
 	public function index() {
 		$this -> listing();
-		
+
 	}
 
 	public function listing() {
 		$access_level = $this -> session -> userdata('user_indicator');
-		
+
 		$source = 0;
 		if ($access_level == "pharmacist") {
 			$source = $this -> session -> userdata('facility');
@@ -25,75 +25,62 @@ class Regimen_management extends MY_Controller {
 		$data['content_view'] = "regimen_listing_v";
 		$data['styles'] = array("jquery-ui.css");
 		$data['scripts'] = array("jquery-ui.js");
-		
-		$regimens = Regimen::getAllHydrated($source,$access_level);
-		$tmpl = array ( 'table_open'  => '<table id="regimen_setting" class="table table-bordered table-hover table-striped setting_table">' );
-		$this -> table ->set_template($tmpl);
+
+		$regimens = Regimen::getAllHydrated($source, $access_level);
+		$tmpl = array('table_open' => '<table id="regimen_setting" class="table table-bordered table-hover table-striped setting_table">');
+		$this -> table -> set_template($tmpl);
 		$this -> table -> set_heading('id', 'Regimen Code', 'Regimen Desc', 'Line', 'Regimen Category', 'Type Of Service', 'Options');
-		
-		
+
 		foreach ($regimens as $regimen) {
-			$links="";
+			$links = "";
 			$drug = $regimen['id'];
-			$type_of_service=$regimen['Regimen_Service_Type'];
+			$type_of_service = $regimen['Regimen_Service_Type'];
 
 			//if($type_of_service!="ART" && $access_level!="system_administrator"){
-			if($access_level!="facility_administrator"){
-				$array_param=array(
-					'id'=>$regimen['id'],
-					'role'=>'button',
-					'class'=>'edit_user',
-					'data-toggle'=>'modal'
-				);
-				if($regimen['Enabled'] == 1){
+			if ($access_level != "facility_administrator") {
+				$array_param = array('id' => $regimen['id'], 'role' => 'button', 'class' => 'edit_user', 'data-toggle' => 'modal');
+				if ($regimen['Enabled'] == 1) {
 					//$links .= anchor('' . $regimen['id'], 'Edit', array('class' => 'edit_user','id'=>$regimen['id']));
 					$links .= anchor('#edit_form', 'Edit', $array_param);
 				}
-				
-			}
-			elseif($access_level=="facility_administrator"){
+
+			} elseif ($access_level == "facility_administrator") {
 				//href="#entry_form" role="button" id="new_regimen" class="btn" data-toggle="modal"
-				$array_param=array(
-					'id'=>$regimen['id'],
-					'role'=>'button',
-					'class'=>'edit_user',
-					'data-toggle'=>'modal'
-				);
-				if($regimen['Enabled'] == 1){
+				$array_param = array('id' => $regimen['id'], 'role' => 'button', 'class' => 'edit_user', 'data-toggle' => 'modal');
+				if ($regimen['Enabled'] == 1) {
 					$links .= anchor('#edit_form', 'Edit', $array_param);
-					
+
 				}
 			}
-			
+
 			if ($regimen['Enabled'] == 1 && @$regimen['Merged_To']) {
 				$links .= " | ";
 				$links .= anchor('regimen_management/disable/' . $regimen['id'], 'Disable', array('class' => 'disable_user'));
-		
-			} 
 
-			if ($regimen['Enabled'] == 1 && @$regimen['Merged_To']=="" && $access_level == "facility_administrator") {
-				$links .= " | ";	
+			}
+
+			if ($regimen['Enabled'] == 1 && @$regimen['Merged_To'] == "" && $access_level == "facility_administrator") {
+				$links .= " | ";
 				$links .= anchor('regimen_management/disable/' . $regimen['id'], 'Disable', array('class' => 'disable_user'));
 				$links .= " | ";
 				$links .= "<a href='#' class='merge_drug' id='$drug'>Merge</a>";
 			}
-			if ($regimen['Enabled'] == 0 && $access_level == "facility_administrator"){
+			if ($regimen['Enabled'] == 0 && $access_level == "facility_administrator") {
 				$links .= anchor('regimen_management/enable/' . $regimen['id'], 'Enable', array('class' => 'enable_user'));
 			}
-			if (@$regimen['Merged_To']) {
-				if($access_level == "facility_administrator"){
+			if ($regimen['Merged_To'] != '') {
+				if ($access_level == "facility_administrator") {
 					$links .= " | ";
 					$links .= anchor('regimen_management/unmerge/' . $regimen['id'], 'Unmerge', array('class' => 'unmerge_drug'));
 				}
 				$checkbox = "<input type='checkbox' name='drugcodes' id='drugcodes' value='$drug' disabled/>";
-
 			} else {
-				
+
 				$checkbox = "<input type='checkbox' name='drugcodes' id='drugcodes' value='$drug'/>";
 			}
-			$this -> table -> add_row($regimen['id'], $checkbox . "&nbsp;" .$regimen['Regimen_Code'], $regimen['Regimen_Desc'], $regimen['Line'], $regimen['Regimen_Category'], $regimen['Regimen_Service_Type'], $links);
+			$this -> table -> add_row($regimen['id'], $checkbox . "&nbsp;" . $regimen['Regimen_Code'], $regimen['Regimen_Desc'], $regimen['Line'], $regimen['Regimen_Category'], $regimen['Regimen_Service_Type'], $links);
 		}
-		$data['access_level']=$access_level;
+		$data['access_level'] = $access_level;
 		$data['regimens'] = $this -> table -> generate();
 
 		$data['regimen_categories'] = Regimen_Category::getAll();
@@ -124,22 +111,22 @@ class Regimen_management extends MY_Controller {
 	}
 
 	public function edit() {
-		$regimen_id=$this -> input -> post('id');
+		$regimen_id = $this -> input -> post('id');
 		$data['regimens'] = Regimen::getHydratedRegimen($regimen_id);
 		echo json_encode($data);
 	}
 
 	public function update() {
-		$regimen_id = $this -> input -> post('regimen_id');		
+		$regimen_id = $this -> input -> post('regimen_id');
 		$regimen_Code = $this -> input -> post('regimen_code');
 		$regimen_Desc = $this -> input -> post('regimen_desc');
 		$category = $this -> input -> post('category');
 		$line = $this -> input -> post('line');
 		$type_Of_Service = $this -> input -> post('type_of_service');
-		$remarks =str_replace("'","\'",$this -> input -> post('remarks'));
+		$remarks = str_replace("'", "\'", $this -> input -> post('remarks'));
 
 		$this -> load -> database();
-		
+
 		$query = $this -> db -> query("UPDATE regimen SET regimen_code='$regimen_Code',regimen_desc='$regimen_Desc',category='$category',line='$line',type_of_service='$type_Of_Service',remarks='$remarks' WHERE id='$regimen_id'");
 		$this -> session -> set_userdata('message_counter', '1');
 		$this -> session -> set_userdata('msg_success', $this -> input -> post('regimen_code') . ' was Updated');
@@ -148,8 +135,8 @@ class Regimen_management extends MY_Controller {
 
 	public function enable($regimen_id) {
 		$this -> load -> database();
-        $query = $this -> db -> query("UPDATE regimen SET enabled='1'WHERE id='$regimen_id'");	
-        $results = Regimen::getRegimen($regimen_id);
+		$query = $this -> db -> query("UPDATE regimen SET enabled='1'WHERE id='$regimen_id'");
+		$results = Regimen::getRegimen($regimen_id);
 		$this -> session -> set_userdata('message_counter', '1');
 		$this -> session -> set_userdata('msg_success', $results -> Regimen_Code . ' was enabled');
 		redirect('settings_management');
@@ -163,7 +150,7 @@ class Regimen_management extends MY_Controller {
 		$this -> session -> set_userdata('msg_error', $results -> Regimen_Code . ' was disabled');
 		redirect('settings_management');
 	}
-	
+
 	public function merge($primary_drugcode_id) {
 		//Handle the array with all regimens that are to be merged
 		$drugcodes = $_POST['drug_codes'];
@@ -186,11 +173,12 @@ class Regimen_management extends MY_Controller {
 		//Fifth Query that updates patient_visit table last_regimen
 		$the_query = "UPDATE patient_visit SET last_regimen_merged_from=last_regimen,last_regimen='$primary_drugcode_id' WHERE last_regimen IN($drugcodes_to_remove);";
 		$this -> db -> query($the_query);
-		//Final Query that updates regimen_drug table 
+		//Final Query that updates regimen_drug table
 		$the_query = "UPDATE regimen_drug SET regimen_merged_from=regimen,regimen='$primary_drugcode_id' WHERE regimen IN($drugcodes_to_remove);";
 		$this -> db -> query($the_query);
 		$results = Regimen::getRegimen($primary_drugcode_id);
-		echo $results -> Regimen_Desc . ' was merged';
+		$this -> session -> set_userdata('message_counter', '1');
+		$this -> session -> set_userdata('msg_success', $results -> Regimen_Code . ' was Merged');
 	}
 
 	public function unmerge($drugcode) {
@@ -204,34 +192,34 @@ class Regimen_management extends MY_Controller {
 		//Third Query that updates patient table current_regimen
 		$the_query = "UPDATE patient SET current_regimen='$drugcode',current_regimen_merged_from='' WHERE current_regimen_merged_from='$drugcode';";
 		$this -> db -> query($the_query);
-		//Fourth Query that updates patient_visit table 
+		//Fourth Query that updates patient_visit table
 		$the_query = "UPDATE patient_visit SET regimen='$drugcode',regimen_merged_from='' WHERE regimen_merged_from='$drugcode';";
 		$this -> db -> query($the_query);
 		//Fifth Query that updates patient_visit table last regimen
 		$the_query = "UPDATE patient_visit SET last_regimen='$drugcode',last_regimen_merged_from='' WHERE last_regimen_merged_from='$drugcode';";
 		$this -> db -> query($the_query);
-		//Final Query that updates regimen_drug table 
+		//Final Query that updates regimen_drug table
 		$the_query = "UPDATE regimen_drug SET regimen='$drugcode',regimen_merged_from='' WHERE regimen_merged_from='$drugcode';";
 		$this -> db -> query($the_query);
-		
+
 		$results = Regimen::getRegimen($drugcode);
-		$this -> session -> set_userdata('message_counter', '2');
-		$this -> session -> set_userdata('message', $results -> Regimen_Desc . ' was unmerged');
-		redirect('regimen_management');
+		$this -> session -> set_userdata('message_counter', '1');
+		$this -> session -> set_userdata('msg_error', $results -> Regimen_Code . ' was Unmerged');
+		redirect('settings_management');
 
 	}
-	
-	public function getRegimenLine($service){
-		$regimens=Regimen::getLineRegimens($service);
+
+	public function getRegimenLine($service) {
+		$regimens = Regimen::getLineRegimens($service);
 		echo json_encode($regimens);
 	}
-	
-	public function getDrugs($regimen){
-		$sql="select rd.drugcode as drug_id,d.drug as drug_name from drugcode d,regimen_drug rd where rd.regimen='$regimen' and rd.drugcode=d.id and rd.active='1' group by rd.drugcode order by rd.drugcode desc";
-		$query=$this->db->query($sql);
-		$results=$query->result_array();
-		if($results){
-		echo json_encode($results);
+
+	public function getDrugs($regimen) {
+		$sql = "select rd.drugcode as drug_id,d.drug as drug_name from drugcode d,regimen_drug rd where rd.regimen='$regimen' and rd.drugcode=d.id and rd.active='1' group by rd.drugcode order by rd.drugcode desc";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			echo json_encode($results);
 		}
 	}
 
