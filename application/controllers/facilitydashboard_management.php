@@ -142,8 +142,9 @@ class Facilitydashboard_Management extends MY_Controller {
 	}
 
 	public function getExpiringDrugs($period = 30, $stock_type = 1) {
-		$expiryArray=array();
-		$stockArray=array();
+		$expiryArray = array();
+		$stockArray = array();
+		$resultArraySize = 0;
 		$count = 0;
 		$facility_code = $this -> session -> userdata('facility');
 		$drugs_sql = "SELECT s.id AS id,s.drug AS Drug_Id,d.drug AS Drug_Name,d.pack_size AS pack_size, u.name AS Unit, s.batch_number AS Batch,s.expiry_date AS Date_Expired,DATEDIFF(s.expiry_date,CURDATE()) AS Days_Since_Expiry FROM drugcode d LEFT JOIN drug_unit u ON d.unit = u.id LEFT JOIN drug_stock_movement s ON d.id = s.drug LEFT JOIN transaction_type t ON t.id=s.transaction_type WHERE t.effect=1 AND DATEDIFF(s.expiry_date,CURDATE()) <='$period' AND DATEDIFF(s.expiry_date,CURDATE())>=0 AND d.enabled=1 AND s.facility ='" . $facility_code . "' GROUP BY Batch ORDER BY Days_Since_Expiry asc";
@@ -167,12 +168,14 @@ class Facilitydashboard_Management extends MY_Controller {
 			$nameArray[] = $drug['drug_name'] . '(' . $drug['batch'] . ')';
 			$expiryArray[] = (int)$drug['expired_days_display'];
 			$stockArray[] = (int)$drug['stocks_display'];
+			$resultArraySize++;
 		}
 		$resultArray = array( array('name' => 'Expiry', 'data' => $expiryArray), array('name' => 'Stock', 'data' => $stockArray));
 		$resultArray = json_encode($resultArray);
 		$categories = $nameArray;
 		$categories = json_encode($categories);
 		//Load Data Variables
+		$data['resultArraySize'] = $resultArraySize;
 		$data['container'] = 'chart_div';
 		$data['chartType'] = 'bar';
 		$data['title'] = 'Chart';
@@ -267,6 +270,7 @@ class Facilitydashboard_Management extends MY_Controller {
 		$dates = array();
 		$x = 7;
 		$y = 0;
+		$resultArraySize = 0;
 
 		//If no parameters are passed, get enrolled patients for the past 7 days
 		if ($startdate == "" || $enddate == "") {
@@ -351,6 +355,7 @@ class Facilitydashboard_Management extends MY_Controller {
 					$patients_array[$counter]['total_male_child'] = $total_male_child;
 					$patients_array[$counter]['total_female_adult'] = $total_female_adult;
 					$patients_array[$counter]['total_female_child'] = $total_female_child;
+					
 				} else {
 					$total_male_child++;
 					$patients_array[$counter]['total_male_adult'] = $total_male_adult;
@@ -376,20 +381,23 @@ class Facilitydashboard_Management extends MY_Controller {
 					$patients_array[$counter]['total_female_child'] = $total_female_child;
 				}
 			}
-
+			
+			
 		}
-		$categories = array('Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday');
-		foreach($patients_array as $key =>$value){
-			$maleAdult[]=(int)$value['total_male_adult'];
-			$femaleAdult[]=(int)$value['total_female_adult'];
-			$maleChild[]=(int)$value['total_male_child'];
-			$femaleChild[]=(int)$value['total_female_child'];
+$resultArraySize=5;
+		$categories = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday');
+		foreach ($patients_array as $key => $value) {
+			$maleAdult[] = (int)$value['total_male_adult'];
+			$femaleAdult[] = (int)$value['total_female_adult'];
+			$maleChild[] = (int)$value['total_male_child'];
+			$femaleChild[] = (int)$value['total_female_child'];
 		}
-		$resultArray=array(array('name'=>'Male Adult','data'=>$maleAdult),array('name'=>'Female Adult','data'=>$femaleAdult),array('name'=>'Male Child','data'=>$maleChild),array('name'=>'Female Child','data'=>$femaleChild));
+		$resultArray = array( array('name' => 'Male Adult', 'data' => $maleAdult), array('name' => 'Female Adult', 'data' => $femaleAdult), array('name' => 'Male Child', 'data' => $maleChild), array('name' => 'Female Child', 'data' => $femaleChild));
 		$resultArray = json_encode($resultArray);
 		$categories = json_encode($categories);
-		
-		$data['container']="chart_div";
+
+        $data['resultArraySize']=$resultArraySize;
+		$data['container'] = "chart_div";
 		$data['chartType'] = 'bar';
 		$data['chartTitle'] = 'Patients Enrollment';
 		$data['yAxix'] = 'Patients';
@@ -435,6 +443,7 @@ class Facilitydashboard_Management extends MY_Controller {
 		$patients_expected_sql = "select distinct pa.patient,pa.appointment,UPPER(p.first_name) as first_name from patient_appointment pa, patient p where pa.appointment between '" . $start_date . "' and '" . $end_date . "'  and pa.patient = p.patient_number_ccc and p.facility_code='" . $facility_code . "' AND pa.facility=p.facility_code GROUP BY pa.patient,pa.appointment ORDER BY pa.appointment";
 		$res = $this -> db -> query($patients_expected_sql);
 		$results = $res -> result_array();
+		$resultArraySize=0;
 		$counter = 0;
 		$x = 0;
 		$y = 0;
@@ -491,16 +500,17 @@ class Facilitydashboard_Management extends MY_Controller {
 
 		}
 
-$categories = array('Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday');
-		foreach($patients_array as $key =>$value){
-			$visited[]=(int)$value['patient_visited'];
-			$missed[]=(int)$value['patient_not_visited'];
+		$categories = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday');
+		foreach ($patients_array as $key => $value) {
+			$visited[] = (int)$value['patient_visited'];
+			$missed[] = (int)$value['patient_not_visited'];
+			$resultArraySize++;
 		}
-		$resultArray=array(array('name'=>'Visited','data'=>$visited),array('name'=>'Missed','data'=>$missed));
+		$resultArray = array( array('name' => 'Visited', 'data' => $visited), array('name' => 'Missed', 'data' => $missed));
 		$resultArray = json_encode($resultArray);
 		$categories = json_encode($categories);
-		
-		$data['container']="chart_div5";
+ $data['resultArraySize']=$resultArraySize;
+		$data['container'] = "chart_div5";
 		$data['chartType'] = 'bar';
 		$data['chartTitle'] = 'Patients Expected';
 		$data['yAxix'] = 'Patients';

@@ -972,7 +972,8 @@ table.setting_table {
 }
 .graph{
 	height:100%;
-	overflow:auto;
+	overflow-x:hidden;
+	overflow-y:auto;
 }
 /**
  * 	Styling for Dashboard
