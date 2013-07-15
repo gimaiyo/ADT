@@ -454,9 +454,9 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 		</div>
 
 		<div class="tile">
-			<h3>Weekly Summary of Patient Enrolment from
-				<input type="text" placeholder="Start" class="input-mini hasDatepicker"/> to
-				<input type="text" placeholder="End" class=" input-mini hasDatepicker"/>
+			<h3>Weekly Summary of Patient Enrollment from
+				<input type="text" placeholder="Start" class="input-mini" id="enrollment_start"/> to
+				<input type="text" placeholder="End" class=" input-mini" id="enrollment_end" readonly="readonly"/>
 				<button class="btn generate btn-mini">Generate</button>
 				 </h3>
 			<div id="chart_area2"></div>
@@ -466,8 +466,8 @@ div#manualcontent .ui-tabs-panel{height:700px;overflow-x:hidden; overflow-y:auto
 		<div class="tile">
 			<h3>Weekly Summary of Patient Appointments
 				from
-				<input type="text" placeholder="Start" class="input-mini hasDatepicker"/> to
-				<input type="text" placeholder="End" class=" input-mini hasDatepicker"/>
+				<input type="text" placeholder="Start" class="input-mini" id="visit_start"/> to
+				<input type="text" placeholder="End" class=" input-mini" id="visit_end" readonly="readonly" />
 				<button class="btn-mini generate btn">Generate</button>
 				</h3>
 			<div id="chart_area3"></div>
@@ -499,5 +499,83 @@ $(document).ready(function(){
 					}
 					
 		      });
+		      
+		      	   
+	        $("#enrollment_start").datepicker({
+					yearRange : "-120:+0",
+					maxDate : "0D",
+					dateFormat : $.datepicker.ATOM,
+					changeMonth : true,
+					changeYear : true,
+					beforeShowDay: function(date){ 
+                                   var day = date.getDay(); 
+                                   return [day == 1];
+                                   }
+			});
+			
+			 $("#enrollment_end").datepicker({
+					yearRange : "-120:+0",
+					maxDate : "0D",
+					dateFormat : $.datepicker.ATOM,
+					changeMonth : true,
+					changeYear : true,
+					beforeShowDay: function(date){ 
+                                   var day = date.getDay(); 
+                                   return [day == 6];
+                                   }
+			});
+			
+			
+			$("#visit_start").datepicker({
+					yearRange : "-120:+0",
+					maxDate : "0D",
+					dateFormat : $.datepicker.ATOM,
+					changeMonth : true,
+					changeYear : true,
+					beforeShowDay: function(date){ 
+                                   var day = date.getDay(); 
+                                   return [day == 1];
+                                   }
+			});
+			
+			 $("#visit_end").datepicker({
+					yearRange : "-120:+0",
+					maxDate : "0D",
+					dateFormat : $.datepicker.ATOM,
+					changeMonth : true,
+					changeYear : true,
+					beforeShowDay: function(date){ 
+                                   var day = date.getDay(); 
+                                   return [day == 6];
+                                   }
+			});
+			
+			
+			//Visit Onchange Events
+			$("#visit_start").change(function(){
+				var from_date=$(this).val();
+				var someDate = new Date(from_date);
+                var numberOfDaysToAdd = 5;
+                var to_date=new Date(someDate.setDate(someDate.getDate() + numberOfDaysToAdd)); 
+                var dd = ("0" + to_date.getDate()).slice(-2);
+                var mm = ("0" + (to_date.getMonth() + 1)).slice(-2);
+                var y = to_date.getFullYear();
+                var someFormattedDate =y+'-'+mm+'-'+dd;
+				$("#visit_end").val(someFormattedDate);
+			});
+			
+			//Enrollments Onchange Events
+			$("#enrollment_start").change(function(){
+				var from_date=$(this).val();
+				var someDate = new Date(from_date);
+                var numberOfDaysToAdd = 5;
+                var to_date=new Date(someDate.setDate(someDate.getDate() + numberOfDaysToAdd)); 
+                var dd = ("0" + to_date.getDate()).slice(-2);
+                var mm = ("0" + (to_date.getMonth() + 1)).slice(-2);
+                var y = to_date.getFullYear();
+                var someFormattedDate =y+'-'+mm+'-'+dd;
+				$("#enrollment_end").val(someFormattedDate);
+			});
+			
 		      });
 </script>
