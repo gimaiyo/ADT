@@ -1086,7 +1086,7 @@ class report_management extends MY_Controller {
 		$this -> load -> view('template', $data);
 	}
 
-	public function cumulative_patients($from = "2013-06-06") {
+	public function cumulative_patients($from = "2013-06-06",$type='1') {
 		//Variables
 		$facility_code = $this -> session -> userdata("facility");
 		$from = date('Y-m-d', strtotime($from));
@@ -1303,8 +1303,14 @@ class report_management extends MY_Controller {
 		$data['selected_report_type'] = "Standard Reports";
 		$data['report_title'] = "Cumulative Number of Patients to Date";
 		$data['facility_name'] = $this -> session -> userdata('facility_name');
+		$data['repo_type']=$type;
 		$data['content_view'] = 'reports/cumulative_patients_v';
-		$this -> load -> view('template', $data);
+		if($type==1){
+			$this -> load -> view('template', $data);
+		}else{
+			$this -> load -> view('reports/cumulative_patients_v', $data);
+		}
+		
 	}
 
 	public function drug_consumption($year = "") {

@@ -11,17 +11,16 @@
 	 */
 	$(document).ready(function() {
 		var base_url=$("#base_url").val();
-		   $('.dataTables').dataTable( {
-		   		"sDom": 'T<"clear">lfrtip',
-		   		"oTableTools": {
-					"sSwfPath": base_url+"scripts/datatable/copy_csv_xls_pdf.swf",
-					"aButtons": [ "copy", "print","xls","pdf" ]
-				},
+		   $('.dataTables').dataTable({  		
 		   		"bProcessing": true,
 				"bServerSide": false,
 		        "bJQueryUI": true,
-		        "sPaginationType": "full_numbers"
-		        
+		        "sPaginationType": "full_numbers",
+		        "sDom": 'T<"clear">lfrtip',
+		        "oTableTools": {
+					"sSwfPath": base_url+"scripts/datatable/copy_csv_xls_pdf.swf",
+					"aButtons": [ "copy", "print","xls","pdf" ]
+				}		        
 			});
 		/*
 		 * Reports generation

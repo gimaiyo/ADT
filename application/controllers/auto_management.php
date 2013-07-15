@@ -26,12 +26,10 @@ class auto_management extends MY_Controller {
 		/*Change PMTCT End to Active(Adults)*/
 		$sql = "update patient p,(SELECT patient_number_ccc FROM patient WHERE (DATEDIFF(CURDATE(),dob)) >=720 AND (DATEDIFF(CURDATE(),dob)) >=4320 AND service=3 AND current_status =4 AND facility_code='$facility') as p1 set p.current_status = '5' where p.patient_number_ccc=p1.patient_number_ccc AND p.facility_code='$facility';";
 		$query = $this -> db -> query($sql);
-		$this -> export($facility);
-		//redirect("patient_management/export");
 	}
 
-	public function export($facility_code) {
-		//$facility_code = $this -> session -> userdata('facility');
+	public function export() {
+		$facility_code = $this -> session -> userdata('facility');
 		$this -> load -> database();
 		$sql = "SELECT medical_record_number,patient_number_ccc,first_name,last_name,other_name,dob,pob,IF(gender=1,'MALE','FEMALE')as gender,IF(pregnant=1,'YES','NO')as pregnant,weight as Current_Weight,height as Current_height,sa as Current_BSA,p.phone,physical as Physical_Address,alternate as Alternate_Address,other_illnesses,other_drugs,adr as Drug_Allergies,IF(tb=1,'YES','NO')as TB,IF(smoke=1,'YES','NO')as smoke,IF(alcohol=1,'YES','NO')as alcohol,date_enrolled,ps.name as Patient_source,s.Name as supported_by,timestamp,facility_code,rst.name as Service,r1.regimen_desc as Start_Regimen,start_regimen_date,pst.Name as Current_status,migration_id,machine_code,IF(sms_consent=1,'YES','NO') as SMS_Consent,fplan as Family_Planning,tbphase,startphase,endphase,IF(partner_status=1,'Concordant',IF(partner_status=2,'Discordant','')) as partner_status,status_change_date,IF(partner_type=1,'YES','NO') as Disclosure,support_group,r.regimen_desc as Current_Regimen,nextappointment,start_height,start_weight,start_bsa,IF(p.transfer_from !='',f.name,'N/A') as Transfer_From,DATEDIFF(nextappointment,CURDATE()) AS Days_to_NextAppointment
 FROM patient p
@@ -156,8 +154,8 @@ ORDER BY p.patient_number_ccc ASC";
 		}
 
 		//if (ob_get_contents())
-			//ob_end_clean();
-			ob_start();
+		//ob_end_clean();
+		ob_start();
 		$filename = "Patient Master For " . $facility_code . ".csv";
 		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 		header("Cache-Control: no-store, no-cache, must-revalidate");
@@ -172,8 +170,6 @@ ORDER BY p.patient_number_ccc ASC";
 
 		$objPHPExcel -> disconnectWorksheets();
 		unset($objPHPExcel);
-		
-
 	}
 
 }
