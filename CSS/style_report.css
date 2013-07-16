@@ -10,6 +10,7 @@
 	background:#eee;
 }
 .comments{
+	margin-top:5%;
 	padding:2%;
 }
 #patient_listing th:first-child, .listing th:first-child,.dataTable th:first-child {
