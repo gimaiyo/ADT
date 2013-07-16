@@ -218,7 +218,7 @@ class Order_Management extends MY_Controller {
 		$data['facilities'] = Facilities::getSatellites($facility);
 		$data['orders'] = $orders;
 		$data['quick_link'] = $status;
-		$data['content_view'] = "view_facility_orders_v";
+		$data['content_view'] = "view_facility_orders_rat_v";
 		$data['banner_text'] = "Submitted Orders";
 		$data['styles'] = array("pagination.css");
 		//get all submitted orders that have not been rationalized (fresh orders)

@@ -41,10 +41,10 @@ class Order_Rationalization extends MY_Controller {
 		
 		$data['orders'] = $orders;
 		$data['quick_link'] = $status;
-		$data['content_view'] = "view_orders_v";
+		$data['content_view'] = "view_orders_rat_v";
 		//If the orders being viewd are approved, display the view for generating the picking list
 		if($status == 1){
-			$data['content_view'] = "view_approved_orders_v";
+			$data['content_view'] = "view_approved_orders_rat_v";
 		}
 		$data['banner_text'] = "Submitted Orders";
 		$data['styles'] = array("pagination.css");
@@ -56,6 +56,7 @@ class Order_Rationalization extends MY_Controller {
 		//First retrieve the order and its particulars from the database
 		$data = array();
 		$data['order_no']=$order;
+		$data['hide_side_menu']=1;
 		$data['order_details_page']='edit_order';
 		$data['order_details'] = Facility_Order::getOrder($order);
 		$data['commodities'] = Cdrr_Item::getOrderItems($order);
