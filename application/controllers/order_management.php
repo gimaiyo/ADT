@@ -205,7 +205,7 @@ class Order_Management extends MY_Controller {
 		$items_per_page = 10;
 		$number_of_orders = Facility_Order::getTotalFacilityNumber($status, $facility);
 		$orders = Facility_Order::getPagedFacilityOrders($offset, $items_per_page, $status, $facility);
-
+		
 		if ($number_of_orders > $items_per_page) {
 			$config['base_url'] = base_url() . "order_management/submitted_orders/" . $status . "/";
 			$config['total_rows'] = $number_of_orders;
@@ -215,7 +215,7 @@ class Order_Management extends MY_Controller {
 			$this -> pagination -> initialize($config);
 			$data['pagination'] = $this -> pagination -> create_links();
 		}
-
+		$data['facilities'] = Facilities::getSatellites($facility);
 		$data['orders'] = $orders;
 		$data['quick_link'] = $status;
 		$data['content_view'] = "view_facility_orders_v";
@@ -260,15 +260,16 @@ class Order_Management extends MY_Controller {
 
 	public function new_central_order($type_order = 1) {
 		$data = array();
-		$data['page_title'] = 'New Central Facility Report';
-
+		
 		$facility = $this -> session -> userdata('facility_id');
 		$facility_code = $this -> session -> userdata('facility');
 
 		//If order is an aggregated one
 		if ($type_order == 1) {
+			
+			$data['page_title'] = 'New Aggregated Facility Report';
 			if ($this -> input -> post("btn_period_select_proceed")) {
-				$data['page_title'] = 'Aggregated Order';
+				$data['page_title_1'] = 'Satelitte Orders';
 				$reporting_period = $this -> input -> post("reporting_period");
 				$reporting_period = date('Y-m', strtotime($reporting_period));
 				$start_date = $this -> input -> post("start_date");
@@ -294,6 +295,7 @@ class Order_Management extends MY_Controller {
 					return;
 				}
 			} else {
+				
 				$data['facility_object'] = Facilities::getFacility($facility);
 				$data['content_view'] = "central_facility_selection_v";
 				$data['banner_text'] = "Select Reporting Period";
@@ -304,6 +306,8 @@ class Order_Management extends MY_Controller {
 		}
 		//If order is a central one
 		else {
+			
+			$data['page_title'] = 'New Central Facility Report';
 			$data['order_details_page'] = "new_central_order";
 			$data['content_view'] = "new_central_order_v";
 			//$data['scripts'] = array("offline_database.js");
@@ -330,9 +334,12 @@ class Order_Management extends MY_Controller {
 		$central_facility = $this -> session -> userdata('facility');
 		$facility_id = $this -> input -> post("satellite_facility");
 		$parent = Facilities::getParent($central_facility);
-
+		
+		//Satellite order
 		if ($parent -> parent == $central_facility) {
+			
 			if ($facility_id < 1) {
+				
 				$data['content_view'] = "facility_selection_v";
 				$data['banner_text'] = "Select Satelitte Facility";
 				$data['facilities'] = Facilities::getSatellites($central_facility);
@@ -351,10 +358,11 @@ class Order_Management extends MY_Controller {
 				$data['facility_object'] = Facilities::getCodeFacility($facility_id);
 				$data['hide_side_menu'] = 0;
 			}
-			$data['page_title'] = "New Satellite Order";
+			$data['page_title'] = "Satellite Order Details";
 			$this -> base_params($data);
 			return;
 		} else {
+			
 			$data = array();
 			$data['order_details_page'] = "new_satellite_order";
 			$facility_id = $this -> session -> userdata('facility');
@@ -377,7 +385,7 @@ class Order_Management extends MY_Controller {
 		$parent = Facilities::getParent($central_facility);
 		$data['parent'] = $parent;
 		$data['central_facility'] = $central_facility;
-		$data['page_title'] = "Order details";
+		//$data['page_title'] = "Order details";
 
 		$data['_type'] = 'order_facility';
 		$data['title'] = "Commodity Orders";
@@ -666,7 +674,8 @@ class Order_Management extends MY_Controller {
 
 		$data['aggregated_order_ids'] = $aggregated_order_ids;
 		$data['order_nos'] = $order_nos;
-		$data['page_title'] = "Aggregated Order";
+		$data['page_title'] = 'New Aggregated Facility Report';
+		$data['page_title_1'] = "Aggregated Order Details";
 		$data['order_details_page'] = "aggregated_orders";
 		$data['facility_object'] = Facilities::getCodeFacility($facility_id);
 		$data['cdrr_totals'] = $cdrr_totals;

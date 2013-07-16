@@ -1,8 +1,5 @@
 <script>
 	$(document).ready(function() {
-		
-		$(".accordion").accordion();
-
 		var $research = $('.research');
 		$research.find("tr").not('.accordion').hide();
 		$research.find("tr").eq(0).show();
@@ -130,6 +127,21 @@
 
 </style>
 <div class="full-content" style="background:#9CF">
+	<div >
+		<ul class="breadcrumb">
+		  <li><a href="<?php echo site_url().'order_management' ?>">Orders</a> <span class="divider">/</span></li>
+		  <?php
+		  	if(isset($page_title_1)){
+		  ?>
+		  <li><a href="<?php echo site_url().'order_management/new_central_order' ?>"><?php echo $page_title; ?></a> <span class="divider">/</span></li>
+		  	
+		  		 <li class="active" id="actual_page"><?php echo $page_title_1;?> </li>
+		  		<?php
+		  	}
+		  	?>
+		 
+		</ul>
+	</div>
 <div class="alert-bootstrap alert-info">
    Aggregated order for order(s) No <span class="_green"><?php echo $order_nos; ?></span>. Make any changes you deem neccessary then click on 'Submit' at the bottom. <b>Note:</b> The units have been converted to packs
 </div>
@@ -159,8 +171,7 @@
 					<input name="start_date" id="start_date" type="hidden" value="<?php echo date("d",strtotime($start_date));?>">
 					<input name="end_date" id="end_date" type="hidden" value="<?php echo date("d",strtotime($end_date));?>">
 					<input name="reporting_period" id="reporting_period" type="hidden" value="<?php echo date("M-Y",strtotime($end_date));?>">
-					<th>Reporting Period:</th>
-					<td colspan="3" >From <span class="_green"><?php echo date("d-M-Y",strtotime($start_date));?></span> To <span class="_green"><?php echo date("d-M-Y",strtotime($end_date));?></span></td>
+					<th >From </th><td><span class="_green"><?php echo date("d-M-Y",strtotime($start_date));?></span></td><th> To</th><td> <span class="_green"><?php echo date("d-M-Y",strtotime($end_date));?></span></td>
 					
 				</tr>
 			</tbody>
@@ -283,7 +294,7 @@
 		<hr size="1">
 		<span class="label" style="vertical-align: bottom">Comments </span>
 		<textarea style="width:98%" rows="4" name="comments"></textarea>
-		<input type="button" id="save_changes" class="btn btn-success btn-large" value="Submit Order" name="save_changes"  />
+		<input type="button" id="save_changes" class="btn" value="Submit Order" name="save_changes"  />
 	</div>
 	
 	

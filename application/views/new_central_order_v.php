@@ -1,9 +1,9 @@
 
 <script>
 	$(document).ready(function() {
-		initDatabase();
+		//initDatabase();
 
-		$(".accordion").accordion();
+		//$(".accordion").accordion();
 
 		var $research = $('.research');
 		$research.find("tr").not('.accordion').hide();
@@ -264,104 +264,26 @@
 </script>
 
 <style>
-	#commodity-table {
-		width: 70%;
-		float: left;
-	}
-	
-	
-	.regimen-table {
-		width: 28%;
-		float: right;
-	}
-	.regimen-table tbody th {
-		font-size: 14px;
-		padding-left: 40px;
-	}
-	.regimen-table input {
-		margin: 5px;
-	}
-	
-	.big-table th. ,.big-table td {
-		border:1px solid #000000;
-		border-top:1px solid #000000;
-		vertical-align: middle;
-	}
-	.big-table input {
-		width: 60px;
-	}
-	.big-table td.number {
-		text-align: center;
-	}
-	th div {
-		font-size: 10px;
-	}
-	.button {
-		width: 100px;
-		margin: 10px;
-	}
-	
-	#comments-section td {
-		border: 0px;
-	}
-	#comments-section th {
-		text-align: left !important;
-	}
-	td {
-		word-wrap: break-word;
-	}
-	.col_drug {
-		width: 400px !important;
-		font-size: 13px;
-	}
-	.accordion{
-		height:25px;
-	}
-	
-	#facility_info{
-		width:80%;
-		margin:0 auto;
-	}
-	.table-bordered input{
-		width:70px;
-		height:23px;
-		margin:0 auto;
-	}
-	#commodity-table tbody tr{
-		font-size:10px;
-		
-	}
-	tr.odd{
-		background-color:rgb(244, 255, 240);
-	}
-	.regimen-table tbody td {
-		font-size: 13px;
-		color: #000;
-		padding:5px;
-	}
-	
-	.ui-state-active{
-		background: #e6e6e6 url(images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x;
-	}
-	.regimen-table thead .col_drug{
-		font-size:14px;
-	}
-	.dataTables_wrapper{
-		width: auto;
-		margin:0 auto;
-	}
-	
-	#reporting_period,#period_start_date,#period_end_date{
- 		color: #00B831;
- 		width:190px;
- 	}
 	.ui-datepicker-calendar {
     	display: none;
     }
 
 </style>
 
-<div class="center-content">
+<div class="full-content" style="background:#9cf;">
+	<div >
+		<ul class="breadcrumb">
+		  <li><a href="<?php echo site_url().'order_management' ?>">Orders</a> <span class="divider">/</span></li>
+		 <?php
+		  	if(isset($page_title)){
+		  		?>
+		  		 <li class="active" id="actual_page"><?php echo $page_title;?> </li>
+		  		<?php
+		  	}
+		  	?>
+		 
+		</ul>
+	</div>
 <form method="post" id="fmNewCentral" action="<?php echo site_url('order_management/save')?>">
 	<?php
 	if ($facility_object -> supported_by == "1") {
@@ -389,8 +311,8 @@
 		
 	}
 	?>
-	<div id="facility_info" class="header section">
-		<table class="table table-bordered"  >
+	<div  class="facility_info">
+		<table class="table"  border="1"  style="border:1px solid #DDD;">
 			<tbody>
 				<tr>
 					<input type="hidden" name="facility_id" value="<?php echo $facility_object -> facilitycode;?>" />
@@ -424,8 +346,7 @@
 						$ordering_facility = $facility_object->id;
 						if($logged_in_facility == $ordering_facility){
 						?>
-						<input style="width: auto" name="generate" id="generate" class="btn btn-success btn-small" value="Get Dispensing Data" readonly="readonly" >
-						<?php }?>
+                        <input style="width: auto" name="generate" id="generate" class="btn" value="Get Dispensing Data" >						<?php }?>
 					</td>
 				</tr>
 			</tbody>
@@ -486,7 +407,7 @@
 	?>
 <div id="commodity-table">
 <div>
-	<table class="table table-bordered table_order_details" id="generate_order">
+	<table class="table table-bordered table_order_details dataTables" id="generate_order">
 		<?php echo $header_text;?>
 		<tbody>
 			<?php
@@ -536,12 +457,12 @@
 	</table>
 </div>
 	
-	<div id="comment_section">
+	<div id="comment_section" class="comments">
 		<br />
 		<hr size="1">
 		<span class="label" style="vertical-align: bottom">Comment </span>
 		<textarea style="width:98%" rows="4" name="comments"></textarea>
-		<input type="button" id="save_changes" class="btn btn-success btn-large" value="Submit Order" name="save_changes"  />
+		<input type="button" id="save_changes" class="btn" value="Submit Order" name="save_changes"  />
 	</div>
 </div>
 

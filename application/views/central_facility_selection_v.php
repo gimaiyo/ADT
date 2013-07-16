@@ -54,6 +54,20 @@ $(document).ready(function() {
     
 </style>
 <div class="center-content">
+	<div >
+		<ul class="breadcrumb">
+		  <li><a href="<?php echo site_url().'order_management' ?>">Orders</a> <span class="divider">/</span></li>
+		 
+		  	<?php
+		  	if(isset($page_title)){
+		  		?>
+		  		 <li class="active" id="actual_page"><?php echo $page_title;?> </li>
+		  		<?php
+		  	}
+		  	?>
+		 
+		</ul>
+	</div>
 <div class="alert-bootstrap alert-info">
     <b>Select the period that you want to create an order for then click 'Proceed'</b>
 </div>

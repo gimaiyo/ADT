@@ -10,7 +10,8 @@ $quick_link = null;
 	<a class="btn" href="<?php echo site_url("order_management/submitted_orders/3");?>"><img src="<?php echo base_url().'Images/dispatch_icon.png'?>">Dispatched</a>
 </div>
 <div id="menu_container">
-	<a class='btn' href="<?php echo base_url().'order_management/new_central_order'?>" style="margin-top:10px;">Central Facility Report</a>
-	<a class="btn" href="<?php echo base_url().'order_management/new_satellite_order'?>" style="margin-top:10px;">Satellite Facility Report</a>
+	<a class='btn' href="<?php echo base_url().'order_management/new_central_order'?>" style="margin-top:10px;">Aggregated Facility Report</a>
+	<a class='btn' href="<?php echo base_url().'order_management/new_central_order/0'?>" style="margin-top:10px;">Central Facility Report</a>
+	<a class="btn " data-toggle="modal" href="#select_satellite" style="margin-top:10px;">Satellite Facility Report</a>
 	
 </div> 
