@@ -1037,14 +1037,7 @@ table.setting_table {
 	border: 1px solid #FFF;
 	padding: 5px;
 }
-.section {
-	width: 29.5%;
-	border: 1px solid #FFF;
-	height: 40%;
-	padding: 5px;
-	background: #000;
-	margin: 10px 5px 5px 5px;
-}
+
 .tleft {
 	float: left;
 }
@@ -1484,7 +1477,7 @@ table#history_table td {
  */
 #commodity-table {
 	width: 70%;
-	float: left;
+	display:inline-block;
 }
 
 .regimen-table {
@@ -1533,8 +1526,11 @@ td {
 }
 
 .facility_info {
+	border: 1px solid #FFF;
 	width: 60%;
 	margin: 0 auto;
+	margin-bottom:5%;
+	background:#eee;
 }
 .table-bordered input {
 	width: 70px;
@@ -1560,7 +1556,4 @@ td {
 .dataTables_wrapper {
 	width: auto;
 	margin: 0 auto;
-}
-table thead tr{
-	background:#999;
 }

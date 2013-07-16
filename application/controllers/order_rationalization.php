@@ -38,6 +38,7 @@ class Order_Rationalization extends MY_Controller {
 			$this -> pagination -> initialize($config);
 			$data['pagination'] = $this -> pagination -> create_links();
 		}
+		
 		$data['orders'] = $orders;
 		$data['quick_link'] = $status;
 		$data['content_view'] = "view_orders_v";
@@ -181,7 +182,7 @@ class Order_Rationalization extends MY_Controller {
 		$data['title'] = "Commodity Orders";
 		$data['_type']='order';
 		$data['link'] = "order_management";
-		$this -> load -> view('template_order', $data);
+		$this -> load -> view('template', $data);
 	}
 
 }

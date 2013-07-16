@@ -1723,7 +1723,7 @@ class report_management extends MY_Controller {
 		$end_date=date('Y-m-d',strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
 		$data['facility_name'] = $this -> session -> userdata('facility_name');
-		$get_facility_sql = $this -> db -> query("SELECT '$facility_code' as facility,d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id where d.Enabled=1 ");
+		$get_facility_sql = $this -> db -> query("SELECT '$facility_code' as facility,d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id where d.Enabled=1 LIMIT 10 ");
 		$get_commodity_array=$get_facility_sql->result_array();
 		foreach ($get_commodity_array as $parent_row) {
 			$this->getDrugInfo($facility_code, $parent_row['id'], $parent_row['drug'], $parent_row['name'], $parent_row['pack_size'],$start_date, $end_date, $stock_type="2");

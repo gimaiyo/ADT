@@ -1,13 +1,13 @@
 
-
-<table id="pending_orders" class="table table-striped table-bordered">
+<div class="center-content">
+<table id="pending_orders" class="table table-striped table-bordered dataTables">
 	<thead>
 		<tr>
 			<th width="80px">Order No</th>
 			<th >Facility Name</th>
 			<th>Beginning Period</th>
 			<th>Ending Period</th>
-			<th>Days pending <span style="<?php if($days_pending=="Approval"){ ?> color:rgb(255, 167, 11);  <?php } elseif ($days_pending=="Dispatched") { ?> color:green; <?php } elseif ($days_pending=="Resubmission") { ?> color:red; <?php } elseif ($days_pending=="Delivery") { ?> color:rgb(1, 167, 146); <?php } ?>">(<?php echo $days_pending ?>)</span></th>
+			<th>Days pending <div style="<?php if($days_pending=="Approval"){ ?> color:rgb(255, 167, 11);  <?php } elseif ($days_pending=="Dispatched") { ?> color:green; <?php } elseif ($days_pending=="Resubmission") { ?> color:red; <?php } elseif ($days_pending=="Delivery") { ?> color:rgb(1, 167, 146); <?php } ?>">(<?php echo $days_pending ?>)</div></th>
 			<th width="80px">Action</th>
 		</tr>
 	</thead>
@@ -37,3 +37,4 @@
 		?>
 	</tbody>
 </table>
+</div>

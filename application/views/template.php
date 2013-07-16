@@ -113,7 +113,6 @@ if (isset($styles)) {
 		 });
 	  });
 </script>
-
 <?php 
 //Load tableTools for datatables printing and exporting
 if(isset($report_title)){
@@ -283,8 +282,7 @@ if(isset($reports)|| isset($report_title)){
 
 	$this -> load -> view($content_view);
 ?>
- 
-    
+     
     <!-- Modal edit user profile-->
     <div id="edit_user_profile" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <form action="<?php echo base_url().'user_management/profile_update' ?>" method="post">
