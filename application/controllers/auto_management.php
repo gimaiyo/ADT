@@ -6,10 +6,11 @@ class auto_management extends MY_Controller {
 		ini_set("max_execution_time", "100000");
 		$this -> load -> library('PHPExcel');
 		$this -> load -> helper('url');
+		$this -> load -> database();
 	}
 
 	public function index() {
-		$this -> load -> database();
+
 		$facility = $this -> session -> userdata('facility');
 		/*Change Active to Lost_to_follow_up*/
 		$sql = "update patient p,(SELECT patient_number_ccc FROM patient WHERE current_status =1 AND (DATEDIFF( CURDATE( ) ,nextappointment )) >=90 AND facility_code =  '$facility') as p1 set p.current_status = '5' where p.patient_number_ccc=p1.patient_number_ccc AND p.facility_code='$facility';";
@@ -30,7 +31,6 @@ class auto_management extends MY_Controller {
 
 	public function export() {
 		$facility_code = $this -> session -> userdata('facility');
-		$this -> load -> database();
 		$sql = "SELECT medical_record_number,patient_number_ccc,first_name,last_name,other_name,dob,pob,IF(gender=1,'MALE','FEMALE')as gender,IF(pregnant=1,'YES','NO')as pregnant,weight as Current_Weight,height as Current_height,sa as Current_BSA,p.phone,physical as Physical_Address,alternate as Alternate_Address,other_illnesses,other_drugs,adr as Drug_Allergies,IF(tb=1,'YES','NO')as TB,IF(smoke=1,'YES','NO')as smoke,IF(alcohol=1,'YES','NO')as alcohol,date_enrolled,ps.name as Patient_source,s.Name as supported_by,timestamp,facility_code,rst.name as Service,r1.regimen_desc as Start_Regimen,start_regimen_date,pst.Name as Current_status,migration_id,machine_code,IF(sms_consent=1,'YES','NO') as SMS_Consent,fplan as Family_Planning,tbphase,startphase,endphase,IF(partner_status=1,'Concordant',IF(partner_status=2,'Discordant','')) as partner_status,status_change_date,IF(partner_type=1,'YES','NO') as Disclosure,support_group,r.regimen_desc as Current_Regimen,nextappointment,start_height,start_weight,start_bsa,IF(p.transfer_from !='',f.name,'N/A') as Transfer_From,DATEDIFF(nextappointment,CURDATE()) AS Days_to_NextAppointment
 FROM patient p
 left join regimen r on r.id=p.current_regimen
@@ -170,6 +170,33 @@ ORDER BY p.patient_number_ccc ASC";
 
 		$objPHPExcel -> disconnectWorksheets();
 		unset($objPHPExcel);
+	}
+
+	public function auto_sms() {
+		$tommorrow = date('Y-m-d', strtotime('+1 day'));
+		$sql = "SELECT phone FROM patient WHERE sms_consent ='1' AND nextappointment ='$tommorrow' GROUP BY phone";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$phone = "";
+		$phone_list = "";
+		$message = "You have an Appointment Tommorow on " . date('d-M-Y', strtotime($tommorrow)) . " at Liverpool VCT";
+		if ($results) {
+			foreach ($results as $result) {
+				$phone = $result['phone'];
+				if (strlen($phone) == '10') {
+
+				} else if (strlen($phone) == 9) {
+					if ($phone[0] != '0') {
+						$phone = "0" . $phone;
+					}
+				}
+				$phone = "+254" . substr($phone, 1);
+				$phone_list .= $phone;
+			}
+			 $phone_list = substr($phone_list, 1);
+		}
+		$message = urlencode($message);
+		file("http://41.57.109.242:13000/cgi-bin/sendsms?username=clinton&password=ch41sms&to=$phone_list=$message");
 	}
 
 }
