@@ -1,107 +1,4 @@
-<style>
-	
-	#commodity-table {
-		width: 70%;
-		float: left;
-	}
-	
-	
-	.regimen-table {
-		width: 28%;
-		float: right;
-	}
-	.regimen-table tbody th {
-		font-size: 14px;
-		padding-left: 40px;
-	}
-	.regimen-table input {
-		margin: 5px;
-	}
-	
-	.big-table th. ,.big-table td {
-		border:1px solid #000000;
-		border-top:1px solid #000000;
-		vertical-align: middle;
-	}
-	.big-table input {
-		width: 60px;
-	}
-	.big-table td.number {
-		text-align: center;
-	}
-	th div {
-		font-size: 10px;
-	}
-	.button {
-		width: 100px;
-		margin: 10px;
-	}
-	
-	#comments-section td {
-		border: 0px;
-	}
-	#comments-section th {
-		text-align: left !important;
-	}
-	td {
-		word-wrap: break-word;
-	}
-	.col_drug {
-		width: 400px !important;
-		font-size: 13px;
-	}
-	.accordion{
-		height:25px;
-	}
-	
-	#facility_info{
-		width:60%;
-		margin:0 auto;
-	}
-	.table-bordered input{
-		width:70px;
-		height:23px;
-		margin:0 auto;
-	}
-	#commodity-table tbody tr{
-		font-size:10px;
-		
-	}
-	tr.odd{
-		background-color:rgb(244, 255, 240);
-	}
-	.regimen-table tbody td {
-		font-size: 13px;
-		color: #000;
-		padding:5px;
-	}
-	
-	.ui-state-active{
-		background: #e6e6e6 url(images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x;
-	}
-	.regimen-table thead .col_drug{
-		font-size:14px;
-	}
-	.dataTables_wrapper{
-		width: auto;
-		margin:0 auto;
-	}
-	#reporting_period,#period_start_date,#period_end_date{
- 		color: #00B831;
- 		width:190px;
- 	}
-	.ui-datepicker-calendar {
-    	display: none;
-    }
-	/**
-	 * 	thead th div{
-		transform:rotate(-40deg);
-		-ms-transform:rotate(-40deg); /* IE 9 
-		-webkit-transform:rotate(-40deg); /* Safari and Chrome 
-	}
-	 */
 
-</style>
 <script>
 	$(document).ready(function() {
 		
@@ -246,10 +143,11 @@
 		row_element.find(".resupply").attr("value", resupply);
 	}
 </script>
+<div class="full-content" style='background:#9CF'>
 <form method="post" id="fmEditOrder" action="<?php echo site_url('order_rationalization/save')?>">
 	<input type="hidden" id="transaction_type" name="transaction_type" >
 	<input type="hidden" name="order_number" value="<?php echo $order_details->id;?>" />
-	<div id="facility_info" class="header section">
+	<div class="facility_info" class="header section">
 		<table class="table table-bordered" >
 			<tbody>
 				<tr>
@@ -431,3 +329,4 @@
 	</table> 
 		
 </form>
+</div>
