@@ -1,7 +1,7 @@
 
 <script>
 	$(document).ready(function() {
-		initDatabase();
+		//initDatabase();
 
 		$(".accordion").accordion();
 

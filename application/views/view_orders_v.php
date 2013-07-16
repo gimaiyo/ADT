@@ -1,4 +1,7 @@
 <div class="center-content">
+	<?php
+	$this->load->view('orders_sub_menu');
+	?>
 <table id="pending_orders" class="table table-striped table-bordered dataTables">
 	<thead>
 		<tr>

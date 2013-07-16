@@ -40,7 +40,7 @@ class User_Management extends MY_Controller {
 			$facility_code = $this -> session -> userdata('facility');
 			$user_type = "indicator='pharmacist'";
 			$facilities = Facilities::getCurrentFacility($facility_code);
-			$q = "u.Facility_Code='" . $facility_code . "' and Access_Level !='1'";
+			$q = "u.Facility_Code='" . $facility_code . "' and Access_Level !='1' and Access_Level !='4'";
 			$users = Users::getUsersFacility($q);
 
 		}
@@ -57,8 +57,8 @@ class User_Management extends MY_Controller {
 			if ($access_level == "system_administrator") {
 				if ($user['Access'] == "System Administrator" or $user['Access'] == "NASCOP Pharmacist" or $user['Access'] == "Facility Administrator") {
 					//$links = anchor('user_management/edit/' . $user['id'], 'Edit', array('class' => 'edit_user', 'id' => $user['id']));
-					$links = anchor('#edit_user', 'Edit', $array_param);
-					$links .= " | ";
+					//$links = anchor('#edit_user', 'Edit', $array_param);
+					//$links .= " | ";
 				} else {
 					$links = "";
 				}
@@ -66,22 +66,22 @@ class User_Management extends MY_Controller {
 				//$links = anchor('user_management/edit/' . $user['id'], 'Edit', array('class' => 'edit_user', 'id' => $user['id']));
 				//Only show edit link for pharmacists
 				if ($user['Access'] == "Pharmacist" || $user['Access'] == "User") {
-					$links = anchor('#edit_user', 'Edit', $array_param);
+					//$links = anchor('#edit_user', 'Edit', $array_param);
 				}
 
 			}
 
 			if ($user['Active'] == 1) {
 				if ($access_level == "system_administrator") {
-					$links .= " | ";
+					//$links .= " | ";
 					$links .= anchor('user_management/disable/' . $user['id'], 'Disable', array('class' => 'disable_user'));
 				} else if ($access_level == "facility_administrator" and $user['Access'] == "Pharmacist") {
-					$links .= " | ";
+					//$links .= " | ";
 					$links .= anchor('user_management/disable/' . $user['id'], 'Disable', array('class' => 'disable_user'));
 				}
 
 			} else {
-				$links .= " | ";
+				//$links .= " | ";
 				$links .= anchor('user_management/enable/' . $user['id'], 'Enable', array('class' => 'enable_user'));
 			}
 			if ($user['Access'] == "Pharmacist") {

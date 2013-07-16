@@ -48,6 +48,7 @@ $(document).ready(function() {
 $("#facility_type").attr("value","<?php echo @$facility['facilitytype'];?>");
 $("#district").attr("value","<?php echo @$facility['district'];?>");
 $("#central_site").attr("value","<?php echo @$facility['parent'];?>");
+$("#county").attr("value","<?php echo @$facility['county'];?>");
 		
 	});
 

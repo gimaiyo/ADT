@@ -51,7 +51,9 @@ $(document).ready(function() {
 	.ui-datepicker-calendar {
     	display: none;
     }
+    
 </style>
+<div class="center-content">
 <div class="alert-bootstrap alert-info">
     <b>Select the period that you want to create an order for then click 'Proceed'</b>
 </div>
@@ -91,3 +93,4 @@ echo validation_errors('
 			</tbody>
 		</table> 
 </form>
+</div>

@@ -21,7 +21,6 @@
 				},
 		   		"bProcessing": true,
 				"bServerSide": false,
-		        
 			});
 		/*
 		 * Reports generation

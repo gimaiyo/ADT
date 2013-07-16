@@ -19,10 +19,61 @@ class Facilitydashboard_Management extends MY_Controller {
 
 	public function order_notification() {
 		$facility_code = $this -> session -> userdata("facility");
-		$query = $this -> db -> query("SELECT COUNT(*) as total FROM facility_order f WHERE (f.status =  '3' AND (f.facility_id ='$facility_code' OR f.central_facility='$facility_code'))ORDER BY ABS(f.id) DESC ");
+		$sql = "SELECT status ,COUNT(*) AS total FROM `facility_order` WHERE facility_id ='$facility_code' GROUP BY STATUS";
+		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		$res = $results[0]['total'];
-		echo "<a href='#'><i class='icon-tasks'></i>Pending Orders<div class='badge badge-important'>" . $res . "</div></a>";
+		$status = "";
+		$status_total = 0;
+		$total = 0;
+		$order_link = "";
+		$dyn_table = "";
+		if ($results) {
+			foreach ($results as $result) {
+				if ($result['status'] != '') {
+					if ($result['status'] == 0) {
+						$status = "Pending Orders";
+						$order_link = site_url('order_management/submitted_orders/0');
+					} else if ($result['status'] == 1) {
+						$status = "Approved Orders";
+						$order_link = site_url('order_management/submitted_orders/1');
+					} else if ($result['status'] == 2) {
+						$status = "Declined Orders";
+						$order_link = site_url('order_management/submitted_orders/2');
+					} else if ($result['status'] == 3) {
+						$status = "Dispatched Orders";
+						$order_link = site_url('order_management/submitted_orders/3');
+					}
+					$status_total = $result['total'];
+					$total += $status_total;
+					$dyn_table .= "<li><a id='inactive_users' href='$order_link'><i class='icon-th'></i>$status <div class='badge badge-important'>$status_total</div></a></li>";
+				}
+			}
+		} else {
+			$dyn_table .= "<li>No Data Available</li>";
+		}
+		$access_level = $this -> session -> userdata('user_indicator');
+		if ($access_level == "facility_administrator") {
+			$dyn_table .= $this -> inactive_users();
+		}
+
+		echo $dyn_table;
+	}
+
+	public function inactive_users() {
+		$facility_code = $this -> session -> userdata("facility");
+		$sql = "select count(*) as total from users where Facility_Code='$facility_code' and Active='0' and access_level='2'";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$total = 0;
+		$temp = "";
+		$order_link = site_url('settings_management');
+		if ($results) {
+			foreach ($results as $result) {
+				$total = $result['total'];
+			}
+		}
+		$temp = "<li class='divider'></li><li><a href='$order_link'><i class='icon-th'></i>Inactive Users <div class='badge badge-important'>$total</div></a></li>";
+		return $temp;
 	}
 
 	public function stock_notification($stock_type = "2") {
@@ -147,20 +198,18 @@ class Facilitydashboard_Management extends MY_Controller {
 		$resultArraySize = 0;
 		$count = 0;
 		$facility_code = $this -> session -> userdata('facility');
-		$drugs_sql = "SELECT s.id AS id,s.drug AS Drug_Id,d.drug AS Drug_Name,d.pack_size AS pack_size, u.name AS Unit, s.batch_number AS Batch,s.expiry_date AS Date_Expired,DATEDIFF(s.expiry_date,CURDATE()) AS Days_Since_Expiry FROM drugcode d LEFT JOIN drug_unit u ON d.unit = u.id LEFT JOIN drug_stock_movement s ON d.id = s.drug LEFT JOIN transaction_type t ON t.id=s.transaction_type WHERE t.effect=1 AND DATEDIFF(s.expiry_date,CURDATE()) <='$period' AND DATEDIFF(s.expiry_date,CURDATE())>=0 AND d.enabled=1 AND s.facility ='" . $facility_code . "' GROUP BY Batch ORDER BY Days_Since_Expiry asc";
+		//$drugs_sql = "SELECT s.id AS id,s.drug AS Drug_Id,d.drug AS Drug_Name,d.pack_size AS pack_size, u.name AS Unit, s.batch_number AS Batch,s.expiry_date AS Date_Expired,DATEDIFF(s.expiry_date,CURDATE()) AS Days_Since_Expiry FROM drugcode d LEFT JOIN drug_unit u ON d.unit = u.id LEFT JOIN drug_stock_movement s ON d.id = s.drug LEFT JOIN transaction_type t ON t.id=s.transaction_type WHERE t.effect=1 AND DATEDIFF(s.expiry_date,CURDATE()) <='$period' AND DATEDIFF(s.expiry_date,CURDATE())>=0 AND d.enabled=1 AND s.facility ='" . $facility_code . "' GROUP BY Batch ORDER BY Days_Since_Expiry asc";
+		$drugs_sql="SELECT d.drug as drug_name,d.pack_size,u.name as drug_unit,dsb.batch_number as batch,dsb.balance as stocks_display,dsb.expiry_date,DATEDIFF(dsb.expiry_date,CURDATE()) as expired_days_display FROM drugcode d LEFT JOIN drug_unit u ON d.unit=u.id LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id WHERE DATEDIFF(dsb.expiry_date,CURDATE()) <='$period' AND DATEDIFF(dsb.expiry_date,CURDATE())>=0 AND d.enabled=1 AND dsb.facility_code ='" . $facility_code . "' AND dsb.stock_type='".$stock_type."' AND dsb.balance>0 ORDER BY expired_days_display asc";
 		$drugs = $this -> db -> query($drugs_sql);
 		$results = $drugs -> result_array();
 		//Get all expiring drugs
-		foreach ($results as $result => $value) {
-			$count = 1;
-			$this -> getBatchInfo($value['Drug_Id'], $value['Batch'], $value['Unit'], $value['Drug_Name'], $value['Date_Expired'], $value['Days_Since_Expiry'], $value['id'], $value['pack_size'], $stock_type, $facility_code);
-		}
-		//If no drugs if found, return null
-		if ($count == 0) {
-			$data['drug_details'] = "null";
-		}
+		//foreach ($results as $result => $value) {
+			//$count = 1;
+			//$this -> getBatchInfo($value['Drug_Id'], $value['Batch'], $value['Unit'], $value['Drug_Name'], $value['Date_Expired'], $value['Days_Since_Expiry'], $value['id'], $value['pack_size'], $stock_type, $facility_code);
+		//}
+		
 		$d = 0;
-		$drugs_array = $this -> drug_array;
+		$drugs_array =$results;
 
 		$nameArray = array();
 		$dataArray = array();
@@ -384,9 +433,9 @@ class Facilitydashboard_Management extends MY_Controller {
 
 		}
 		$resultArraySize = 5;
-		$categories = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday','Saturday');
-		$maleAdult[] =0;
-		$femaleAdult[] =0;
+		$categories = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+		$maleAdult[] = 0;
+		$femaleAdult[] = 0;
 		$maleChild[] = 0;
 		$femaleChild[] = 0;
 		foreach ($patients_array as $key => $value) {
@@ -503,7 +552,7 @@ class Facilitydashboard_Management extends MY_Controller {
 
 		}
 
-		$categories = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday','Saturday');
+		$categories = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
 		foreach ($patients_array as $key => $value) {
 			$visited[] = (int)$value['patient_visited'];
 			$missed[] = (int)$value['patient_not_visited'];
