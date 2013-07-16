@@ -1,4 +1,3 @@
-
 <div class="center-content">
 <table id="pending_orders" class="table table-striped table-bordered dataTables">
 	<thead>
