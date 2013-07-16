@@ -88,27 +88,30 @@ if (isset($styles)) {
 
 <script>
 
-
-
-						$(document).ready(function() {<?php 
+						$(document).ready(function() {
+							$('.table_order_details').dataTable( {
+		        "sDom": "<'row'r>t<'row'<'span5'i><'span7'p>>",
+		        "sPaginationType": "bootstrap",
+		        "bSort": false
+		        //"aaSorting": []
+		    } );
+							
+							
+							
+							
+							<?php 
 			if($user_is_pharmacist){
 				?>
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>
-					');
-					$('#notification2').load('
-<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>
-					');
+				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
+					$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>');
 
 				<?php
 				}
 
 				if($user_is_facility_administrator){
 				?>
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>
-					');
-					$('#notification2').load('
-<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>
-					');
+				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>');
+					$('#notification2').load('<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>	');
 
 				<?php
 
@@ -296,8 +299,7 @@ if(isset($reports)|| isset($report_title)){
 
 	$this -> load -> view($content_view);
 ?>
- 
-    
+     
     <!-- Modal edit user profile-->
     <div id="edit_user_profile" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <form action="<?php echo base_url().'user_management/profile_update' ?>" method="post">

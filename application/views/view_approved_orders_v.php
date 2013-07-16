@@ -19,13 +19,14 @@
 		});
 	});
 </script>
+<div class="center-content">
 <div id="error_message" class="alert-bootstrap alert-error"></div>
 <form method="post" id="frmSubmitAggregated" action="<?php echo site_url('picking_list_management/assign_orders')?>">
 <div class="alert-bootstrap alert-info">
   Check the orders that you want to assign to a picking list then click 'Proceed'
 </div>
     
-<table class="table table-striped table-bordered">
+<table class="table table-striped table-bordered dataTables" >
 	<thead>
 		<tr>
 			<th width="80px">Order No</th>
@@ -62,5 +63,6 @@
 		?> 
 	</tbody>
 </table>
-<div ><input style="padding-left:15px;padding-right:15px;" type="submit" value="Proceed" class="btn btn-primary"/></div>
+<div ><input style="padding-left:15px;padding-right:15px;" type="submit" value="Proceed" class="btn"/></div>
 </form>
+</div>

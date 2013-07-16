@@ -47,23 +47,7 @@ if ($access_level == "nascop_staff") {
 
 <script type="text/javascript" src="<?php echo base_url().'Scripts/bootstrap/js/paging.js'?>"></script>
 
-<!--Load datatables settings -->
-<script type="text/javascript">
-	$(document).ready(function() {
-		$('.table-striped').dataTable( {
-	        "sDom": "<'row'<'span5'l><'span7'f>r>t<'row'<'span5'i><'span7'p>>",
-	        "sPaginationType": "bootstrap"
-	    } );
-	    $.extend( $.fn.dataTableExt.oStdClasses, {
-		    "sSortAsc": "header headerSortDown",
-		    "sSortDesc": "header headerSortUp",
-		    "sSortable": "header"
-		} );
-	    
-	    
-	} );
 
-</script>
 
 <?php
 if ($user_is_pharmacist) {
@@ -261,7 +245,7 @@ if (isset($styles)) {
 </head>
 
 <body>
-<div id="wrapper">
+
 	<div id="top-panel" style="margin:0px;">
 
 		<div class="logo">

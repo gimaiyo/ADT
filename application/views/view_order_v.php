@@ -18,26 +18,23 @@
 
 <div class="full-content" style="background:#9CF">
 <div class="facility_info">
-	<table class="table table-bordered table-striped" style="width:60%;margin:auto">
+	<table class="table table-bordered table-striped" style="margin:auto">
 		<tbody>
 			<tr>
 				<th>Order No</th>
 				<td><span class="_green"><?php echo $order_no ?></span></td>
-			</tr>
-			<tr>
 				<th width="160px">Facility code:</th>
 				<td><span class="_green"><?php echo $order_details -> Facility_Object -> facilitycode;?></span></td>
+			</tr>
+			<tr>
 				<th width="140px">Facility Name:</th>
 				<td><span class="_green"><?php echo $order_details -> Facility_Object -> name;?></span></td>
-				
-			</tr>
-			<tr>
 				<th>Facility Type:</th>
 				<td><span class="_green"><?php echo $order_details -> Facility_Object -> Type -> Name;?></span></td>
-				<th>District/County:</th>
-				<td><span class="_green"><?php echo $order_details -> Facility_Object -> Parent_District -> Name;?>/<?php echo $order_details -> Facility_Object -> County -> county;?></span></td>
 			</tr>
 			<tr>
+				<th>District/County:</th>
+				<td><span class="_green"><?php echo $order_details -> Facility_Object -> Parent_District -> Name;?>/<?php echo $order_details -> Facility_Object -> County -> county;?></span></td>
 				<th>Reporting Period:</th>
 				<td colspan="3" >From <span class="_green"><?php echo date("d-M-Y",strtotime($order_details -> Period_Begin));?></span> To <span class="_green"><?php echo date("d-M-Y",strtotime($order_details -> Period_End));?></span></td>
 			</tr>
