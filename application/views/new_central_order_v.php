@@ -361,7 +361,7 @@
 
 </style>
 
-
+<div class="center-content">
 <form method="post" id="fmNewCentral" action="<?php echo site_url('order_management/save')?>">
 	<?php
 	if ($facility_object -> supported_by == "1") {
@@ -580,3 +580,4 @@
 	</table>
 	
 </form>
+</div>

@@ -89,7 +89,6 @@
 </script>
 <div class="center-content">
 	<?php
-	
 	$this->load->view('orders_sub_menu');
 	?>
 <table class="dataTables" border="1">

@@ -214,6 +214,7 @@
 	 */
 
 </style>
+<div class="full-content">
 <div class="alert-bootstrap alert-info">
    Aggregated order for order(s) No <span class="_green"><?php echo $order_nos; ?></span>. Make any changes you deem neccessary then click on 'Submit' at the bottom. <b>Note:</b> The units have been converted to packs
 </div>
@@ -416,3 +417,4 @@
 	</table>
 	
 </form>
+</div>

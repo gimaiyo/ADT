@@ -17,6 +17,7 @@ table#table_new_central_facility_report{
 }
 
 </style>
+<div class="center-content">
 <div id="error_message" class="alert-bootstrap alert-error"></div>
 <div class="alert-bootstrap alert-info">
    <b>List of satellite orders submitted for the period starting from <span class="_green"><?php echo date("d-M-Y",strtotime($period_start_date)) ?></span> to <span class="_green"><?php echo date("d-M-Y",strtotime($period_end_date)) ?></span>. Tick on the ones you would like to be aggregated then click proceed.</b>
@@ -59,7 +60,7 @@ table#table_new_central_facility_report{
 	</tfoot>
 </table>
 </form>
-
+</div>
 <script>
 	$(document).ready(function(){
 		$('#frmSubmitAggregated').submit(function(){
