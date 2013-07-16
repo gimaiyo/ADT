@@ -87,38 +87,32 @@ if (isset($styles)) {
 ?> 
 
 <script>
-
-
-
-						$(document).ready(function() {<?php 
-			if($user_is_pharmacist){
-				?>
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>
-					');
-					$('#notification2').load('
-<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>
-					');
-
-				<?php
-				}
-
-				if($user_is_facility_administrator){
-				?>
-				$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification'?>
-					');
-					$('#notification2').load('
-<?php echo base_url().'facilityadmin_dashboard_management/getOrders/approved'?>
-					');
-
-				<?php
-
-				}
-				?>});</script>
-				 <script>
-					$(document).ready(function(){
-						$(".error").css("display","block");
-					})
-				</script>
+   $(document).ready(function(){
+   	  <?php 
+		if($user_is_pharmacist){
+	   ?>
+	    $('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification';?>');
+	  <?php
+		}
+        if($user_is_facility_administrator){
+	   ?>
+		$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification';?>');
+      <?php
+        }
+	   ?>});
+</script>
+<script>
+	  $(document).ready(function(){
+		 $(".error").css("display","block");
+		 $("#inactive_users").click(function(){
+		 	<?php
+			$this -> session -> set_userdata("link_id", "index");
+			$this -> session -> set_userdata("linkSub", "user_management");
+			$this -> session -> set_userdata("linkTitle","Users Management");
+		 	?>
+		 });
+	  });
+</script>
 
 <?php 
 //Load tableTools for datatables printing and exporting
@@ -280,16 +274,9 @@ if(isset($reports)|| isset($report_title)){
 			
 		</ul>
 		<h3>Notifications</h3>
-		<ul class="nav nav-list well">
-		<li class="notif" id="notification1"></li>
-		<li class="divider"></li>
-		<li class="notif"id="notification2"></li>
-		<li class="notif" id="notification3"></li>
-		<li class="notif" id="notification4"></li>
-		</ul>
+		<ul id="notification1" class="nav nav-list well">
 		
-		
-		
+		</ul>	
 	</div>
 	<?php
 	}
@@ -389,7 +376,8 @@ if(isset($reports)|| isset($report_title)){
  	<div id="footer">
  		<?php $this->load->view('footer_v');?>
  	</div>
- </div>   
+ </div> 
+ <script></script>  
 </body>
 
 </html>
