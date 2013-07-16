@@ -333,11 +333,11 @@ class Order_Management extends MY_Controller {
 
 		if ($parent -> parent == $central_facility) {
 			if ($facility_id < 1) {
-				//$data['content_view'] = "facility_selection_v";
-				//$data['banner_text'] = "Select Facility";
+				$data['content_view'] = "facility_selection_v";
+				$data['banner_text'] = "Select Satelitte Facility";
 				$data['facilities'] = Facilities::getSatellites($central_facility);
-				echo json_encode($data);
-				die();
+				//echo json_encode($data);
+				//die();
 
 			} else {
 				$data = array();
@@ -349,6 +349,7 @@ class Order_Management extends MY_Controller {
 				//$data['regimens'] = Regimen::getAllObjects($facility_id);
 				$data['regimen_categories'] = Regimen_Category::getAll();
 				$data['facility_object'] = Facilities::getCodeFacility($facility_id);
+				$data['hide_side_menu'] = 0;
 			}
 			$data['page_title'] = "New Satellite Order";
 			$this -> base_params($data);
