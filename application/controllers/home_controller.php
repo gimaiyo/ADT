@@ -26,6 +26,7 @@ class Home_Controller extends MY_Controller {
 	}
 
 	public function home() {
+		
 		$rights = User_Right::getRights($this -> session -> userdata('access_level'));
 		$menu_data = array();
 		$menus = array();

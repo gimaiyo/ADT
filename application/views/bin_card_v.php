@@ -207,6 +207,7 @@
 								}	
 								//Pharmacy transaction
 								else if($drug_transaction->Source==$drug_transaction->Destination){
+									
 									//Receive from
 									if($drug_transaction->Transaction_Type==1){
 										$qty=$drug_transaction->Quantity;
@@ -217,10 +218,13 @@
 										$qty=$drug_transaction->Quantity_Out;
 
 									}
-									else if($drug_transaction->Quantity==0){
-										$qty=$drug_transaction->Quantity_Out;
+									
+									else if($drug_transaction->Quantity==0 or $drug_transaction->Quantity==""){
 										$transaction_type.=" Patients";
 										$qty=$drug_transaction->Quantity_Out;
+									}
+									else if($drug_transaction->Quantity_Out==0){
+										$qty=$drug_transaction->Quantity;
 									}
 									
 								}

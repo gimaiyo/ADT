@@ -68,6 +68,7 @@
 		
 		//Transaction type change
 		$("#select_transtype").change(function(){
+			
 			if($("#select_transtype").attr("value")==0){
 				$("#drug_details").css("pointer-events","none");
 				$(".t_source").css("display","none");
@@ -452,8 +453,8 @@
 					destination=dump['destination'];
 				}
 				//Pharmacy transaction:Received from Main Store
-				else if(dump["transaction_type"]==1 && stock_type=='2'){
-					source=dump['source'];
+				else if(dump["transaction_type"]==1 && stock_type=='2' && dump['source']==1){
+					source=facility;
 					destination=facility;
 					
 				}
@@ -494,8 +495,8 @@
 					sql_queries += "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number,transaction_type, source, destination, expiry_date, packs," + quantity_out_choice + "," + quantity_choice + ", unit_cost, amount, remarks, operator, order_number, facility) VALUES ('" + drugs[i] + "', '" + dump["transaction_date"] + "', '" + batches[i] + "', '" + transaction_type + "', '" + source + "', '" + destination + "', '" + expiries[i] + "', '" + packs[i] + "', '" + quantities[i] + "','0','" + unit_costs[i] + "', '" + amounts[i] + "', '" + comments[i] + "','" + user + "','" + dump["reference_number"] + "','" +  destination + "');";
 				}
 				
-				//Pharmacy transaction, substract main store balance
-				else if(dump["transaction_type"]=='1' && dump["source"]==facility ){
+				//If received from main store to pharmacy, insert an issued to from main store
+				else if(dump["transaction_type"]=='1' && stock_type=='2' && dump['source']==1 ){
 					var transaction_type=6;
 					sql_queries += "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type, source, destination, expiry_date, packs," + quantity_out_choice + "," + quantity_choice + ", unit_cost, amount, remarks, operator, order_number, facility) VALUES ('" + drugs[i] + "', '" + dump["transaction_date"] + "', '" + batches[i] + "', '" + transaction_type + "', '" + source + "', '', '" + expiries[i] + "', '" + packs[i] + "', '" + quantities[i] + "','0','" + unit_costs[i] + "', '" + amounts[i] + "', '" + comments[i] + "','" + user + "','" + dump["reference_number"] + "','" +  destination + "');";
 				}
@@ -701,9 +702,19 @@
 								<option value="0" selected="">-- Select Type --</option>
 								<?php
 								foreach ($transaction_types as $transaction_type) {
-								?>
-								<option value="<?php echo $transaction_type['id'] ?>"><?php echo $transaction_type['Name'] ?></option>
-								<?php
+									if($stock_type==2){
+										//Hide issued to
+										if($transaction_type['id']!=6){
+									?>
+									<option value="<?php echo $transaction_type['id'] ?>"><?php echo $transaction_type['Name'] ?></option>
+									<?php
+										}
+									}
+									else{
+										?>
+										<option value="<?php echo $transaction_type['id'] ?>"><?php echo $transaction_type['Name'] ?></option>
+										<?php
+									}
 								}
 								?>
 								
@@ -735,16 +746,18 @@
 							<select name="destination" id="select_destination" class="input-large">
 								<option value="0">--Select Destination --</option>
 								<?php
-								//Add satelittes
-								foreach ($satelittes as $satelitte) {
-									?>
-									<option value="<?php echo $satelitte['facilitycode'] ?>"><?php echo $satelitte['name'] ?></option>
-								<?php
-								}
+								//Add satelittes if transaction from main store
+								
+									foreach ($satelittes as $satelitte) {
+										?>
+										<option value="<?php echo $satelitte['facilitycode'] ?>"><?php echo $satelitte['name'] ?></option>
+									<?php
+									}
+								
 								
 								foreach ($drug_destinations as $drug_destination) {
 									
-									//Not picking outpatien pharmacy if stock type is pharmacy
+									//Not picking outpatient pharmacy if stock type is pharmacy
 									if($stock_type==2 && $drug_destination['id']==1){
 										continue;
 									}

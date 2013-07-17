@@ -5,6 +5,14 @@
 if (!$this -> session -> userdata('user_id')) {
 	redirect("User_Management/login");
 }
+
+if($this->session->userdata("prev_page")){
+	if($this -> input -> cookie("actual_page")){
+		$this->session->unset_userdata("prev_page");
+		redirect($this -> input -> cookie("actual_page"));
+	}
+}
+
 if (!isset($link)) {
 	$link = null;
 }
@@ -141,7 +149,7 @@ if(isset($report_title)){
 </style>
 </head>
 
-<body>
+<body onload="set_interval()" onmousemove="set_interval()" onclick="set_interval" onkeypress="set_interval()" onscroll="set_interval()">
 
 
 	<div id="top-panel" style="margin:0px;">

@@ -331,8 +331,10 @@ class User_Management extends MY_Controller {
 					$new_access_log -> facility_code = $this -> session -> userdata('facility');
 					$new_access_log -> access_type = "Login";
 					$new_access_log -> save();
-
+					//Set session to redirect the page to the previous page before logged out
+					$this->session->set_userdata("prev_page","1");
 					redirect("home_controller/home");
+					
 
 				}
 
