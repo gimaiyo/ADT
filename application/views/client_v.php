@@ -119,7 +119,7 @@ foreach($actions as $action){
 		</form>
 	</div>
 	
-	<div id="edit_form" title="Edit Client Sources" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="NewDrug" aria-hidden="true">>
+	<div id="edit_form" title="Edit Client Sources" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="NewDrug" aria-hidden="true">
 		<?php
 		$attributes = array('class' => 'input_form');
 		echo form_open('client_management/update', $attributes);

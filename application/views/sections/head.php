@@ -11,8 +11,6 @@
 <link href="<?php echo base_url().'CSS/datatable/jquery.dataTables.css'?>" type="text/css" rel="stylesheet" media="all"/>
 <link href="<?php echo base_url().'CSS/datatable/jquery.dataTables_themeroller.css'?>" type="text/css" rel="stylesheet" media="all"/>
 <link href="<?php echo base_url().'CSS/datatable/demo_table.css" type="text/css'?>" rel="stylesheet" media="all"/>
-<!-- Table Filter -->
-<link href="<?php echo base_url().'TableFilter/filtergrid.css' ?>" type="text/css" rel="stylesheet"/>
 <!-- JQuery UI -->
 <link href="<?php echo base_url().'CSS/jquery-ui.css'?>" type="text/css" rel="stylesheet"/>
 <!-- Merged CSS
@@ -45,8 +43,6 @@
 <!-- Bootstrap -->
 <script src="<?php echo base_url().'Scripts/bootstrap/js/bootstrap.min.js'?>"></script>
 <script src="<?php echo base_url().'Scripts/bootstrap/js/paging.js'?>"></script>
-<!-- Table Filter -->
-<script type="text/javascript" src="<?php echo base_url().'TableFilter/tablefilter_all.js' ?>"></script>
 <!-- Merged JS
 ** Has the separate customized functions  -->
 <script src="<?php echo base_url().'Scripts/Merged_JS.js'?>" type="text/javascript"></script>

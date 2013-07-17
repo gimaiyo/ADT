@@ -96,10 +96,7 @@ $(document).ready(function() {
                  }else if(button_id=="stockout_btn"){
                  	 period=$("#store_location").val();
                  	 $('#table1').load('<?php echo base_url().'facilitydashboard_management/stock_notification/'?>'+period,function(){
-				         $('#stock_level').dataTable({
-					        "bJQueryUI": true,
-	        		        "sPaginationType": "full_numbers"
-	                     });
+
 	                 });
                  }		
             });
