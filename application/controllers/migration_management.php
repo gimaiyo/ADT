@@ -12,7 +12,7 @@ class Migration_Management extends MY_Controller {
 	}
 
 	public function migration_interface() {
-		$data['content_view'] = "migration_new_v";
+		$data['content_view'] = "migration_v";
 		$data['banner_text'] = "Data Migration";
 		$tables = array('tblARVDrugStockMain', 'tblCurrentStatus', 'tblDose', 'tblDrugsInRegimen', 'tblGenericName', 'tblIndication', 'tblReasonforChange', 'tblRegimen', 'tblRegimenCategory', 'tblSecurity', 'tblARTPatientMasterInformation', 'tblStockTransactionType', 'tblTypeOfService', 'tblVisitTransaction', 'tblSourceOfClient', 'tblARTPatientTransactions', 'tblARVDrugStockTransactions');
 		$data['tables'] = $tables;

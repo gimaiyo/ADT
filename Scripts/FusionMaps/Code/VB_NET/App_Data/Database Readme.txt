@@ -1,1 +1,0 @@
-Please copy data files ../CS_NET/App_Data to this folder.

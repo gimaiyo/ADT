@@ -139,138 +139,35 @@
 		row_element.find(".resupply").attr("value", resupply);
 	}
 </script>
-<style>
-	
-	#commodity-table {
-		width: 70%;
-		float: left;
-	}
-	
-	
-	.regimen-table {
-		width: 28%;
-		float: right;
-	}
-	.regimen-table tbody th {
-		font-size: 14px;
-		padding-left: 40px;
-	}
-	.regimen-table input {
-		margin: 5px;
-	}
-	
-	.big-table th. ,.big-table td {
-		border:1px solid #000000;
-		border-top:1px solid #000000;
-		vertical-align: middle;
-	}
-	.big-table input {
-		width: 60px;
-	}
-	.big-table td.number {
-		text-align: center;
-	}
-	th div {
-		font-size: 10px;
-	}
-	.button {
-		width: 100px;
-		margin: 10px;
-	}
-	
-	#comments-section td {
-		border: 0px;
-	}
-	#comments-section th {
-		text-align: left !important;
-	}
-	td {
-		word-wrap: break-word;
-	}
-	.col_drug {
-		width: 400px !important;
-		font-size: 13px;
-	}
-	.accordion{
-		height:25px;
-	}
-	
-	#facility_info{
-		width:60%;
-		margin:0 auto;
-	}
-	.table-bordered input{
-		width:70px;
-		height:23px;
-		margin:0 auto;
-	}
-	#commodity-table tbody tr{
-		font-size:10px;
-		
-	}
-	tr.odd{
-		background-color:rgb(244, 255, 240);
-	}
-	.regimen-table tbody td {
-		font-size: 13px;
-		color: #000;
-		padding:5px;
-	}
-	
-	.ui-state-active{
-		background: #e6e6e6 url(images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x;
-	}
-	.regimen-table thead .col_drug{
-		font-size:14px;
-	}
-	.dataTables_wrapper{
-		width: auto;
-		margin:0 auto;
-	}
-	#reporting_period,#period_start_date,#period_end_date{
- 		color: #00B831;
- 		width:190px;
- 	}
-	.ui-datepicker-calendar {
-    	display: none;
-    }
-	/**
-	 * 	thead th div{
-		transform:rotate(-40deg);
-		-ms-transform:rotate(-40deg); /* IE 9 
-		-webkit-transform:rotate(-40deg); /* Safari and Chrome 
-	}
-	 */
 
-</style>
 
-<div class="full-content">
+
+<div class="full-content"  style="background:#9CF">
 <form method="post" id="fmEditOrder" action="<?php echo site_url('order_management/save')?>">
 	<input type="hidden" name="order_number" value="<?php echo $order_details->id;?>" />
 	<input type="hidden" name="facility_id" value="<?php echo $order_details->Facility_Object->facilitycode;?>" />
 	<input type="hidden" name="central_facility" value="<?php echo $order_details->Facility_Object->parent;?>" />
 	<input type="hidden" name="order_type" value="<?php echo $order_type ?>"/>
-	<div id="facility_info" class="header section">
-		<table class="table table-bordered" >
+	<div class="facility_info">
+		<table class="table dataTable" >
 			<tbody>
 				<tr>
 					<th>Order No</th>
 					<td><span class="_green"><?php echo $order_no ?></span></td>
-				</tr>
-				<tr>
 					<th width="160px">Facility code:</th>
 					<td><span class="_green"><?php echo $order_details -> Facility_Object -> facilitycode;?></span></td>
+					</tr>
+				<tr>
 					<th width="140px">Facility Name:</th>
 					<td><span class="_green"><?php echo $order_details -> Facility_Object -> name;?></span></td>
 					
-				</tr>
-				<tr>
+				
 					<th>Facility Type:</th>
 					<td><span class="_green"><?php echo $order_details -> Facility_Object -> Type -> Name;?></span></td>
+					</tr>
+				<tr>
 					<th>District / County:</th>
 					<td><span class="_green"><?php echo $order_details -> Facility_Object -> Parent_District -> Name;?> / <?php echo $order_details -> Facility_Object -> County -> county;?></span></td>
-				</tr>
-				<tr>
 					<th>Reporting Period : </th>
 					<td colspan="3"><input class="_green" name="reporting_period" id="reporting_period" type="text" value="<?php echo date('F-Y',strtotime($order_details->Period_Begin)); ?>"></td>
 					<input name="start_date" id="period_start_date" type="hidden" value="<?php echo date('d',strtotime($order_details->Period_Begin));?>">
@@ -387,7 +284,7 @@
 	</table>
 	<br />
 	<hr size="1">
-	<div>
+	<div class='comments'>
 	<?php 
 	$has_comment=0;
 	foreach($comments as $comment){
@@ -409,6 +306,7 @@
 	<?php } 
 	if($has_comment==0){
 	?>
+	
 		<span class="label" style="vertical-align: bottom"> Add Comment </span>
 		<textarea style="width:98%" rows="3" name="comments"></textarea>
 	<?php	
@@ -418,7 +316,7 @@
 	</div>
 </div>
 
-	<table class=" table table-bordered regimen-table big-table research">
+	<table class=" table regimen-table big-table research">
 		<thead>
 			<tr>
 				<th class="col_drug" colspan="2"> Regimen </th>

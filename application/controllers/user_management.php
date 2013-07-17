@@ -468,7 +468,6 @@ class User_Management extends MY_Controller {
 		$new_access_log -> save();
 		$this -> session -> sess_destroy();
 		redirect("user_management/login");
-		//$this->fixlogout();
 	}
 
 	public function getIPLocation() {
@@ -536,11 +535,6 @@ class User_Management extends MY_Controller {
 		}
 
 	}
-
-	public function fixlogout() {
-		$this -> load -> view("fix_v");
-	}
-
 	public function resetPassword($data = "") {
 
 		$data['title'] = "Reset password";
