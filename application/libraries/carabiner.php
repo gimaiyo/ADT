@@ -513,10 +513,10 @@ class Carabiner {
 			break;
 			
 			case 'both':
-				$this->_display_js();
 				$this->_display_css();
-                $this->_display_js_string();
+				$this->_display_js();				
                 $this->_display_css_string();
+                $this->_display_js_string();
 			break;
 			
 			default:

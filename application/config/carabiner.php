@@ -96,7 +96,7 @@ $config['combine'] = TRUE;
 |
 */
 
-$config['minify_js'] = TRUE;
+$config['minify_js'] = FALSE;
 
 
 /*

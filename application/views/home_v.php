@@ -124,7 +124,7 @@ $(document).ready(function() {
 			</h3>
 			
 			<div id="chart_area">
-				<div class="loadingDiv" style="width:100%;height:100%" ><img style="width: 30px;margin-left:50%" src="<?php echo base_url().'Images/loading_spin.gif' ?>"></div>
+				<div class="loadingDiv" style="width:100%;height:100%" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images//loading_spin.gif' ?>"></div>
 			</div>
 			
 		</div>
@@ -136,7 +136,7 @@ $(document).ready(function() {
 				<button class="btn generate btn-mini" id="enrollment_btn">Generate</button>
 				 </h3>
 			<div id="chart_area2">
-				<div class="loadingDiv" style="width:100%;height:100%" ><img style="width: 30px;margin-left:50%" src="<?php echo base_url().'Images/loading_spin.gif' ?>"></div>
+				<div class="loadingDiv" style="width:100%;height:100%" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>
 			</div>
 		</div>
 	</div>
@@ -149,7 +149,7 @@ $(document).ready(function() {
 				<button class="btn-mini generate btn" id="appointment_btn">Generate</button>
 				</h3>
 			<div id="chart_area3">
-						<div class="loadingDiv" style="width:100%;height:100%" ><img style="width: 30px;margin-left:50%" src="<?php echo base_url().'Images/loading_spin.gif' ?>"></div>		
+						<div class="loadingDiv" style="width:100%;height:100%" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>		
 			</div>
 		</div>
 		<div class="tile">
@@ -161,7 +161,7 @@ $(document).ready(function() {
 			<button class="btn-mini generate btn" id="stockout_btn">Generate</button>
 			</h3>
 			<div id="table1">
-			 	<div class="loadingDiv" style="width:100%;height:100%" ><img style="width: 30px;margin-left:50%" src="<?php echo base_url().'Images/loading_spin.gif' ?>"></div>
+			 	<div class="loadingDiv" style="width:100%;height:100%" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>
 			</div>
 		</div>
 	</div>

@@ -1,4 +1,5 @@
 <?php
+$this->load->view('sections/head');
 $chartSize=0;
 if($resultArraySize<=6){
 	$chartSize='300';
@@ -18,6 +19,7 @@ if($resultArraySize>20){
 if($resultArraySize>25){
 	$chartSize='2100';
 }
+echo $chartSize;
 ?>
 
 <script>

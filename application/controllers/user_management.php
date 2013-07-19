@@ -20,18 +20,7 @@ class User_Management extends MY_Controller {
 
 	public function login() {
 		$data = array();
-		$this -> load -> library('carabiner');
-		$this -> carabiner -> empty_cache();
-		// add a js file
-		$jsArray = array( array('jquery.js'), array('highcharts/highcharts.js'), array('datatable/jquery.dataTables.js'), array('jquery.multiselect.js'));
-		$cssArray = array( array('style.css'), array('jquery-ui.css'),array('style_report.css'));
-
-		$this -> carabiner -> js($jsArray);
-
-		// add a css file
-		$this -> carabiner -> css($cssArray);
-		$assets = $this -> carabiner -> display_string();
-		$this -> session -> set_userdata('assets', $assets);
+		
 		$data['title'] = "webADT | System Login";
 		$this -> load -> view("login_v", $data);
 	}
@@ -479,7 +468,7 @@ class User_Management extends MY_Controller {
 		$new_access_log -> access_type = "Logout";
 		$new_access_log -> save();
 		$this -> session -> sess_destroy();
-		redirect("user_management/login");
+		redirect("system_management");
 	}
 
 	public function getIPLocation() {
