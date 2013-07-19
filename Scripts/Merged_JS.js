@@ -21,10 +21,9 @@ $(document).ready(function() {
 		"bServerSide" : false,
 	});
 	//syncOrders();
-	$(".genorder").click(function(){
+	$(".genorder").click(function() {
 		syncOrders();
 	});
-	
 	/*
 	 * Sysnchronization of Orders
 	 */
@@ -32,7 +31,7 @@ $(document).ready(function() {
 		var href = window.location.href;
 		var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
 		var _href = href.substr(href.lastIndexOf('/') + 1);
-		var link = base_url+"/ADT/synchronization_management/synchronize_orders";
+		var link = base_url + "/ADT/synchronization_management/synchronize_orders";
 		$.ajax({
 			url : link,
 			type : 'POST',
@@ -266,7 +265,7 @@ $(document).ready(function() {
 var timer = 0;
 function set_interval() {
 	// the interval 'timer' is set as soon as the page loads
-	timer = setInterval("auto_logout()", 180000);
+	timer = setInterval("auto_logout()", 600000);
 	// the figure '180000' above indicates how many milliseconds the timer be set to.
 	// Eg: to set it to 5 mins, calculate 3min = 3x60 = 180 sec = 180,000 millisec.
 	// So set it to 180000
@@ -293,5 +292,66 @@ function auto_logout() {
 }
 
 /*
- * Auto logout end
- */
+* Auto logout end
+*/
+
+//Function to get data for ordering(Cdrr)
+function getPeriodDrugBalance(count,drug, start_date, end_date) {
+	var href = window.location.href;
+	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
+	var _href = href.substr(href.lastIndexOf('/') + 1);
+	var link = base_url + '/ADT/order_management/getPeriodDrugBalance/' + drug + '/' + start_date + '/' + end_date;
+	$.ajax({
+		url : link,
+		type : 'POST',
+		dataType : 'json',
+		success : function(data) {
+			var total_received = 0;
+			var total_dispensed = 0;
+			var drug_id = 0;
+			$.each(data, function(i, jsondata) {
+				total_received = jsondata.total_received;
+				total_dispensed = jsondata.total_dispensed;
+				drug_id = jsondata.drug;
+			});
+			count++;
+			var total_received_div = "#received_in_period_" + drug_id;
+			var total_dispensed_div = "#dispensed_in_period_" + drug_id;
+			$(total_received_div).attr("value", total_received);
+			$(total_dispensed_div).attr("value", total_dispensed);
+			calculateResupply($(total_dispensed_div));
+			//Once the calculations are done for the whole table, put back the pagination
+
+			if($(".ordered_drugs").length == count) {
+				$('#generate_order').dataTable({
+					"sDom" : "<'row'r>t<'row'<'span5'i><'span7'p>>",
+					"sPaginationType" : "bootstrap",
+					"bSort" : false,
+					'bDestroy' : true
+				});
+			}
+		}
+	});
+}
+
+//Function to get data for ordering(Maps)
+function getPeriodRegimenPatients(start_date, end_date) {
+	var href = window.location.href;
+	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
+	var _href = href.substr(href.lastIndexOf('/') + 1);
+	var link = base_url + '/ADT/order_management/getPeriodRegimenPatients/' + start_date + '/' + end_date;
+	$.ajax({
+		url : link,
+		type : 'POST',
+		dataType : 'json',
+		success : function(data) {
+			var total_patients = 0;
+			var total_patients_div = "";
+			$.each(data, function(i, jsondata) {
+				total_patients = jsondata.patients;
+				total_patients_div = "#patient_numbers_" + jsondata.regimen;
+				$(total_patients_div).attr("value", total_patients);
+			});
+		}
+	});
+}

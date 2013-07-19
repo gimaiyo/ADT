@@ -689,10 +689,18 @@ class Order_Management extends MY_Controller {
 		$data['regimen_categories'] = Regimen_Category::getAll();
 		$this -> base_params($data);
 	}
-	public function getPeriodDrugBalance($drug,$from,$to) {
+
+	public function getPeriodDrugBalance($drug, $from, $to) {
 		$sql = "select case when 1=1 then '$drug' end as drug,stock_in.*,sum(p.quantity) as total_dispensed from (select sum(ds.quantity) as total_received from drug_stock_movement ds left join transaction_type t on ds.transaction_type = t.id where drug = '$drug' and t.effect = '1' and transaction_date between '$from' and '$to') stock_in left join patient_visit p on p.drug_id = '$drug' and dispensing_date between '$from' and '$to'";
-	    $query=$this->db->query($sql);
-		$results=$query->result_array();
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		echo json_encode($results);
+	}
+
+	public function getPeriodRegimenPatients($from, $to) {
+		$sql = "SELECT regimen, COUNT( DISTINCT patient_id ) AS patients FROM patient_visit WHERE dispensing_date BETWEEN  '$from' AND  '$to' GROUP BY regimen";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
 		echo json_encode($results);
 	}
 

@@ -110,68 +110,14 @@
 			reporting_period = convertDate(reporting_period);
 			var start_date = reporting_period + "-" + $("#period_start_date").attr("value");
 			var end_date = reporting_period + "-" + $("#period_end_date").attr("value");
-			var count = 0;
 			var p = 0;
+			var count = 0;
 			//Do the calculation to get dispensing data
 			$.each($(".ordered_drugs"), function(i, v) {
-				var base_url="<?php echo base_url();?>"
-				var link = base_url + 'order_management/getPeriodDrugBalance/' + $(this).attr("drug_id") + '/' + start_date + '/' + end_date;
-				$.ajax({
-				url : link,
-				type : 'POST',
-				dataType:'json',
-				success : function(data) {
-					var total_received = 0;
-					var total_dispensed =0;
-					var drug_id=0;
-					
-					$.each(data, function(i, jsondata){
-						   total_received=jsondata.total_received;
-						   total_dispensed=jsondata.total_dispensed;
-						   drug_id=jsondata.drug;
-				    });
-					count++;
-					var total_received_div = "#received_in_period_" +drug_id;
-					var total_dispensed_div = "#dispensed_in_period_" +drug_id;
-					$(total_received_div).attr("value", total_received);
-					$(total_dispensed_div).attr("value", total_dispensed);
-					calculateResupply($(total_dispensed_div));
-					//Once the calculations are done for the whole table, put back the pagination
-
-					if($(".ordered_drugs").length == count) {
-						$('#generate_order').dataTable({
-							"sDom" : "<'row'r>t<'row'<'span5'i><'span7'p>>",
-							"sPaginationType" : "bootstrap",
-							"bSort" : false,
-							'bDestroy' : true
-						});
-
-						//$("#comment_section").css("display","block");
-					}
-				}
-				});
+				getPeriodDrugBalance(count,$(this).attr("drug_id"), start_date, end_date);
 			});
-			
-			getPeriodRegimenPatients(start_date, end_date, function(transaction, results) {
-				//Loop through all the regimen information returned and populate the appropriate fields
-				for(var i = 0; i < results.rows.length; i++) {
-					var row = results.rows.item(i);
-					var total_patients = row['patients'];
-					var total_patients_div = "#patient_numbers_" + row['regimen'];
-					$(total_patients_div).attr("value", total_patients);
-				}
+			getPeriodRegimenPatients(start_date, end_date);
 
-			});
-			getPeriodRegimenMos(start_date, end_date, function(transaction, results) {
-				//Loop through all the regimen information returned and populate the appropriate fields
-				for(var i = 0; i < results.rows.length; i++) {
-					var row = results.rows.item(i);
-					var total_mos = row['total_mos'];
-					var total_mos_div = "#mos_" + row['regimen'];
-					$(total_mos_div).attr("value", total_mos);
-				}
-
-			});
 		});
 		//Validate order before submitting
 		$("#save_changes").live('click', function() {

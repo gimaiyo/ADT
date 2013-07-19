@@ -467,7 +467,7 @@ class User_Management extends MY_Controller {
 		$new_access_log -> access_type = "Logout";
 		$new_access_log -> save();
 		$this -> session -> sess_destroy();
-		if($param="2"){
+		if($param=="2"){
 			delete_cookie("actual_page");
 		}
 		redirect("user_management/login");
