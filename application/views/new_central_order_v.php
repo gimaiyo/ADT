@@ -107,7 +107,6 @@
 			});
 
 			var reporting_period = $("#reporting_period").attr("value");
-			alert(reporting_period)
 			reporting_period = convertDate(reporting_period);
 			var start_date = reporting_period + "-" + $("#period_start_date").attr("value");
 			var end_date = reporting_period + "-" + $("#period_end_date").attr("value");
@@ -115,17 +114,25 @@
 			var p = 0;
 			//Do the calculation to get dispensing data
 			$.each($(".ordered_drugs"), function(i, v) {
+				var base_url="<?php echo base_url();?>"
 				var link = base_url + 'order_management/getPeriodDrugBalance/' + $(this).attr("drug_id") + '/' + start_date + '/' + end_date;
 				$.ajax({
 				url : link,
 				type : 'POST',
-				data:'json'
+				dataType:'json',
 				success : function(data) {
+					var total_received = 0;
+					var total_dispensed =0;
+					var drug_id=0;
+					
+					$.each(data, function(i, jsondata){
+						   total_received=jsondata.total_received;
+						   total_dispensed=jsondata.total_dispensed;
+						   drug_id=jsondata.drug;
+				    });
 					count++;
-					var total_received = data['total_received'];
-					var total_dispensed = data['total_dispensed'];
-					var total_received_div = "#received_in_period_" + data['drug'];
-					var total_dispensed_div = "#dispensed_in_period_" + data['drug'];
+					var total_received_div = "#received_in_period_" +drug_id;
+					var total_dispensed_div = "#dispensed_in_period_" +drug_id;
 					$(total_received_div).attr("value", total_received);
 					$(total_dispensed_div).attr("value", total_dispensed);
 					calculateResupply($(total_dispensed_div));
@@ -142,93 +149,69 @@
 						//$("#comment_section").css("display","block");
 					}
 				}
+				});
 			});
-			/*
-			 getPeriodDrugBalance($(this).attr("drug_id"), start_date, end_date, function(transaction, results) {
-			 count++;
-			 var row = results.rows.item(0);
-			 var total_received = row['total_received'];
-			 var total_dispensed = row['total_dispensed'];
-			 var total_received_div = "#received_in_period_" + row['drug'];
-			 var total_dispensed_div = "#dispensed_in_period_" + row['drug'];
-			 $(total_received_div).attr("value", total_received);
-			 $(total_dispensed_div).attr("value", total_dispensed);
-			 calculateResupply($(total_dispensed_div));
-			 //Once the calculations are done for the whole table, put back the pagination
+			
+			getPeriodRegimenPatients(start_date, end_date, function(transaction, results) {
+				//Loop through all the regimen information returned and populate the appropriate fields
+				for(var i = 0; i < results.rows.length; i++) {
+					var row = results.rows.item(i);
+					var total_patients = row['patients'];
+					var total_patients_div = "#patient_numbers_" + row['regimen'];
+					$(total_patients_div).attr("value", total_patients);
+				}
 
-			 if($(".ordered_drugs").length == count) {
-			 $('#generate_order').dataTable({
-			 "sDom" : "<'row'r>t<'row'<'span5'i><'span7'p>>",
-			 "sPaginationType" : "bootstrap",
-			 "bSort" : false,
-			 'bDestroy' : true
-			 });
+			});
+			getPeriodRegimenMos(start_date, end_date, function(transaction, results) {
+				//Loop through all the regimen information returned and populate the appropriate fields
+				for(var i = 0; i < results.rows.length; i++) {
+					var row = results.rows.item(i);
+					var total_mos = row['total_mos'];
+					var total_mos_div = "#mos_" + row['regimen'];
+					$(total_mos_div).attr("value", total_mos);
+				}
 
-			 //$("#comment_section").css("display","block");
-			 }
-			 });
-			 */
+			});
 		});
-		getPeriodRegimenPatients(start_date, end_date, function(transaction, results) {
-			//Loop through all the regimen information returned and populate the appropriate fields
-			for(var i = 0; i < results.rows.length; i++) {
-				var row = results.rows.item(i);
-				var total_patients = row['patients'];
-				var total_patients_div = "#patient_numbers_" + row['regimen'];
-				$(total_patients_div).attr("value", total_patients);
+		//Validate order before submitting
+		$("#save_changes").live('click', function() {
+			var oTable = $('#generate_order').dataTable({
+				"sDom" : "<'row'r>t<'row'<'span5'i><'span7'p>>",
+				"iDisplayStart" : 4000,
+				"iDisplayLength" : 4000,
+				"sPaginationType" : "bootstrap",
+				"bSort" : false,
+				'bDestroy' : true
+			});
+
+			if($(".label-warning").is(':visible')) {
+				alert("Some drugs have a negative resupply quantity !");
+			} else {
+				$("#fmNewCentral").submit();
 			}
-
-		});
-		getPeriodRegimenMos(start_date, end_date, function(transaction, results) {
-			//Loop through all the regimen information returned and populate the appropriate fields
-			for(var i = 0; i < results.rows.length; i++) {
-				var row = results.rows.item(i);
-				var total_mos = row['total_mos'];
-				var total_mos_div = "#mos_" + row['regimen'];
-				$(total_mos_div).attr("value", total_mos);
-			}
-
-		});
-	});
-	//Validate order before submitting
-	$("#save_changes").live('click', function() {
-		var oTable = $('#generate_order').dataTable({
-			"sDom" : "<'row'r>t<'row'<'span5'i><'span7'p>>",
-			"iDisplayStart" : 4000,
-			"iDisplayLength" : 4000,
-			"sPaginationType" : "bootstrap",
-			"bSort" : false,
-			'bDestroy' : true
 		});
 
-		if($(".label-warning").is(':visible')) {
-			alert("Some drugs have a negative resupply quantity !");
-		} else {
-			$("#fmNewCentral").submit();
-		}
-	});
-
-	$(".pack_size").live('change', function() {
-		calculateResupply($(this));
-	});
-	$(".opening_balance").live('change', function() {
-		calculateResupply($(this));
-	});
-	$(".quantity_received").live('change', function() {
-		calculateResupply($(this));
-	});
-	$(".quantity_dispensed").live('change', function() {
-		calculateResupply($(this));
-	});
-	$(".losses").live('change', function() {
-		calculateResupply($(this));
-	});
-	$(".adjustments").live('change', function() {
-		calculateResupply($(this));
-	});
-	$(".physical_count").live('change', function() {
-		calculateResupply($(this));
-	});
+		$(".pack_size").live('change', function() {
+			calculateResupply($(this));
+		});
+		$(".opening_balance").live('change', function() {
+			calculateResupply($(this));
+		});
+		$(".quantity_received").live('change', function() {
+			calculateResupply($(this));
+		});
+		$(".quantity_dispensed").live('change', function() {
+			calculateResupply($(this));
+		});
+		$(".losses").live('change', function() {
+			calculateResupply($(this));
+		});
+		$(".adjustments").live('change', function() {
+			calculateResupply($(this));
+		});
+		$(".physical_count").live('change', function() {
+			calculateResupply($(this));
+		});
 	});
 	function calculateResupply(element) {
 		var row_element = element.closest("tr");
@@ -283,7 +266,6 @@
 	.ui-datepicker-calendar {
 		display: none;
 	}
-
 </style>
 <div class="full-content" style="background:#9cf;">
 	<div >
@@ -367,7 +349,7 @@ $logged_in_facility = $this -> session -> userdata('facility_id');
 $ordering_facility = $facility_object->id;
 if($logged_in_facility == $ordering_facility){
 						?>
-						<input style="width: auto" name="generate" id="generate" class="btn" value="Get Dispensing Data"  type="button"/>
+						<input type="button" style="width: auto" name="generate" id="generate" class="btn" value="Get Dispensing Data" >
 						<?php }?></td>
 					</tr>
 				</tbody>

@@ -7,7 +7,7 @@ if (!$this -> session -> userdata('user_id')) {
 }
 
 if($this->session->userdata("prev_page")){
-	if($this -> input -> cookie("actual_page")){
+	if($this -> input -> cookie("actual_page") and $this -> input -> cookie("actual_page")!=""){
 		$this->session->unset_userdata("prev_page");
 		redirect($this -> input -> cookie("actual_page"));
 	}
@@ -18,22 +18,27 @@ if (!isset($link)) {
 }
 $actual_page = $this -> uri -> segment(1);
 
-if ($this -> uri -> segment(2)) {
+if ($this -> uri -> segment(2)!="") {
 	$actual_page .= "/" . $this -> uri -> segment(2);
 }
-if ($this -> uri -> segment(3)) {
+if ($this -> uri -> segment(3)!="") {
 	$actual_page .= "/" . $this -> uri -> segment(3);
+	
 }
-if ($this -> uri -> segment(4)) {
+if ($this -> uri -> segment(4)!="") {
 	$actual_page .= "/" . $this -> uri -> segment(4);
 }
-if ($this -> uri -> segment(5)) {
+if ($this -> uri -> segment(5)!="") {
 	$actual_page .= "/" . $this -> uri -> segment(5);
 }
-if ($this -> uri -> segment(6)) {
+if ($this -> uri -> segment(6)!="") {
 	$actual_page .= "/" . $this -> uri -> segment(6);
 }
+if ($this -> uri -> segment(7)!="") {
+	$actual_page .= "/" . $this -> uri -> segment(7);
+}
 $this -> input -> set_cookie("actual_page", $actual_page, 3600);
+
 //setcookie("actual_page",$actual_page,3600);
 
 $access_level = $this -> session -> userdata('user_indicator');
@@ -208,7 +213,7 @@ if($menus){
 	</ul>
 </div>
 <div class="welcome_msg">
-	<span>Welcome <b style="font-weight: bolder;font-size: 20px;"><?php echo $this -> session -> userdata('full_name'); ?></b>. <a href="<?php echo base_url().'user_management/logout' ?>">Logout</a></span>
+	<span>Welcome <b style="font-weight: bolder;font-size: 20px;"><?php echo $this -> session -> userdata('full_name'); ?></b>. <a id="logout_btn" href="<?php echo base_url().'user_management/logout/2' ?>">Logout</a></span>
 	<br>
 	<span class="date"><?php echo date('l, jS \of F Y') ?></span>
 </div>
@@ -383,7 +388,6 @@ if(isset($reports)|| isset($report_title)){
  		<?php $this->load->view('footer_v');?>
  	</div>
  </div> 
- <script></script>  
 </body>
 
 </html>
