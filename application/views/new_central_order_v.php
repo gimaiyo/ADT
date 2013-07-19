@@ -116,6 +116,7 @@
 			reporting_period=convertDate(reporting_period);
 			var start_date =reporting_period+"-"+ $("#period_start_date").attr("value");
 			var end_date =reporting_period+"-"+ $("#period_end_date").attr("value");
+			alert(start_date)
 			var count=0;
 			var p=0;
 			//Do the calculation to get dispensing data
@@ -346,7 +347,8 @@
 						$ordering_facility = $facility_object->id;
 						if($logged_in_facility == $ordering_facility){
 						?>
-                        <input style="width: auto" name="generate" id="generate" class="btn" value="Get Dispensing Data" >						<?php }?>
+                        <input type="button" style="width: auto" name="generate" id="generate" class="btn" value="Get Dispensing Data" >						
+                        <?php }?>
 					</td>
 				</tr>
 			</tbody>

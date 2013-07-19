@@ -689,6 +689,10 @@ class Order_Management extends MY_Controller {
 		$data['regimen_categories'] = Regimen_Category::getAll();
 		$this -> base_params($data);
 	}
+	public function getPeriodDrugBalance($drug, $start_date, $end_date) {
+		$sql = "select case when 1=1 then '" .$drug. "' end as drug,stock_in.*,sum(p.quantity) as total_dispensed from (select sum(ds.quantity) as total_received from drug_stock_movement ds left join transaction_type t on ds.transaction_type = t.id where drug = '" .$drug. "' and t.effect = '1' and transaction_date between '".$start_date."' and '".$end_date."' stock_in left join patient_visit p on p.drug_id = '" .$drug."' and dispensing_date between '".$start_date. "' and '".$end_date."')";
+		echo $sql;
+	}
 
 }
 ?>
