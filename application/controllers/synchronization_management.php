@@ -13,7 +13,9 @@ class Synchronization_Management extends MY_Controller {
 
 	public function synchronize_orders() {
 		$mainstrSQl = "";
-		$table_lists = array("facility_order", "cdrr_item", "maps_item", "order_comment");
+		//$table_lists = array("facility_order", "cdrr_item", "maps_item", "order_comment");
+		$table_lists = array("order_comment");
+
 		foreach ($table_lists as $table_list) {
 			$strSQl = "";
 			$table_name = $table_list;
@@ -24,23 +26,23 @@ class Synchronization_Management extends MY_Controller {
 				foreach ($results as $val => $value_array) {
 					$fields = "";
 					$values = "";
-					$temp_val="";
+					$temp_val = "";
 					$strSQl .= "INSERT INTO $table_list (";
 					foreach ($value_array as $col => $value) {
-                        $temp_val.=",".$col."="."'".$value."'";
+						$temp_val .= "," . $col . "=" . "'" .trim($value). "'";
 						$fields .= "," . $col;
-						$values .= "," . $value;
+						$values .= ",'" .trim($value)."'";
 					}
 					$fields = substr($fields, 1);
 					$values = substr($values, 1);
 					$temp_val = substr($temp_val, 1);
-					$strSQl .= $fields . ")VALUES(" . $values . ") ON DUPLICATE KEY UPDATE $temp_val ;<br/>";
+					$strSQl .= $fields . ")VALUES(" . $values . ") ON DUPLICATE KEY UPDATE $temp_val ;";
 				}
 			}
 			$mainstrSQl .= $strSQl;
 		}
-		 echo $mainstrSQl;
-		 
+		echo $mainstrSQl;
+
 	}
 
 	public function base_params($data) {

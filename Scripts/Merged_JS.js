@@ -20,7 +20,11 @@ $(document).ready(function() {
 		"bProcessing" : true,
 		"bServerSide" : false,
 	});
-	syncOrders();
+	//syncOrders();
+	$(".genorder").click(function(){
+		syncOrders();
+	});
+	
 	/*
 	 * Sysnchronization of Orders
 	 */
