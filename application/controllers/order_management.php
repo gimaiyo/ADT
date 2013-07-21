@@ -205,7 +205,7 @@ class Order_Management extends MY_Controller {
 		$items_per_page = 10;
 		$number_of_orders = Facility_Order::getTotalFacilityNumber($status, $facility);
 		$orders = Facility_Order::getPagedFacilityOrders($offset, $items_per_page, $status, $facility);
-		
+
 		if ($number_of_orders > $items_per_page) {
 			$config['base_url'] = base_url() . "order_management/submitted_orders/" . $status . "/";
 			$config['total_rows'] = $number_of_orders;
@@ -260,13 +260,13 @@ class Order_Management extends MY_Controller {
 
 	public function new_central_order($type_order = 1) {
 		$data = array();
-		
+
 		$facility = $this -> session -> userdata('facility_id');
 		$facility_code = $this -> session -> userdata('facility');
 
 		//If order is an aggregated one
 		if ($type_order == 1) {
-			
+
 			$data['page_title'] = 'New Aggregated Facility Report';
 			if ($this -> input -> post("btn_period_select_proceed")) {
 				$data['page_title_1'] = 'Satelitte Orders';
@@ -295,7 +295,7 @@ class Order_Management extends MY_Controller {
 					return;
 				}
 			} else {
-				
+
 				$data['facility_object'] = Facilities::getFacility($facility);
 				$data['content_view'] = "central_facility_selection_v";
 				$data['banner_text'] = "Select Reporting Period";
@@ -306,7 +306,7 @@ class Order_Management extends MY_Controller {
 		}
 		//If order is a central one
 		else {
-			
+
 			$data['page_title'] = 'New Central Facility Report';
 			$data['order_details_page'] = "new_central_order";
 			$data['content_view'] = "new_central_order_v";
@@ -334,12 +334,12 @@ class Order_Management extends MY_Controller {
 		$central_facility = $this -> session -> userdata('facility');
 		$facility_id = $this -> input -> post("satellite_facility");
 		$parent = Facilities::getParent($central_facility);
-		
+
 		//Satellite order
 		if ($parent -> parent == $central_facility) {
-			
+
 			if ($facility_id < 1) {
-				
+
 				$data['content_view'] = "facility_selection_v";
 				$data['banner_text'] = "Select Satelitte Facility";
 				$data['facilities'] = Facilities::getSatellites($central_facility);
@@ -362,7 +362,7 @@ class Order_Management extends MY_Controller {
 			$this -> base_params($data);
 			return;
 		} else {
-			
+
 			$data = array();
 			$data['order_details_page'] = "new_satellite_order";
 			$facility_id = $this -> session -> userdata('facility');
@@ -689,9 +689,19 @@ class Order_Management extends MY_Controller {
 		$data['regimen_categories'] = Regimen_Category::getAll();
 		$this -> base_params($data);
 	}
-	public function getPeriodDrugBalance($drug, $start_date, $end_date) {
-		$sql = "select case when 1=1 then '" .$drug. "' end as drug,stock_in.*,sum(p.quantity) as total_dispensed from (select sum(ds.quantity) as total_received from drug_stock_movement ds left join transaction_type t on ds.transaction_type = t.id where drug = '" .$drug. "' and t.effect = '1' and transaction_date between '".$start_date."' and '".$end_date."' stock_in left join patient_visit p on p.drug_id = '" .$drug."' and dispensing_date between '".$start_date. "' and '".$end_date."')";
-		echo $sql;
+
+	public function getPeriodDrugBalance($drug, $from, $to) {
+		$sql = "select case when 1=1 then '$drug' end as drug,stock_in.*,sum(p.quantity) as total_dispensed from (select sum(ds.quantity) as total_received from drug_stock_movement ds left join transaction_type t on ds.transaction_type = t.id where drug = '$drug' and t.effect = '1' and transaction_date between '$from' and '$to') stock_in left join patient_visit p on p.drug_id = '$drug' and dispensing_date between '$from' and '$to'";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		echo json_encode($results);
+	}
+
+	public function getPeriodRegimenPatients($from, $to) {
+		$sql = "SELECT regimen, COUNT( DISTINCT patient_id ) AS patients FROM patient_visit WHERE dispensing_date BETWEEN  '$from' AND  '$to' GROUP BY regimen";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		echo json_encode($results);
 	}
 
 }
