@@ -124,13 +124,7 @@ if (isset($styles)) {
 			$this -> session -> set_userdata("linkTitle","Users Management");
 		 	?>
 		 });
-		 $("#logout_btn").click(function(event){
-		 	event.preventDefault();
-		 	<?php
-		 	//$this -> input -> set_cookie("actual_page", "",60);
-		 	?>
-		 	window.location='<?php echo base_url()."user_management/logout"?>';
-		 });
+		
 	  });
 </script>
 <?php 
@@ -220,7 +214,7 @@ if($menus){
 	</ul>
 </div>
 <div class="welcome_msg">
-	<span>Welcome <b style="font-weight: bolder;font-size: 20px;"><?php echo $this -> session -> userdata('full_name'); ?></b>. <a id="logout_btn" href="<?php echo base_url().'user_management/logout' ?>">Logout</a></span>
+	<span>Welcome <b style="font-weight: bolder;font-size: 20px;"><?php echo $this -> session -> userdata('full_name'); ?></b>. <a id="logout_btn" href="<?php echo base_url().'user_management/logout/2' ?>">Logout</a></span>
 	<br>
 	<span class="date"><?php echo date('l, jS \of F Y') ?></span>
 </div>
