@@ -6,7 +6,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title><?php echo $title;?></title>
-		<link rel="SHORTCUT ICON" href="<?php echo base_url() . 'Images/favicon.ico';?>">
+		<link rel="SHORTCUT ICON" href="<?php echo asset_url() . 'Images/favicon.ico';?>">
 		<?php
 
 		$this -> load -> view('sections/head');
@@ -15,7 +15,7 @@
 	</head>
 	<body>
 		<header>
-			<img src='<?php echo base_url();?>Images/nascop.jpg'>
+			<img src='<?php echo asset_url();?>Images/nascop.jpg'>
 		</header>
 		        <script>
 					$(document).ready(function(){

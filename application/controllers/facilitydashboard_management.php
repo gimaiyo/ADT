@@ -313,6 +313,10 @@ class Facilitydashboard_Management extends MY_Controller {
 
 	//Get patients enrolled
 	public function getPatientEnrolled($startdate = "", $enddate = "") {
+		$maleAdult= array();
+			$femaleAdult= array();
+			$maleChild = array();
+			$femaleChild=array();
 		$facility_code = $this -> session -> userdata('facility');
 		$timestamp = time();
 		$edate = date('Y-m-d', $timestamp);
@@ -432,12 +436,8 @@ class Facilitydashboard_Management extends MY_Controller {
 			}
 
 		}
-		$resultArraySize = 5;
+		$resultArraySize = 6;
 		$categories = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
-		$maleAdult[] = 0;
-		$femaleAdult[] = 0;
-		$maleChild[] = 0;
-		$femaleChild[] = 0;
 		foreach ($patients_array as $key => $value) {
 			$maleAdult[] = (int)$value['total_male_adult'];
 			$femaleAdult[] = (int)$value['total_female_adult'];

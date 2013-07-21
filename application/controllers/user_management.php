@@ -4,9 +4,9 @@ if (!defined('BASEPATH'))
 class User_Management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
-		$this->session->set_userdata("link_id","index");
-		$this->session->set_userdata("linkSub","user_management");
-		$this->session->set_userdata("linkTitle","Users Management");
+		$this -> session -> set_userdata("link_id", "index");
+		$this -> session -> set_userdata("linkSub", "user_management");
+		$this -> session -> set_userdata("linkTitle", "Users Management");
 		$this -> load -> library('encrypt');
 		$this -> load -> helper('geoiploc');
 		ini_set("SMTP", 'ssl://smtp.googlemail.com');
@@ -20,6 +20,7 @@ class User_Management extends MY_Controller {
 
 	public function login() {
 		$data = array();
+		
 		$data['title'] = "webADT | System Login";
 		$this -> load -> view("login_v", $data);
 	}
@@ -92,7 +93,8 @@ class User_Management extends MY_Controller {
 			$this -> table -> add_row($user['id'], $user['Name'], $user['Username'], $user['Email_Address'], $user['Phone_Number'], $level_access, $user['Creator'], $links);
 		}
 
-		$data['users'] = $this -> table -> generate(); ;
+		$data['users'] = $this -> table -> generate();
+		;
 		$data['user_types'] = $user_types;
 		$data['facilities'] = $facilities;
 		$data['title'] = "System Users";
@@ -303,7 +305,7 @@ class User_Management extends MY_Controller {
 					//$session_data = array('user_id' => $logged_in -> id, 'user_indicator' => $logged_in -> Access -> Indicator, 'facility_name' => $logged_in -> Facility -> name, 'access_level' => $logged_in -> Access_Level, 'username' => $logged_in -> Username, 'full_name' => $logged_in -> Name, 'Email_Address' => $logged_in -> Email_Address, 'Phone_Number' => $logged_in -> Phone_Number, 'facility' => $logged_in -> Facility_Code, 'facility_id' => $facility_details[0]['id'], 'county' => $facility_details[0]['county']);
 					//$this -> session -> set_userdata($session_data);
 					//$this -> activation_view();
-					
+
 				}
 				//looks good. Continue!
 				else {
@@ -332,9 +334,8 @@ class User_Management extends MY_Controller {
 					$new_access_log -> access_type = "Login";
 					$new_access_log -> save();
 					//Set session to redirect the page to the previous page before logged out
-					$this->session->set_userdata("prev_page","1");
+					$this -> session -> set_userdata("prev_page", "1");
 					redirect("home_controller/home");
-					
 
 				}
 
@@ -372,7 +373,7 @@ class User_Management extends MY_Controller {
 		$user -> Name = $this -> input -> post('fullname');
 		$user -> Username = $this -> input -> post('username');
 		$key = $this -> encrypt -> get_key();
-		$password="md5(123456)";
+		$password = "md5(123456)";
 		$encrypted_password = $key . $password;
 		$user -> Password = $encrypted_password;
 		$user -> Access_Level = $this -> input -> post('access_level');
@@ -466,8 +467,7 @@ class User_Management extends MY_Controller {
 		$new_access_log -> facility_code = $this -> session -> userdata('facility');
 		$new_access_log -> access_type = "Logout";
 		$new_access_log -> save();
-		$this -> session -> sess_destroy();
-		if($param==2){
+		$this -> session -> sess_destroy();if($param==2){
 			delete_cookie('actual_page');
 		}
 		redirect("user_management/login");
@@ -538,6 +538,7 @@ class User_Management extends MY_Controller {
 		}
 
 	}
+
 	public function resetPassword($data = "") {
 
 		$data['title'] = "Reset password";
