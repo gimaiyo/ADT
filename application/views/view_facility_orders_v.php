@@ -173,37 +173,36 @@
 	
 </div>
 
+<!-- Modal to select a satellite facility -->
 <div id="select_satellite" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<form action="<?php echo base_url().'order_management/new_satellite_order'?>" method="post" style="margin:0 auto;">
+	<form id="fmFillOrderForm" action="<?php echo base_url().'order_management/new_satellite_order'?>" method="post" style="margin:0 auto;">
 		<div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 		    <h3 id="myModalLabel">Satellite facilities</h3>
 		</div>
 		<div class="modal-body">
 			<table  cellpadding="5">
-					<th>
-					<label> <strong class="label" style="text-align:justify;">Select Satellite Facility</strong>	
-					</th>
-					<tr>
-						<td colspan='2'>
-								<select name="satellite_facility" style="width:250px;height:35px;">
-						<option value="0">--Select Facility--</option>
-						<?php 
+				<tr>
+					<td><span id="msg_fill_order" class='message error'></span></td>
+				</tr>
+				<tr>
+					<td colspan='2'>
+						<select id="satellite_facility" name="satellite_facility" style="width:250px;height:35px;">
+								<option value="0">--Select Facility--</option>
+							<?php 
 							foreach($facilities as $facility){?>
 								<option value="<?php echo $facility['facilitycode'];?>"><?php echo $facility['name'];?></option>
-							<?php }
-						?>
-					</select> 
-						</td>
-						</tr>
-						
+							<?php }?>
+						</select> 
+					</td>
+				</tr>	
 			</table>
 			
 			
 		</div>
 		<div class="modal-footer">
 		    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-		    <input type="submit" class="btn btn-primary" name="proceed" id="proceed" value="Fill Order Form">
+		    <input type="button" class="btn btn-primary" name="proceed" id="proceed" value="Fill Order Form">
 		    <a href="#"><input type="button" class="btn btn-primary" id="upload_excel_btn" value="Upload Excel"></a>
 		</div>
 		
@@ -211,17 +210,31 @@
 	<div id="excel_upload" style="text-align:center;display: none">
 		<form name="frm" method="post" enctype="multipart/form-data" id="frm" action="<?php echo base_url()."fcdrr_management/data_upload"?>">
 		<p>
-					<input type="file"  name="file" size="30"  required="required" />
-					<input name="btn_save" class="btn" type="submit"  value="Save"  style="width:80px; height:30px;"/>
+			<input type="file"  name="file" size="30"  required="required" />
+			<input name="btn_save" class="btn" type="submit"  value="Save"  style="width:80px; height:30px;"/>
 		</p>		
 		</form>	
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function(){
+			$("#msg_fill_order").css("display","none");
 			$("#upload_excel_btn").click(function(){
 				$("#excel_upload").toggle();
+			});
+			//Validate before submitting
+			$("#proceed").click(function(){
+				if($("#satellite_facility").val()==0){
+					$("#msg_fill_order").fadeIn("slow");
+					$("#msg_fill_order").html("Please select a facility !");
+				}
+				//If everything is ok,submit the form
+				else{
+					$("#msg_fill_order").fadeOut("slow");
+					$("#msg_fill_order").html("");
+					$("#fmFillOrderForm").submit();
+				}
 			});
 		})
 	</script>
 </div>
-
+<!-- Modal to select a satellite facility end -->

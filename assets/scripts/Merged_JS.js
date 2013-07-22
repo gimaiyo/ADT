@@ -314,14 +314,12 @@ function getPeriodDrugBalance(count,drug, start_date, end_date) {
 				total_dispensed = jsondata.total_dispensed;
 				drug_id = jsondata.drug;
 			});
-			count++;
 			var total_received_div = "#received_in_period_" + drug_id;
 			var total_dispensed_div = "#dispensed_in_period_" + drug_id;
 			$(total_received_div).attr("value", total_received);
 			$(total_dispensed_div).attr("value", total_dispensed);
 			calculateResupply($(total_dispensed_div));
 			//Once the calculations are done for the whole table, put back the pagination
-
 			if($(".ordered_drugs").length == count) {
 				$('#generate_order').dataTable({
 					"sDom" : "<'row'r>t<'row'<'span5'i><'span7'p>>",
@@ -330,6 +328,7 @@ function getPeriodDrugBalance(count,drug, start_date, end_date) {
 					'bDestroy' : true
 				});
 			}
+			
 		}
 	});
 }
@@ -354,4 +353,5 @@ function getPeriodRegimenPatients(start_date, end_date) {
 			});
 		}
 	});
+	
 }

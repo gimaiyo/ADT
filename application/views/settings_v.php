@@ -282,6 +282,6 @@
 		</ul>
 	</div>
 	<div class="settings well"></div>
-	<div id="loadingDiv" style="display: none"><img style="width: 30px" src="<?php echo base_url().'Images/loading_spin.gif' ?>"</div>
+	<div id="loadingDiv" style="display: none"><img style="width: 30px" src="<?php echo asset_url().'images/loading_spin.gif' ?>"</div>
 </div>
 </div>

@@ -18,6 +18,7 @@ if($resultArraySize>20){
 if($resultArraySize>25){
 	$chartSize='2100';
 }
+
 ?>
 
 <script>

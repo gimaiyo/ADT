@@ -1,9 +1,9 @@
 <?php
 $chartSize=0;
-if($resultArraySize<=5){
+if($resultArraySize<=6){
 	$chartSize='300';
 }
-if($resultArraySize>5){
+if($resultArraySize>6){
 	$chartSize='600';
 }
 if($resultArraySize>10){

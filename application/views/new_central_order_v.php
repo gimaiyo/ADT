@@ -95,6 +95,10 @@
 		}
 
 		$("#generate").click(function() {
+			if($("#reporting_period").val()==""){
+				alert("Please select a reporting period !")
+				return;
+			}
 			//When get dispensing button is clicked, remove pagination
 			//$("#comment_section").css("display","none");
 			var oTable = $('#generate_order').dataTable({
@@ -105,7 +109,6 @@
 				"bSort" : false,
 				'bDestroy' : true
 			});
-
 			var reporting_period = $("#reporting_period").attr("value");
 			reporting_period = convertDate(reporting_period);
 			var start_date = reporting_period + "-" + $("#period_start_date").attr("value");
@@ -114,13 +117,16 @@
 			var count = 0;
 			//Do the calculation to get dispensing data
 			$.each($(".ordered_drugs"), function(i, v) {
+				count++;
 				getPeriodDrugBalance(count,$(this).attr("drug_id"), start_date, end_date);
+				
 			});
 			getPeriodRegimenPatients(start_date, end_date);
 
 		});
 		//Validate order before submitting
 		$("#save_changes").live('click', function() {
+			
 			var oTable = $('#generate_order').dataTable({
 				"sDom" : "<'row'r>t<'row'<'span5'i><'span7'p>>",
 				"iDisplayStart" : 4000,
@@ -134,6 +140,18 @@
 				alert("Some drugs have a negative resupply quantity !");
 			} else {
 				$("#fmNewCentral").submit();
+			}
+		});
+		//Check for errors when user changing resupply manually
+		$(".resupply").live('change',function(){
+			var row_element = $(this).closest("tr");
+			var resupply=($(this).val());
+			row_element.find('.label-warning').remove();
+			if(resupply < 0) {
+				row_element.find('.col_drug').append("<span class='label label-warning' style='display:block'>Warning! Resupply qty cannot be negative</<span>");
+				row_element.find(".resupply").css("background-color", "#f89406");
+			} else {
+				row_element.find(".resupply").css("background-color", "#fff");
 			}
 		});
 

@@ -17,6 +17,16 @@
 </script>
 
 <div class="full-content" style="background:#9CF">
+	<div >
+		<ul class="breadcrumb">
+			<li>
+				<a href="<?php echo site_url().'order_management' ?>">Orders</a><span class="divider">/</span>
+			</li>
+			<li class="active" id="actual_page">
+				Details for Order No <?php echo $order_no;?>
+			</li>
+		</ul>
+	</div>
 <div class="facility_info">
 	<table class="table table-bordered table-striped" style="margin:auto">
 		<tbody>
@@ -100,7 +110,7 @@
 	</thead>';
 	?>
 <div id="commodity-table">
-	<table class="table table-bordered table_order_details ">
+	<table class="table table-bordered table_order_details dataTable">
 		<?php echo $header_text;?>
 		<tbody>
 			<?php

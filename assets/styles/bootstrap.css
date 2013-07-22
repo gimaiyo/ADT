@@ -1,5 +1,5 @@
 /*!
- * Bootstrap v2.3.1
+ * Bootstrap v2.3.2
  *
  * Copyright 2012 Twitter, Inc
  * Licensed under the Apache License v2.0
@@ -223,7 +223,6 @@ textarea {
 
 body {
   margin: 0;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 20px;
   color: #333333;
@@ -1091,7 +1090,7 @@ input[type="tel"],
 input[type="color"],
 .uneditable-input {
   display: inline-block;
-  /*height: 20px;*/
+  height: 20px;
   padding: 4px 6px;
   margin-bottom: 10px;
   font-size: 14px;
@@ -2140,7 +2139,7 @@ table {
 
 .table-striped tbody > tr:nth-child(odd) > td,
 .table-striped tbody > tr:nth-child(odd) > th {
-  background-color: #f9f9f9;
+  background-color: #ccc;
 }
 
 .table-hover tbody tr:hover > td,
@@ -2282,7 +2281,7 @@ table th[class*="span"],
   *margin-right: .3em;
   line-height: 14px;
   vertical-align: text-top;
-  background-image: url("../img/glyphicons-halflings.png");
+  background-image: url("../images/glyphicons-halflings.png");
   background-position: 14px 14px;
   background-repeat: no-repeat;
 }
@@ -2306,7 +2305,7 @@ table th[class*="span"],
 .dropdown-submenu:focus > a > [class^="icon-"],
 .dropdown-submenu:hover > a > [class*=" icon-"],
 .dropdown-submenu:focus > a > [class*=" icon-"] {
-  background-image: url("../img/glyphicons-halflings-white.png");
+  background-image: url("../images/glyphicons-halflings-white.png");
 }
 
 .icon-glass {
@@ -3007,6 +3006,15 @@ table th[class*="span"],
 
 .open > .dropdown-menu {
   display: block;
+}
+
+.dropdown-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 990;
 }
 
 .pull-right > .dropdown-menu {
@@ -3964,7 +3972,7 @@ input[type="submit"].btn.btn-mini {
 .nav-header {
   display: block;
   padding: 3px 15px;
-  font-size: 11px;
+  font-size: 20px;
   font-weight: bold;
   line-height: 20px;
   color: #999999;
@@ -5622,8 +5630,7 @@ a.thumbnail:focus {
 .label,
 .badge {
   display: inline-block;
-  padding: 2px 4px;
-  font-size: 11.844px;
+  
   font-weight: bold;
   line-height: 14px;
   color: #ffffff;
@@ -5640,8 +5647,8 @@ a.thumbnail:focus {
 }
 
 .badge {
-  padding-right: 9px;
-  padding-left: 9px;
+  padding: 1% 2% 1% 2%;
+  font-size: 0.9em;
   -webkit-border-radius: 9px;
      -moz-border-radius: 9px;
           border-radius: 9px;

@@ -65,6 +65,23 @@ if ( ! function_exists('set_realpath'))
 
 		return $path;
 	}
+	
+/**
+ * Get asset URL
+ *
+ * @access  public
+ * @return  string
+ */
+if (!function_exists('asset_url'))
+{  
+    function asset_url()
+    {
+        //get an instance of CI so we can access our configuration
+        $CI =& get_instance();  
+        //return the full asset path
+        return base_url() . $CI->config->item('asset_path');
+    }
+}
 }
 
 
