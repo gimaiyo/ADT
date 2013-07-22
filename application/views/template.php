@@ -6,13 +6,6 @@ if (!$this -> session -> userdata('user_id')) {
 	redirect("User_Management/login");
 }
 
-if($this->session->userdata("prev_page")){
-	if($this -> input -> cookie("actual_page") and $this -> input -> cookie("actual_page")!=""){
-		$this->session->unset_userdata("prev_page");
-		redirect($this -> input -> cookie("actual_page"));
-	}
-}
-
 if (!isset($link)) {
 	$link = null;
 }
@@ -38,6 +31,17 @@ if ($this -> uri -> segment(7)!="") {
 	$actual_page .= "/" . $this -> uri -> segment(7);
 }
 $this -> input -> set_cookie("actual_page", $actual_page, 3600);
+
+//
+if($this->session->userdata("prev_page")){
+	echo $this -> input -> cookie("actual_page");
+	if($this -> input -> cookie("actual_page") and $this -> input -> cookie("actual_page")!=""){
+		$actual_page=$this -> input -> cookie("actual_page");	
+		$this->session->unset_userdata("prev_page");
+		redirect($actual_page);
+		die();
+	}
+}
 
 //setcookie("actual_page",$actual_page,3600);
 
