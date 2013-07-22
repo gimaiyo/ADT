@@ -653,7 +653,7 @@ ORDER BY p.patient_number_ccc ASC";
 	public function getSixMonthsDispensing($patient_no) {
 		$facility = $this -> session -> userdata("facility");
 		$dyn_table = "";
-		$sql = "select * from patient_visit pv left join drugcode d on d.id=pv.drug_id left join dose ds on ds.Name=pv.dose where patient_id = '$patient_no' and datediff(curdate(),dispensing_date)<=180 and datediff(curdate(),dispensing_date)>0 and pv.facility='$facility' order by pv.dispensing_date desc";
+		$sql = "select * from patient_visit pv left join drugcode d on d.id=pv.drug_id left join dose ds on ds.Name=pv.dose where patient_id = '$patient_no' and datediff(curdate(),dispensing_date)<=180 and datediff(curdate(),dispensing_date)>0 and pv.facility='$facility' and pv.active='1' order by pv.dispensing_date desc";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
@@ -727,11 +727,13 @@ ORDER BY p.patient_number_ccc ASC";
 					$mysql="select dispensing_date,DATEDIFF(dispensing_date,'".@$result['appointment']."')as days from patient_visit where patient_id='$patient_no' and dispensing_date>'".@$result['appointment']."' and facility='$facility' ORDER BY dispensing_date asc LIMIT 1";
 					$myquery = $this -> db -> query($mysql);
 		            $myresults = $myquery -> result_array();
+		            $result['dispensing_date']=date('Y-m-d');
 					if($myresults){
+						$result['dispensing_date']=$myresults[0]['dispensing_date'];
 						$result['Days_To']=$myresults[0]['days'];
 					}	
 					$result['Days_To']=str_replace("-","", $result['Days_To']);
-					$status="<td align='center'> Late By " .$result['Days_To']. " Days (".date('d-M-Y',strtotime($myresults[0]['dispensing_date'])).")</td>";
+					$status="<td align='center'> Late By " .$result['Days_To']. " Days (".date('d-M-Y',strtotime($result['dispensing_date'])).")</td>";
 				}else{
 					$status="<td align='center' class='green'>".$result['Days_To']. "</td>";
 				}			

@@ -136,7 +136,7 @@ if (isset($error)) {
 </form>
 
 <p>
-	<span><a href="<?php echo 'user_management/login' ?>" class='btn'> Go to login</a></span>
+	<span><a href="<?php echo base_url().'user_management/login' ?>" class='btn'> Go to login</a></span>
 </p>
 
 </div>

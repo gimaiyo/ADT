@@ -31,6 +31,7 @@ class Patient_Visit extends Doctrine_Record {
 		$this -> hasColumn('Merged_From', 'varchar', 50);
 		$this -> hasColumn('Regimen_Merged_From', 'varchar', 20);
 		$this -> hasColumn('Last_Regimen_Merged_From', 'varchar', 20);
+		$this -> hasColumn('Active', 'int', 5);
 		
 	}
 
