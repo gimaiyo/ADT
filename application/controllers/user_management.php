@@ -456,8 +456,7 @@ class User_Management extends MY_Controller {
 		$this -> session -> set_userdata('msg_error', $name . ' was disabled!');
 		redirect('settings_management');
 	}
-
-	public function logout() {
+	public function logout($param="1") {
 		$machine_code = $this -> session -> userdata("machine_code_id");
 		$new_access_log = new Access_Log();
 		$new_access_log -> machine_code = $machine_code;
@@ -468,7 +467,10 @@ class User_Management extends MY_Controller {
 		$new_access_log -> access_type = "Logout";
 		$new_access_log -> save();
 		$this -> session -> sess_destroy();
-		redirect("system_management");
+		if($param=="2"){
+			delete_cookie("actual_page");
+		}
+		redirect("user_management/login");
 	}
 
 	public function getIPLocation() {

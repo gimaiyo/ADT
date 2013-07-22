@@ -59,9 +59,9 @@ class Migration_Management extends MY_Controller {
 		} else if ($targetname == 'patient_source') {
 			$sql .= "INSERT IGNORE INTO patient_source(id,name,active)SELECT sourceid,sourceofclient,'1' FROM tblsourceofclient WHERE sourceofclient is not null $appendsql;";
 		} else if ($targetname == 'transaction_type') {
-			$sql = "INSERT IGNORE INTO transaction_type(id,name,`desc`,active)SELECT transactiontype,transactiondescription,reporttitle,'1' FROM tblstocktransactiontype $appendsql;";
+			$sql = "INSERT IGNORE INTO transaction_type(id,name,`desc`,active)SELECT transactiontype,transactiondescription,reporttitle,'0' FROM tblstocktransactiontype $appendsql;";
 			$this -> db -> query($sql);
-			$sql = "update `transaction_type` set effect='1' WHERE name like '%dispense%' or name like '%issue%'";
+			$sql = "update `transaction_type` set effect='1' WHERE name like '%Starting%' or name like '%+%' or name like '%Forward%' or name like '%Received%'";
 		} else if ($targetname == 'visit_purpose') {
 			$sql .= "INSERT IGNORE INTO visit_purpose(id,name,active) SELECT transactioncode,visittranname,'1'  FROM tblvisittransaction $appendsql;";
 		} else if ($targetname == 'patient_new') {
