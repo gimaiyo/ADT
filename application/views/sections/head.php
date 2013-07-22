@@ -7,6 +7,7 @@
 <?php //echo $this->session->userdata('assets'); ?>
 <link rel="stylesheet" href="<?php echo asset_url() . 'styles/amcharts/style.css';?>" type="text/css">
 <!-- Bootstrap -->
+<link href="<?php echo asset_url().'styles/bootstrap.css'?>" rel="stylesheet" media="all">
 <link href="<?php echo asset_url().'styles/bootstrap.min.css'?>" rel="stylesheet" media="all">
 <link href="<?php echo asset_url().'styles/bootstrap-responsive.min.css'?>" rel="stylesheet" media="all">
 <!-- Datatables -->
