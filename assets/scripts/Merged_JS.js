@@ -20,7 +20,7 @@ $(document).ready(function() {
 		"bProcessing" : true,
 		"bServerSide" : false,
 	});
-	//syncOrders("13050");
+	syncOrders("13050");
 	/*
 	 * Reports generation
 	 */
@@ -338,33 +338,21 @@ function syncOrders(facility) {
 		url : link,
 		type : 'POST',
 		success : function(data) {
-			if(data != '') {
-				link = base_url + "/ADT/synchronization_management/uploadSQL";
-				$.ajax({
-					url : link,
-					type : 'POST',
-					data : {
-						"sql" : data
-					},
-					success : function(data) {
-
-					}
-				});
-			}
-			link = base_url + "/ADT/synchronization_management/synchronize_orders";
+			link = base_url + "/ADT/synchronization_management/uploadSQL";
 			$.ajax({
 				url : link,
 				type : 'POST',
+				data : {
+					"sql" : data
+				},
 				success : function(data) {
-					link = "http://localhost/NASCOP/synchronization_management/getSQL/" + facility;
+					alert("Download Complete!")
+					link = base_url + "/ADT/synchronization_management/synchronize_orders";
 					$.ajax({
 						url : link,
 						type : 'POST',
-						data : {
-							"sql" : data
-						},
 						success : function(data) {
-							link = base_url + "/ADT/synchronization_management/uploadSQL";
+							link = "http://localhost/NASCOP/synchronization_management/getSQL/" + facility;
 							$.ajax({
 								url : link,
 								type : 'POST',
@@ -372,13 +360,25 @@ function syncOrders(facility) {
 									"sql" : data
 								},
 								success : function(data) {
-									alert("Successful Order Synchronization");
+									link = base_url + "/ADT/synchronization_management/uploadSQL";
+									$.ajax({
+										url : link,
+										type : 'POST',
+										data : {
+											"sql" : data
+										},
+										success : function(data) {
+											alert("Successful Order Synchronization");
+										}
+									});
 								}
 							});
 						}
 					});
+
 				}
 			});
+
 		}
 	});
 

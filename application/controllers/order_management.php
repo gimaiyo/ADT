@@ -471,9 +471,10 @@ class Order_Management extends MY_Controller {
 		$order_object -> Sponsors = $sponsors;
 		$order_object -> Facility_Id = $facility;
 		$order_object -> Central_Facility = $central_facility;
+		$unique_id = md5($order_object -> id . $facility);
+		$order_object -> Unique_Id = $unique_id;
 		$order_object -> save();
 		$order_id = $order_object -> id;
-
 		if (isset($aggregated_orders)) {
 			foreach ($aggregated_orders as $aggregated_order) {
 				$aggregated = new Aggregated_Order();
@@ -486,10 +487,11 @@ class Order_Management extends MY_Controller {
 		//Now save the comment that has been made
 		if (strlen($comments) > 0) {
 			$order_comment = new Order_Comment();
-			$order_comment -> Order_Number = $order_id;
+			$order_comment -> Order_Number = $unique_id;
 			$order_comment -> Timestamp = date('U');
 			$order_comment -> User = $user_id;
 			$order_comment -> Comment = $comments;
+			$order_comment -> Unique_Id = md5($order_comment -> id . $facility);
 			$order_comment -> save();
 
 		}
@@ -516,8 +518,9 @@ class Order_Management extends MY_Controller {
 					/*$cdrr_item->Aggr_Consumed = $opening_balances[$commodity_counter];
 					 $cdrr_item->Aggr_On_Hand = $opening_balances[$commodity_counter];
 					 $cdrr_item->Publish = $opening_balances[$commodity_counter];*/
-					$cdrr_item -> Cdrr_Id = $order_id;
+					$cdrr_item -> Cdrr_Id = $unique_id;
 					$cdrr_item -> Drug_Id = $commodities[$commodity_counter];
+					$cdrr_item -> Unique_Id = md5($cdrr_item -> id . $facility);
 					$cdrr_item -> save();
 					//echo $cdrr_item -> id . "<br>";
 				}
@@ -533,7 +536,8 @@ class Order_Management extends MY_Controller {
 					$maps_item = new Maps_Item();
 					$maps_item -> Total = $patient_numbers[$regimen_counter];
 					$maps_item -> Regimen_Id = $regimens[$regimen_counter];
-					$maps_item -> Maps_Id = $maps_id;
+					$maps_item -> Maps_Id = $unique_id;
+					$maps_item -> Unique_Id = md5($maps_item -> id . $facility);
 					$maps_item -> save();
 					echo $maps_item -> id . "<br>";
 				}

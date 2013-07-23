@@ -27,9 +27,11 @@ class Synchronization_Management extends MY_Controller {
 					$temp_val = "";
 					$strSQl .= "INSERT INTO $table_list (";
 					foreach ($value_array as $col => $value) {
-						$temp_val .= "," . $col . "=" . "\"" . trim($value) . "\"";
-						$fields .= "," . $col;
-						$values .= ",\"" . trim($value) . "\"";
+						if ($col != 'id') {
+							$temp_val .= "," . $col . "=" . "\"" . trim($value) . "\"";
+							$fields .= "," . $col;
+							$values .= ",\"" . trim($value) . "\"";
+						}
 					}
 					$fields = substr($fields, 1);
 					$values = substr($values, 1);
