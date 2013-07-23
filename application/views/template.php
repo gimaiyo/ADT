@@ -69,8 +69,6 @@ if ($access_level == "system_administrator") {
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title><?php echo $title; ?></title>
 <link rel="SHORTCUT ICON" href="<?php echo base_url().'Images/favicon.ico'?>">
-
-
 <?php
 $this -> load -> view('sections/head');
 if ($user_is_pharmacist || $user_is_facility_administrator || $user_is_administrator) {
@@ -218,6 +216,7 @@ if($menus){
 	<span>Welcome <b style="font-weight: bolder;font-size: 20px;"><?php echo $this -> session -> userdata('full_name'); ?></b>. <a id="logout_btn" href="<?php echo base_url().'user_management/logout/2' ?>">Logout</a></span>
 	<br>
 	<span class="date"><?php echo date('l, jS \of F Y') ?></span>
+	<input type="hidden" id="facility_hidden" />
 </div>
 <?php } ?>
  </div>

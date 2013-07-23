@@ -20,37 +20,7 @@ $(document).ready(function() {
 		"bProcessing" : true,
 		"bServerSide" : false,
 	});
-	//syncOrders();
-	$(".genorder").click(function() {
-		syncOrders();
-	});
-	/*
-	 * Sysnchronization of Orders
-	 */
-	function syncOrders() {
-		var href = window.location.href;
-		var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
-		var _href = href.substr(href.lastIndexOf('/') + 1);
-		var link = base_url + "/ADT/synchronization_management/synchronize_orders";
-		$.ajax({
-			url : link,
-			type : 'POST',
-			success : function(data) {
-				link = "http://localhost/NASCOP/synchronization_management/getSQL";
-				$.ajax({
-					url : link,
-					type : 'POST',
-					data : {
-						"sql" : data
-					},
-					success : function(data) {
-						alert(data);
-					}
-				});
-			}
-		});
-	}
-
+	//syncOrders("13050");
 	/*
 	 * Reports generation
 	 */
@@ -265,7 +235,7 @@ $(document).ready(function() {
 var timer = 0;
 function set_interval() {
 	// the interval 'timer' is set as soon as the page loads
-	timer = setInterval("auto_logout()", 600000);
+	timer = setInterval("auto_logout()", 6000000);
 	// the figure '180000' above indicates how many milliseconds the timer be set to.
 	// Eg: to set it to 5 mins, calculate 3min = 3x60 = 180 sec = 180,000 millisec.
 	// So set it to 180000
@@ -296,7 +266,7 @@ function auto_logout() {
 */
 
 //Function to get data for ordering(Cdrr)
-function getPeriodDrugBalance(count,drug, start_date, end_date) {
+function getPeriodDrugBalance(count, drug, start_date, end_date) {
 	var href = window.location.href;
 	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
 	var _href = href.substr(href.lastIndexOf('/') + 1);
@@ -328,7 +298,7 @@ function getPeriodDrugBalance(count,drug, start_date, end_date) {
 					'bDestroy' : true
 				});
 			}
-			
+
 		}
 	});
 }
@@ -353,5 +323,63 @@ function getPeriodRegimenPatients(start_date, end_date) {
 			});
 		}
 	});
-	
+
+}
+
+/*
+ * Sysnchronization of Orders
+ */
+function syncOrders(facility) {
+	var href = window.location.href;
+	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
+	var _href = href.substr(href.lastIndexOf('/') + 1);
+	var link = "http://localhost/NASCOP/synchronization_management/getSQL/" + facility;
+	$.ajax({
+		url : link,
+		type : 'POST',
+		success : function(data) {
+			if(data != '') {
+				link = base_url + "/ADT/synchronization_management/uploadSQL";
+				$.ajax({
+					url : link,
+					type : 'POST',
+					data : {
+						"sql" : data
+					},
+					success : function(data) {
+
+					}
+				});
+			}
+			link = base_url + "/ADT/synchronization_management/synchronize_orders";
+			$.ajax({
+				url : link,
+				type : 'POST',
+				success : function(data) {
+					link = "http://localhost/NASCOP/synchronization_management/getSQL/" + facility;
+					$.ajax({
+						url : link,
+						type : 'POST',
+						data : {
+							"sql" : data
+						},
+						success : function(data) {
+							link = base_url + "/ADT/synchronization_management/uploadSQL";
+							$.ajax({
+								url : link,
+								type : 'POST',
+								data : {
+									"sql" : data
+								},
+								success : function(data) {
+									alert("Successful Order Synchronization");
+								}
+							});
+						}
+					});
+				}
+			});
+		}
+	});
+
 }

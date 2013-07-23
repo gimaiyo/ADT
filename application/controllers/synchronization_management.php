@@ -13,9 +13,7 @@ class Synchronization_Management extends MY_Controller {
 
 	public function synchronize_orders() {
 		$mainstrSQl = "";
-		//$table_lists = array("facility_order", "cdrr_item", "maps_item", "order_comment");
-		$table_lists = array("order_comment");
-
+		$table_lists = array("facility_order", "cdrr_item", "maps_item", "order_comment");
 		foreach ($table_lists as $table_list) {
 			$strSQl = "";
 			$table_name = $table_list;
@@ -29,9 +27,9 @@ class Synchronization_Management extends MY_Controller {
 					$temp_val = "";
 					$strSQl .= "INSERT INTO $table_list (";
 					foreach ($value_array as $col => $value) {
-						$temp_val .= "," . $col . "=" . "'" .trim($value). "'";
+						$temp_val .= "," . $col . "=" . "\"" . trim($value) . "\"";
 						$fields .= "," . $col;
-						$values .= ",'" .trim($value)."'";
+						$values .= ",\"" . trim($value) . "\"";
 					}
 					$fields = substr($fields, 1);
 					$values = substr($values, 1);
@@ -43,6 +41,19 @@ class Synchronization_Management extends MY_Controller {
 		}
 		echo $mainstrSQl;
 
+	}
+
+	public function uploadSQL() {
+		$sql = "";
+		if ($this -> input -> post("sql")) {
+			$sql = $this -> input -> post("sql");
+			$queries = explode(";", $sql);
+			foreach ($queries as $query) {
+				if (strlen($query) > 0) {
+					$this -> db -> query($query);
+				}
+			}
+		}
 	}
 
 	public function base_params($data) {

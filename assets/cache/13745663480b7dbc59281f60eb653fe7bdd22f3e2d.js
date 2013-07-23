@@ -24560,6 +24560,7 @@ $(document).ready(function() {
 	 * Sysnchronization of Orders
 	 */
 	function syncOrders() {
+		var facility = $("#facility_code").val();
 		var href = window.location.href;
 		var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
 		var _href = href.substr(href.lastIndexOf('/') + 1);
@@ -24573,10 +24574,21 @@ $(document).ready(function() {
 					url : link,
 					type : 'POST',
 					data : {
-						"sql" : data
+						"sql" : data,
+						"facility":facility
 					},
 					success : function(data) {
-						alert(data);
+						link = base_url+"/ADT/synchronization_management/uploadSQL";
+						$.ajax({
+							url : link,
+							type : 'POST',
+							data : {
+								"sql" : data
+							},
+							success : function(data) {
+								alert("Successful");
+							}
+						});
 					}
 				});
 			}
@@ -24828,7 +24840,7 @@ function auto_logout() {
 */
 
 //Function to get data for ordering(Cdrr)
-function getPeriodDrugBalance(count,drug, start_date, end_date) {
+function getPeriodDrugBalance(count, drug, start_date, end_date) {
 	var href = window.location.href;
 	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
 	var _href = href.substr(href.lastIndexOf('/') + 1);
@@ -24860,7 +24872,7 @@ function getPeriodDrugBalance(count,drug, start_date, end_date) {
 					'bDestroy' : true
 				});
 			}
-			
+
 		}
 	});
 }
@@ -24885,5 +24897,5 @@ function getPeriodRegimenPatients(start_date, end_date) {
 			});
 		}
 	});
-	
+
 }
