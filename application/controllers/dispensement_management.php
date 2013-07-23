@@ -153,7 +153,7 @@ class Dispensement_Management extends MY_Controller {
 		$patient=@$_POST['patient'];
 		//If record is to be deleted
         if(@$_POST['delete_trigger']==1) {
-		  $sql ="delete from patient_visit WHERE id='".@$_POST["dispensing_id"]."';";
+		  $sql ="update patient_visit set active='1' WHERE id='".@$_POST["dispensing_id"]."';";
 		  $this->db->query($sql);
 		  $sql = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type,source,destination,expiry_date, quantity, facility, machine_code,timestamp) SELECT '".@$_POST["original_drug"]."','".@$_POST["original_dispensing_date"]."', '".@$_POST["batch"]."','4','$facility','$facility',expiry_date,'".@$_POST["qty_disp"]."','$facility','0','$timestamp' from drug_stock_movement WHERE batch_number= '".@$_POST["batch"]."' AND drug='".@$_POST["original_drug"]."' LIMIT 1;";
 	      $this->db->query($sql);

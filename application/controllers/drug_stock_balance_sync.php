@@ -38,7 +38,7 @@ class Drug_stock_balance_sync extends MY_Controller {
 			$bacthes=$this -> db -> query($get_batches_sql);
 			$batch_results=$bacthes -> result_array();
 			foreach ($batch_results as $key => $batch_row) {
-				echo $count_it."<br>";
+				//echo $count_it."<br>";
 				//Query to check if batch has had a physical count
 				$batch_no = $batch_row['batch'];
 				$expiry_date=$batch_row['expiry_date'];

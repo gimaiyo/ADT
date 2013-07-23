@@ -134,13 +134,13 @@ solid #000;border-top:1px solid #000;vertical-align:middle}.big-table
 input{width:60px}.big-table
 td.number{text-align:center}.button{width:100px;margin:10px}#comments-section
 td{border:0px}#comments-section
-th{text-align:left !important}td{word-wrap:break-word}.col_drug{width:400px !important;font-size:13px}.accordion{height:25px}.facility_info{border:1px
+th{text-align:left !important}td{word-wrap:break-word}.col_drug{width:400px !important;font-size:0.8em}.accordion{height:25px}.facility_info{border:1px
 solid #FFF;width:60%;margin:0
 auto;margin-bottom:5%;background:#eee}.table-bordered
-input{width:70px;height:23px;margin:0
+input{width:4.7em;height:23px;margin:0
 auto}#commodity-table tbody
 tr{font-size:14px}.regimen-table tbody
-td{font-size:13px;color:#000;padding:5px}.ui-state-active{background:#e6e6e6 url(http://localhost/ADT/assets/styles/images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x}.regimen-table thead
+td{font-size:0.75em;color:#000;padding:3px}.ui-state-active{background:#e6e6e6 url(http://localhost/ADT/assets/styles/images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x}.regimen-table thead
 .col_drug{font-size:14px}.dataTables_wrapper{width:auto;margin:0
 auto}
 
