@@ -24,7 +24,7 @@ $(document).ready(function() {
 		"bProcessing" : true,
 		"bServerSide" : false,
 	});
-	syncOrders("13050");
+	//syncOrders("13050");
 	/*
 	 * Reports generation
 	 */
