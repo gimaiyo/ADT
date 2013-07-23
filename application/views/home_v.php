@@ -207,7 +207,7 @@ var chartLink;
 			<h3>Weekly Summary of Patient Enrollment from
 				<input type="text" placeholder="Start" class="input-mini" id="enrollment_start"/> to
 				<input type="text" placeholder="End" class=" input-mini" id="enrollment_end" readonly="readonly"/>
-				<button class="btn generate btn-mini" id="enrollment_btn">Get</button>
+				<button class="btn generate" id="enrollment_btn">Get</button>
 				<button class="btn btn-success more" id="enrollment-more">Larger</button>
 			<button class="btn btn-danger less" id="enrollment-less">Smaller</button>
 				 </h3>
@@ -220,7 +220,7 @@ var chartLink;
 				from
 				<input type="text" placeholder="Start" class="input-mini" id="visit_start"/> to
 				<input type="text" placeholder="End" class=" input-mini" id="visit_end" readonly="readonly" />
-				<button class="btn-mini generate btn" id="appointment_btn">Get</button>
+				<button class="generate btn" id="appointment_btn">Get</button>
 				<button class="btn btn-success more" id="appointment-more">Larger</button>
 			<button class="btn btn-danger less" id="appointment-less">Smaller</button>
 				</h3>
@@ -234,7 +234,7 @@ var chartLink;
 				   <option value="1">Main Store</option>
 				   <option  selected=selected value="2">Pharmacy</option>
 			</select> 	
-			<button class="btn-mini generate btn" id="stockout_btn">Get</button>
+			<button class="generate btn" id="stockout_btn">Get</button>
 			<button class="btn btn-success more" id="stock-more">Larger</button>
 			<button class="btn btn-danger less" id="stock-less">Smaller</button>
 			</h3>
