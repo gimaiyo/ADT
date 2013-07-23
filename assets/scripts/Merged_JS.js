@@ -8,6 +8,10 @@
  *Change password validation
  */
 $(document).ready(function() {
+	  
+	
+	
+	
 	var base_url = $("#base_url").val();
 	$('.dataTables').dataTable({
 		"bJQueryUI" : true,

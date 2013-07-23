@@ -40,7 +40,7 @@ if($this->session->userdata("changed_password")){
 $(document).ready(function() {
       var period=30;
       var location=2;
-      
+      $('h3 .btn-danger').hide();
       
       //Get Today's Date and Upto Saturday
       var someDate = new Date();
@@ -75,7 +75,80 @@ $(document).ready(function() {
 	        		"sPaginationType": "full_numbers"
 	            });
 	   });
-       
+    //Toggle
+var chartID;
+var graphID;
+var chartLink;
+	$('.more').click(function(){
+		$('h3 .btn-success').hide();
+		$('h3 .btn-danger').show();
+		var myID = $(this).attr('id');
+		switch(myID){
+		case'drugs-more':
+		$('.tile').hide();
+		$('#drugs-chart').show();
+		chartID='#drugs-chart';
+		graphID="#chart_area";
+		chartLink="<?php echo base_url().'facilitydashboard_management/getExpiringDrugs/';?>"+period+'/'+location;
+	
+		break;
+		case'enrollment-more':
+		$('.tile').hide();
+		$('#enrollment-chart').show();
+		chartID='#enrollment-chart';
+		graphID="#chart_area2";
+		chartLink="<?php echo base_url().'facilitydashboard_management/getPatientEnrolled/';?>"+fromDate+'/'+endDate;
+	  
+		break;
+		case'appointment-more':
+		$('.tile').hide();
+		$('#appointments-chart').show();
+		chartID='#appointments-chart';
+		graphID="#chart_area3";
+		chartLink="<?php echo base_url().'facilitydashboard_management/getExpectedPatients/';?>"+fromDate+'/'+endDate;
+
+		break;
+		case'stock-more':
+		$('.tile').hide();
+		$('#stocks-chart').show();
+		chartID='#stocks-chart';
+		graphID="#table1";
+		break;
+		}
+		
+		  $(chartID).animate({height:'80%',width:'100%'}, 500);
+		  $(graphID).load(chartLink);
+
+	});
+	
+	$('.less').click(function(){
+		$('h3 .btn-success').show();
+		$('h3 .btn-danger').hide();
+		var myID = $(this).attr('id');
+		
+		switch(myID){
+		case'drugs-less':
+		$('.tile').show();
+		 $(graphID).load(chartLink);
+		break;
+		case'enrollment-less':
+		$('.tile').show();
+		 $(graphID).load(chartLink);
+		break;
+		case'appointment-less':
+		$('.tile').show();
+		 $(graphID).load(chartLink);
+		break;
+		case'stock-less':
+		$('.tile').show();
+		break;
+		
+		}
+ $(chartID).animate({height:'45%',width:'49%'}, 500);
+
+	});
+	
+    
 		    $('.generate').click(function(){
                  var button_id=$(this).attr("id");
                  if(button_id=="expiry_btn"){
@@ -106,8 +179,7 @@ $(document).ready(function() {
 <div class="main-content">
 	<div class="center-content">
 		<div id="expDiv>"></div>
-	<div class="tile-half">
-		<div class="tile">
+		<div class="tile" id="drugs-chart">
 			<h3>Summary of Drugs Expiring in 
 				<select style="width:auto" class="period">
 					<option valuue="7">7 Days</option>
@@ -120,7 +192,9 @@ $(document).ready(function() {
 				   <option value="1">Main Store</option>
 				   <option  selected=selected value="2">Pharmacy</option>
 			</select> 
-			<button class="generate btn" id="expiry_btn">Generate</button>
+			<button class="generate btn" id="expiry_btn">Get</button>
+			<button class="btn btn-success more" id="drugs-more">Larger</button>
+			<button class="btn btn-danger less" id="drugs-less">Smaller</button>
 			</h3>
 			
 			<div id="chart_area">
@@ -129,42 +203,45 @@ $(document).ready(function() {
 			
 		</div>
 
-		<div class="tile">
+		<div class="tile" id="enrollment-chart">
 			<h3>Weekly Summary of Patient Enrollment from
 				<input type="text" placeholder="Start" class="input-mini" id="enrollment_start"/> to
 				<input type="text" placeholder="End" class=" input-mini" id="enrollment_end" readonly="readonly"/>
-				<button class="btn generate btn-mini" id="enrollment_btn">Generate</button>
+				<button class="btn generate" id="enrollment_btn">Get</button>
+				<button class="btn btn-success more" id="enrollment-more">Larger</button>
+			<button class="btn btn-danger less" id="enrollment-less">Smaller</button>
 				 </h3>
 			<div id="chart_area2">
 				<div class="loadingDiv" style="width:100%;height:100%" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>
 			</div>
 		</div>
-	</div>
-	<div class="tile-half">
-		<div class="tile">
+		<div class="tile" id="appointments-chart">
 			<h3>Weekly Summary of Patient Appointments
 				from
 				<input type="text" placeholder="Start" class="input-mini" id="visit_start"/> to
 				<input type="text" placeholder="End" class=" input-mini" id="visit_end" readonly="readonly" />
-				<button class="btn-mini generate btn" id="appointment_btn">Generate</button>
+				<button class="generate btn" id="appointment_btn">Get</button>
+				<button class="btn btn-success more" id="appointment-more">Larger</button>
+			<button class="btn btn-danger less" id="appointment-less">Smaller</button>
 				</h3>
 			<div id="chart_area3">
 						<div class="loadingDiv" style="width:100%;height:100%" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>		
 			</div>
 		</div>
-		<div class="tile">
+		<div class="tile" id="stocks-chart">
 			<h3>Stocks About to Run Out at
 			<select style="width:auto" class="location" id="store_location"> 
 				   <option value="1">Main Store</option>
 				   <option  selected=selected value="2">Pharmacy</option>
 			</select> 	
-			<button class="btn-mini generate btn" id="stockout_btn">Generate</button>
+			<button class="generate btn" id="stockout_btn">Get</button>
+			<button class="btn btn-success more" id="stock-more">Larger</button>
+			<button class="btn btn-danger less" id="stock-less">Smaller</button>
 			</h3>
 			<div id="table1">
 			 	<div class="loadingDiv" style="width:100%;height:100%" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>
 			</div>
 		</div>
-	</div>
 </div>
 	
 </div>

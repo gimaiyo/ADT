@@ -225,7 +225,7 @@ class Facilitydashboard_Management extends MY_Controller {
 		$categories = json_encode($categories);
 		//Load Data Variables
 		$data['resultArraySize'] = $resultArraySize;
-		$data['container'] = 'chart_div';
+		$data['container'] = 'chart_expiry';
 		$data['chartType'] = 'bar';
 		$data['title'] = 'Chart';
 		$data['chartTitle'] = 'Expired Drugs';
@@ -449,13 +449,12 @@ class Facilitydashboard_Management extends MY_Controller {
 		$categories = json_encode($categories);
 
 		$data['resultArraySize'] = $resultArraySize;
-		$data['container'] = "chart_div";
+		$data['container'] = "chart_enrollment";
 		$data['chartType'] = 'bar';
 		$data['chartTitle'] = 'Patients Enrollment';
 		$data['yAxix'] = 'Patients';
 		$data['categories'] = $categories;
 		$data['resultArray'] = $resultArray;
-		$data['container'] = "chart1";
 		$this -> load -> view('chart_stacked_v', $data);
 
 	}
@@ -562,7 +561,7 @@ class Facilitydashboard_Management extends MY_Controller {
 		$resultArray = json_encode($resultArray);
 		$categories = json_encode($categories);
 		$data['resultArraySize'] = $resultArraySize;
-		$data['container'] = "chart_div5";
+		$data['container'] = "chart_appointments";
 		$data['chartType'] = 'bar';
 		$data['chartTitle'] = 'Patients Expected';
 		$data['yAxix'] = 'Patients';
