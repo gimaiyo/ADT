@@ -58,7 +58,7 @@ class Facility_Order extends Doctrine_Record {
 	}
 
 	public function getPagedFacilityOrders($offset, $items, $status, $facility) {
-		$query = Doctrine_Query::create() -> select("*") -> from("Facility_Order") -> orderBy("abs(id) desc") -> where("Status = '$status' and (Facility_Id = '$facility' or Central_Facility = '$facility')") -> offset($offset);
+		$query = Doctrine_Query::create() -> select("*") -> from("Facility_Order") -> orderBy("abs(id) desc") -> where("Status = '$status' and (Facility_Id = '$facility' or Central_Facility = '$facility')")-> offset($offset);
 		$orders = $query -> execute();
 		return $orders;
 	}

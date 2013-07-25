@@ -13,8 +13,10 @@ class Order_Management extends MY_Controller {
 		//First retrieve the order and its particulars from the database
 		$data = array();
 		$data['order_no'] = $order;
-		$data['order_details_page'] = 'view_order';
 		$data['order_details'] = Facility_Order::getOrder($order);
+		$facility=$this->session->userdata("facility");
+		$order=md5($order.$facility);
+		$data['order_details_page'] = 'view_order';
 		$data['commodities'] = Cdrr_Item::getOrderItems($order);
 		$data['regimens'] = Maps_Item::getOrderItems($order);
 		$data['comments'] = Order_Comment::getOrderComments($order);
@@ -31,6 +33,8 @@ class Order_Management extends MY_Controller {
 		$data['order_details_page'] = 'edit_order';
 		$data['order_no'] = $order;
 		$data['order_details'] = Facility_Order::getOrder($order);
+		$facility=$this->session->userdata("facility");
+		$order=md5($order.$facility);
 		$data['hide_side_menu'] = 1;
 		$this -> load -> database();
 		//Get all drugs, ordered or not
@@ -40,7 +44,7 @@ class Order_Management extends MY_Controller {
 		//Get all regimens; ordered or not
 		$regimen_sql = "select r.regimen_desc,r.id as rid,m.* from regimen r left join maps_item m on r.id = m.regimen_id and m.maps_id = '$order' order by r.id";
 		$regimen_query = $this -> db -> query($regimen_sql);
-		$data['commodities'] = $query -> result_array();
+		$data['regimens'] = $query -> result_array();
 		//var_dump($data['commodities']);
 		$data['regimen_totals'] = $regimen_query -> result_array();
 		$data['comments'] = Order_Comment::getOrderComments($order);

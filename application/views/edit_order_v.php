@@ -1,3 +1,8 @@
+<style type="text/css">
+	.ui-datepicker-calendar {
+    	display: none;
+    }
+</style>
 <script>
 	$(document).ready(function() {
 		
@@ -143,6 +148,16 @@
 
 
 <div class="full-content"  style="background:#9CF">
+	<div >
+		<ul class="breadcrumb">
+			<li>
+				<a href="<?php echo site_url().'order_management' ?>">Orders</a><span class="divider">/</span>
+			</li>
+			<li class="active" id="actual_page">
+				Details for Order No <?php echo $order_no;?>
+			</li>
+		</ul>
+	</div>	
 <form method="post" id="fmEditOrder" action="<?php echo site_url('order_management/save')?>">
 	<input type="hidden" name="order_number" value="<?php echo $order_details->id;?>" />
 	<input type="hidden" name="facility_id" value="<?php echo $order_details->Facility_Object->facilitycode;?>" />
@@ -169,7 +184,7 @@
 					<th>District / County:</th>
 					<td><span class="_green"><?php echo $order_details -> Facility_Object -> Parent_District -> Name;?> / <?php echo $order_details -> Facility_Object -> County -> county;?></span></td>
 					<th>Reporting Period : </th>
-					<td colspan="3"><input class="_green" name="reporting_period" id="reporting_period" type="text" value="<?php echo date('F-Y',strtotime($order_details->Period_Begin)); ?>"></td>
+					<td colspan="3"><input name="reporting_period" id="reporting_period" type="text" placeholder="Click here to select period" value="<?php echo date('F-Y',strtotime($order_details->Period_Begin)); ?>" disabled="disabled"/></td>
 					<input name="start_date" id="period_start_date" type="hidden" value="<?php echo date('d',strtotime($order_details->Period_Begin));?>">
 					<input name="end_date" id="period_end_date" type="hidden" value="<?php echo date('d',strtotime($order_details->Period_End));?>"></td>
 				</tr>
@@ -235,7 +250,7 @@
 </thead>';
 	?>
 <div id="commodity-table">
-	<table class="table table-bordered table_order_details" id="generate_order">
+	<table class="table table-bordered table_order_details dataTables" id="generate_order">
 		<?php echo $header_text;?>
 		<tbody>
 			<?php
@@ -250,7 +265,7 @@
 			<tr class="ordered_drugs" drug_id="<?php echo $commodity['did'];?>">
 				<td class="col_drug"><?php echo $commodity['drug'];?></td>
 				<td class="number">
-				<input id="pack_size" type="text" value="<?php echo $commodity['pack_size']?>" class="pack_size">
+				<input id="pack_size" type="text" value="<?php echo $commodity['pack_size']?>" class="pack_size" readonly="readonly"/>
 				</td>
 				<td class="number calc_count">
 				<input name="opening_balance[]" id="opening_balance_<?php echo $commodity['did'];?>" type="text" class="opening_balance" value="<?php echo $commodity['balance'];?>">
@@ -298,7 +313,7 @@
 				<tr><th>Date</th><th>Made By</th><th>Access Level</th></tr>
 			</thead>
 			<tbody>
-				<tr><td><span class="_green"><?php echo date('Y-m-d H:i:s', $comment -> Timestamp);?></span></td><td><span class="_green"><?php echo $comment -> User_Object -> Name;?></span></td><td><span class="_green"><?php echo $comment -> User_Object -> Access -> Level_Name;?></span></td></tr>
+				<tr><td><span class="green"><?php echo date('l d-M-Y h:i:s a', $comment -> Timestamp);?></span></td><td><span class="green"><?php echo $comment -> User_Object -> Name;?></span></td><td><span class="green"><?php echo $comment -> User_Object -> Access -> Level_Name;?></span></td></tr>
 			</tbody>
 		</table>
 		
