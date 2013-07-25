@@ -15,7 +15,7 @@ class Maps_Item extends Doctrine_Record {
 	}//end setUp
 
 	public static function getOrderItems($order) {
-		$query = Doctrine_Query::create() -> select("*") -> from("Maps_Item") -> where("Maps_Id = '$order'")->orderby("id asc");
+		$query = Doctrine_Query::create() -> select("*") -> from("Maps_Item") -> where("Maps_Id = '$order'");
 		$items = $query -> execute();
 		return $items;
 	}

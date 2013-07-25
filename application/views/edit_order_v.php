@@ -154,7 +154,7 @@
 				<a href="<?php echo site_url().'order_management' ?>">Orders</a><span class="divider">/</span>
 			</li>
 			<li class="active" id="actual_page">
-				Details for Order No <?php echo $order_no;?>
+				Edit Details for Order No <?php echo $order_no;?>
 			</li>
 		</ul>
 	</div>	
@@ -168,7 +168,10 @@
 			<tbody>
 				<tr>
 					<th>Order No</th>
-					<td><span class="_green"><?php echo $order_no ?></span></td>
+					<td><span class="_green">
+					<?php 
+					$order_types = array(0=>"Central Order",1=>"Aggregated Order",2=>"Satellite Order"); 
+					echo $order_no."(".@$order_types[$order_details->Code].")";?></span></td>
 					<th width="160px">Facility code:</th>
 					<td><span class="_green"><?php echo $order_details -> Facility_Object -> facilitycode;?></span></td>
 					</tr>
@@ -185,8 +188,8 @@
 					<td><span class="_green"><?php echo $order_details -> Facility_Object -> Parent_District -> Name;?> / <?php echo $order_details -> Facility_Object -> County -> county;?></span></td>
 					<th>Reporting Period : </th>
 					<td colspan="3"><input name="reporting_period" id="reporting_period" type="text" placeholder="Click here to select period" value="<?php echo date('F-Y',strtotime($order_details->Period_Begin)); ?>" disabled="disabled"/></td>
-					<input name="start_date" id="period_start_date" type="hidden" value="<?php echo date('d',strtotime($order_details->Period_Begin));?>">
-					<input name="end_date" id="period_end_date" type="hidden" value="<?php echo date('d',strtotime($order_details->Period_End));?>"></td>
+					<input name="start_date" id="period_start_date" type="hidden" value="<?php echo $order_details->Period_Begin;?>">
+					<input name="end_date" id="period_end_date" type="hidden" value="<?php echo $order_details->Period_End;?>"></td>
 				</tr>
 				
 			</tbody>
@@ -310,7 +313,7 @@
 		<textarea style="width:98%" rows="3" name="comments"><?php echo $comment->Comment ?></textarea>
 		<table class="table table-bordered">
 			<thead>
-				<tr><th>Date</th><th>Made By</th><th>Access Level</th></tr>
+				<tr><th>Last Update</th><th>Made By</th><th>Access Level</th></tr>
 			</thead>
 			<tbody>
 				<tr><td><span class="green"><?php echo date('l d-M-Y h:i:s a', $comment -> Timestamp);?></span></td><td><span class="green"><?php echo $comment -> User_Object -> Name;?></span></td><td><span class="green"><?php echo $comment -> User_Object -> Access -> Level_Name;?></span></td></tr>
@@ -327,11 +330,11 @@
 	<?php	
 	}
 	?>
-	<input type="button" id="save_changes" class="btn btn-success btn-large" value="Save Order" name="save_changes"  />
+	<input type="button" id="save_changes" class="btn" value="Save Order" name="save_changes"  />
 	</div>
 </div>
 
-	<table class=" table regimen-table big-table research">
+	<table class=" table table-bordered regimen-table big-table research">
 		<thead>
 			<tr>
 				<th class="col_drug" colspan="2"> Regimen </th>
@@ -353,7 +356,7 @@
 				<td style="border-right:2px solid #DDD;"><?php echo $regimen -> Regimen_Code;?></td>
 				<td regimen_id="<?php echo $regimen -> id;?>" class="regimen_desc col_drug"><?php echo $regimen -> Regimen_Desc;?></td>
 				<td regimen_id="<?php echo $regimen -> id;?>" class="regimen_numbers">
-				<input name="patient_numbers[]" id="patient_numbers_<?php echo $regimen -> id;?>" type="text" value="<?php if(isset($regimen_totals[$regimen->id])){ /*echo $regimen_totals[$regimen->id]['total'];*/}?>">
+				<input name="patient_numbers[]" id="patient_numbers_<?php echo $regimen -> id;?>" type="text" value="<?php if(isset($regimen_totals[$regimen->id])){ echo $regimen_totals[$regimen->id-1]['total'];}?>">
 				<input name="patient_regimens[]" value="<?php echo $regimen -> id;?>" type="hidden">
 				</td>				 
 			   </tr>

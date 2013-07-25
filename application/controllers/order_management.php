@@ -14,8 +14,7 @@ class Order_Management extends MY_Controller {
 		$data = array();
 		$data['order_no'] = $order;
 		$data['order_details'] = Facility_Order::getOrder($order);
-		$facility=$this->session->userdata("facility");
-		$order=md5($order.$facility);
+		$order= $data['order_details'] -> Unique_Id;
 		$data['order_details_page'] = 'view_order';
 		$data['commodities'] = Cdrr_Item::getOrderItems($order);
 		$data['regimens'] = Maps_Item::getOrderItems($order);
@@ -33,8 +32,7 @@ class Order_Management extends MY_Controller {
 		$data['order_details_page'] = 'edit_order';
 		$data['order_no'] = $order;
 		$data['order_details'] = Facility_Order::getOrder($order);
-		$facility=$this->session->userdata("facility");
-		$order=md5($order.$facility);
+		$order= $data['order_details'] -> Unique_Id;
 		$data['hide_side_menu'] = 1;
 		$this -> load -> database();
 		//Get all drugs, ordered or not
@@ -44,9 +42,11 @@ class Order_Management extends MY_Controller {
 		//Get all regimens; ordered or not
 		$regimen_sql = "select r.regimen_desc,r.id as rid,m.* from regimen r left join maps_item m on r.id = m.regimen_id and m.maps_id = '$order' order by r.id";
 		$regimen_query = $this -> db -> query($regimen_sql);
-		$data['regimens'] = $query -> result_array();
+		//$data['commodities'] = $query -> result_array();
 		//var_dump($data['commodities']);
 		$data['regimen_totals'] = $regimen_query -> result_array();
+		//print_r($data['regimen_totals']['44']);
+		//die();
 		$data['comments'] = Order_Comment::getOrderComments($order);
 		$order_type = $data['order_details']['Code'];
 		$data['order_type'] = $order_type;
@@ -406,12 +406,6 @@ class Order_Management extends MY_Controller {
 		$reporting_period = $this -> input -> post("reporting_period");
 		$aggregated_orders = $this -> input -> post("aggregated_order");
 
-		$reporting_period = date('Y-m', strtotime($reporting_period));
-		$start_date = $this -> input -> post("start_date");
-		$end_date = $this -> input -> post("end_date");
-		$period_start = $reporting_period . "-" . $start_date;
-		$period_end = $reporting_period . "-" . $end_date;
-
 		$services = $this -> input -> post('services');
 		$sponsors = $this -> input -> post('sponsors');
 		$opening_balances = $this -> input -> post('opening_balance');
@@ -435,15 +429,30 @@ class Order_Management extends MY_Controller {
 		$is_editing = false;
 		if ($order_number != null) {
 			$is_editing = true;
+			$reporting_period = date('Y-m', strtotime($reporting_period));
+			$start_date = $this -> input -> post("start_date");
+			$end_date = $this -> input -> post("end_date");
+			$period_start = $start_date;
+			$period_end = $end_date;
+		} else {
+			$reporting_period = date('Y-m', strtotime($reporting_period));
+			$start_date = $this -> input -> post("start_date");
+			$end_date = $this -> input -> post("end_date");
+			$period_start = $reporting_period . "-" . $start_date;
+			$period_end = $reporting_period . "-" . $end_date;
 		}
 		$commodity_counter = 0;
 		$regimen_counter = 0;
+		$last_id = 0;
+		$initial_order_number=0;
 
 		//Save the cdrr
 		if ($is_editing) {
 			//Retrieve the order being edited
 			$order_object = Facility_Order::getOrder($order_number);
 			//Delete all items for that order
+			$initial_order_number=$order_number;
+			$order_number = md5($order_number . $facility);
 			$old_commodities = Cdrr_Item::getOrderItems($order_number);
 			$old_regimens = Maps_Item::getOrderItems($order_number);
 			$old_comments = Order_Comment::getOrderComments($order_number);
@@ -459,6 +468,7 @@ class Order_Management extends MY_Controller {
 
 		} else {
 			$order_object = new Facility_Order();
+			$order_object -> Created = $updated_on;
 		}
 
 		//status = 0 i.e. prepared
@@ -475,11 +485,20 @@ class Order_Management extends MY_Controller {
 		$order_object -> Sponsors = $sponsors;
 		$order_object -> Facility_Id = $facility;
 		$order_object -> Central_Facility = $central_facility;
-		$unique_id = md5($order_object -> id . $facility);
+		if ($order_number == null) {
+			$sql = "select max(id)as last from facility_order";
+			$query = $this -> db -> query($sql);
+			$results = $query -> result_array();
+			$last_id = $results[0]['last'];
+			$last_id++;
+		} else {
+			$last_id = $initial_order_number;
+		}
+		$unique_id = md5($last_id . $facility);
 		$order_object -> Unique_Id = $unique_id;
 		$order_object -> save();
 		$order_id = $order_object -> id;
-		if (isset($aggregated_orders)) {
+		if ($aggregated_orders) {
 			foreach ($aggregated_orders as $aggregated_order) {
 				$aggregated = new Aggregated_Order();
 				$aggregated -> aggregated_order_id = $order_id;
@@ -495,7 +514,16 @@ class Order_Management extends MY_Controller {
 			$order_comment -> Timestamp = date('U');
 			$order_comment -> User = $user_id;
 			$order_comment -> Comment = $comments;
-			$order_comment -> Unique_Id = md5($order_comment -> id . $facility);
+			if ($order_number == null) {
+				$sql = "select max(id)as last from order_comment";
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				$last_id = $results[0]['last'];
+				$last_id++;
+			} else {
+				$last_id = $initial_order_number;
+			}
+			$order_comment -> Unique_Id = md5($last_id . $facility);
 			$order_comment -> save();
 
 		}
@@ -504,7 +532,14 @@ class Order_Management extends MY_Controller {
 		$commodity_counter = 0;
 
 		if ($commodities != null) {
-
+			if ($order_number == null) {
+				$sql = "select max(id)as last from cdrr_item";
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				$last_id = $results[0]['last'];
+			} else {
+				$last_id = $initial_order_number;
+			}
 			foreach ($commodities as $commodity) {
 				//First check if any quantitites are required for resupply to avoid empty entries
 				if ($resupply[$commodity_counter] > 0) {
@@ -524,7 +559,13 @@ class Order_Management extends MY_Controller {
 					 $cdrr_item->Publish = $opening_balances[$commodity_counter];*/
 					$cdrr_item -> Cdrr_Id = $unique_id;
 					$cdrr_item -> Drug_Id = $commodities[$commodity_counter];
-					$cdrr_item -> Unique_Id = md5($cdrr_item -> id . $facility);
+					$sql = "select max(id)as last from cdrr_item";
+					$query = $this -> db -> query($sql);
+					$results = $query -> result_array();
+					if ($order_number == null) {
+						$last_id++;
+					}
+					$cdrr_item -> Unique_Id = md5($last_id . $facility);
 					$cdrr_item -> save();
 					//echo $cdrr_item -> id . "<br>";
 				}
@@ -534,6 +575,14 @@ class Order_Management extends MY_Controller {
 		//Save the maps details
 		$maps_id = $order_object -> id;
 		if ($regimens != null) {
+			if ($order_number == null) {
+				$sql = "select max(id)as last from maps_item";
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				$last_id = $results[0]['last'];
+			} else {
+				$last_id = $initial_order_number;
+			}
 			foreach ($regimens as $regimen) {
 				//Check if any patient numbers have been reported for this regimen
 				if ($patient_numbers[$regimen_counter] > 0) {
@@ -541,9 +590,12 @@ class Order_Management extends MY_Controller {
 					$maps_item -> Total = $patient_numbers[$regimen_counter];
 					$maps_item -> Regimen_Id = $regimens[$regimen_counter];
 					$maps_item -> Maps_Id = $unique_id;
-					$maps_item -> Unique_Id = md5($maps_item -> id . $facility);
+					if ($order_number == null) {
+						$last_id++;
+					}
+					$maps_item -> Unique_Id = md5($last_id . $facility);
 					$maps_item -> save();
-					echo $maps_item -> id . "<br>";
+					//echo $maps_item -> id . "<br>";
 				}
 				$regimen_counter++;
 			}
