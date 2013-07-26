@@ -769,6 +769,11 @@ table.setting_table {
 	padding-left: 25px;
 	padding-right: 25px;
 }
+.btn_small {
+	margin: 3px;
+	padding-left: 25px;
+	padding-right: 25px;
+}
 .rowCount-grid {
 	color: green;
 }

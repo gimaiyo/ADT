@@ -10,8 +10,9 @@ class Facility_Order extends Doctrine_Record {
 		 * 3 - Dispatched
 		 *
 		 * For the codes
-		 * 0 - Satellite facility order
-		 * 1 - Central facility order
+		 * 0 - Central facility order
+		 * 1 - Aggregated facility order
+		 * 2 - Satellite facility order
 		 */
 
 		$this -> hasColumn('Status', 'varchar', 10);

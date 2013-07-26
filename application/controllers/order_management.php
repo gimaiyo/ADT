@@ -14,7 +14,7 @@ class Order_Management extends MY_Controller {
 		$data = array();
 		$data['order_no'] = $order;
 		$data['order_details'] = Facility_Order::getOrder($order);
-		$order= $data['order_details'] -> Unique_Id;
+		$order = $data['order_details'] -> Unique_Id;
 		$data['order_details_page'] = 'view_order';
 		$data['commodities'] = Cdrr_Item::getOrderItems($order);
 		$data['regimens'] = Maps_Item::getOrderItems($order);
@@ -32,7 +32,7 @@ class Order_Management extends MY_Controller {
 		$data['order_details_page'] = 'edit_order';
 		$data['order_no'] = $order;
 		$data['order_details'] = Facility_Order::getOrder($order);
-		$order= $data['order_details'] -> Unique_Id;
+		$order = $data['order_details'] -> Unique_Id;
 		$data['hide_side_menu'] = 1;
 		$this -> load -> database();
 		//Get all drugs, ordered or not
@@ -238,7 +238,20 @@ class Order_Management extends MY_Controller {
 
 	public function delete_order($order, $aggregated_order = "") {
 		$order = Facility_Order::getOrder($order);
+		$order_number=$order->Unique_Id;
 		$order -> delete();
+		$old_commodities = Cdrr_Item::getOrderItems($order_number);
+		$old_regimens = Maps_Item::getOrderItems($order_number);
+		$old_comments = Order_Comment::getOrderComments($order_number);
+		foreach ($old_commodities as $old_commodity) {
+			$old_commodity -> delete();
+		}
+		foreach ($old_regimens as $old_regimen) {
+			$old_regimen -> delete();
+		}
+		foreach ($old_comments as $old_comment) {
+			$old_comment -> delete();
+		}
 		if ($aggregated_order != "") {
 			$order = Facility_Order::getOrder($aggregated_order);
 			$order -> delete();
@@ -444,14 +457,14 @@ class Order_Management extends MY_Controller {
 		$commodity_counter = 0;
 		$regimen_counter = 0;
 		$last_id = 0;
-		$initial_order_number=0;
+		$initial_order_number = 0;
 
 		//Save the cdrr
 		if ($is_editing) {
 			//Retrieve the order being edited
 			$order_object = Facility_Order::getOrder($order_number);
 			//Delete all items for that order
-			$initial_order_number=$order_number;
+			$initial_order_number = $order_number;
 			$order_number = md5($order_number . $facility);
 			$old_commodities = Cdrr_Item::getOrderItems($order_number);
 			$old_regimens = Maps_Item::getOrderItems($order_number);

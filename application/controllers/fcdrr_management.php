@@ -69,8 +69,8 @@ class Fcdrr_Management extends MY_Controller {
 			$programme_sponsor_pepfar = $arr[4]['G'];
 			$programme_sponsor_msf = $arr[4]['L'];
 
-            $programme_sponsor="";
-			
+			$programme_sponsor = "";
+
 			if ($programme_sponsor_gok) {
 				$programme_sponsor = "GOK";
 			}
@@ -85,20 +85,23 @@ class Fcdrr_Management extends MY_Controller {
 
 			//Reporting Period
 
-		    @$beginning =$arr[10]['D'] . $arr[10]['E'];
+			@$beginning = trim($arr[10]['D'] . $arr[10]['E']);
 			@$ending = $arr[10]['R'] . $arr[10]['S'] . $arr[10]['T'];
 			
-			$beginning = str_replace('/', '-', $beginning);
-			$old_beginning= strtotime($beginning);
-            $beginning = date('Y-m-d', $old_beginning); 
-			
+			$start=explode("-",$beginning);
+			$day=$start[0];
+			$month=$start[1];
+			$year=$start[2];
+			$beginning="20".$year."-".$month."-".$day;
+			$beginning = date('Y-m-d',strtotime($beginning));
+
 			$ending = str_replace('/', '-', $ending);
-			$old_ending= strtotime($ending);
-            $ending= date('Y-m-d', $old_ending); 
-			
+			$old_ending = strtotime($ending);
+			$ending = date('Y-m-d', $old_ending);
+
 			$central_facility = $this -> session -> userdata('facility');
-		    $parent = Facilities::getParent($central_facility);
-			$central_site=$parent -> parent;
+			$parent = Facilities::getParent($central_facility);
+			$central_site = $parent -> parent;
 
 			//Comments
 
@@ -108,45 +111,48 @@ class Fcdrr_Management extends MY_Controller {
 				@$comments .= $arr[$i]['A'] . $arr[$i]['B'] . $arr[$i]['C'] . $arr[$i]['D'] . $arr[$i]['E'] . $arr[$i]['G'] . $arr[$i]['H'] . $arr[$i]['L'];
 
 			}
-
+			$unique_id = 0;
 			$this -> load -> database();
-			$query = $this -> db -> query("INSERT INTO facility_order (`id`, `status`, `created`, `updated`, `code`, `period_begin`, `period_end`, `comments`, `reports_expected`, `reports_actual`, `services`, `sponsors`, `delivery_note`, `order_id`, `facility_id`,`central_facility`) VALUES (NULL, '0', CURDATE(), '$updated_on', '0', '$beginning', '$ending', '$comments', NULL, NULL, '$services_offered', '$programme_sponsor', NULL, NULL, '$facility_code','$central_site');");
-
-
-            $facility_order_query = $this -> db -> query("SELECT MAX(id) AS id FROM facility_order");
+			$facility_order_query = $this -> db -> query("SELECT MAX(id) AS id FROM facility_order");
 			$facility_order_results = $facility_order_query -> result_array();
 			$facility_id = $facility_order_results[0]['id'];
-			$user_id = $this -> session -> userdata('user_id');;
-            //Adding comments
-            $order_comment = new Order_Comment();
+			$order_number = $facility_id + 1;
+			$unique_id = md5($order_number . $facility_code);
+			
+			$query = $this -> db -> query("INSERT INTO facility_order (`id`, `status`, `created`, `updated`, `code`, `period_begin`, `period_end`, `comments`, `reports_expected`, `reports_actual`, `services`, `sponsors`, `delivery_note`, `order_id`, `facility_id`,`central_facility`,`unique_id`) VALUES ('$order_number', '0', CURDATE(), '$updated_on', '2', '$beginning', '$ending', '$comments', NULL, NULL, '$services_offered', '$programme_sponsor', NULL, NULL, '$facility_code','$central_site','$unique_id');");
+			$facility_id = $unique_id;
+			$user_id = $this -> session -> userdata('user_id');
+
+			$query = $this -> db -> query("SELECT MAX(id) AS id FROM order_comment");
+			$results = $query -> result_array();
+			$last_id = $results[0]['id'];
+			$last_id = $last_id + 1;
+			$last_id = md5($last_id . $facility_code);
+
+			//Adding comments
+			$order_comment = new Order_Comment();
 			$order_comment -> Order_Number = $facility_id;
 			$order_comment -> Timestamp = date('U');
 			$order_comment -> User = $user_id;
 			$order_comment -> Comment = $comments;
+			$order_comment -> Unique_Id = $last_id;
 			$order_comment -> save();
-
-
-
-
-
-			
 
 			//Adult ARV Preparations
 			for ($i = 18; $i <= 42; $i++) {
 				for ($j = 1; $j <= $highestColumm; $j++) {
 				}
-
 				$quantity_required_for_supply = $arr[$i]['L'];
 				$drug_name = $arr[$i]['A'];
-				if ($quantity_required_for_supply!=0) {
+				if ($quantity_required_for_supply != 0) {
 					$this -> load -> database();
 					$query = $this -> db -> query("SELECT id FROM drugcode WHERE drug LIKE '%$drug_name%'");
 					$results = $query -> result_array();
-					@$drug_id = $results[0]['id'];	
-					if($results[0]['id']==""){
-					$drug_id=$drug_name;
+					@$drug_id = $results[0]['id'];
+					if ($results[0]['id'] == "") {
+						$drug_id = $drug_name;
 					}
-					
+
 					$basic_unit = $arr[$i]['B'];
 					$beginning_balance = $arr[$i]['C'];
 					$quantity_received_in_period = $arr[$i]['D'];
@@ -154,7 +160,12 @@ class Fcdrr_Management extends MY_Controller {
 					$adjustments_to_other_facilities = $arr[$i]['G'];
 					$end_of_month_physical_count = $arr[$i]['H'];
 					$quantity_required_for_supply = $arr[$i]['L'];
-					$cdrr_query = $this -> db -> query("INSERT INTO cdrr_item (`id`, `balance`, `received`, `dispensed_units`, `dispensed_packs`, `losses`, `adjustments`, `count`, `resupply`, `aggr_consumed`, `aggr_on_hand`, `publish`, `cdrr_id`, `drug_id`) VALUES (NULL, '$beginning_balance', '$quantity_received_in_period', '$quantity_dispensed_in_period', NULL, NULL, '$adjustments_to_other_facilities', '$end_of_month_physical_count', '$quantity_required_for_supply', NULL, NULL, '0', '$facility_id', '$drug_id');");
+					$query = $this -> db -> query("SELECT MAX(id) AS id FROM cdrr_item");
+					$results = $query -> result_array();
+					$last_id = $results[0]['id'];
+					$last_id++;
+					$last_id = md5($last_id . $facility_code);
+					$cdrr_query = $this -> db -> query("INSERT INTO cdrr_item (`id`, `balance`, `received`, `dispensed_units`, `dispensed_packs`, `losses`, `adjustments`, `count`, `resupply`, `aggr_consumed`, `aggr_on_hand`, `publish`, `cdrr_id`, `drug_id`,`unique_id`) VALUES (NULL, '$beginning_balance', '$quantity_received_in_period', '$quantity_dispensed_in_period', NULL, NULL, '$adjustments_to_other_facilities', '$end_of_month_physical_count', '$quantity_required_for_supply', NULL, NULL, '0', '$facility_id', '$drug_id','$last_id');");
 				}
 			}
 
@@ -166,7 +177,7 @@ class Fcdrr_Management extends MY_Controller {
 
 				$quantity_required_for_supply = $arr[$i]['L'];
 				$drug_name = $arr[$i]['A'];
-				if ($quantity_required_for_supply!=0) {
+				if ($quantity_required_for_supply != 0) {
 					$this -> load -> database();
 					$query = $this -> db -> query("SELECT id FROM drugcode WHERE drug LIKE '%$drug_name%'");
 					$results = $query -> result_array();
@@ -178,7 +189,12 @@ class Fcdrr_Management extends MY_Controller {
 					$adjustments_to_other_facilities = $arr[$i]['G'];
 					$end_of_month_physical_count = $arr[$i]['H'];
 					$quantity_required_for_supply = $arr[$i]['L'];
-					$cdrr_query = $this -> db -> query("INSERT INTO cdrr_item (`id`, `balance`, `received`, `dispensed_units`, `dispensed_packs`, `losses`, `adjustments`, `count`, `resupply`, `aggr_consumed`, `aggr_on_hand`, `publish`, `cdrr_id`, `drug_id`) VALUES (NULL, '$beginning_balance', '$quantity_received_in_period', '$quantity_dispensed_in_period', NULL, NULL, '$adjustments_to_other_facilities', '$end_of_month_physical_count', '$quantity_required_for_supply', NULL, NULL, '0', '$facility_id', '$drug_id');");
+					$query = $this -> db -> query("SELECT MAX(id) AS id FROM cdrr_item");
+					$results = $query -> result_array();
+					$last_id = $results[0]['id'];
+					$last_id++;
+					$last_id = md5($last_id . $facility_code);
+					$cdrr_query = $this -> db -> query("INSERT INTO cdrr_item (`id`, `balance`, `received`, `dispensed_units`, `dispensed_packs`, `losses`, `adjustments`, `count`, `resupply`, `aggr_consumed`, `aggr_on_hand`, `publish`, `cdrr_id`, `drug_id`,`unique_id`) VALUES (NULL, '$beginning_balance', '$quantity_received_in_period', '$quantity_dispensed_in_period', NULL, NULL, '$adjustments_to_other_facilities', '$end_of_month_physical_count', '$quantity_required_for_supply', NULL, NULL, '0', '$facility_id', '$drug_id','$last_id');");
 
 				}
 
@@ -192,7 +208,7 @@ class Fcdrr_Management extends MY_Controller {
 
 				$quantity_required_for_supply = $arr[$i]['L'];
 				$drug_name = $arr[$i]['A'];
-				if ($quantity_required_for_supply!=0) {
+				if ($quantity_required_for_supply != 0) {
 					$this -> load -> database();
 					$query = $this -> db -> query("SELECT id FROM drugcode WHERE drug LIKE '%$drug_name%'");
 					$results = $query -> result_array();
@@ -204,7 +220,12 @@ class Fcdrr_Management extends MY_Controller {
 					$adjustments_to_other_facilities = $arr[$i]['G'];
 					$end_of_month_physical_count = $arr[$i]['H'];
 					$quantity_required_for_supply = $arr[$i]['L'];
-					$cdrr_query = $this -> db -> query("INSERT INTO cdrr_item (`id`, `balance`, `received`, `dispensed_units`, `dispensed_packs`, `losses`, `adjustments`, `count`, `resupply`, `aggr_consumed`, `aggr_on_hand`, `publish`, `cdrr_id`, `drug_id`) VALUES (NULL, '$beginning_balance', '$quantity_received_in_period', '$quantity_dispensed_in_period', NULL, NULL, '$adjustments_to_other_facilities', '$end_of_month_physical_count', '$quantity_required_for_supply', NULL, NULL, '0', '$facility_id', '$drug_id');");
+					$query = $this -> db -> query("SELECT MAX(id) AS id FROM cdrr_item");
+					$results = $query -> result_array();
+					$last_id = $results[0]['id'];
+					$last_id++;
+					$last_id = md5($last_id . $facility_code);
+					$cdrr_query = $this -> db -> query("INSERT INTO cdrr_item (`id`, `balance`, `received`, `dispensed_units`, `dispensed_packs`, `losses`, `adjustments`, `count`, `resupply`, `aggr_consumed`, `aggr_on_hand`, `publish`, `cdrr_id`, `drug_id`,`unique_id`) VALUES (NULL, '$beginning_balance', '$quantity_received_in_period', '$quantity_dispensed_in_period', NULL, NULL, '$adjustments_to_other_facilities', '$end_of_month_physical_count', '$quantity_required_for_supply', NULL, NULL, '0', '$facility_id', '$drug_id','$last_id');");
 
 				}
 			}
@@ -222,8 +243,12 @@ class Fcdrr_Management extends MY_Controller {
 					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
 					$results = $query -> result_array();
 					@$regimen_id = $results[0]['id'];
-					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id');");
-
+					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
+					$results = $query -> result_array();
+					$last_id = $results[0]['id'];
+					$last_id++;
+					$last_id = md5($last_id . $facility_code);
+					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`,`unique_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id','$last_id');");
 				}
 
 			}
@@ -242,7 +267,12 @@ class Fcdrr_Management extends MY_Controller {
 					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
 					$results = $query -> result_array();
 					@$regimen_id = $results[0]['id'];
-					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id');");
+					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
+					$results = $query -> result_array();
+					$last_id = $results[0]['id'];
+					$last_id++;
+					$last_id = md5($last_id . $facility_code);
+					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`,`unique_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id','$last_id');");
 				}
 
 			}
@@ -261,7 +291,12 @@ class Fcdrr_Management extends MY_Controller {
 					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
 					$results = $query -> result_array();
 					@$regimen_id = $results[0]['id'];
-					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id');");
+					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
+					$results = $query -> result_array();
+					$last_id = $results[0]['id'];
+					$last_id++;
+					$last_id = md5($last_id . $facility_code);
+					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`,`unique_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id','$last_id');");
 				}
 
 			}
@@ -280,7 +315,12 @@ class Fcdrr_Management extends MY_Controller {
 					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
 					$results = $query -> result_array();
 					@$regimen_id = $results[0]['id'];
-					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id');");
+					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
+					$results = $query -> result_array();
+					$last_id = $results[0]['id'];
+					$last_id++;
+					$last_id = md5($last_id . $facility_code);
+					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`,`unique_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id','$last_id');");
 				}
 
 			}
@@ -299,7 +339,12 @@ class Fcdrr_Management extends MY_Controller {
 					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
 					$results = $query -> result_array();
 					@$regimen_id = $results[0]['id'];
-					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id');");
+					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
+					$results = $query -> result_array();
+					$last_id = $results[0]['id'];
+					$last_id++;
+					$last_id = md5($last_id . $facility_code);
+					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`,`unique_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id','$last_id');");
 				}
 
 			}
@@ -318,7 +363,12 @@ class Fcdrr_Management extends MY_Controller {
 					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
 					$results = $query -> result_array();
 					@$regimen_id = $results[0]['id'];
-					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id');");
+					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
+					$results = $query -> result_array();
+					$last_id = $results[0]['id'];
+					$last_id++;
+					$last_id = md5($last_id . $facility_code);
+					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`,`unique_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id','$last_id');");
 				}
 
 			}
@@ -337,7 +387,12 @@ class Fcdrr_Management extends MY_Controller {
 					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
 					$results = $query -> result_array();
 					@$regimen_id = $results[0]['id'];
-					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id');");
+					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
+					$results = $query -> result_array();
+					$last_id = $results[0]['id'];
+					$last_id++;
+					$last_id = md5($last_id . $facility_code);
+					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`,`unique_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id','$last_id');");
 				}
 
 			}
@@ -356,7 +411,12 @@ class Fcdrr_Management extends MY_Controller {
 					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
 					$results = $query -> result_array();
 					@$regimen_id = $results[0]['id'];
-					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id');");
+					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
+					$results = $query -> result_array();
+					$last_id = $results[0]['id'];
+					$last_id++;
+					$last_id = md5($last_id . $facility_code);
+					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`,`unique_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id','$last_id');");
 				}
 
 			}
@@ -375,7 +435,12 @@ class Fcdrr_Management extends MY_Controller {
 					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
 					$results = $query -> result_array();
 					@$regimen_id = $results[0]['id'];
-					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id');");
+					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
+					$results = $query -> result_array();
+					$last_id = $results[0]['id'];
+					$last_id++;
+					$last_id = md5($last_id . $facility_code);
+					$next_query = $this -> db -> query("INSERT INTO maps_item (`id`, `total`, `regimen_id`, `maps_id`,`unique_id`) VALUES (NULL, '$no_of_clients_dispensed_in_period', '$regimen_id', '$facility_id','$last_id');");
 				}
 			}
 
@@ -423,7 +488,7 @@ class Fcdrr_Management extends MY_Controller {
 			$date_approved_by_signature = $arr[126]['G'] . $arr[126]['H'];
 
 			//$this -> session -> set_userdata('upload_counter','2');
-			redirect("order_management/edit_order/$facility_id");
+			redirect("order_management/edit_order/$order_number");
 
 		}
 
