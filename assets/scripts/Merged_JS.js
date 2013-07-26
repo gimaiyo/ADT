@@ -350,7 +350,6 @@ function syncOrders(facility) {
 					"sql" : data
 				},
 				success : function(data) {
-					alert("Download Complete!")
 					link = base_url + "/ADT/synchronization_management/synchronize_orders";
 					$.ajax({
 						url : link,

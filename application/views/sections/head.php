@@ -71,4 +71,3 @@
 <script type="text/javascript" src="<?php echo asset_url().'scripts/highcharts/highcharts.js'?>"></script>
 <script type="text/javascript" src="<?php echo asset_url().'scripts/highcharts/highcharts-more.js'?>"></script>
 <script type="text/javascript" src="<?php echo asset_url().'scripts/highcharts/modules/exporting.js'?>"></script>
-<script type="text/javascript" src="<?php echo asset_url().'scripts/highcharts/modules/canvas-tools.js'?>"></script>

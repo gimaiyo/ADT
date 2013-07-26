@@ -47,7 +47,7 @@
 					<th>District/County:</th>
 					<td><span class="_green"><?php echo $order_details -> Facility_Object -> Parent_District -> Name;?>/<?php echo $order_details -> Facility_Object -> County -> county;?></span></td>
 					<th>Reporting Period:</th>
-					<td colspan="3" ><span class="green"><b><?php echo date("d-M-Y", strtotime($order_details -> Period_Begin));?></b></span> To <span class="green"><b><?php echo date("d-M-Y", strtotime($order_details -> Period_End));?></b></span></td>
+					<td colspan="3" ><span class="green"><b><?php echo date("M-Y", strtotime($order_details -> Period_Begin));?></b></span></td>
 				</tr>
 			</tbody>
 		</table>

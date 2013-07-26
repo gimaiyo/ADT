@@ -174,7 +174,7 @@ class User_Management extends MY_Controller {
 			$this -> session -> set_userdata("msg_password_change", "Your Password Has Been Changed");
 			$response = array('msg_password_change' => 'password_changed');
 			echo json_encode($response);
-			//redirect("user_management/login");
+			redirect("user_management/login");
 		}
 
 	}

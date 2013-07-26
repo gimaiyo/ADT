@@ -260,7 +260,6 @@ if(isset($reports)|| isset($report_title)){
 				<li><a href="<?php echo base_url().'patient_management/addpatient_show' ?>"><i class="icon-user"></i>Add Patients</a></li>
 			    <li><a href="<?php echo base_url().'inventory_management/stock_transaction/1' ?>"><i class="icon-inbox"></i>Receive/Issue - Main Store</a></li>
 			    <li><a href="<?php echo base_url().'inventory_management/stock_transaction/2' ?>"><i class="icon-inbox"></i>Receive/Issue - Pharmacy</a></li>
-			    <li><a href="<?php echo base_url().'user_management/index' ?>"><i class="icon-user"></i>Add Facility Users</a></li>
             
 				<li class="divider"></li>
 				<li><a href="<?php echo base_url().'auto_management/export' ?>"><i class="icon-book"></i>Export Patient List</a></li>			

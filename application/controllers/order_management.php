@@ -224,7 +224,7 @@ class Order_Management extends MY_Controller {
 		$data['quick_link'] = $status;
 		$data['content_view'] = "view_facility_orders_v";
 		$data['banner_text'] = "Submitted Orders";
-		$data['styles'] = array("pagination.css");
+		//$data['styles'] = array("pagination.css");
 		//get all submitted orders that have not been rationalized (fresh orders)
 
 		$this -> base_params($data);
@@ -237,8 +237,9 @@ class Order_Management extends MY_Controller {
 	}
 
 	public function delete_order($order, $aggregated_order = "") {
+		$this -> session -> set_userdata('msg_error', 'Order No:' . $order . ' was Deleted');
 		$order = Facility_Order::getOrder($order);
-		$order_number=$order->Unique_Id;
+		$order_number = $order -> Unique_Id;
 		$order -> delete();
 		$old_commodities = Cdrr_Item::getOrderItems($order_number);
 		$old_regimens = Maps_Item::getOrderItems($order_number);
@@ -458,11 +459,12 @@ class Order_Management extends MY_Controller {
 		$regimen_counter = 0;
 		$last_id = 0;
 		$initial_order_number = 0;
-
+		$this -> session -> set_userdata('msg_success', 'Order No:' . $order_number . ' was Added');
 		//Save the cdrr
 		if ($is_editing) {
 			//Retrieve the order being edited
 			$order_object = Facility_Order::getOrder($order_number);
+			$this -> session -> set_userdata('msg_success', 'Order No:' . $order_number . ' was Updated');
 			//Delete all items for that order
 			$initial_order_number = $order_number;
 			$order_number = md5($order_number . $facility);
@@ -478,7 +480,6 @@ class Order_Management extends MY_Controller {
 			foreach ($old_comments as $old_comment) {
 				$old_comment -> delete();
 			}
-
 		} else {
 			$order_object = new Facility_Order();
 			$order_object -> Created = $updated_on;
@@ -719,13 +720,15 @@ class Order_Management extends MY_Controller {
 			}
 			$order_nos .= $order;
 			$aggregated_order_ids .= "<input type='hidden' name='aggregated_order[]' value='" . $order . "' >";
+			$results = Facility_Order::getOrder($order);
+			$order = $results -> Unique_Id;
 			//append the order id to the order string
 			if (isset($orders[$counter])) {
-				$cdrr_portion .= $order . " or cdrr_id = ";
-				$maps_portion .= $order . " or maps_id = ";
+				$cdrr_portion .= "'" . $order . "' or cdrr_id = ";
+				$maps_portion .= "'" . $order . "' or maps_id = ";
 			} else {
-				$cdrr_portion .= $order . " ";
-				$maps_portion .= $order . " ";
+				$cdrr_portion .= "'" . $order . "' ";
+				$maps_portion .= "'" . $order . "' ";
 			}
 
 			$counter++;

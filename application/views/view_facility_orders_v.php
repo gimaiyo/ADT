@@ -80,6 +80,14 @@
 		});
 		
 	});
+		setTimeout(function(){
+			$(".message").fadeOut("2000");
+		},6000);
+		/*Auto-Sync Orders to NASCOP when internet is present*/
+		var online = navigator.onLine;
+		if(online==true){
+		syncOrders("<?php echo $this->session->userdata("facility");?>");
+		}
 	});
 	function delete_record(){
 	window.location = url;
@@ -88,7 +96,7 @@
 	
 </script>
 <div class="center-content">
-	<div >
+	<div>
 		<ul class="breadcrumb">
 		  <li><a href="<?php echo site_url().'order_management' ?>">Orders</a> <span class="divider">/</span></li>
 		 
@@ -102,8 +110,29 @@
 		 
 		</ul>
 	</div>
+	<div>
 	<?php
+  	if($this->session->userdata("msg_success")){
+  		?>
+  		<span class="message success"><?php echo $this->session->userdata("msg_success")  ?></span>
+  	<?php
+  	$this->session->unset_userdata("msg_success");
+	}
+  		
+  	elseif($this->session->userdata("msg_error")){
+  		?>
+  		<span class="message error"><?php echo $this->session->userdata("msg_error")  ?></span>
+  	<?php
+  	$this->session->unset_userdata("msg_error");
+  	}
+	?>
+	</div>
+	<?php
+	if($parent->parent!=$central_facility){
+	$this->load->view('satellite_orders_sub_menu');	
+	}else{
 	$this->load->view('orders_sub_menu');
+	}
 	?>
 <table id="orderlist" class="dataTables" border="1">
 	<thead>
