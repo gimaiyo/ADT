@@ -333,7 +333,7 @@ function getPeriodRegimenPatients(start_date, end_date) {
 /*
  * Sysnchronization of Orders
  */
-function syncOrders(facility) {
+function syncOrders(facility,session_id) {
 	var href = window.location.href;
 	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
 	var _href = href.substr(href.lastIndexOf('/') + 1);
@@ -342,7 +342,7 @@ function syncOrders(facility) {
 		url : link,
 		type : 'POST',
 		success : function(data) {
-			link = base_url + "/ADT/synchronization_management/uploadSQL";
+			link = base_url + "/ADT/synchronization_management/uploadSQL/"+session_id;
 			$.ajax({
 				url : link,
 				type : 'POST',
@@ -355,6 +355,7 @@ function syncOrders(facility) {
 						url : link,
 						type : 'POST',
 						success : function(data) {
+							
 							link = "http://localhost/NASCOP/synchronization_management/getSQL/" + facility;
 							$.ajax({
 								url : link,
@@ -363,7 +364,7 @@ function syncOrders(facility) {
 									"sql" : data
 								},
 								success : function(data) {
-									link = base_url + "/ADT/synchronization_management/uploadSQL";
+									link = base_url + "/ADT/synchronization_management/uploadSQL/"+session_id;
 									$.ajax({
 										url : link,
 										type : 'POST',

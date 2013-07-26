@@ -41,14 +41,35 @@ class Synchronization_Management extends MY_Controller {
 			}
 			$mainstrSQl .= $strSQl;
 		}
-		echo $mainstrSQl;
+		echo $mainstrSQl=$this->encrypt->encode($mainstrSQl);
 
 	}
 
-	public function uploadSQL() {
+	public function uploadSQL($session_id) {
+		$sql = "select machine_code from access_log where user_id='$session_id' and access_type='Login' order by id desc LIMIT 1";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$session_array = explode(",", $results[0]['machine_code']);
+		$session_data = array('user_id' => $session_array[0], 'user_indicator' => $session_array[1], 'facility_name' => $session_array[2], 'access_level' => $session_array[3], 'username' => $session_array[4], 'full_name' => $session_array[5], 'Email_Address' => $session_array[6], 'Phone_Number' => $session_array[7], 'facility' => $session_array[8], 'facility_id' => $session_array[9], 'county' => $session_array[10]);
+		$this -> session -> set_userdata($session_data);
+
+		//Setup menus
+		$rights = User_Right::getRights($session_array[3]);
+		$menu_data = array();
+		$menus = array();
+		$counter = 0;
+		foreach ($rights as $right) {
+			$menu_data['menus'][$right -> Menu] = $right -> Access_Type;
+			$menus['menu_items'][$counter]['url'] = $right -> Menu_Item -> Menu_Url;
+			$menus['menu_items'][$counter]['text'] = $right -> Menu_Item -> Menu_Text;
+			$menus['menu_items'][$counter]['offline'] = $right -> Menu_Item -> Offline;
+			$counter++;
+		}
+		$this -> session -> set_userdata($menu_data);
+		$this -> session -> set_userdata($menus);
 		$sql = "";
 		if ($this -> input -> post("sql")) {
-			$sql = $this -> input -> post("sql");
+			$sql = $this -> encrypt -> decode($this -> input -> post("sql"));
 			$queries = explode(";", $sql);
 			foreach ($queries as $query) {
 				if (strlen($query) > 0) {
