@@ -13,6 +13,11 @@ class Dispensement_Management extends MY_Controller {
 		$data = array();
 		$facility_code=$this -> session -> userdata('facility');
 		$dispensing_date="";
+		$data['last_regimens']="";
+		$data['visits']="";
+		$data['appointments']="";
+		$dispensing_date=date('Y-m-d');
+		
 		$sql = "select * from patient where patient_number_ccc='$patient_no' and facility_code='$facility_code'";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
@@ -24,8 +29,9 @@ class Dispensement_Management extends MY_Controller {
 		$results = $query -> result_array();
 		if ($results) {
 			$data['last_regimens']=$results[0];
+			$dispensing_date=$results[0]['dispensing_date'];
 		}
-		$dispensing_date=$results[0]['dispensing_date'];
+		
 		$sql="select d.drug,pv.quantity from patient_visit pv,drugcode d where pv.patient_id = '$patient_no' and pv.dispensing_date = '$dispensing_date' and pv.drug_id = d.id order by pv.id desc";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
@@ -118,7 +124,6 @@ class Dispensement_Management extends MY_Controller {
 
 	public function save() {
 		$sql=$this->input->post("sql");
-		
 		$queries = explode(";", $sql);
 		$count=count($queries);
 		$c=0;

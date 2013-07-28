@@ -8,6 +8,9 @@
 	        "bJQueryUI": true,
 	        "sPaginationType": "full_numbers"
 		} );
+		 setTimeout(function(){
+			$(".message").fadeOut("2000");
+		},6000);
 	} );
 
 </script>

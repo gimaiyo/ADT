@@ -28,16 +28,24 @@ foreach($results as $result){
 				var last_name="<?php echo strtoupper($result['last_name']); ?>";
 				$("#patient_details").val(first_name+" "+other_name+" "+last_name);
 				$("#height").val("<?php echo $result['height']; ?>");
+				<?php
+				if($last_regimens){
+				?>
 				$("#last_regimen_disp").val("<?php echo $last_regimens['regimen_code']." | ".$last_regimens['regimen_desc'];?>");
 				$("#last_regimen").val("<?php echo $last_regimens['id'];?>");
+				<?php
+				}
+				?>
 				
-				
-				var last_visit_date ="<?php echo $last_regimens['dispensing_date']; ?>";
+				var last_visit_date ="<?php echo @$last_regimens['dispensing_date']; ?>";
 				$("#last_visit_date").attr("value", last_visit_date);
 				
 				//Get Prev Appointment
+				<?php
+				if($appointments){
+				?>
 				var today = new Date();
-				var appointment_date = $.datepicker.parseDate('yy-mm-dd',"<?php echo $appointments['appointment']; ?>");
+				var appointment_date = $.datepicker.parseDate('yy-mm-dd',"<?php echo $appointments['appointment'];?>");
 				var timeDiff = today.getTime() - appointment_date.getTime();
 				var diffDays = Math.floor(timeDiff / (1000 * 3600 * 24));
 				if(diffDays > 0) {
@@ -48,7 +56,10 @@ foreach($results as $result){
 
 				$("#days_late").append(html);
 				$("#days_count").attr("value", diffDays);
-				$("#last_appointment_date").attr("value","<?php echo $appointments['appointment']; ?>");
+				$("#last_appointment_date").attr("value","<?php echo @$appointments['appointment']; ?>");
+				<?php
+				}
+				?>
 				
 				
 		    //Attach date picker for date of dispensing
@@ -186,6 +197,8 @@ foreach($results as $result){
 			    		//alert(value.drug);
 			    		row.closest("tr").find(".batch").append("<option value='"+value.batch_number+"'>"+value.batch_number+"</option> ");
 			    		row.closest("tr").find(".dose").val(value.dose);
+			    		row.closest("tr").find(".duration").val(value.duration);
+			    		row.closest("tr").find(".qty_disp").val(value.quantity);
 			    		dose=value.dose;
 			    	});
 			    	var new_url="<?php echo base_url().'dispensement_management/getBrands'; ?>";
@@ -383,7 +396,7 @@ foreach($results as $result){
 				    type: 'POST',
 				    dataType: 'json',
 				    success: function(data) {		        
-				       var all_appointments_link = "<a class='link' target='_blank' href='reports/patients_scheduled_to_visit.html#?date=" + appointment + "' style='font-weight:bold;color:red;'>View appointments</a>";
+				       var all_appointments_link = "<a class='link' target='_blank' href='<?php echo base_url().'report_management/getScheduledPatients/';?>" + appointment + "/" + appointment + "' style='font-weight:bold;color:red;'>View appointments</a>";
 					   var html = "Patients Scheduled on Date: <b>" + data[0].total_appointments + "</b>. " + all_appointments_link;
 					   var new_date = new Date(appointment);
 					   var formatted_date_day = new_date.getDay();
@@ -503,6 +516,7 @@ foreach($results as $result){
 					}
 					var sql = next_appointment_sql;
 					sql += "UPDATE patient SET height='" + dump["height"] + "',current_regimen='" + dump["current_regimen"] + "',nextappointment=DATE(STR_TO_DATE('"+dump["next_appointment_date"]+"','%Y-%m-%d')) where patient_number_ccc ='" + dump["patient"] + "';";
+					
 					//After getting the number of drugs issued, create a unique entry (sql statement) for each in the database in this loop
 					for(var i = 0; i < drugs_count; i++) {
 						sql += "INSERT INTO patient_visit (patient_id, visit_purpose, current_height, current_weight, regimen, regimen_change_reason, drug_id, batch_number, brand, indication, pill_count, comment, timestamp, user, facility, dose, dispensing_date, dispensing_date_timestamp,quantity,duration,adherence,missed_pills,non_adherence_reason) VALUES ('" + dump["patient"] + "', '" + dump["purpose"] + "', '" + dump["height"] + "', '" + dump["weight"] + "', '" + dump["current_regimen"] + "', '" + dump["regimen_change_reason"] + "', '" + drugs[i] + "', '" + batches[i] + "', '" + brands[i] + "', '" + indications[i] + "', '" + pill_counts[i] + "', '" + comments[i] + "', '" + timestamp + "', '" + user + "', '" + facility + "', '" + doses[i] + "', DATE(STR_TO_DATE('"+dump["dispensing_date"]+"','%Y-%m-%d')), '" + dispensing_date_timestamp + "','" + quantities[i] + "','" + durations[i] + "','" + dump["adherence"] + "','" + missed_pills[i] + "','" + dump["non_adherence_reasons"] + "');";
@@ -560,7 +574,7 @@ foreach($results as $result){
 			<h3>Dispense Drugs</h3>
 
 			<form id="dispense_form" class="dispense_form" method="post"  action="<?php echo base_url().'dispensement_management/save';?>" onsubmit="return processData('dispense_form')" >
-				<textarea name="sql" id="sql" style="display:none"></textarea>
+				<textarea name="sql" id="sql" style="display:none;"></textarea>
 				<input type="hidden" id="hidden_stock" name="hidden_stock"/>
 				<input type="hidden" id="days_count" name="days_count"/>
 				<div class="column-2">
@@ -709,8 +723,10 @@ foreach($results as $result){
 							</thead>
 							<tbody>
 								<?php 
+								if($visits){
 								foreach(@$visits as $visit){
 									echo "<tr><td>".$visit['drug']."</td><td>".$visit['quantity']."</td></tr>";
+								}
 								}
 								?>
 							</tbody>
@@ -741,7 +757,7 @@ foreach($results as $result){
 							<th style="">Action</th>
 							</tr>
 							<tr drug_row="0">
-							<td><select name="drug" class="drug input-small"  style=" "></select></td>
+							<td><select name="drug" class="drug input-large"  style=" "></select></td>
 							<td>
 							<input type="text" name="unit" class="unit input-small" style="" readonly="" />
 							</td>

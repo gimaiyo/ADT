@@ -86,7 +86,7 @@
 		/*Auto-Sync Orders to NASCOP when internet is present*/
 		var online = navigator.onLine;
 		if(online==true){
-		syncOrders("<?php echo $this->session->userdata("facility");?>","<?php echo $this->session->userdata("user_id"); ?>");
+		/*syncOrders("<?php //echo $this->session->userdata("facility");?>","<?php //echo $this->session->userdata("user_id"); ?>");*/
 		}
 	});
 	function delete_record(){

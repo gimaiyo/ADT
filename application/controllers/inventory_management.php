@@ -396,7 +396,7 @@ class Inventory_Management extends MY_Controller {
 		$facility_code = $this -> session -> userdata('facility');
 		$stock_type=$this->input ->post("stock_type");
 		$selected_drug=$this->input ->post("selected_drug");
-		$batch_sql=$this->db->query("SELECT DISTINCT d.pack_size,u.Name,dsb.batch_number,d.dose as dose_id,do.Name as dose FROM drugcode d LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id LEFT JOIN drug_unit u ON u.id=d.unit LEFT JOIN dose do ON d.dose=do.id  WHERE d.enabled=1 AND dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' AND dsb.drug_id='$selected_drug' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE() ORDER BY dsb.expiry_date ASC");
+		$batch_sql=$this->db->query("SELECT DISTINCT d.pack_size,d.duration,d.quantity,u.Name,dsb.batch_number,d.dose as dose,do.Name as dose_id FROM drugcode d LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id LEFT JOIN drug_unit u ON u.id=d.unit LEFT JOIN dose do ON d.dose=do.id  WHERE d.enabled=1 AND dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' AND dsb.drug_id='$selected_drug' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE() ORDER BY dsb.expiry_date ASC");
 		$batches_array=$batch_sql->result_array();
 		echo json_encode($batches_array);
 	}

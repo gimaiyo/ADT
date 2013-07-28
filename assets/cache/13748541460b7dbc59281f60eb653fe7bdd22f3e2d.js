@@ -24887,6 +24887,7 @@ function syncOrders(facility,session_id) {
 						url : link,
 						type : 'POST',
 						success : function(data) {
+							
 							link = "http://localhost/NASCOP/synchronization_management/getSQL/" + facility;
 							$.ajax({
 								url : link,
