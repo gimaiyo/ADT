@@ -757,39 +757,39 @@ foreach($results as $result){
 							<th style="">Action</th>
 							</tr>
 							<tr drug_row="0">
-							<td><select name="drug" class="drug input-large"  style=" "></select></td>
+							<td><select name="drug[]" class="drug input-large"  style=" "></select></td>
 							<td>
-							<input type="text" name="unit" class="unit input-small" style="" readonly="" />
+							<input type="text" name="unit[]" class="unit input-small" style="" readonly="" />
 							</td>
-							<td><select name="batch" class="batch input-small" style=""></select></td>
+							<td><select name="batch[]" class="batch input-small" style=""></select></td>
 							<td>
-							<input type="text" name="expiry" name="expiry" class="expiry input-small" id="expiry_date" readonly="" size="15"/>
-							</td>
-							<td>
-							<select name="dose" class="dose input-small"></select>
+							<input type="text" name="expiry[]" name="expiry" class="expiry input-small" id="expiry_date" readonly="" size="15"/>
 							</td>
 							<td>
-							<input type="text" name="duration" class="duration input-small" />
+							<select name="dose[]" class="dose input-small"></select>
 							</td>
 							<td>
-							<input type="text" name="qty_disp" class="qty_disp input-small" />
-							</td>
-							<td><select name="brand" class="brand input-small"></select></td>
-							<td>
-							<input type="text" name="soh" class="soh input-small" disabled="disabled"/>
+							<input type="text" name="duration[]" class="duration input-small" />
 							</td>
 							<td>
-							<select name="indication" class="indication input-small" style="">
+							<input type="text" name="qty_disp[]" class="qty_disp input-small" />
+							</td>
+							<td><select name="brand[]" class="brand input-small"></select></td>
+							<td>
+							<input type="text" name="soh[]" class="soh input-small" disabled="disabled"/>
+							</td>
+							<td>
+							<select name="indication[]" class="indication input-small" style="">
 							<option value="0">None</option>
 							</select></td>
 							<td>
-							<input type="text" name="pill_count" class="pill_count input-small" />
+							<input type="text" name="pill_count[]" class="pill_count input-small" />
 							</td>
 							<td>
-							<input type="text" name="comment" class="comment input-small" />
+							<input type="text" name="comment[]" class="comment input-small" />
 							</td>
 							<td>
-							<input type="text" name="missed_pills" class="missed_pills input-small" />
+							<input type="text" name="missed_pills[]" class="missed_pills input-small" />
 							</td>
 							<td>
 							<a class="add btn-small">Add</a>|<a style="display: none" class="remove btn-small">Remove</a>
