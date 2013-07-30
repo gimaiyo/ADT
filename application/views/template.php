@@ -248,7 +248,7 @@ if(isset($reports)|| isset($report_title)){
 		$this -> session -> unset_userdata('message_user_update_success');
 		}
 		if(!isset($hide_side_menu)){
-	?>
+	    ?>
 	<div class="left-content" style="float: left">
 
 

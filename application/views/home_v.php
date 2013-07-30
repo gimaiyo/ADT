@@ -177,6 +177,9 @@ var chartLink;
     </script>
 
 <div class="main-content">
+	<?php
+	if(!$user_is_administrator){
+	?>
 	<div class="center-content">
 		<div id="expDiv>"></div>
 		<div class="tile" id="drugs-chart">
@@ -243,7 +246,7 @@ var chartLink;
 			</div>
 		</div>
 </div>
-	
+	<?php } $this->load->view("sysadmin_home_v");?>
 </div>
 
 <script type="text/javascript">

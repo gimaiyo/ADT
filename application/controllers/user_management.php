@@ -302,30 +302,12 @@ class User_Management extends MY_Controller {
 					$data['unactivated'] = true;
 					$data['title'] = "System Login";
 					$this -> load -> view("login_v", $data);
-					//$session_data = array('user_id' => $logged_in -> id, 'user_indicator' => $logged_in -> Access -> Indicator, 'facility_name' => $logged_in -> Facility -> name, 'access_level' => $logged_in -> Access_Level, 'username' => $logged_in -> Username, 'full_name' => $logged_in -> Name, 'Email_Address' => $logged_in -> Email_Address, 'Phone_Number' => $logged_in -> Phone_Number, 'facility' => $logged_in -> Facility_Code, 'facility_id' => $facility_details[0]['id'], 'county' => $facility_details[0]['county']);
-					//$this -> session -> set_userdata($session_data);
-					//$this -> activation_view();
-
 				}
 				//looks good. Continue!
 				else {
-
 					$facility_details = Facilities::getCurrentFacility($logged_in -> Facility_Code);
 					$session_data = array('user_id' => $logged_in -> id, 'user_indicator' => $logged_in -> Access -> Indicator, 'facility_name' => $logged_in -> Facility -> name, 'access_level' => $logged_in -> Access_Level, 'username' => $logged_in -> Username, 'full_name' => $logged_in -> Name, 'Email_Address' => $logged_in -> Email_Address, 'Phone_Number' => $logged_in -> Phone_Number, 'facility' => $logged_in -> Facility_Code, 'facility_id' => $facility_details[0]['id'], 'county' => $facility_details[0]['county']);
 					$this -> session -> set_userdata($session_data);
-					//Execute queries that update the patient statuses
-					/*
-					 $sql_pep = "update patient set current_status = '3' WHERE service='2' and current_status = '1' AND datediff(now(),date_enrolled)>=30;";
-					 $sql_pmtct = "update patient set current_status = '4' WHERE service='3' and current_status = '1' AND datediff(now(),date_enrolled)>=270;";
-					 $sql_inactive = "update patient,(SELECT patient from patient_appointment pa left join patient p on p.patient_number_ccc = pa.patient where  datediff(now(),appointment)>90 and p.current_status = '1' and p.service = '1' group by patient) patient_ids set current_status = '5' where patient_number_ccc  = patient_ids.patient ;";
-					 $this -> load -> database();
-					 $this -> db -> query($sql_pep);
-					 $this -> db -> query($sql_pmtct);
-					 $this -> db -> query($sql_inactive);
-					 *
-					 *
-					 */
-
 					$new_access_log = new Access_Log();
 					$new_access_log -> ip_address = $_SERVER['REMOTE_ADDR'];
 					$new_access_log -> machine_code = implode(",",$session_data);
@@ -337,7 +319,6 @@ class User_Management extends MY_Controller {
 					//Set session to redirect the page to the previous page before logged out
 					$this -> session -> set_userdata("prev_page", "1");
 					redirect("home_controller/home");
-
 				}
 
 			}

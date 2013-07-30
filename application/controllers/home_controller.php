@@ -51,6 +51,9 @@ class Home_Controller extends MY_Controller {
 			$timestamp = strtotime($today);
 			$data['scheduled_patients'] = Patient_Appointment::getAllScheduled($timestamp);
 		}
+		if($this -> session -> userdata('user_indicator') == "system_administrator"){
+			$data['hide_side_menu'] = '1';
+		}
 
 		$data['title'] = "webADT | System Home";
 		$data['content_view'] = "home_v";
