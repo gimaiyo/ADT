@@ -47,7 +47,7 @@ class Client_Management extends MY_Controller {
 			$this -> table -> add_row($source->id, $source->Name,$links);
 		}
 
-		$data['sources'] = $this -> table -> generate();;
+		$data['sources'] = $this -> table -> generate();
 		$data['title'] = "Client Sources";
 		$data['banner_text'] = "Client Sources";
 		$data['link'] = "client";

@@ -11,32 +11,32 @@ if (!isset($link)) {
 }
 $actual_page = $this -> uri -> segment(1);
 
-if ($this -> uri -> segment(2)!="") {
+if ($this -> uri -> segment(2) != "") {
 	$actual_page .= "/" . $this -> uri -> segment(2);
 }
-if ($this -> uri -> segment(3)!="") {
+if ($this -> uri -> segment(3) != "") {
 	$actual_page .= "/" . $this -> uri -> segment(3);
-	
+
 }
-if ($this -> uri -> segment(4)!="") {
+if ($this -> uri -> segment(4) != "") {
 	$actual_page .= "/" . $this -> uri -> segment(4);
 }
-if ($this -> uri -> segment(5)!="") {
+if ($this -> uri -> segment(5) != "") {
 	$actual_page .= "/" . $this -> uri -> segment(5);
 }
-if ($this -> uri -> segment(6)!="") {
+if ($this -> uri -> segment(6) != "") {
 	$actual_page .= "/" . $this -> uri -> segment(6);
 }
-if ($this -> uri -> segment(7)!="") {
+if ($this -> uri -> segment(7) != "") {
 	$actual_page .= "/" . $this -> uri -> segment(7);
 }
 $this -> input -> set_cookie("actual_page", $actual_page, 3600);
 
 //
-if($this->session->userdata("prev_page")){
-	if($this -> input -> cookie("actual_page") and $this -> input -> cookie("actual_page")!=""){
-		$actual_page=$this -> input -> cookie("actual_page");	
-		$this->session->unset_userdata("prev_page");
+if ($this -> session -> userdata("prev_page")) {
+	if ($this -> input -> cookie("actual_page") and $this -> input -> cookie("actual_page") != "") {
+		$actual_page = $this -> input -> cookie("actual_page");
+		$this -> session -> unset_userdata("prev_page");
 		redirect($actual_page);
 		die();
 	}
@@ -67,7 +67,7 @@ if ($access_level == "system_administrator") {
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title><?php echo $title; ?></title>
+<title><?php echo $title;?></title>
 <link rel="SHORTCUT ICON" href="<?php echo base_url().'Images/favicon.ico'?>">
 <?php
 $this -> load -> view('sections/head');
@@ -100,31 +100,26 @@ if (isset($styles)) {
 ?> 
 
 <script>
-   $(document).ready(function(){
-   	  <?php 
+   	$(document).ready(function(){<?php 
 		if($user_is_pharmacist){
 	   ?>
-	    $('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification';?>');
-	  <?php
-		}
-        if($user_is_facility_administrator){
+	    $('#notification1').load('<?php echo base_url() . 'facilitydashboard_management/order_notification';?>');<?php
+	}
+	if($user_is_facility_administrator){
 	   ?>
-		$('#notification1').load('<?php echo base_url().'facilitydashboard_management/order_notification';?>');
-      <?php
-        }
-	   ?>});
-</script>
+		$('#notification1').load('<?php echo base_url() . 'facilitydashboard_management/order_notification';?>');<?php
+	}
+	   ?>});</script>
 <script>
-	  $(document).ready(function(){
+	  	$(document).ready(function(){
 		 $(".error").css("display","block");
-		 $("#inactive_users").click(function(){
-		 	<?php
+		 $("#inactive_users").click(function(){<?php
 			$this -> session -> set_userdata("link_id", "index");
 			$this -> session -> set_userdata("linkSub", "user_management");
-			$this -> session -> set_userdata("linkTitle","Users Management");
+			$this -> session -> set_userdata("linkTitle", "Users Management");
 		 	?>
-		 });
-	  });
+				});
+				});
 </script>
 <?php 
 //Load tableTools for datatables printing and exporting
@@ -133,12 +128,13 @@ if(isset($report_title)){
 	<style type="text/css" title="currentStyle">
 		@import "../../media/css/demo_page.css";
 		@import "../../media/css/demo_table.css";
-		@import "<?php echo base_url().'css/datatable/TableTools.css' ?>";
+		@import "<?php echo base_url().'css/datatable/TableTools.css' ?>
+			";
 	</style>
 	<script type="text/javascript" charset="utf-8" src="<?php echo base_url().'Scripts/datatable/ZeroClipboard.js' ?>"></script>
 	<script type="text/javascript" charset="utf-8"  src="<?php echo base_url().'Scripts/datatable/TableTools.js' ?>"></script>
 	<?php
-}
+	}
 ?>      
 <style>
 	.setting_table {
@@ -153,7 +149,7 @@ if(isset($report_title)){
 	<div id="top-panel" style="margin:0px;">
 
 		<div class="logo">
-			<a class="logo" href="<?php echo base_url(); ?>" ></a> 
+			<a class="logo" href="<?php echo base_url();?>" ></a> 
 </div>
 
 
@@ -162,11 +158,11 @@ if(isset($report_title)){
 					$this -> load -> view('sections/banner');
 					?>
 					<div id="facility_name">							
-						<span><?php echo $this -> session -> userdata('facility_name'); ?></span>
+						<span><?php echo $this -> session -> userdata('facility_name');?></span>
 					</div>
 					
 				</div>
-				<div class="banner_text"><?php echo $banner_text; ?></div>	
+				<div class="banner_text"><?php echo $banner_text;?></div>	
 				
  <div id="top_menu"> 
 
@@ -178,24 +174,24 @@ if(isset($report_title)){
 	$counter = 0;
 	if($menus){
 ?>
- 	<a href="<?php  echo site_url('home_controller'); ?>" class="top_menu_link  first_link <?php
+ 	<a href="<?php  echo site_url('home_controller');?>" class="top_menu_link  first_link <?php
 	if ($current == "home_controller") {echo " top_menu_active ";
 	}
-?>">Home </a><?php } ?>
+?>">Home </a><?php }?>
 <?php
 if($menus){
 foreach($menus as $menu){?>
-	<a href = "<?php echo site_url($menu['url']); ?>" class="top_menu_link <?php
+	<a href = "<?php echo site_url($menu['url']);?>" class="top_menu_link <?php
 	if ($current == $menu['url'] || $menu['url'] == $link) {echo " top_menu_active ";
 	}
 ?>"><?php echo $menu['text']; if($menu['offline'] == "1"){?>
 	 <!-- Offline -->
 	 <span class=" red_"></span></a>
 	
-<?php } else{ ?>
+<?php } else{?>
 	<!-- Online -->
 	 <span class=" green_"></span></a>
-<?php } ?>
+<?php }?>
 
 
 
@@ -213,12 +209,12 @@ if($menus){
 	</ul>
 </div>
 <div class="welcome_msg">
-	<span>Welcome <b style="font-weight: bolder;font-size: 20px;"><?php echo $this -> session -> userdata('full_name'); ?></b>. <a id="logout_btn" href="<?php echo base_url().'user_management/logout/2' ?>">Logout</a></span>
+	<span>Welcome <b style="font-weight: bolder;font-size: 20px;"><?php echo $this -> session -> userdata('full_name');?></b>. <a id="logout_btn" href="<?php echo base_url().'user_management/logout/2' ?>">Logout</a></span>
 	<br>
 	<span class="date"><?php echo date('l, jS \of F Y') ?></span>
 	<input type="hidden" id="facility_hidden" />
 </div>
-<?php } ?>
+<?php }?>
  </div>
 
 </div>
@@ -243,7 +239,7 @@ if(isset($reports)|| isset($report_title)){
 				$("#msg_user_update").fadeOut("2000");
 			}, 6000)
 		</script>
-		<div id="msg_user_update"><?php  echo $this -> session -> userdata("message_user_update_success"); ?></div>
+		<div id="msg_user_update"><?php  echo $this -> session -> userdata("message_user_update_success");?></div>
 		<?php
 		$this -> session -> unset_userdata('message_user_update_success');
 		}
@@ -254,8 +250,8 @@ if(isset($reports)|| isset($report_title)){
 
 		<h3>Quick Links</h3>
 		<ul class="nav nav-list well">
-			<?php 
-			if($user_is_pharmacist){
+			    <?php 
+			    if($user_is_pharmacist){
 				?>
 				<li><a href="<?php echo base_url().'patient_management/addpatient_show' ?>"><i class="icon-user"></i>Add Patients</a></li>
 			    <li><a href="<?php echo base_url().'inventory_management/stock_transaction/1' ?>"><i class="icon-inbox"></i>Receive/Issue - Main Store</a></li>
@@ -280,8 +276,39 @@ if(isset($reports)|| isset($report_title)){
 				
 				<?php
 				}
+				if($user_is_administrator){
 				?>
-			
+			    	<li>
+						<a  id="addCounty" class="admin_link"><i class="icon-user"></i>Add County</a>
+					</li>
+					<li>
+						<a  id="addSatellite" class="admin_link"><i class="icon-user"></i>Add Satellites</a>
+					</li>
+					<li>
+						<a  id="addDistrict" class="admin_link"><i class="icon-user"></i>Add Districts</a>
+					</li>
+					<li>
+						<a  id="addMenu" class="admin_link"><i class="icon-user"></i>Add Menus</a>
+					</li>
+					<li>
+						<a  id="addUsers" class="admin_link"><i class="icon-user"></i>Add Users</a>
+					</li>
+					<li class="divider"></li>
+					<li>
+						<a  id="assignRights" class="admin_link"><i class="icon-book"></i>Assign User Rights</a>
+					</li>
+					<li>
+						<a  id="nascopSettings" class="admin_link"><i class="icon-book"></i>Nascop Settings</a>
+					</li>
+					<li>
+						<a  id="getAccessLogs" class="admin_link"><i class="icon-book"></i>Access Logs</a>
+					</li>
+					<li>
+						<a  id="getDeniedLogs" class="admin_link"><i class="icon-book"></i>Denied Logs</a>
+					</li>
+			    <?php
+				}
+				?>
 			
 			
 		</ul>
@@ -294,7 +321,7 @@ if(isset($reports)|| isset($report_title)){
 	}
 
 	$this -> load -> view($content_view);
-	
+
 	//Load modals view
 	$this -> load -> view('sections/modals_v');
 	//Load modals view end
@@ -303,7 +330,7 @@ if(isset($reports)|| isset($report_title)){
 
  <div id="bottom_ribbon">
  	<div id="footer">
- 		<?php $this->load->view('footer_v');?>
+ 		<?php $this -> load -> view('footer_v');?>
  	</div>
  </div> 
 </body>

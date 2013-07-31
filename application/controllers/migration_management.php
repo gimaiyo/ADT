@@ -16,6 +16,7 @@ class Migration_Management extends MY_Controller {
 		$data['banner_text'] = "Data Migration";
 		$tables = array('tblARVDrugStockMain', 'tblCurrentStatus', 'tblDose', 'tblDrugsInRegimen', 'tblGenericName', 'tblIndication', 'tblReasonforChange', 'tblRegimen', 'tblRegimenCategory', 'tblSecurity', 'tblARTPatientMasterInformation', 'tblStockTransactionType', 'tblTypeOfService', 'tblVisitTransaction', 'tblSourceOfClient', 'tblARTPatientTransactions', 'tblARVDrugStockTransactions');
 		$data['tables'] = $tables;
+		$data['hide_side_menu'] = 1;
 		$this -> base_params($data);
 	}
 

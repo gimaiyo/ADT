@@ -16,5 +16,4 @@ class User_Right extends Doctrine_Record {
 		$rights = $query -> execute();
 		return $rights;
 	}
-
 }

@@ -16,5 +16,10 @@ class Menu extends Doctrine_Record {
 		$menus = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
 		return $menus;
 	}
+	public function getAll() {
+		$query = Doctrine_Query::create() -> select("*") -> from("menu");
+		$menus = $query -> execute();
+		return $menus;
+	}
 
 }
