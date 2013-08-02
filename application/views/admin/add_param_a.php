@@ -5,6 +5,11 @@ if($table){
 <?php }echo $dyn_table;?>
 <!--Dialog for Counties-->
 <div id="dialog_counties" title="Add County" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="AddCounty" aria-hidden="true">
+	   <?php
+		$attributes = array('class' => 'input_form');
+		echo form_open('admin_management/save/'.$table, $attributes);
+		echo validation_errors('<p class="error">', '</p>');
+		?>
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
 			×
@@ -14,7 +19,7 @@ if($table){
 	<div class="modal-body">
 		<div class="max-row">
 				<label>County Name</label>
-				<input type="text" class="input-large"/>
+				<input type="text" class="input-large" name="name" required="required"/>
 		</div>
 	</div>
 	<div class="modal-footer">
@@ -23,9 +28,15 @@ if($table){
 		</button>
 		<input type="submit" value="Save" class="btn btn-primary " />
 	</div>
+	<?php echo form_close(); ?>
 </div>
 <!--Dialog for Satellites-->
 <div id="dialog_facilities" title="Add Satellite" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="AddCounty" aria-hidden="true">
+    <?php
+		$attributes = array('class' => 'input_form');
+		echo form_open('admin_management/save/'.$table, $attributes);
+		echo validation_errors('<p class="error">', '</p>');
+	?>
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
 			×
@@ -35,9 +46,7 @@ if($table){
 	<div class="modal-body">
 		<div class="max-row">
 				<label>Facility Name</label>
-				<select class="input-large">
-					<option>LVCT MOMBASA</option>
-					<option>LVCT KISUMU</option>
+				<select name="facility" id="satellite" class="input-xlarge">
 				</select>
 		</div>
 	</div>
@@ -47,9 +56,15 @@ if($table){
 		</button>
 		<input type="submit" value="Save" class="btn btn-primary " />
 	</div>
+	<?php echo form_close(); ?>
 </div>
 <!--Dialog for Districts-->
 <div id="dialog_district" title="Add District" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="AddDistrict" aria-hidden="true">
+	<?php
+		$attributes = array('class' => 'input_form');
+		echo form_open('admin_management/save/'.$table, $attributes);
+		echo validation_errors('<p class="error">', '</p>');
+	?>
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
 			×
@@ -59,7 +74,7 @@ if($table){
 	<div class="modal-body">
 		<div class="max-row">
 				<label>District Name</label>
-				<input type="text" class="input-large"/>
+				<input type="text" class="input-large" name="name" required="required"/>
 		</div>
 	</div>
 	<div class="modal-footer">
@@ -68,9 +83,15 @@ if($table){
 		</button>
 		<input type="submit" value="Save" class="btn btn-primary " />
 	</div>
+	<?php echo form_close(); ?>
 </div>
 <!--Dialog for Menus-->
 <div id="dialog_menu" title="Add Menu" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="AddDistrict" aria-hidden="true">
+	<?php
+		$attributes = array('class' => 'input_form');
+		echo form_open('admin_management/save/'.$table, $attributes);
+		echo validation_errors('<p class="error">', '</p>');
+	?>
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
 			×
@@ -80,15 +101,15 @@ if($table){
 	<div class="modal-body">
 		<div class="max-row">
 				<label>Menu Name</label>
-				<input type="text" class="input-large"/>
+				<input type="text" class="input-large" name="name" required="required"/>
 		</div>
 		<div class="max-row">
 				<label>Menu URL</label>
-				<input type="text" class="input-large"/>
+				<input type="text" class="input-large" name="url" required="required"/>
 		</div>
 		<div class="max-row">
 				<label>Menu Description</label>
-				<textarea cols="40" rows="5"></textarea>
+				<textarea cols="40" rows="5" name="description"></textarea>
 		</div>
 	</div>
 	<div class="modal-footer">
@@ -97,15 +118,16 @@ if($table){
 		</button>
 		<input type="submit" value="Save" class="btn btn-primary " />
 	</div>
+	<?php echo form_close(); ?>
 </div>
 
-
+<!--Dialog for Users-->
 
 <div id="dialog_users" title="New User" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="label" aria-hidden="true">
 		
 			<?php
 			$attributes = array('class' => 'input_form','id'=>'fm_user');
-			echo form_open('user_management/save', $attributes);
+			echo form_open('admin_management/save/'.$table, $attributes);
 			echo validation_errors('<p class="error">', '</p>');
 			?>
 			<div class="modal-header">
@@ -120,18 +142,7 @@ if($table){
 					<td>
 						<span class="add-on"><i class=" icon-chevron-down icon-black"></i></span>
 						<select class="input-xlarge" id="access_level" name="access_level">
-							<?php
-							foreach($user_types as $user_type){ 
-							if($user_type['Access']=="Pharmacist"){
-								//$level_access="User";
-								$level_access=$user_type['Access'];
-							}else{
-								$level_access=$user_type['Access'];
-							}					
-							?>
-								<option value="<?php echo $user_type['Id']; ?>"><?php echo $level_access ?></option>
-							<?php }
-							?>
+							<option selected="selected" value="3">Facility Administrator</option>
 						</select>
 					</td>
 					<td></td>
@@ -171,11 +182,7 @@ if($table){
 					<td>
 						<span class="add-on"><i class=" icon-chevron-down icon-black"></i></span>
 						<select name="facility" id="facility" class="input-xlarge">
-							<?php 
-							foreach($facilities as $facility){
-							?>]
-							<option value="<?php echo $facility['facilitycode'];?>"><?php echo $facility['name'];?></option>
-							<?php }?>
+							
 						</select>
 					</td>
 					<td></td>
@@ -187,8 +194,107 @@ if($table){
 			   <input type="submit" value="Save" class="btn btn-primary " />
 			</div>
 			</form>
-			
+			<?php echo form_close(); ?>
 		</div>
 
+<!--Dialog For User Rights-->
+<!--Dialog for Satellites-->
+<div id="dialog_user_right" title="Add User Right" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="AddCounty" aria-hidden="true">
+	<?php
+		$attributes = array('class' => 'input_form','id'=>'fm_user');
+		echo form_open('admin_management/save/'.$table, $attributes);
+		echo validation_errors('<p class="error">', '</p>');
+	 ?>
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+			×
+		</button>
+		<h3 id="NewDrug">Add User Right</h3>
+	</div>
+	<div class="modal-body">
+		<div class="max-row">
+				<label>Access Level</label>
+				<select class="input-large" name="access_level" id="access_levels">
 
+				</select>
+		</div>
+		<div class="max-row">
+				<label>Menu List</label>
+				<select class="input-large" name="menus" id="menus">
+
+				</select>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">
+			Cancel
+		</button>
+		<input type="submit" value="Save" class="btn btn-primary " />
+	</div>
+	<?php echo form_close(); ?>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		var base_url="<?php echo base_url(); ?>";
+		//Adding Facilities
+		$("#facilities").click(function(){
+		    var link=base_url+"facility_management/getFacilityList";
+				$.ajax({
+				    url: link,
+				    type: 'POST',
+				    dataType: "json",
+				    success: function(data) {	
+				    	$("#satellite").append($("<option></option>").attr("value",'').text('--Select One--'));
+				    	$.each(data, function(i, jsondata){
+				    		$("#satellite").append($("<option></option>").attr("value",jsondata.facilitycode).text(jsondata.name));
+				    	});
+				    }
+				});
+		});
+		
+		//Adding Users
+		$("#users").click(function(){
+		    var link=base_url+"facility_management/getCurrent";
+				$.ajax({
+				    url: link,
+				    type: 'POST',
+				    dataType: "json",
+				    success: function(data) {	
+				    	$.each(data, function(i, jsondata){
+				    		$("#facility").append($("<option selected='selected'></option>").attr("value",jsondata.facilitycode).text(jsondata.name));
+				    	});
+				    }
+				});
+		});
+		
+		//Adding User Rights
+	    $("#user_right").click(function(){
+		    var link1=base_url+"settings_management/getAccessLevels";
+				$.ajax({
+				    url: link1,
+				    type: 'POST',
+				    dataType: "json",
+				    success: function(data) {	
+				    	$.each(data, function(i, jsondata){
+				    		$("#access_levels").append($("<option></option>").attr("value",jsondata.Id).text(jsondata.Access));
+				    	});
+				    }
+				});
+				
+			 var link2=base_url+"settings_management/getMenus";
+				$.ajax({
+				    url: link2,
+				    type: 'POST',
+				    dataType: "json",
+				    success: function(data) {	
+				    	$("#menus").append($("<option></option>").attr("value",'').text('--Select One--'));
+				    	$.each(data, function(i, jsondata){
+				    		$("#menus").append($("<option></option>").attr("value",jsondata.id).text(jsondata.Menu_Text));
+				    	});
+				    }
+				});	
+		});
+	});
+</script>
 

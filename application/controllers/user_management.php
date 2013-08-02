@@ -117,29 +117,19 @@ class User_Management extends MY_Controller {
 		$this -> load -> view('template', $data);
 	}
 
-	public function activation_view() {
-		$data = array();
-		$data['title'] = "Activate User";
-		$data['invalid'] = $data['content_view'] = "activation_code_v";
-		$data['link'] = "settings_management";
-		$data['banner_text'] = "Activate User";
-		$this -> load -> view('template', $data);
-
-	}
-
 	public function activation() {
 		$activation_code = $_POST['activation_code'];
 		$user_id = $this -> session -> userdata('user_id');
 		$this -> load -> database();
-		$query = $this -> db -> query("select * from users where id='$user_id' and Signature='$activation_code' and Active='1'");
+		$query = $this -> db -> query("select * from users where Signature='$activation_code' and Active='1'");
 		$results = $query -> result_array();
 		if ($results) {
-			$query = $this -> db -> query("update users set Signature='1' where id='$user_id' and Active='1'");
+			$query = $this -> db -> query("update users set Signature='1' where Signature='$activation_code' and Active='1'");
 			$this -> session -> set_userdata("changed_password", "Your Account Has Been Activated");
-			redirect("home_controller/home");
+			redirect("user_management/login");
 		} else {
 			$this -> session -> set_userdata("changed_password", "Your Actvation code was incorrect");
-			redirect("user_management/activation_view");
+			redirect("user_management/login");
 		}
 	}
 
@@ -162,8 +152,8 @@ class User_Management extends MY_Controller {
 			if ($type == 2) {
 				$response = array('msg_password_change' => 'password_no_exist');
 				echo json_encode($response);
-			}else{
-			$this -> session -> set_userdata("matching_password", "This is not your current password");
+			} else {
+				$this -> session -> set_userdata("matching_password", "This is not your current password");
 			}
 		} else if ($check_results) {
 			if ($type == 2) {
@@ -189,7 +179,7 @@ class User_Management extends MY_Controller {
 			}
 		}
 		if ($type != 2) {
-		redirect("user_management/change_password");
+			redirect("user_management/change_password");
 		}
 
 	}
@@ -369,7 +359,15 @@ class User_Management extends MY_Controller {
 		$user -> Name = $this -> input -> post('fullname');
 		$user -> Username = $this -> input -> post('username');
 		$key = $this -> encrypt -> get_key();
-		$password = "md5(123456)";
+		$characters = strtoupper("abcdefghijklmnopqrstuvwxyz");
+		$characters = $characters . 'abcdefghijklmnopqrstuvwxyz0123456789';
+		$random_string_length = 8;
+		$string = '';
+		for ($i = 0; $i < $random_string_length; $i++) {
+			$string .= $characters[rand(0, strlen($characters) - 1)];
+		}
+		$password = $string;
+
 		$encrypted_password = $key . $password;
 		$user -> Password = $encrypted_password;
 		$user -> Access_Level = $this -> input -> post('access_level');
@@ -380,20 +378,15 @@ class User_Management extends MY_Controller {
 		$user -> Email_Address = $this -> input -> post('email');
 		$phone = $this -> input -> post('phone');
 		$email = $this -> input -> post('email');
-		$username = $this -> input -> post('username');
-		if ($phone != "") {
-			$code = rand(11111, 99999);
-			$user -> Signature = $code;
-			$this -> sendActivationCode($username, $phone, $code, 'phone');
-		} else {
-			$code = md5($user . $email);
-			$user -> Signature = $code;
-			$this -> sendActivationCode($username, $email, $code, 'email');
-		}
+		$username = $this -> input -> post('fullname');
+
+		$code = md5($user . $email);
+		$user -> Signature = $code;
+		$this -> sendActivationCode($username, $email, $password, $code, 'email');
+
 		$user -> Active = "1";
 
 		$user -> save();
-		//$this -> session -> set_userdata('message_counter', '1');
 		$this -> session -> set_userdata('msg_success', $this -> input -> post('username') . ' \' s details were successfully saved!');
 		redirect('settings_management');
 	}
@@ -483,7 +476,7 @@ class User_Management extends MY_Controller {
 		$this -> db -> query("UPDATE access_log al,(SELECT MAX( id ) AS id FROM  `access_log` WHERE user_id = '$user_id' AND access_type =  'Login') as temp_log SET al.machine_code='$machine_code' WHERE al.id=temp_log.id");
 	}
 
-	public function sendActivationCode($username, $contact, $code = "", $type = "phone") {
+	public function sendActivationCode($username, $contact, $password, $code = "", $type = "phone") {
 
 		//If activation code is to be sent through email
 		if ($type == "email") {
@@ -502,7 +495,7 @@ class User_Management extends MY_Controller {
 			$this -> email -> from('webadt.chai@gmail.com', "WEB_ADT CHAI");
 			$this -> email -> to("$email");
 			$this -> email -> subject("Account Activation");
-			$this -> email -> message("Dear $username, Please click the following link to activate your account.
+			$this -> email -> message("Dear $username,<p> You account has been created and your password is <b>$password</b></p>Please click the following link to activate your account.
 			<form action='" . base_url() . "user_management/activation' method='post'>
 			<input type='submit' value='Activate account' id='btn_activate_account'>
 			<input type='hidden' name='activation_code' id='activation_code' value='" . $code . "'>
@@ -521,7 +514,7 @@ class User_Management extends MY_Controller {
 			} else {
 				show_error($this -> email -> print_debugger());
 			}
-			ob_end_flush();
+			//ob_end_flush();
 
 		}
 
@@ -553,7 +546,8 @@ class User_Management extends MY_Controller {
 	public function resendPassword() {
 
 		$type = $this -> input -> post("type");
-		$characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+		$characters = strtoupper("abcdefghijklmnopqrstuvwxyz");
+		$characters = $characters . 'abcdefghijklmnopqrstuvwxyz0123456789';
 		$random_string_length = 8;
 		$string = '';
 		for ($i = 0; $i < $random_string_length; $i++) {

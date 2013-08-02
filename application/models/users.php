@@ -79,6 +79,12 @@ class Users extends Doctrine_Record {
 		return $users;
 	}
 	
+	public function getInactive($facility_code) {
+		$query = Doctrine_Query::create() -> select("u.Name,u.Username, a.Level_Name as Access, u.Email_Address, u.Phone_Number, b.Name as Creator,u.Active as Active") -> from("Users u") -> leftJoin('u.Access a, u.Creator b')->where('a.Level_Name !="Pharmacist" and Facility_Code="'.$facility_code.'" and Active="0"');
+		$users = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $users;
+	}
+	
 
 	public static function getUser($id) {
 		$query = Doctrine_Query::create() -> select("*") -> from("Users") -> where("id = '$id'");

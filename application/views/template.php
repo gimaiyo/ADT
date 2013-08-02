@@ -2,7 +2,7 @@
 /**
  * Using Session Data
  */
-if (!$this -> session -> userdata('user_id') && $content_view !='resend_password_v' && $content_view !='resend_password_success_v') {
+if (!$this -> session -> userdata('user_id') && $content_view !='resend_password_v') {
 	redirect("User_Management/login");
 }
 
@@ -68,7 +68,6 @@ if ($access_level == "system_administrator") {
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title><?php echo $title;?></title>
-<link rel="SHORTCUT ICON" href="<?php echo base_url().'Images/favicon.ico'?>">
 <?php
 $this -> load -> view('sections/head');
 if ($user_is_pharmacist || $user_is_facility_administrator || $user_is_administrator) {
@@ -100,16 +99,25 @@ if (isset($styles)) {
 ?> 
 
 <script>
-   	$(document).ready(function(){<?php 
-		if($user_is_pharmacist){
-	   ?>
-	    $('#notification1').load('<?php echo base_url() . 'facilitydashboard_management/order_notification';?>');<?php
-	}
-	if($user_is_facility_administrator){
-	   ?>
-		$('#notification1').load('<?php echo base_url() . 'facilitydashboard_management/order_notification';?>');<?php
-	}
-	   ?>});</script>
+   	$(document).ready(function(){
+   	<?php 
+	 if($user_is_pharmacist){
+	 ?>
+	    $('#notification1').load('<?php echo base_url() . 'facilitydashboard_management/order_notification';?>');
+	<?php
+	 }
+	 if($user_is_facility_administrator){
+	 ?>
+		$('#notification1').load('<?php echo base_url() . 'facilitydashboard_management/order_notification';?>');
+	<?php
+	 }
+	 if($user_is_administrator){
+	 ?>
+	    $('#span1').load('<?php echo base_url() . 'admin_management/inactive_users';?>');
+    <?php
+	 }
+	 ?>
+	 });</script>
 <script>
 	  	$(document).ready(function(){
 		 $(".error").css("display","block");
@@ -306,6 +314,9 @@ if(isset($reports)|| isset($report_title)){
 					<li>
 						<a  id="getDeniedLogs" class="admin_link"><i class="icon-book"></i>Denied Logs</a>
 					</li>
+					 <li>
+					 	<a href="<?php echo base_url().'user_manual.pdf' ?>"><i class="icon-book"></i>User Manual</a>
+					 </li>	
 			    <?php
 				}
 				?>
@@ -314,7 +325,7 @@ if(isset($reports)|| isset($report_title)){
 		</ul>
 		<h3>Notifications</h3>
 		<ul id="notification1" class="nav nav-list well">
-		
+			<li><a id='inactive' class='admin_link'><i class='icon-th'></i>Inactive Users <div id="span1" class='badge badge-important'></div></a></li>
 		</ul>	
 	</div>
 	<?php

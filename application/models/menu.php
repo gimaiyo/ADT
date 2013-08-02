@@ -22,5 +22,11 @@ class Menu extends Doctrine_Record {
 		$menus = $query -> execute();
 		return $menus;
 	}
+	
+	public function getAllActive() {
+		$query = Doctrine_Query::create() -> select("*") -> from("menu")->where("active='1'");
+		$menus = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $menus;
+	}
 
 }

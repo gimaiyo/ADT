@@ -24726,7 +24726,7 @@ $(document).ready(function() {
 		} else {
 			$(".error").css("display", "none");
 			//$("#fmChangePassword").submit();
-			var _url = base_url + "user_management/save_new_password";
+			var _url = base_url + "user_management/save_new_password/2";
 			var request = $.ajax({
 				url : _url,
 				type : 'post',
