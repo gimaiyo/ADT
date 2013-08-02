@@ -2,7 +2,7 @@
 /**
  * Using Session Data
  */
-if (!$this -> session -> userdata('user_id')) {
+if (!$this -> session -> userdata('user_id') && $content_view !='resend_password_v' && $content_view !='resend_password_success_v') {
 	redirect("User_Management/login");
 }
 
@@ -279,26 +279,26 @@ if(isset($reports)|| isset($report_title)){
 				if($user_is_administrator){
 				?>
 			    	<li>
-						<a  id="addCounty" class="admin_link"><i class="icon-user"></i>Add County</a>
+						<a  id="addCounty" class="admin_link"><i class="icon-plus icon-black"></i>Add County</a>
 					</li>
 					<li>
-						<a  id="addSatellite" class="admin_link"><i class="icon-user"></i>Add Satellites</a>
+						<a  id="addSatellite" class="admin_link"><i class="icon-plus icon-black"></i>Add Satellites</a>
 					</li>
 					<li>
-						<a  id="addDistrict" class="admin_link"><i class="icon-user"></i>Add Districts</a>
+						<a  id="addDistrict" class="admin_link"><i class="icon-plus icon-black"></i>Add Districts</a>
 					</li>
 					<li>
-						<a  id="addMenu" class="admin_link"><i class="icon-user"></i>Add Menus</a>
+						<a  id="addMenu" class="admin_link"><i class="icon-plus icon-black"></i>Add Menus</a>
 					</li>
 					<li>
 						<a  id="addUsers" class="admin_link"><i class="icon-user"></i>Add Users</a>
 					</li>
 					<li class="divider"></li>
 					<li>
-						<a  id="assignRights" class="admin_link"><i class="icon-book"></i>Assign User Rights</a>
+						<a  id="assignRights" class="admin_link"><i class="icon-cog"></i>Assign User Rights</a>
 					</li>
 					<li>
-						<a  id="nascopSettings" class="admin_link"><i class="icon-book"></i>Nascop Settings</a>
+						<a  id="nascopSettings" class="admin_link"><i class="icon-cog"></i>Nascop Settings</a>
 					</li>
 					<li>
 						<a  id="getAccessLogs" class="admin_link"><i class="icon-book"></i>Access Logs</a>

@@ -20,13 +20,16 @@
 		        <script>
 					$(document).ready(function(){
 						$(".error").css("display","block");
+						setTimeout(function(){
+			               $(".message").fadeOut("2000");
+		                },6000);
 					})
 				</script>
 		<?php
 			echo validation_errors('<span class="message error">', '</span>');
 			if ($this -> session -> userdata("changed_password")) {
 				$message = $this -> session -> userdata("changed_password");
-				echo "<p class='message error'>" . $message . "</p>";
+				echo "<p class='message success'>" . $message . "</p>";
 				$this -> session -> set_userdata("changed_password", "");
 			}
 			if (isset($invalid)) {
@@ -37,6 +40,8 @@
 				echo "<p class='message error'>Your Account Has Not Been Activated.<br/>Please Check your Email to Activate Account</p>";
 			}else if (isset($expired)) {
 				echo "<p class='message error'>" . @$login_attempt . "</p>";
+			} else if (isset($reset)) {
+				echo "<p class='message success'>".$message."</p>";
 			}
 		?>
 		<div id="signup_form">

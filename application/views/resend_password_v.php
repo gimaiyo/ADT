@@ -170,6 +170,9 @@ if (isset($error)) {
 				$(".input-xlarge").attr("name", "contact_phone");
 			}
 		});
+		setTimeout(function(){
+			$(".message").fadeOut("2000");
+	    },6000);
 	}); 
 </script>
   <!--End Wrapper div--></div>

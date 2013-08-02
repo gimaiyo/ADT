@@ -194,7 +194,7 @@ $(document).ready(function() {
 		} else {
 			$(".error").css("display", "none");
 			//$("#fmChangePassword").submit();
-			var _url = base_url + "user_management/save_new_password";
+			var _url = base_url + "user_management/save_new_password/2";
 			var request = $.ajax({
 				url : _url,
 				type : 'post',
@@ -239,7 +239,7 @@ $(document).ready(function() {
 var timer = 0;
 function set_interval() {
 	// the interval 'timer' is set as soon as the page loads
-	timer = setInterval("auto_logout()", 6000000);
+	timer = setInterval("auto_logout()", 600000);
 	// the figure '180000' above indicates how many milliseconds the timer be set to.
 	// Eg: to set it to 5 mins, calculate 3min = 3x60 = 180 sec = 180,000 millisec.
 	// So set it to 180000

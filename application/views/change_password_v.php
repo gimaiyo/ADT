@@ -108,14 +108,14 @@
 
 </script>
 
-<div class="center-content">
+<div class="full-content">
 	<?php
 	echo validation_errors('
 	<p class="error">', '</p>
 	');
 	if ($this -> session -> userdata("matching_password")) {
 		$message = $this -> session -> userdata("matching_password");
-		echo "<p class='alert-error'>" . $message . "</p>";
+		echo "<p class='message error'>" . $message . "</p>";
 		$this -> session -> set_userdata("matching_password", "");
 	}
 	?>

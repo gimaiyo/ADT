@@ -10,10 +10,15 @@ class admin_management extends MY_Controller {
 	public function addCounty() {
 		$results = Counties::getAll();
 		$dyn_table = "<table border='1' id='patient_listing'  cellpadding='5' class='dataTables'>";
-		$dyn_table .= "<thead><tr><th>County Name</th><th colspan='2'> Options</th></tr></thead><tbody>";
+		$dyn_table .= "<thead><tr><th>County Name</th><th> Options</th></tr></thead><tbody>";
 		if ($results) {
 			foreach ($results as $result) {
-				$dyn_table .= "<tr><td>" . $result['county'] . "</td></tr>";
+				if ($result['active'] = 1) {
+					$option = "<a href='" . base_url() . "admin_management/edit/counties/" . $result['id'] . "'>Edit</a> | <a href='" . base_url() . "admin_management/disable/counties/" . $result['id'] . "' class='red'>Disable</a>";
+				} else {
+					$option = "<a href='" . base_url() . "admin_management/edit/counties/" . $result['id'] . "'>Edit</a> | <a href='" . base_url() . "admin_management/enable/counties/" . $result['id'] . "' class='green'>Enable</a>";
+				}
+				$dyn_table .= "<tr><td>" . $result['county'] . "</td><td>" . $option . "</td></tr>";
 			}
 		}
 		$dyn_table .= "</tbody></table>";
@@ -27,10 +32,11 @@ class admin_management extends MY_Controller {
 	public function addSatellite() {
 		$results = Facilities::getSatellites($this -> session -> userdata("facility"));
 		$dyn_table = "<table border='1' id='patient_listing'  cellpadding='5' class='dataTables'>";
-		$dyn_table .= "<thead><tr><th>Facility Code</th><th>Facility Name</th><th colspan='2'> Options</th></tr></thead><tbody>";
+		$dyn_table .= "<thead><tr><th>Facility Code</th><th>Facility Name</th><th>Options</th></tr></thead><tbody>";
 		if ($results) {
 			foreach ($results as $result) {
-				$dyn_table .= "<tr><td>" . $result['facilitycode'] . "</td><td>" . $result['name'] . "</td></tr>";
+				$option = "<a href='" . base_url() . "admin_management/remove/" . $result['facilitycode'] . "'' class='red'>Remove</a>";
+				$dyn_table .= "<tr><td>" . $result['facilitycode'] . "</td><td>" . $result['name'] . "</td><td>" . $option . "</td></tr>";
 			}
 		}
 		$dyn_table .= "</tbody></table>";
@@ -44,10 +50,15 @@ class admin_management extends MY_Controller {
 	public function addDistrict() {
 		$results = District::getAll();
 		$dyn_table = "<table border='1' id='patient_listing'  cellpadding='5' class='dataTables'>";
-		$dyn_table .= "<thead><tr><th>District Name</th><th colspan='2'> Options</th></tr></thead><tbody>";
+		$dyn_table .= "<thead><tr><th>District Name</th><th> Options</th></tr></thead><tbody>";
 		if ($results) {
 			foreach ($results as $result) {
-				$dyn_table .= "<tr><td>" . $result['Name'] . "</td></tr>";
+				if ($result['active'] = 1) {
+					$option = "<a href='" . base_url() . "admin_management/edit/district/" . $result['id'] . "'>Edit</a> | <a href='" . base_url() . "admin_management/disable/district/" . $result['id'] . "' class='red'>Disable</a>";
+				} else {
+					$option = "<a href='" . base_url() . "admin_management/edit/district/" . $result['id'] . "'>Edit</a> | <a href='" . base_url() . "admin_management/enable/district/" . $result['id'] . "' class='green'>Enable</a>";
+				}
+				$dyn_table .= "<tr><td>" . $result['Name'] . "</td><td>" . $option . "</td></tr>";
 			}
 		}
 		$dyn_table .= "</tbody></table>";
@@ -61,10 +72,15 @@ class admin_management extends MY_Controller {
 	public function addMenu() {
 		$results = Menu::getAll();
 		$dyn_table = "<table border='1' id='patient_listing'  cellpadding='5' class='dataTables'>";
-		$dyn_table .= "<thead><tr><th>Menu Name</th><th>Menu URL</th><th>Menu Description</th><th>Menu Status</th><th colspan='2'> Options</th></tr></thead><tbody>";
+		$dyn_table .= "<thead><tr><th>Menu Name</th><th>Menu URL</th><th>Menu Description</th><th> Options</th></tr></thead><tbody>";
 		if ($results) {
 			foreach ($results as $result) {
-				$dyn_table .= "<tr><td>" . $result['Menu_Text'] . "</td><td>" . $result['Menu_Url'] . "</td><td>" . $result['Description'] . "</td><td>" . $result['Offline'] . "</td></tr>";
+				if ($result['active'] = 1) {
+					$option = "<a href='" . base_url() . "admin_management/edit/menu/" . $result['id'] . "'>Edit</a> | <a href='" . base_url() . "admin_management/disable/menu/" . $result['id'] . "' class='red'>Disable</a>";
+				} else {
+					$option = "<a href='" . base_url() . "admin_management/edit/menu/" . $result['id'] . "'>Edit</a> | <a href='" . base_url() . "admin_management/enable/menu/" . $result['id'] . "' class='green'>Enable</a>";
+				}
+				$dyn_table .= "<tr><td>" . $result['Menu_Text'] . "</td><td>" . $result['Menu_Url'] . "</td><td>" . $result['Description'] . "</td><td>" . $option . "</td></tr>";
 			}
 		}
 		$dyn_table .= "</tbody></table>";
@@ -78,10 +94,18 @@ class admin_management extends MY_Controller {
 	public function addUsers() {
 		$results = Users::getThem();
 		$dyn_table = "<table border='1' id='patient_listing'  cellpadding='5' class='dataTables'>";
-		$dyn_table .= "<thead><tr><th>Full Name</th><th>UserName</th><th>Access Level</th><th>Email Address</th><th>Phone Number</th><th>Account Creator</th><th colspan='2'> Options</th></tr></thead><tbody>";
+		$dyn_table .= "<thead><tr><th>Full Name</th><th>UserName</th><th>Access Level</th><th>Email Address</th><th>Phone Number</th><th>Account Creator</th><th> Options</th></tr></thead><tbody>";
+		$option = "";
 		if ($results) {
 			foreach ($results as $result) {
-				$dyn_table .= "<tr><td>" . $result['Name'] . "</td><td>" . $result['Username'] . "</td><td>" . $result['Access'] . "</td><td>" . $result['Email_Address'] . "</td><td>" . $result['Phone_Number'] . "</td><td>" . $result['Creator'] . "</td></tr>";
+				if ($result['id'] != $this -> session -> userdata("user_id")) {
+					if ($result['Active'] = 1) {
+						$option = "<a href='" . base_url() . "admin_management/disable/users/" . $result['id'] . "' class='red'>Disable</a>";
+					} else {
+						$option = "<a href='" . base_url() . "admin_management/enable/users/" . $result['id'] . "' class='green'>Enable</a>";
+					}
+				}
+				$dyn_table .= "<tr><td>" . $result['Name'] . "</td><td>" . $result['Username'] . "</td><td>" . $result['Access'] . "</td><td>" . $result['Email_Address'] . "</td><td>" . $result['Phone_Number'] . "</td><td>" . $result['Creator'] . "</td><td>" . $option . "</td></tr>";
 			}
 		}
 		$dyn_table .= "</tbody></table>";
@@ -97,10 +121,15 @@ class admin_management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$dyn_table = "<table border='1' id='patient_listing'  cellpadding='5' class='dataTables'>";
-		$dyn_table .= "<thead><tr><th>Access Level</th><th>Menu</th><th colspan='2'> Options</th></tr></thead><tbody>";
+		$dyn_table .= "<thead><tr><th>Access Level</th><th>Menu</th><th> Options</th></tr></thead><tbody>";
 		if ($results) {
 			foreach ($results as $result) {
-				$dyn_table .= "<tr><td>" . $result['level_name'] . "</td><td>" . $result['menu_text'] . "</td></tr>";
+				if ($result['active'] = 1) {
+					$option = "<a href='" . base_url() . "admin_management/edit/user_right/" . $result['id'] . "'>Edit</a> | <a href='" . base_url() . "admin_management/disable/user_right/" . $result['id'] . "' class='red'>Disable</a>";
+				} else {
+					$option = "<a href='" . base_url() . "admin_management/edit/user_right/" . $result['id'] . "'>Edit</a> | <a href='" . base_url() . "admin_management/enable/user_right/" . $result['id'] . "' class='green'>Enable</a>";
+				}
+				$dyn_table .= "<tr><td>" . $result['level_name'] . "</td><td>" . $result['menu_text'] . "</td><td>" . $option . "</td></tr>";
 			}
 		}
 		$dyn_table .= "</tbody></table>";
@@ -120,8 +149,8 @@ class admin_management extends MY_Controller {
 		}
 		$dyn_table .= "</tbody></table>";
 		$data['label'] = 'Nascop Settings';
-		$data['table'] = 'nascop';
 		$data['column'] = 'active';
+		$data['table'] = '';
 		$data['dyn_table'] = $dyn_table;
 		$this -> base_params($data);
 	}
@@ -134,13 +163,13 @@ class admin_management extends MY_Controller {
 		$dyn_table .= "<thead><tr><th>User</th><th>Timestamp</th><th>Status</th></tr></thead><tbody>";
 		if ($results) {
 			foreach ($results as $result) {
-				$dyn_table .= "<tr><td>" . $result['Name'] . "</td><td>" .date('d-M-Y h:i:s a',strtotime($result['timestamp'])) . "</td><td>" . $result['access_type'] . "</td></tr>";
+				$dyn_table .= "<tr><td>" . $result['Name'] . "</td><td>" . date('d-M-Y h:i:s a', strtotime($result['timestamp'])) . "</td><td>" . $result['access_type'] . "</td></tr>";
 			}
 		}
 		$dyn_table .= "</tbody></table>";
 		$data['label'] = 'Access Logs';
-		$data['table'] = 'user_right';
 		$data['column'] = 'active';
+		$data['table'] = '';
 		$data['dyn_table'] = $dyn_table;
 		$this -> base_params($data);
 	}
@@ -153,13 +182,13 @@ class admin_management extends MY_Controller {
 		$dyn_table .= "<thead><tr><th>User</th><th>Timestamp</th></tr></thead><tbody>";
 		if ($results) {
 			foreach ($results as $result) {
-				$dyn_table .= "<tr><td>" . $result['Name'] . "</td><td>" . date('d-M-Y h:i:s a',strtotime($result['timestamp'])) . "</td></tr>";
+				$dyn_table .= "<tr><td>" . $result['Name'] . "</td><td>" . date('d-M-Y h:i:s a', strtotime($result['timestamp'])) . "</td></tr>";
 			}
 		}
 		$dyn_table .= "</tbody></table>";
 		$data['label'] = 'Denied Logs';
-		$data['table'] = 'user_right';
 		$data['column'] = 'active';
+		$data['table'] = '';
 		$data['dyn_table'] = $dyn_table;
 		$this -> base_params($data);
 	}

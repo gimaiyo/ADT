@@ -4,6 +4,7 @@ class User_Right extends Doctrine_Record {
 		$this -> hasColumn('Access_Level', 'varchar', 50);
 		$this -> hasColumn('Menu', 'varchar', 100);
 		$this -> hasColumn('Access_Type', 'text');
+		$this -> hasColumn('active', 'int', 5);
 	}
 
 	public function setUp() {
