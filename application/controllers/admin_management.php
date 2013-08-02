@@ -14,7 +14,7 @@ class admin_management extends MY_Controller {
 		$dyn_table .= "<thead><tr><th>County Name</th><th> Options</th></tr></thead><tbody>";
 		if ($results) {
 			foreach ($results as $result) {
-				if ($result['active'] = 1) {
+				if ($result['active'] == '1') {
 					$option = "<a href='" . base_url() . "admin_management/edit/counties/" . $result['id'] . "'>Edit</a> | <a href='" . base_url() . "admin_management/disable/counties/" . $result['id'] . "' class='red'>Disable</a>";
 				} else {
 					$option = "<a href='" . base_url() . "admin_management/edit/counties/" . $result['id'] . "'>Edit</a> | <a href='" . base_url() . "admin_management/enable/counties/" . $result['id'] . "' class='green'>Enable</a>";
@@ -25,7 +25,6 @@ class admin_management extends MY_Controller {
 		$dyn_table .= "</tbody></table>";
 		$data['label'] = 'County';
 		$data['table'] = 'counties';
-		$data['column'] = 'active';
 		$data['dyn_table'] = $dyn_table;
 		$this -> base_params($data);
 	}
@@ -43,7 +42,6 @@ class admin_management extends MY_Controller {
 		$dyn_table .= "</tbody></table>";
 		$data['label'] = 'Satellite';
 		$data['table'] = 'facilities';
-		$data['column'] = 'active';
 		$data['dyn_table'] = $dyn_table;
 		$this -> base_params($data);
 	}
@@ -54,7 +52,7 @@ class admin_management extends MY_Controller {
 		$dyn_table .= "<thead><tr><th>District Name</th><th> Options</th></tr></thead><tbody>";
 		if ($results) {
 			foreach ($results as $result) {
-				if ($result['active'] = 1) {
+				if ($result['active'] == "1") {
 					$option = "<a href='" . base_url() . "admin_management/edit/district/" . $result['id'] . "'>Edit</a> | <a href='" . base_url() . "admin_management/disable/district/" . $result['id'] . "' class='red'>Disable</a>";
 				} else {
 					$option = "<a href='" . base_url() . "admin_management/edit/district/" . $result['id'] . "'>Edit</a> | <a href='" . base_url() . "admin_management/enable/district/" . $result['id'] . "' class='green'>Enable</a>";
@@ -65,7 +63,6 @@ class admin_management extends MY_Controller {
 		$dyn_table .= "</tbody></table>";
 		$data['label'] = 'District';
 		$data['table'] = 'district';
-		$data['column'] = 'active';
 		$data['dyn_table'] = $dyn_table;
 		$this -> base_params($data);
 	}
@@ -76,7 +73,7 @@ class admin_management extends MY_Controller {
 		$dyn_table .= "<thead><tr><th>Menu Name</th><th>Menu URL</th><th>Menu Description</th><th> Options</th></tr></thead><tbody>";
 		if ($results) {
 			foreach ($results as $result) {
-				if ($result['active'] = 1) {
+				if ($result['active'] == "1") {
 					$option = "<a href='" . base_url() . "admin_management/edit/menu/" . $result['id'] . "'>Edit</a> | <a href='" . base_url() . "admin_management/disable/menu/" . $result['id'] . "' class='red'>Disable</a>";
 				} else {
 					$option = "<a href='" . base_url() . "admin_management/edit/menu/" . $result['id'] . "'>Edit</a> | <a href='" . base_url() . "admin_management/enable/menu/" . $result['id'] . "' class='green'>Enable</a>";
@@ -100,7 +97,7 @@ class admin_management extends MY_Controller {
 		if ($results) {
 			foreach ($results as $result) {
 				if ($result['id'] != $this -> session -> userdata("user_id")) {
-					if ($result['Active'] = 1) {
+					if ($result['Active'] =="1") {
 						$option = "<a href='" . base_url() . "admin_management/disable/users/" . $result['id'] . "' class='red'>Disable</a>";
 					} else {
 						$option = "<a href='" . base_url() . "admin_management/enable/users/" . $result['id'] . "' class='green'>Enable</a>";
@@ -118,7 +115,7 @@ class admin_management extends MY_Controller {
 	}
 
 	public function inactive() {
-		$facility_code=$this->session->userdata("facility");
+		$facility_code = $this -> session -> userdata("facility");
 		$results = Users::getInactive($facility_code);
 		$dyn_table = "<table border='1' id='patient_listing'  cellpadding='5' class='dataTables'>";
 		$dyn_table .= "<thead><tr><th>Full Name</th><th>UserName</th><th>Access Level</th><th>Email Address</th><th>Phone Number</th><th>Account Creator</th><th> Options</th></tr></thead><tbody>";
@@ -126,7 +123,7 @@ class admin_management extends MY_Controller {
 		if ($results) {
 			foreach ($results as $result) {
 				if ($result['id'] != $this -> session -> userdata("user_id")) {
-					if ($result['Active'] = 1) {
+					if ($result['Active'] =="1") {
 						$option = "<a href='" . base_url() . "admin_management/disable/users/" . $result['id'] . "' class='red'>Disable</a>";
 					} else {
 						$option = "<a href='" . base_url() . "admin_management/enable/users/" . $result['id'] . "' class='green'>Enable</a>";
@@ -144,14 +141,14 @@ class admin_management extends MY_Controller {
 	}
 
 	public function assignRights() {
-		$sql = "select * from user_right ur left join menu m on m.id=ur.menu left join access_level al on al.id=ur.access_level";
+		$sql = "select ur.id,al.level_name,m.menu_text,ur.active from user_right ur left join menu m on m.id=ur.menu left join access_level al on al.id=ur.access_level";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$dyn_table = "<table border='1' id='patient_listing'  cellpadding='5' class='dataTables'>";
 		$dyn_table .= "<thead><tr><th>Access Level</th><th>Menu</th><th> Options</th></tr></thead><tbody>";
 		if ($results) {
 			foreach ($results as $result) {
-				if ($result['active'] = 1) {
+				if ($result['active'] =="1") {
 					$option = "<a href='" . base_url() . "admin_management/edit/user_right/" . $result['id'] . "'>Edit</a> | <a href='" . base_url() . "admin_management/disable/user_right/" . $result['id'] . "' class='red'>Disable</a>";
 				} else {
 					$option = "<a href='" . base_url() . "admin_management/edit/user_right/" . $result['id'] . "'>Edit</a> | <a href='" . base_url() . "admin_management/enable/user_right/" . $result['id'] . "' class='green'>Enable</a>";
@@ -351,8 +348,33 @@ class admin_management extends MY_Controller {
 				$total = $result['total'];
 			}
 		}
-		$temp =$total;
+		$temp = $total;
 		echo $temp;
+	}
+
+	public function disable($table = "", $id = "") {
+		if ($table == "users") {
+			$sql = "update $table set Active='0' where id='$id'";
+		} else {
+			$sql = "update $table set active='0' where id='$id'";
+		}
+		$this -> db -> query($sql);
+		redirect("home_controller/home");
+	}
+	public function enable($table = "", $id = "") {
+		if ($table == "users") {
+			$sql = "update $table set Active='1' where id='$id'";
+		} else {
+			$sql = "update $table set active='1' where id='$id'";
+		}
+		$this -> db -> query($sql);
+		redirect("home_controller/home");
+	}
+
+	public function remove($facilitycode = "") {
+		$sql = "update facilities set parent='' where facilitycode='$facilitycode'";
+		$this -> db -> query($sql);
+		redirect("home_controller/home");
 	}
 
 	public function base_params($data) {

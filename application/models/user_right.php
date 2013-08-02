@@ -13,7 +13,7 @@ class User_Right extends Doctrine_Record {
 	}
 
 	public static function getRights($access_level) {
-		$query = Doctrine_Query::create() -> select("*") -> from("User_Right") -> where("Access_Level = '" . $access_level . "'");
+		$query = Doctrine_Query::create() -> select("*") -> from("User_Right") -> where("Access_Level = '" . $access_level . "' and active='1'");
 		$rights = $query -> execute();
 		return $rights;
 	}
