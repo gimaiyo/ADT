@@ -183,7 +183,7 @@ var chartLink;
 	<div class="center-content">
 		<div id="expDiv>"></div>
 		<div class="tile" id="drugs-chart">
-			<h3>Summary of Drugs Expiring in 
+			<h3>Summary of Drugs <br/>Expiring in 
 				<select style="width:auto" class="period">
 					<option valuue="7">7 Days</option>
 					<option value="14">14 Days</option>
@@ -201,34 +201,34 @@ var chartLink;
 			</h3>
 			
 			<div id="chart_area">
-				<div class="loadingDiv" style="width:100%;height:100%" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images//loading_spin.gif' ?>"></div>
+				<div class="loadingDiv" style="margin:20% 0 20% 0;" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images//loading_spin.gif' ?>"></div>
 			</div>
 			
 		</div>
 
 		<div class="tile" id="enrollment-chart">
-			<h3>Weekly Summary of Patient Enrollment from
-				<input type="text" placeholder="Start" class="input-mini" id="enrollment_start"/> to
-				<input type="text" placeholder="End" class=" input-mini" id="enrollment_end" readonly="readonly"/>
+			<h3>Weekly Summary of Patient Enrollment <br/>From
+				<input type="text" placeholder="Start" class="input-medium" id="enrollment_start"/> To
+				<input type="text" placeholder="End" class=" input-medium" id="enrollment_end" readonly="readonly"/>
 				<button class="btn generate" id="enrollment_btn">Get</button>
 				<button class="btn btn-success more" id="enrollment-more">Larger</button>
 			<button class="btn btn-danger less" id="enrollment-less">Smaller</button>
 				 </h3>
 			<div id="chart_area2">
-				<div class="loadingDiv" style="width:100%;height:100%" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>
+				<div class="loadingDiv" style="margin:20% 0 20% 0;" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>
 			</div>
 		</div>
 		<div class="tile" id="appointments-chart">
 			<h3>Weekly Summary of Patient Appointments
-				from
-				<input type="text" placeholder="Start" class="input-mini" id="visit_start"/> to
-				<input type="text" placeholder="End" class=" input-mini" id="visit_end" readonly="readonly" />
+				<br/>From
+				<input type="text" placeholder="Start" class="input-medium" id="visit_start"/> To
+				<input type="text" placeholder="End" class=" input-medium" id="visit_end" readonly="readonly" />
 				<button class="generate btn" id="appointment_btn">Get</button>
 				<button class="btn btn-success more" id="appointment-more">Larger</button>
 			<button class="btn btn-danger less" id="appointment-less">Smaller</button>
 				</h3>
 			<div id="chart_area3">
-						<div class="loadingDiv" style="width:100%;height:100%" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>		
+						<div class="loadingDiv" style="margin:20% 0 20% 0;"><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>		
 			</div>
 		</div>
 		<div class="tile" id="stocks-chart">
@@ -242,11 +242,11 @@ var chartLink;
 			<button class="btn btn-danger less" id="stock-less">Smaller</button>
 			</h3>
 			<div id="table1">
-			 	<div class="loadingDiv" style="width:100%;height:100%" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>
+			 	<div class="loadingDiv" style="margin:20% 0 20% 0;" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>
 			</div>
 		</div>
 </div>
-	<?php } $this->load->view("sysadmin_home_v");?>
+	<?php }if($user_is_facilityadmin){ $this->load->view("sysadmin_home_v");}?>
 </div>
 
 <script type="text/javascript">

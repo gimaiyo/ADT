@@ -17,6 +17,7 @@ class Migration_Management extends MY_Controller {
 		$tables = array('tblARVDrugStockMain', 'tblCurrentStatus', 'tblDose', 'tblDrugsInRegimen', 'tblGenericName', 'tblIndication', 'tblReasonforChange', 'tblRegimen', 'tblRegimenCategory', 'tblSecurity', 'tblARTPatientMasterInformation', 'tblStockTransactionType', 'tblTypeOfService', 'tblVisitTransaction', 'tblSourceOfClient', 'tblARTPatientTransactions', 'tblARVDrugStockTransactions');
 		$data['tables'] = $tables;
 		$data['hide_side_menu'] = 1;
+		$data['actual_page'] = 'webADT Migration';
 		$this -> base_params($data);
 	}
 

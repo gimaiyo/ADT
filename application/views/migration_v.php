@@ -1,7 +1,6 @@
-<html>
-	<head>
-		<script type="text/javascript">
+<script type="text/javascript">
 			$(document).ready(function() {
+				$("#actual_page").text("<?php echo $actual_page; ?>");
 				var base_url="<?php echo base_url(); ?>";
 				$("#table_list").multiselect().multiselectfilter();
 				var table_array =['tblARVDrugStockMain', 'tblCurrentStatus', 'tblDose', 'tblDrugsInRegimen', 'tblGenericName', 'tblIndication', 'tblReasonforChange', 'tblRegimen', 'tblRegimenCategory', 'tblSecurity', 'tblARTPatientMasterInformation', 'tblStockTransactionType', 'tblTypeOfService', 'tblVisitTransaction', 'tblSourceOfClient', 'tblARTPatientTransactions', 'tblARVDrugStockTransactions'];
@@ -132,9 +131,7 @@
 		</script>
 		<style type="text/css">
 			#table_view {
-				margin: 0 auto;
-				width:65%;
-				background:#DDD;
+				width:40%;
 			}
 			#output{
 				width:100%;
@@ -148,9 +145,15 @@
 				width:250px;
 			}
 		</style>
-	</head>
-	<body>
-		<div class="full-content" id="table_view">
+
+		<div class="full-content" id="table_view" style="background:#9CF">
+	    <div>
+		<ul class="breadcrumb">
+		  <li><a href="<?php echo site_url().'home_controller/home' ?>"><i class="icon-home"></i><strong>Home</strong></a> 
+		  	<span class="divider">/</span></li>
+		  <li class="active" id="actual_page"></li>
+		</ul>
+	     </div>
 			<fieldset>
 				<legend class="leg">
 						<p>
@@ -177,11 +180,9 @@
 							<input type="submit" value="Migrate"  id='migrate'" class="btn"/>
 						</div>
 						<p>
-						<div id="output"  disabled="disabled">
-					          Migration Started<br/><hr/>
-				        </div>
+						<textarea id="output"  disabled="disabled" cols="100" rows="10">
+					          Migration Progress...
+				        </textarea>
 				        </p>
 			</fieldset>
 		</div>
-	</body>
-</html>

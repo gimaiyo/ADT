@@ -12,6 +12,7 @@ class User_Management extends MY_Controller {
 		ini_set("SMTP", 'ssl://smtp.googlemail.com');
 		ini_set("smtp_port", '465');
 		ini_set("sendmail_from", 'webadt.chai@gmail.com');
+		date_default_timezone_set('Africa/Nairobi');
 	}
 
 	public function index() {
@@ -94,8 +95,7 @@ class User_Management extends MY_Controller {
 			$this -> table -> add_row($user['id'], $user['Name'], $user['Username'], $user['Email_Address'], $user['Phone_Number'], $level_access, $user['Creator'], $links);
 		}
 
-		$data['users'] = $this -> table -> generate();
-		;
+		$data['users'] = $this -> table -> generate(); ;
 		$data['user_types'] = $user_types;
 		$data['facilities'] = $facilities;
 		$data['title'] = "System Users";
@@ -448,14 +448,9 @@ class User_Management extends MY_Controller {
 
 	public function logout($param = "1") {
 		$machine_code = $this -> session -> userdata("machine_code_id");
-		$new_access_log = new Access_Log();
-		$new_access_log -> machine_code = $machine_code;
-		$new_access_log -> ip_address = $_SERVER['REMOTE_ADDR'];
-		$new_access_log -> location = $this -> getIPLocation();
-		$new_access_log -> user_id = $this -> session -> userdata('user_id');
-		$new_access_log -> facility_code = $this -> session -> userdata('facility');
-		$new_access_log -> access_type = "Logout";
-		$new_access_log -> save();
+		$last_id = Access_Log::getLastUser($this -> session -> userdata('user_id'));
+		$this -> db -> where('id', $last_id);
+		$this -> db -> update("access_log", array('access_type' =>"Logout"));
 		$this -> session -> sess_destroy();
 		if ($param == "2") {
 			delete_cookie("actual_page");

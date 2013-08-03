@@ -72,7 +72,7 @@ class Facilitydashboard_Management extends MY_Controller {
 				$total = $result['total'];
 			}
 		}
-		$temp = "<li class='divider'></li><li><a href='$order_link'><i class='icon-th'></i>Inactive Users <div class='badge badge-important'>$total</div></a></li>";
+		$temp = "<li class='divider'></li><li><a href='$order_link'><i class='icon-th'></i>Deactivated Users <div class='badge badge-important'>$total</div></a></li>";
 		return $temp;
 	}
 

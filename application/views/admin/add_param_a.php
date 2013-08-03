@@ -30,6 +30,35 @@ if($table){
 	</div>
 	<?php echo form_close(); ?>
 </div>
+
+<div id="edit_counties" title="Edit County" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="AddCounty" aria-hidden="true">
+	   <?php
+		$attributes = array('class' => 'input_form');
+		echo form_open('admin_management/update/'.$table, $attributes);
+		echo validation_errors('<p class="error">', '</p>');
+		?>
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+			×
+		</button>
+		<h3 id="NewDrug">Edit County</h3>
+	</div>
+	<div class="modal-body">
+		<div class="max-row">
+				<label>County Name</label>
+				<input type="hidden" class="input-large" name="county_id"  id="county_id" required="required"/>
+				<input type="text" class="input-large" name="county_name" id="county_name" required="required"/>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">
+			Cancel
+		</button>
+		<input type="submit" value="Save" class="btn btn-primary " />
+	</div>
+	<?php echo form_close(); ?>
+</div>
+
 <!--Dialog for Satellites-->
 <div id="dialog_facilities" title="Add Satellite" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="AddCounty" aria-hidden="true">
     <?php
@@ -85,6 +114,34 @@ if($table){
 	</div>
 	<?php echo form_close(); ?>
 </div>
+
+<div id="edit_district" title="Edit District" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="AddDistrict" aria-hidden="true">
+	<?php
+		$attributes = array('class' => 'input_form');
+		echo form_open('admin_management/update/'.$table, $attributes);
+		echo validation_errors('<p class="error">', '</p>');
+	?>
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+			×
+		</button>
+		<h3 id="NewDrug">Edit District</h3>
+	</div>
+	<div class="modal-body">
+		<div class="max-row">
+				<label>District Name</label>
+				<input type="hidden" class="input-large" name="district_id"  id="district_id" required="required"/>
+				<input type="text" class="input-large" name="district_name" id="district_name" required="required"/>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">
+			Cancel
+		</button>
+		<input type="submit" value="Save" class="btn btn-primary " />
+	</div>
+	<?php echo form_close(); ?>
+</div>
 <!--Dialog for Menus-->
 <div id="dialog_menu" title="Add Menu" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="AddDistrict" aria-hidden="true">
 	<?php
@@ -101,15 +158,51 @@ if($table){
 	<div class="modal-body">
 		<div class="max-row">
 				<label>Menu Name</label>
-				<input type="text" class="input-large" name="name" required="required"/>
+				<input type="text" class="input-large" name="menu_name" required="required"/>
 		</div>
 		<div class="max-row">
 				<label>Menu URL</label>
-				<input type="text" class="input-large" name="url" required="required"/>
+				<input type="text" class="input-large" name="menu_url" id="menu_url" required="required"/>
 		</div>
 		<div class="max-row">
 				<label>Menu Description</label>
-				<textarea cols="40" rows="5" name="description"></textarea>
+				<textarea cols="40" rows="5" name="menu_description" id="menu_description"></textarea>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">
+			Cancel
+		</button>
+		<input type="submit" value="Save" class="btn btn-primary " />
+	</div>
+	<?php echo form_close(); ?>
+</div>
+
+<div id="edit_menu" title="Edit Menu" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="AddDistrict" aria-hidden="true">
+	<?php
+		$attributes = array('class' => 'input_form');
+		echo form_open('admin_management/update/'.$table, $attributes);
+		echo validation_errors('<p class="error">', '</p>');
+	?>
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+			×
+		</button>
+		<h3 id="NewDrug">Edit Menu</h3>
+	</div>
+	<div class="modal-body">
+		<div class="max-row">
+				<label>Menu Name</label>
+				<input type="hidden" class="input-large" name="menu_id"  id="edit_menu_id" required="required"/>
+				<input type="text" class="input-large" name="menu_name" id="edit_menu_name" required="required"/>
+		</div>
+		<div class="max-row">
+				<label>Menu URL</label>
+				<input type="text" class="input-large" name="menu_url" id="edit_menu_url" required="required"/>
+		</div>
+		<div class="max-row">
+				<label>Menu Description</label>
+				<textarea cols="40" rows="5" name="menu_description" id="edit_menu_description"></textarea>
 		</div>
 	</div>
 	<div class="modal-footer">
@@ -198,7 +291,6 @@ if($table){
 		</div>
 
 <!--Dialog For User Rights-->
-<!--Dialog for Satellites-->
 <div id="dialog_user_right" title="Add User Right" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="AddCounty" aria-hidden="true">
 	<?php
 		$attributes = array('class' => 'input_form','id'=>'fm_user');
@@ -234,17 +326,82 @@ if($table){
 	<?php echo form_close(); ?>
 </div>
 
+<div id="edit_user_right" title="Edit User Right" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="AddCounty" aria-hidden="true">
+	<?php
+		$attributes = array('class' => 'input_form','id'=>'fm_user');
+		echo form_open('admin_management/update/'.$table, $attributes);
+		echo validation_errors('<p class="error">', '</p>');
+	 ?>
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+			×
+		</button>
+		<h3 id="NewDrug">Edit User Right</h3>
+	</div>
+	<div class="modal-body">
+		<div class="max-row">
+				<label>Access Level</label>
+				<input type="hidden" class="input-large" name="right_id"  id="edit_right_id" required="required"/>
+				<select class="input-large" name="access_level" id="edit_access_levels">
+
+				</select>
+		</div>
+		<div class="max-row">
+				<label>Menu List</label>
+				<select class="input-large" name="menus" id="edit_menus">
+
+				</select>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">
+			Cancel
+		</button>
+		<input type="submit" value="Save" class="btn btn-primary " />
+	</div>
+	<?php echo form_close(); ?>
+</div>
+
+<div id="edit_nascop" title="Edit Nascop" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="AddCounty" aria-hidden="true">
+	   <?php
+		$attributes = array('class' => 'input_form');
+		echo form_open('admin_management/update/nascop', $attributes);
+		echo validation_errors('<p class="error">', '</p>');
+		?>
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+			×
+		</button>
+		<h3 id="NewDrug">Edit NASCOP</h3>
+	</div>
+	<div class="modal-body">
+		<div class="max-row">
+				<label>NASCOP URL</label>
+				<input type="text" class="input-xlarge" name="nascop_url" id="nascop_url" required="required"/>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">
+			Cancel
+		</button>
+		<input type="submit" value="Save" class="btn btn-primary " />
+	</div>
+	<?php echo form_close(); ?>
+</div>
+
 <script type="text/javascript">
 	$(document).ready(function(){
 		var base_url="<?php echo base_url(); ?>";
+		$("#actual_page").text("<?php echo $actual_page; ?>");
 		//Adding Facilities
-		$("#facilities").click(function(){
+		$("#facilities").live('click',function(){
 		    var link=base_url+"facility_management/getFacilityList";
 				$.ajax({
 				    url: link,
 				    type: 'POST',
 				    dataType: "json",
 				    success: function(data) {	
+				    	$("#satellite").empty();
 				    	$("#satellite").append($("<option></option>").attr("value",'').text('--Select One--'));
 				    	$.each(data, function(i, jsondata){
 				    		$("#satellite").append($("<option></option>").attr("value",jsondata.facilitycode).text(jsondata.name));
@@ -254,13 +411,14 @@ if($table){
 		});
 		
 		//Adding Users
-		$("#users").click(function(){
+		$("#users").live('click',function(){
 		    var link=base_url+"facility_management/getCurrent";
 				$.ajax({
 				    url: link,
 				    type: 'POST',
 				    dataType: "json",
-				    success: function(data) {	
+				    success: function(data) {
+				    	$("#facility").empty();	
 				    	$.each(data, function(i, jsondata){
 				    		$("#facility").append($("<option selected='selected'></option>").attr("value",jsondata.facilitycode).text(jsondata.name));
 				    	});
@@ -269,13 +427,14 @@ if($table){
 		});
 		
 		//Adding User Rights
-	    $("#user_right").click(function(){
+	    $("#user_right").live('click',function(){
 		    var link1=base_url+"settings_management/getAccessLevels";
 				$.ajax({
 				    url: link1,
 				    type: 'POST',
 				    dataType: "json",
-				    success: function(data) {	
+				    success: function(data) {
+				    	$("#access_levels").empty();	
 				    	$.each(data, function(i, jsondata){
 				    		$("#access_levels").append($("<option></option>").attr("value",jsondata.Id).text(jsondata.Access));
 				    	});
@@ -287,7 +446,8 @@ if($table){
 				    url: link2,
 				    type: 'POST',
 				    dataType: "json",
-				    success: function(data) {	
+				    success: function(data) {
+				    	$("#menus").empty();	
 				    	$("#menus").append($("<option></option>").attr("value",'').text('--Select One--'));
 				    	$.each(data, function(i, jsondata){
 				    		$("#menus").append($("<option></option>").attr("value",jsondata.id).text(jsondata.Menu_Text));
@@ -295,6 +455,62 @@ if($table){
 				    }
 				});	
 		});
-	});
+		
+		$(".edit").live('click',function(){
+			var table=$(this).attr("table");
+			if(table=='counties'){
+				$("#county_id").val($(this).attr("county_id"));
+				$("#county_name").val($(this).attr("county"));
+			}else if(table=='district'){
+				$("#district_id").val($(this).attr("district_id"));
+				$("#district_name").val($(this).attr("district"));
+			}else if(table=='menu'){
+				$("#edit_menu_id").val($(this).attr("menu_id"));
+				$("#edit_menu_name").val($(this).attr("menu_name"));
+				$("#edit_menu_url").val($(this).attr("menu_url"));
+				$("#edit_menu_description").val($(this).attr("menu_desc"));
+			}else if(table=='user_right'){
+				        $("#edit_right_id").val($(this).attr("right_id"))
+						var access_id = $(this).attr("access_id");
+						var menu_id = $(this).attr("edit_menu_id");
+						var link1 = base_url + "settings_management/getAccessLevels";
+						$.ajax({
+							url : link1,
+							type : 'POST',
+							dataType : "json",
+							success : function(data) {
+								$("#edit_access_levels").empty();
+								$.each(data, function(i, jsondata) {
+									if(access_id == jsondata.Id) {
+										$("#edit_access_levels").append($("<option selected='selected'></option>").attr("value", jsondata.Id).text(jsondata.Access));
+									} else {
+										$("#edit_access_levels").append($("<option></option>").attr("value", jsondata.Id).text(jsondata.Access));
+									}
+								});
+							}
+						});
+
+						var link2 = base_url + "settings_management/getMenus";
+						$.ajax({
+							url : link2,
+							type : 'POST',
+							dataType : "json",
+							success : function(data) {
+								$("#edit_menus").empty();
+								$("#edit_menus").append($("<option></option>").attr("value", '').text('--Select One--'));
+								$.each(data, function(i, jsondata) {
+									if(menu_id == jsondata.id) {
+										$("#edit_menus").append($("<option selected='selected'></option>").attr("value", jsondata.id).text(jsondata.Menu_Text));
+									} else {
+										$("#edit_menus").append($("<option></option>").attr("value", jsondata.id).text(jsondata.Menu_Text));
+									}
+								});
+							}
+						});
+					}else if(table=="nascop"){
+						$("#nascop_url").val($(this).attr("nascop_url"));
+					}
+			   });
+		  });
 </script>
 

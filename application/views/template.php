@@ -114,6 +114,7 @@ if (isset($styles)) {
 	 if($user_is_administrator){
 	 ?>
 	    $('#span1').load('<?php echo base_url() . 'admin_management/inactive_users';?>');
+	    $('#span2').load('<?php echo base_url() . 'admin_management/online_users';?>');
     <?php
 	 }
 	 ?>
@@ -287,19 +288,19 @@ if(isset($reports)|| isset($report_title)){
 				if($user_is_administrator){
 				?>
 			    	<li>
-						<a  id="addCounty" class="admin_link"><i class="icon-plus icon-black"></i>Add County</a>
+						<a  id="addCounty" class="admin_link"><i class="icon-eye-open icon-black"></i>View Counties</a>
 					</li>
 					<li>
-						<a  id="addSatellite" class="admin_link"><i class="icon-plus icon-black"></i>Add Satellites</a>
+						<a  id="addSatellite" class="admin_link"><i class="icon-eye-open icon-black"></i>View Satellites</a>
 					</li>
 					<li>
-						<a  id="addDistrict" class="admin_link"><i class="icon-plus icon-black"></i>Add Districts</a>
+						<a  id="addDistrict" class="admin_link"><i class="icon-eye-open icon-black"></i>View Districts</a>
 					</li>
 					<li>
-						<a  id="addMenu" class="admin_link"><i class="icon-plus icon-black"></i>Add Menus</a>
+						<a  id="addMenu" class="admin_link"><i class="icon-eye-open icon-black"></i>View Menus</a>
 					</li>
 					<li>
-						<a  id="addUsers" class="admin_link"><i class="icon-user"></i>Add Users</a>
+						<a  id="addUsers" class="admin_link"><i class="icon-user"></i>View Users</a>
 					</li>
 					<li class="divider"></li>
 					<li>
@@ -325,7 +326,8 @@ if(isset($reports)|| isset($report_title)){
 		</ul>
 		<h3>Notifications</h3>
 		<ul id="notification1" class="nav nav-list well">
-			<li><a id='inactive' class='admin_link'><i class='icon-th'></i>Inactive Users <div id="span1" class='badge badge-important'></div></a></li>
+			<li><a id='online' class='admin_link'><i class='icon-signal'></i>Online Users <div id="span2" class='badge badge-important'></div></a></li>
+			<li><a id='inactive' class='admin_link'><i class='icon-th'></i>Deactivated Users <div id="span1" class='badge badge-important'></div></a></li>
 		</ul>	
 	</div>
 	<?php

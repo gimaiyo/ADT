@@ -4,7 +4,6 @@ if (!defined('BASEPATH'))
 
 class Home_Controller extends MY_Controller {
 	function __construct() {
-
 		parent::__construct();
 	}
 

@@ -21,6 +21,12 @@ class Access_Log extends Doctrine_Record {
 		return $sync_log;
 	}
 	
+	public function getLastUser($user_id){
+		$query = Doctrine_Query::create() -> select("id") -> from("access_log")->where("user_id='$user_id'")->orderby("id desc")->limit("1");
+		$sync_log = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $sync_log[0]['id'];
+	}
+	
 
 
 }
