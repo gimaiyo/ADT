@@ -171,7 +171,14 @@ var chartLink;
                  	 $('#table1').load('<?php echo base_url().'facilitydashboard_management/stock_notification/'?>'+period,function(){
 
 	                 });
-                 }		
+                 } else if(button_id=="usage_btn"){                	
+                 	 period=$("#usage_period").val();
+                 	 $('#chart_area77').load('<?php echo base_url().'admin_management/getSystemUsage/'?>'+period);
+                 } else if(button_id=="access_btn"){                	
+                 	 var from_date=$("#enrollment_start").val();
+                 	 var to_date=$("#enrollment_end").val();
+                 	 $('#chart_area78').load('<?php echo base_url().'admin_management/getWeeklySumary/'?>'+from_date+'/'+to_date);	
+                 }
             });
 		});
     </script>
@@ -185,7 +192,7 @@ var chartLink;
 		<div class="tile" id="drugs-chart">
 			<h3>Summary of Drugs <br/>Expiring in 
 				<select style="width:auto" class="period">
-					<option valuue="7">7 Days</option>
+					<option value="7">7 Days</option>
 					<option value="14">14 Days</option>
 				   <option value="30" selected=selected>1 Month</option>
 				   <option value="90">3 Months</option>
@@ -240,13 +247,15 @@ var chartLink;
 			<button class="generate btn" id="stockout_btn">Get</button>
 			<button class="btn btn-success more" id="stock-more">Larger</button>
 			<button class="btn btn-danger less" id="stock-less">Smaller</button>
+			<p>&nbsp;</p>
 			</h3>
+			
 			<div id="table1">
 			 	<div class="loadingDiv" style="margin:20% 0 20% 0;" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>
 			</div>
 		</div>
 </div>
-	<?php }if($user_is_facilityadmin){ $this->load->view("sysadmin_home_v");}?>
+	<?php }if($user_is_administrator){ $this->load->view("sysadmin_home_v");}?>
 </div>
 
 <script type="text/javascript">

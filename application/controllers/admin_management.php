@@ -145,29 +145,34 @@ class admin_management extends MY_Controller {
 
 	public function online() {
 		$today = date('Y-m-d');
-		$sql = "SELECT DISTINCT(user_id) as user_id,`timestamp` as time_log FROM access_log  WHERE access_type = 'Login' AND `timestamp` LIKE '%$today%'";
+		$sql = "SELECT DISTINCT(user_id) as user_id,start_time as time_log FROM access_log  WHERE access_type = 'Login' AND start_time LIKE '%$today%'";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		foreach ($results as $result) {
-			$user_id = $result['user_id'];
-			$time_log = $result['time_log'];
-			$now = date('Y-m-d H:i:s');
-			$dd = date_diff(new DateTime($time_log), new DateTime($now));
+		if ($results) {
+			foreach ($results as $result) {
+				$user_id = $result['user_id'];
+				$time_log = $result['time_log'];
+				$now = date('Y-m-d H:i:s');
+				$dd = date_diff(new DateTime($time_log), new DateTime($now));
 
-			if ($dd -> h > 0) {
-				$activity = $dd -> h . " Hour(s)" . $dd -> i . " Minutes and " . $dd -> s . " Seconds";
-			} else {
-				$activity = $dd -> i . " Minutes and " . $dd -> s . " Seconds";
-			}
-			$results = Users::getSpecific($user_id);
-			$dyn_table = "<table border='1' id='patient_listing'  cellpadding='5' class='dataTables'>";
-			$dyn_table .= "<thead><tr><th>Full Name</th><th>UserName</th><th>Access Level</th><th>Email Address</th><th>Activity Duration</th></tr></thead><tbody>";
-			$option = "";
-			if ($results) {
-				foreach ($results as $result) {
-					$dyn_table .= "<tr><td>" . $result['Name'] . "</td><td>" . $result['Username'] . "</td><td>" . $result['Access'] . "</td><td>" . $result['Email_Address'] . "</td><td>" . $activity . "</td></tr>";
+				if ($dd -> h > 0) {
+					$activity = $dd -> h . " Hour(s)" . $dd -> i . " Minutes and " . $dd -> s . " Seconds";
+				} else {
+					$activity = $dd -> i . " Minutes and " . $dd -> s . " Seconds";
+				}
+				$results = Users::getSpecific($user_id);
+				$dyn_table = "<table border='1' id='patient_listing'  cellpadding='5' class='dataTables'>";
+				$dyn_table .= "<thead><tr><th>Full Name</th><th>UserName</th><th>Access Level</th><th>Email Address</th><th>Activity Duration</th></tr></thead><tbody>";
+				$option = "";
+				if ($results) {
+					foreach ($results as $result) {
+						$dyn_table .= "<tr><td>" . $result['Name'] . "</td><td>" . $result['Username'] . "</td><td>" . $result['Access'] . "</td><td>" . $result['Email_Address'] . "</td><td>" . $activity . "</td></tr>";
+					}
 				}
 			}
+		} else {
+			$dyn_table = "<table border='1' id='patient_listing'  cellpadding='5' class='dataTables'>";
+			$dyn_table .= "<thead><tr><th>Full Name</th><th>UserName</th><th>Access Level</th><th>Email Address</th><th>Activity Duration</th></tr></thead><tbody>";
 		}
 		$dyn_table .= "</tbody></table>";
 		$data['label'] = 'Users';
@@ -408,9 +413,9 @@ class admin_management extends MY_Controller {
 	public function online_users() {
 		$facility_code = $this -> session -> userdata("facility");
 		$today = date('Y-m-d');
-		$sql = "update access_log set access_type ='Logout' WHERE datediff('$today',`timestamp`)>0";
+		$sql = "update access_log set access_type ='Logout' WHERE datediff('$today',`start_time`)>0";
 		$query = $this -> db -> query($sql);
-		$sql = "SELECT COUNT(DISTINCT(user_id)) AS total FROM access_log WHERE access_type = 'Login' AND `timestamp` LIKE '%$today%'";
+		$sql = "SELECT COUNT(DISTINCT(user_id)) AS total FROM access_log WHERE access_type = 'Login' AND `start_time` LIKE '%$today%'";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$total = 0;
@@ -515,13 +520,114 @@ class admin_management extends MY_Controller {
 			$this -> session -> set_userdata('default_link', 'nascopSettings');
 		}
 	}
-	
-	public function getSystemUsage($period = 30){
-		
+
+	public function getSystemUsage($period = '') {
+		$dataArray = array();
+		$total_series = array();
+		$sql = "select * from access_level order by id asc";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$count = 1;
+		foreach ($results as $result) {
+			$access_level = $result['id'];
+			$level = $result['level_name'];
+			$sql = "SELECT acl.id AS access, acl.level_name, COUNT(*) AS total FROM access_log al,access_level acl  WHERE DATEDIFF(CURDATE(),al.start_time) <=  '$period' AND acl.id = al.access_level AND al.access_level='$access_level'";
+			$query = $this -> db -> query($sql);
+			$results = $query -> result_array();
+			if ($results) {
+				foreach ($results as $result) {
+					$total = $result['total'];
+					$dataArray[] = (int)$total;
+				}
+			}
+			$series = array('name' => "Usage", 'data' => $dataArray);
+		}
+		$total_series[] = $series;
+
+		$columns = array("System Admin", "Facility User", "Facility Admin");
+		$resultArray = json_encode($total_series);
+		$categories = json_encode($columns);
+		$resultArraySize = 0;
+		$data['resultArraySize'] = $resultArraySize;
+		$data['container'] = 'chart_expiry';
+		$data['chartType'] = 'bar';
+		$data['title'] = 'Chart';
+		$data['chartTitle'] = 'System Usage Summary';
+		$data['categories'] = $categories;
+		$data['yAxix'] = 'No. Of Times';
+		$data['resultArray'] = $resultArray;
+		$this -> load -> view('chart_v', $data);
 	}
-	
-	public function getWeeklySumary(){
+
+	public function getWeeklySumary($startdate = '', $enddate = '') {
+		$dataArray = array();
+		$total_series = array();
+		$timestamp = time();
+		$edate = date('Y-m-d', $timestamp);
+		$series=array();
+		$dates=array();
+		$columns = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+		$x = 6;
+		$y = 0;
+		if ($startdate == "" || $enddate == "") {
+			for ($i = 0; $i < $x; $i++) {
+				if (date("D", $timestamp) != "Sun") {
+					$sdate = date('Y-m-d', $timestamp);
+					//Store the days in an array
+					$dates[$y] = $sdate;
+					$y++;
+				}
+				//If sunday is included, add one more day
+				else {$x = 8;
+				}
+				$timestamp += 24 * 3600;
+			}
+			$start_date = $sdate;
+			$end_date = $edate;
+		} else {
+			$startdate=strtotime($startdate);
+			for ($i = 0; $i < $x; $i++) {
+				if (date("D",$startdate) != "Sun") {
+					$sdate = date('Y-m-d',$startdate);
+					//Store the days in an array
+					
+					$dates[$y] = $sdate;
+					$y++;
+				}
+				//If sunday is included, add one more day
+				else {$x = 8;
+				}
+				$startdate += 24 * 3600;
+			}
+			$start_date = $startdate;
+			$end_date = $enddate;
+		}
+		foreach ($dates as $date_period) {
+			$sql = "SELECT count(*) as total FROM access_log WHERE DATE_FORMAT(start_time,'%Y-%m-%d')='$date_period' ORDER BY start_time LIMIT 1";
+			$query = $this -> db -> query($sql);
+			$results = $query -> result_array();
+			foreach ($results as $value) {
+				$total = $value['total'];
+				$dataArray[] = (int)$total;
+			}
+			$series = array('name' =>"Summary", 'data' => $dataArray);
+		}
+		$total_series[] = $series;
 		
+
+		$resultArray = json_encode($total_series);
+		$categories = json_encode($columns);
+		$resultArraySize = 0;
+		$data['resultArraySize'] = $resultArraySize;
+		$data['container'] = 'chart_enrollment';
+		$data['chartType'] = 'bar';
+		$data['title'] = 'Chart';
+		$data['chartTitle'] = 'Weekly System Access Summary';
+		$data['categories'] = $categories;
+		$data['yAxix'] = 'Access Total';
+		$data['resultArray'] = $resultArray;
+		$this -> load -> view('chart_v', $data);
+
 	}
 
 	public function base_params($data) {

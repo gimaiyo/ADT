@@ -3,10 +3,10 @@ class Access_Log extends Doctrine_Record {
 
 	public function setTableDefinition() {
 		$this -> hasColumn('machine_code','varchar',150);
-		$this -> hasColumn('ip_address', 'text');
-		$this -> hasColumn('location','varchar',150);
 		$this -> hasColumn('user_id','varchar',150);
-		$this -> hasColumn('timestamp','varchar',150);
+		$this -> hasColumn('access_level','int',5);
+		$this -> hasColumn('start_time','varchar',50);
+		$this -> hasColumn('end_time','varchar',50);
 		$this -> hasColumn('facility_code','varchar',150);
 		$this -> hasColumn('access_type','varchar',150);
 	}

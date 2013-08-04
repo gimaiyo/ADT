@@ -28,14 +28,14 @@
     <div id="display_content">
 	<div class="tile" id="drugs-chart">
 			<h3>System Usage Summary <br/>For the last
-				<select style="width:auto" class="period">
-					<option valuue="7">7 Days</option>
+				<select style="width:auto" class="period" id="usage_period">
+					<option value="7">7 Days</option>
 					<option value="14">14 Days</option>
 				   <option value="30" selected=selected>1 Month</option>
 				   <option value="90">3 Months</option>
 				   <option value="180">6 Months</option>
 			</select>
-			<button class="generate btn" id="expiry_btn">Go</button>
+			<button class="generate btn" id="usage_btn">Go</button>
 			<button class="btn btn-success more" id="drugs-more">Larger</button>
 			<button class="btn btn-danger less" id="drugs-less">Smaller</button>
 			</h3>
@@ -49,7 +49,7 @@
 			<h3>Weekly Access Log Summary <br/>From
 				<input type="text" placeholder="Start" class="input-medium" id="enrollment_start"/> To
 				<input type="text" placeholder="End" class=" input-medium" id="enrollment_end" readonly="readonly"/>
-				<button class="btn generate" id="enrollment_btn">Go</button>
+				<button class="btn generate" id="access_btn">Go</button>
 				<button class="btn btn-success more" id="enrollment-more">Larger</button>
 			<button class="btn btn-danger less" id="enrollment-less">Smaller</button>
 				 </h3>
@@ -81,8 +81,8 @@
 	    var period=30;	
 		var chart1_link="<?php echo base_url().'admin_management/getSystemUsage/';?>"+period
 		var chart2_link="<?php echo base_url().'admin_management/getWeeklySumary/';?>"+fromDate+'/'+endDate;
-        //$('#chart_area77').load(chart1_link);
-        //$('#chart_area78').load(chart2_link);
+        $('#chart_area77').load(chart1_link);
+        $('#chart_area78').load(chart2_link);
 		
 		
 		if(default_link){
@@ -106,5 +106,7 @@
 		setTimeout(function(){
 			$(".message").fadeOut("2000");
 		},6000);
+		
+
 	});
 </script>

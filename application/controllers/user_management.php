@@ -313,10 +313,10 @@ class User_Management extends MY_Controller {
 					$session_data = array('user_id' => $logged_in -> id, 'user_indicator' => $logged_in -> Access -> Indicator, 'facility_name' => $logged_in -> Facility -> name, 'access_level' => $logged_in -> Access_Level, 'username' => $logged_in -> Username, 'full_name' => $logged_in -> Name, 'Email_Address' => $logged_in -> Email_Address, 'Phone_Number' => $logged_in -> Phone_Number, 'facility' => $logged_in -> Facility_Code, 'facility_id' => $facility_details[0]['id'], 'county' => $facility_details[0]['county']);
 					$this -> session -> set_userdata($session_data);
 					$new_access_log = new Access_Log();
-					$new_access_log -> ip_address = $_SERVER['REMOTE_ADDR'];
 					$new_access_log -> machine_code = implode(",", $session_data);
-					$new_access_log -> location = $this -> getIPLocation();
 					$new_access_log -> user_id = $this -> session -> userdata('user_id');
+					$new_access_log -> access_level = $this -> session -> userdata('access_level');
+					$new_access_log -> start_time =date("Y-m-d H:i:s a");
 					$new_access_log -> facility_code = $this -> session -> userdata('facility');
 					$new_access_log -> access_type = "Login";
 					$new_access_log -> save();
@@ -450,7 +450,7 @@ class User_Management extends MY_Controller {
 		$machine_code = $this -> session -> userdata("machine_code_id");
 		$last_id = Access_Log::getLastUser($this -> session -> userdata('user_id'));
 		$this -> db -> where('id', $last_id);
-		$this -> db -> update("access_log", array('access_type' =>"Logout"));
+		$this -> db -> update("access_log", array('access_type' =>"Logout",'end_time'=>date("Y-m-d H:i:s a")));
 		$this -> session -> sess_destroy();
 		if ($param == "2") {
 			delete_cookie("actual_page");
