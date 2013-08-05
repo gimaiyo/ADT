@@ -4,7 +4,7 @@
 				var base_url="<?php echo base_url(); ?>";
 				$("#table_list").multiselect().multiselectfilter();
 				var table_array =['tblARVDrugStockMain', 'tblCurrentStatus', 'tblDose', 'tblDrugsInRegimen', 'tblGenericName', 'tblIndication', 'tblReasonforChange', 'tblRegimen', 'tblRegimenCategory', 'tblSecurity', 'tblARTPatientMasterInformation', 'tblStockTransactionType', 'tblTypeOfService', 'tblVisitTransaction', 'tblSourceOfClient', 'tblARTPatientTransactions', 'tblARVDrugStockTransactions'];
-				var target_array =['drugcode', 'patient_status', 'dose', 'regimen_drug', 'generic_name', 'opportunistic_infection', 'regimen_change_purpose', 'regimen', 'regimen_category', 'users_new', 'patient_new','transaction_type', 'regimen_service_type', 'visit_purpose', 'patient_source','patient_visit_new', 'drug_stock_movement_new'];
+				var target_array =['drugcode', 'patient_status', 'dose', 'regimen_drug', 'generic_name', 'opportunistic_infection', 'regimen_change_purpose', 'regimen', 'regimen_category', 'users', 'patient','transaction_type', 'regimen_service_type', 'visit_purpose', 'patient_source','patient_visit', 'drug_stock_movement'];
 				$("#migrate").click(function(){
 					var selected_table=$("select#table_list").val();
 					var checked_value=$("input[name='tablename']:checked").val();

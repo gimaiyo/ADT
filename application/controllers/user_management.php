@@ -507,7 +507,7 @@ class User_Management extends MY_Controller {
 				$this -> email -> clear(TRUE);
 
 			} else {
-				show_error($this -> email -> print_debugger());
+				//show_error($this -> email -> print_debugger());
 			}
 			//ob_end_flush();
 
@@ -633,7 +633,7 @@ class User_Management extends MY_Controller {
 				$this -> email -> clear(TRUE);
 
 			} else {
-				$data['error'] = $this -> email -> print_debugger();
+				//$data['error'] = $this -> email -> print_debugger();
 				//show_error($this -> email -> print_debugger());
 			}
 			//ob_end_flush();
