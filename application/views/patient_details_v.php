@@ -617,6 +617,10 @@ if(isset($results)){
 			        "sScrollX": "100%",
 			       
 			    });
+			    
+			    var oTable = $('#history_table').dataTable();
+                oTable.fnSort([[0,'desc']]);
+                
 				$.extend( $.fn.dataTableExt.oStdClasses, {
 				    "sWrapper": "dataTables_wrapper form-inline"
 				} );
@@ -810,6 +814,17 @@ if(isset($results)){
 					<label> Patient's Alternate Contact(s)</label>
 					<input type="text" name="alternate" id="alternate" value="">
 				</div>
+				<div class="max-row">
+					<label>Does Patient belong to any support group?</label>
+					<label>Yes
+						<input type="checkbox" name="support_group" id="support_group" value="">
+					</label>
+
+					<div class="list">
+						List Them
+					</div>
+					<textarea class="list_area" name="support_group_listing" id="support_group_listing"></textarea>
+				</div>
 
 		</div>
 
@@ -861,12 +876,12 @@ if(isset($results)){
 					</table>
 				</div>
 				<div class="max-row">
-					<label>If <b>Other Illnesses</b>
+					If <b>Other Illnesses</b>
 						<br/>
 						Click Here
 						<input type="checkbox" name="other_other" id="other_other" value="">
 						<br/>
-						List Them Below (Use Commas to separate) </label>
+						List Them Below (Use Commas to separate)
 					<textarea  name="other_chronic" id="other_chronic"></textarea>
 				</div>
 				<div class="max-row">
@@ -887,17 +902,6 @@ if(isset($results)){
 
 					<label>List Them</label>
 					<textarea class="list_area" name="other_allergies_listing" id="other_allergies_listing"></textarea>
-				</div>
-				<div class="max-row">
-					<label>Does Patient belong to any support group?</label>
-					<label>Yes
-						<input type="checkbox" name="support_group" id="support_group" value="">
-					</label>
-
-					<div class="list">
-						List Them
-					</div>
-					<textarea class="list_area" name="support_group_listing" id="support_group_listing"></textarea>
 				</div>
 				<div class="max-row">
 					<div class="mid-row">

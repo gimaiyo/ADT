@@ -161,12 +161,8 @@ foreach($results as $result){
 							$("#regimen_change_reason").val("");
 						}
 				}else{
-					if(regimen != last_regimen) {
-							$("#regimen_change_reason_container").show();
-						} else {
-							$("#regimen_change_reason_container").hide();
-							$("#regimen_change_reason").val("");
-					 }
+					  $("#regimen_change_reason_container").hide();
+					  $("#regimen_change_reason").val("");
 				}	
 			});
 			
@@ -190,11 +186,28 @@ foreach($results as $result){
 			     dataType: "json"
 			    });
 			    request.done(function(data){
+			    	
+			    	var url_dose="<?php echo base_url().'dispensement_management/getDoses'; ?>";
+					//Get doses
+					var request_dose=$.ajax({
+				     url: url_dose,
+				     type: 'post',
+				     dataType: "json"
+				    });
+				    request_dose.done(function(data){
+				    	row.closest("tr").find(".dose option").remove();
+				    	row.closest("tr").find(".dose").append("<option value='0'>None</option> ");
+				    	$.each(data,function(key,value){
+				    		row.closest("tr").find(".dose").append("<option value='"+value.Name+"'>"+value.Name+"</option> ");
+				   		});
+				   		$(".dose").val(dose);
+				    	
+				    });
+
 			    	row.closest("tr").find(".batch option").remove();
 			    	$(".batch").append($("<option value='0'>Select</option>"));
 			    	$.each(data,function(key,value){
 			    		row.closest("tr").find(".unit").val(value.Name);
-			    		//alert(value.drug);
 			    		row.closest("tr").find(".batch").append("<option value='"+value.batch_number+"'>"+value.batch_number+"</option> ");
 			    		row.closest("tr").find(".dose").val(value.dose);
 			    		row.closest("tr").find(".duration").val(value.duration);
@@ -222,23 +235,6 @@ foreach($results as $result){
 				    request_brand.fail(function(jqXHR, textStatus) {
 					  alert( "Could not retrieve the list of brands : " + textStatus );
 					});
-					
-					var url_dose="<?php echo base_url().'dispensement_management/getDoses'; ?>";
-					//Get doses
-					var request_dose=$.ajax({
-				     url: url_dose,
-				     type: 'post',
-				     dataType: "json"
-				    });
-				    request_dose.done(function(data){
-				    	row.closest("tr").find(".dose option").remove();
-				    	row.closest("tr").find(".dose").append("<option value='0'>None</option> ");
-				    	$.each(data,function(key,value){
-				    		row.closest("tr").find(".dose").append("<option value='"+value.Name+"'>"+value.Name+"</option> ");
-				   		});
-				   		$(".dose").val(dose);
-				    	
-				    });
 				    
 				    //Get indications(opportunistic infections)
 				    var url_indication="<?php echo base_url().'dispensement_management/getIndications'; ?>";
@@ -251,7 +247,7 @@ foreach($results as $result){
 				    	row.closest("tr").find(".indication option").remove();
 				    	row.closest("tr").find(".indication").append("<option value='0'>None</option> ");
 				    	$.each(data,function(key,value){
-				    		row.closest("tr").find(".indication").append("<option value='"+value.Name+"'>"+value.Name+"</option> ");
+				    		row.closest("tr").find(".indication").append("<option value='"+value.Name+"'>"+value.Indication+" | "+value.Name+"</option> ");
 				   		});
 				   		$(".dose").val(dose);
 				    	
@@ -375,6 +371,15 @@ foreach($results as $result){
 				$(this).closest('tr').remove();
 			});
 			
+			$(".confirm").click(function(){
+				var test_confirm=confirm("Are You Sure?");
+				if(test_confirm){
+					return true;
+				}else{
+					return false;
+				}
+			});
+			
 		 function resetFields(row){
 			row.closest("tr").find(".qty_disp").val("");
 			row.closest("tr").find(".soh").val("");
@@ -397,7 +402,7 @@ foreach($results as $result){
 				    dataType: 'json',
 				    success: function(data) {		        
 				       var all_appointments_link = "<a class='link' target='_blank' href='<?php echo base_url().'report_management/getScheduledPatients/';?>" + appointment + "/" + appointment + "' style='font-weight:bold;color:red;'>View appointments</a>";
-					   var html = "Patients Scheduled on Date: <b>" + data[0].total_appointments + "</b>. " + all_appointments_link;
+					   var html = "Patients Scheduled on Date: <b>" + data[0].total_appointments + "</b> Patients" + all_appointments_link;
 					   var new_date = new Date(appointment);
 					   var formatted_date_day = new_date.getDay();
 					   var days_of_week = ["Sunday", "Monday", "Tuseday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -435,9 +440,9 @@ foreach($results as $result){
 		     //Function to post data to the server
 		     function saveData(){
 		     	$("#btn_submit").attr("disabled","disabled");
-		     	var facility=<?php echo $facility ?>;
+		     	var facility="<?php echo $facility ?>";
 		     	var timestamp = new Date().getTime();
-		     	var user=<?php echo $user?>;
+		     	var user="<?php echo $user;?>";
 		     	var last_row=$('#drugs_table tr:last');
 				if(last_row.find(".qty_disp").hasClass("input_error")){
 					alert("The quantity of the last commodity being dispensed is greater that the quantity available!");
@@ -596,12 +601,12 @@ foreach($results as $result){
 
 						<div class="max-row">
 							<div class="mid-row">
-								<label>Dispensing Date</label>
+								<label><span class='astericks'>*</span>Dispensing Date</label>
 
 								<input  type="text"name="dispensing_date" id="dispensing_date" class="validate[required]">
 							</div>
 							<div class="mid-row">
-								<label>Purpose of Visit</label>
+								<label><span class='astericks'>*</span>Purpose of Visit</label>
 
 								<select  type="text"name="purpose" id="purpose" class="validate[required]">
 									<option value="">--Select One--</option>
@@ -621,37 +626,39 @@ foreach($results as $result){
 								<input  type="text"name="height" id="height" class="validate[required]">
 							</div>
 							<div class="mid-row">
-								<label>Current Weight(kg)</label>
+								<label><span class='astericks'>*</span>Current Weight(kg)</label>
 
 								<input  type="text"name="weight" id="weight" class="validate[required]">
 							</div>
 						</div>
 						<div class="max-row">
 							<div class="mid-row">
-								<label>Days to Next Appointment</label>
+								<label><span class='astericks'>*</span>Days to Next Appointment</label>
 
 								<input  type="text"name="days_to_next" id="days_to_next" class="validate[required]">
 							</div>
 							<div class="mid-row">
-								<label>Date of Next Appointment</label>
+								<label><span class='astericks'>*</span>Date of Next Appointment</label>
 
 								<input  type="text"name="next_appointment_date" id="next_appointment_date" class="validate[required]">
 							</div>
 						</div>
-
-						<span id="scheduled_patients"  style="display:none;">
+                            
+                            
+                       <div class="max-row">
+						<span id="scheduled_patients" class="message"  style="display:none;background:#9CF;">
 							
 						</span>
-						
+						</div>
 						<div class="max-row">
 							<div class="mid-row">
 								<label id="scheduled_patients" class="message information close" style="display:none"></label><label>Last Regimen Dispensed</label>
-								<input type="text"name="last_regimen_disp" value="0" id="last_regimen_disp" readonly="">
-								<input type="hidden" name="last_regimen" regimen_id="0" id="last_regimen" value="0">
+								<input type="text"name="last_regimen_disp" value="none" id="last_regimen_disp" readonly="">
+								<input type="hidden" name="last_regimen" value="0" id="last_regimen" value="0">
 							</div>
 
 							<div class="mid-row">
-								<label>Current Regimen</label>
+								<label><span class='astericks'>*</span>Current Regimen</label>
 								<select type="text"name="current_regimen" id="current_regimen"  class="validate[required]">
 									<option value="">-Select One--</option>
 										<?php 
@@ -715,8 +722,7 @@ foreach($results as $result){
 							</div>
 						</div>
                         <div class="max-row">
-                        <div class="mid-row">
-						<table class="data-table" id="last_visit_data">
+						<table class="data-table" id="last_visit_data" style="float:left;">
 							<thead>
 							<th>Drug Dispensed</th>
 							<th>Quantity Dispensed</th>
@@ -724,14 +730,13 @@ foreach($results as $result){
 							<tbody>
 								<?php 
 								if($visits){
-								foreach(@$visits as $visit){
+								foreach($visits as $visit){
 									echo "<tr><td>".$visit['drug']."</td><td>".$visit['quantity']."</td></tr>";
 								}
 								}
 								?>
 							</tbody>
 						</table>
-						</div>
 						</div>
 					</fieldset>
 				</div>
@@ -801,8 +806,8 @@ foreach($results as $result){
 				
 				</div>
 				<div id="submit_section">
-					<input type="reset" class="btn" id="reset" value="Reset Fields" />
-					<input form="dispense_form" id="btn_submit" class="btn" id="submit" type="submit" value="Dispense Drugs"/>
+					<input type="reset" class="btn confirm" id="reset" value="Reset Fields" />
+					<input form="dispense_form" id="btn_submit" class="btn confirm" id="submit" type="submit" value="Dispense Drugs"/>
 				</div>
 			</form>
 

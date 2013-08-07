@@ -267,7 +267,7 @@
 			
 		 var oTable = $('#orderlist').dataTable();
          oTable.fnSort( [ [0,'desc'] ] );
-		})
+		});
 	</script>
 </div>
 <!-- Modal to select a satellite facility end -->

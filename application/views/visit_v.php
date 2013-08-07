@@ -90,7 +90,7 @@ foreach($actions as $action){
 		<div class="span12 span-fixed-sidebar">
 	      	<div class="hero-unit">
 				<?php echo validation_errors('<p class="error">', '</p>');?>
-				<a href="#client_form" role="button" id="new_client" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Client Source</a>
+				<a href="#client_form" role="button" id="new_client" class="btn" data-toggle="modal"><i class="icon-plus icon-black"></i>New Visit Purpose</a>
 				<?php echo $sources;?>
 			</div>
 	    </div><!--/span-->
@@ -99,16 +99,16 @@ foreach($actions as $action){
 	<div id="client_form" title="New Client Sources" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="NewDrug" aria-hidden="true">
 		<?php
 		$attributes = array('class' => 'input_form');
-		echo form_open('client_management/save', $attributes);
+		echo form_open('visit_management/save', $attributes);
 		echo validation_errors('<p class="error">', '</p>');
 		?>	
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			<h3 id="NewDrug">Client source details</h3>
+			<h3 id="NewDrug">Visit Purpose details</h3>
 		</div>
 		<div class="modal-body">
 			<label>
-				<strong class="label">Client Source Name</strong>
+				<strong class="label">Purpose Name</strong>
 				<input type="text" name="source_name" id="source_name" class="input-xlarge">
 			</label>
 		</div>
@@ -119,19 +119,19 @@ foreach($actions as $action){
 		</form>
 	</div>
 	
-	<div id="edit_form" title="Edit Client Sources" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="NewDrug" aria-hidden="true">
+	<div id="edit_form" title="Edit Visit Purpose" class="modal hide fade cyan" tabindex="-1" role="dialog" aria-labelledby="NewDrug" aria-hidden="true">
 		<?php
 		$attributes = array('class' => 'input_form');
-		echo form_open('client_management/update', $attributes);
+		echo form_open('visit_management/update', $attributes);
 		echo validation_errors('<p class="error">', '</p>');
 		?>	
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			<h3 id="NewDrug">Client source details</h3>
+			<h3 id="NewDrug">Visit Purpose details</h3>
 		</div>
 		<div class="modal-body">
 			<label>
-				<strong class="label">Client Source Name</strong>
+				<strong class="label">Purpose Name</strong>
 				<input type="hidden" name="source_id" id="edit_source_id" class="input-xlarge">
 				<input type="text" name="source_name" id="edit_source_name" class="input-xlarge">
 			</label>

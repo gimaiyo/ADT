@@ -15,6 +15,12 @@ class Visit_Purpose extends Doctrine_Record {
 		$purposes = $query -> execute();
 		return $purposes;
 	}
+	
+	public function getThemAll() {
+		$query = Doctrine_Query::create() -> select("*") -> from("Visit_Purpose")->orderby("Name asc");
+		$purposes = $query -> execute();
+		return $purposes;
+	}
 
 	public function getTotalNumber() {
 		$query = Doctrine_Query::create() -> select("count(*) as Total_Purposes") -> from("Visit_Purpose");

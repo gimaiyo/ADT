@@ -41,9 +41,12 @@ foreach ($expiries as $expiry) {
 				
 				$("#original_drug").val("<?php echo $result['drug_id'];?>");
 				
-				if($("#last_regimen").val() !=$("#current_regimen").val()){
-				 $("#regimen_change_reason_container").show();	
+				if($("#last_regimen").val() !=""){
+					if($("#last_regimen").val() !=$("#current_regimen").val()){
+				      $("#regimen_change_reason_container").show();	
+				    }
 				}
+				
 				
 				
 				//Get Drugs in current_regimen
@@ -63,12 +66,8 @@ foreach ($expiries as $expiry) {
 							$("#regimen_change_reason").val("");
 						}
 				}else{
-					if(regimen != last_regimen) {
-							$("#regimen_change_reason_container").show();
-						} else {
-							$("#regimen_change_reason_container").hide();
-							$("#regimen_change_reason").val("");
-					 }
+					  $("#regimen_change_reason_container").hide();
+					  $("#regimen_change_reason").val("");
 				}	
 			});
 				
@@ -259,21 +258,21 @@ foreach ($expiries as $expiry) {
 				</legend>
 				<div class="max-row">
 					<div class="mid-row">
-						<label>Patient Number CCC</label>
+						<label><span class='astericks'>*</span>Patient Number CCC</label>
 						<input readonly="" id="patient" name="patient" class="validate[required]"/>
 					</div>
 					<div class="mid-row">
-						<label>Patient Name</label>
+						<label><span class='astericks'>*</span>Patient Name</label>
 						<input readonly="" id="patient_details" name="patient_details" class="validate[required]"/>
 					</div>
 				</div>
 				<div class="max-row">
 					<div class="mid-row">
-						<label>Dispensing Date</label>
+						<label><span class='astericks'>*</span>Dispensing Date</label>
 						<input type="text"name="dispensing_date" id="dispensing_date" class="validate[required]"/>
 					</div>
 					<div class="mid-row">
-						<label>Purpose of Visit</label>
+						<label><span class='astericks'>*</span>Purpose of Visit</label>
 						<select type="text"name="purpose" id="purpose" class="validate[required]"/>
 						<option value="">--Select One--</option>
 									<?php 
@@ -286,18 +285,18 @@ foreach ($expiries as $expiry) {
 				</div>
 				<div class="max-row">
 					<div class="mid-row">
-						<label>Current Height(cm)</label>
+						<label><span class='astericks'>*</span>Current Height(cm)</label>
 						<input type="text"name="height" id="height" class="validate[required]"/>
 					</div>
 					<div class="mid-row">
-						<label>Current Weight(kg)</label>
+						<label><span class='astericks'>*</span>Current Weight(kg)</label>
 						<input type="text"name="weight" id="weight" class="validate[required]"/>
 					</div>
 					<div class="max-row">
 						<div class="mid-row">
 							<label id="scheduled_patients" class="message information close" style="display:none"></label>
 							<label>Last Regimen Dispensed</label>
-							<select name="last_regimen" id="last_regimen" class="validate[required]"/>
+							<select name="last_regimen" id="last_regimen" />
 							<option value="">-Select One--</option>
 										<?php 
 									       foreach($regimens as $regimen){
@@ -307,7 +306,7 @@ foreach ($expiries as $expiry) {
 							</select>
 						</div>
 						<div class="mid-row">
-							<label>Current Regimen</label>
+							<label><span class='astericks'>*</span>Current Regimen</label>
 							<select name="current_regimen" id="current_regimen"  class="validate[required]"/>
 							<option value="">-Select One--</option>
 										<?php 
@@ -372,13 +371,13 @@ foreach ($expiries as $expiry) {
 				</thead>
 				<tbody>
 					<tr drug_row="0">
-					<td><select name="drug" class="drug input-large" id="drug" style="width:150px"></select></td>
+					<td><select name="drug" class="drug input-xlarge" id="drug" ></select></td>
 					<td>
 					<input type="text" name="unit" id="unit" class="unit input-small validate[required]"  readonly="readonly"/>
 					</td>
-					<td><select id="batch" name="batch" class="batch input-small" style="width:120px"></select></td>
+					<td><select id="batch" name="batch" class="batch input-medium"></select></td>
 					<td>
-					<input type="text" id="expiry" name="expiry" class="expiry input-small validate[required]" />
+					<input type="text" id="expiry" name="expiry" class="expiry input-xlarge validate[required]" />
 					</td>
 					<td>
 					<select id="dose" name="dose" class="expiry input-small">
