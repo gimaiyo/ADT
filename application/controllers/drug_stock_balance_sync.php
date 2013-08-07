@@ -114,7 +114,7 @@ class Drug_stock_balance_sync extends MY_Controller {
 			$stock_param=" AND (source=destination) AND(source='".$facility_code."') ";
 		}
 		//Get all drugs
-		echo "<table border='1'><thead><th>Drug</th><th>Transaction Date</th><th>Transaction_Type</th><th>Batch</th><th>Quantity</th><th>Quantity_Out</th><th>Balance</th></thead>
+		echo "<table border='1'><thead><th>ID</th><th>Drug</th><th>Transaction Date</th><th>Transaction_Type</th><th>Batch</th><th>Quantity</th><th>Quantity_Out</th><th>Balance</th></thead>
 				<tbody>";
 		$get_all_drugs="select '" .$facility_code. "' as facility,d.id as id,drug from drugcode d where d.Enabled=1";
 		$drugs=$this -> db -> query($get_all_drugs);
@@ -140,7 +140,7 @@ class Drug_stock_balance_sync extends MY_Controller {
 					$balances=$this -> db -> query($update_balance_sql);
 					//$balance_results=$balances -> result_array();
 					
-					echo "<tr><td>".$drug_id."</td><td>".$balance['TRANSACTION_DATE']."</td><td>".$balance['TRANSACTION_TYPE']."</td><td>".$batch_number."</td><td>". $balance['QUANTITY']."</td><td> ".$balance['QUANTITY_OUT']." </td><td> ".$balance['balance']."</td></tr>";
+					echo "<tr><td>".$balance['ID']."</td><td>".$drug_id."</td><td>".$balance['TRANSACTION_DATE']."</td><td>".$balance['TRANSACTION_TYPE']."</td><td>".$batch_number."</td><td>". $balance['QUANTITY']."</td><td> ".$balance['QUANTITY_OUT']." </td><td> ".$balance['balance']."</td></tr>";
 				}
 			}
 		}
