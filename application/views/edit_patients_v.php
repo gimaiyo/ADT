@@ -124,7 +124,7 @@ foreach($results as $result){
 			    $("textarea[name='other_chronic']").not(this).removeAttr("disabled");		
 			}
 
-            $("#other_drugs").val("<?php echo $result['other_drugs']?>");
+            $("#other_drugs").val("<?php echo $result['other_drugs'];?>");
 
             if($("#other_drugs").val()){
 				$("input[name='other_drugs_box']").not(this).attr("checked", "true");
@@ -139,7 +139,7 @@ foreach($results as $result){
 			$("#disclosure_no").attr("checked", "true");	
 			}
 			
-			$("#other_allergies_listing").val("<?php echo $result['adr']?>");
+			$("#other_allergies_listing").val("<?php echo $result['adr'];?>");
 
             if($("#other_allergies_listing").val()){
 				$("input[name='other_allergies']").not(this).attr("checked", "true");
@@ -194,6 +194,10 @@ foreach($results as $result){
 					$("#fromphase").attr("value",'');
 		   	        $("#tophase").attr("value",'');
 			     }
+		   });
+		   
+		   $("#current_status").change(function(){
+		   	 $("#status_started").datepicker('setDate', new Date());
 		   });
 		   
 		   //Function to display tbphase dates
@@ -321,7 +325,7 @@ foreach($results as $result){
 				
 		   //Function to display Regimens in this line
 		   $("#service").change(function() {
-		   	$("#regimen option").remove();
+		   	$("#current_regimen option").remove();
 		   	  var service_line = $(this).val();
 		   	  var link=base_url+"regimen_management/getRegimenLine/"+service_line;
 				$.ajax({
@@ -329,9 +333,9 @@ foreach($results as $result){
 				    type: 'POST',
 				    dataType: "json",
 				    success: function(data) {	
-				    	$("#regimen").append($("<option></option>").attr("value",'').text('--Select One--'));
+				    	$("#current_regimen").append($("<option></option>").attr("value",'').text('--Select One--'));
 				    	$.each(data, function(i, jsondata){
-				    		$("#regimen").append($("<option></option>").attr("value",jsondata.id).text(jsondata.Regimen_Code+" | "+jsondata.Regimen_Desc));
+				    		$("#current_regimen").append($("<option></option>").attr("value",jsondata.id).text(jsondata.Regimen_Code+" | "+jsondata.Regimen_Desc));
 				    	});
 				    }
 				});
@@ -610,6 +614,17 @@ foreach($results as $result){
 				<label> Patient's Alternate Contact(s)</label>
 				<input type="text" name="alternate" id="alternate" value="">
 			</div>
+			<div class="max-row">
+				<label>Does Patient belong to any support group?</label>
+				<label>Yes
+					<input type="checkbox" name="support_group" id="support_group" value="">
+				</label>
+
+				<div class="list">
+					List Them
+				</div>
+				<textarea class="list_area" name="support_group_listing" id="support_group_listing"></textarea>
+			</div>
 
 	</div>
 
@@ -639,10 +654,10 @@ foreach($results as $result){
 			<div class="max-row">
 				<label>Family Planning Method</label>
 				<input type="hidden" id="family_planning_holder" name="family_planning_holder" />
-				<select name="family_planning" id="family_planning" multiple="multiple" style="width:200px;"  >
+				<select name="family_planning" id="family_planning" multiple="multiple" style="width:400px;"  >
 					<?php
 					foreach ($family_planning as $fplan) {
-						echo "<option value='" . $fplan['indicator'] . "'>" . $fplan['name'] . "</option>";
+						echo "<option value='" . $fplan['indicator'] . "'>" ." ".$fplan['name'] . "</option>";
 					}
 					?>
 				</select>
@@ -651,21 +666,21 @@ foreach($results as $result){
 			<div class="max-row">
 				<label>Does Patient have other Chronic illnesses</label>
 				<input type="hidden" id="other_illnesses_holder" name="other_illnesses_holder" />
-				<select name="other_illnesses" id="other_illnesses"  multiple="multiple"  style="width:200px;" >
+				<select name="other_illnesses" id="other_illnesses"  multiple="multiple"  style="width:400px;" >
 					<?php
 					foreach ($other_illnesses as $other_illness) {
-						echo "<option value='" . $other_illness['indicator'] . "'>" . $other_illness['name'] . "</option>";
+						echo "<option value='" . $other_illness['indicator'] . "'>" ." ".$other_illness['name'] . "</option>";
 					}
 					?>
 				</select>
 			</div>
 			<div class="max-row">
-				<label>If <b>Other Illnesses</b>
+				If <b>Other Illnesses</b>
 					<br/>
 					Click Here
 					<input type="checkbox" name="other_other" id="other_other" value="">
 					<br/>
-					List Them Below (Use Commas to separate) </label>
+					List Them Below (Use Commas to separate)
 				<textarea  name="other_chronic" id="other_chronic"></textarea>
 			</div>
 			<div class="max-row">
@@ -687,17 +702,7 @@ foreach($results as $result){
 				<label>List Them</label>
 				<textarea class="list_area" name="other_allergies_listing" id="other_allergies_listing"></textarea>
 			</div>
-			<div class="max-row">
-				<label>Does Patient belong to any support group?</label>
-				<label>Yes
-					<input type="checkbox" name="support_group" id="support_group" value="">
-				</label>
 
-				<div class="list">
-					List Them
-				</div>
-				<textarea class="list_area" name="support_group_listing" id="support_group_listing"></textarea>
-			</div>
 			<div class="max-row">
 				<div class="mid-row">
 					<label > Does Patient Smoke?</label>
@@ -777,8 +782,8 @@ foreach($results as $result){
 				</select>
 			</div>
 			<div class="max-row">
-				<label class="status_started" ><span class='astericks'>*</span>Date of Status Change</label>
-				<input type="text" name="status_started" id="status_started" value="" class="validate[required]">
+				<label class="status_started" >Date of Status Change</label>
+				<input type="text" name="status_started" id="status_started" value="" >
 			</div>
 			<div class="max-row">
 				<label><span class='astericks'>*</span>Source of Patient</label>
@@ -855,7 +860,6 @@ foreach($results as $result){
 	</div>
 	<div class="button-bar">
 			<input form="edit_patient_form" type="submit" class="btn" value="Edit" name="save"/>
-
 	</div>
 
 </form>

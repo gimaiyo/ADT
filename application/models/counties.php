@@ -3,6 +3,7 @@ class Counties extends Doctrine_Record {
 
 	public function setTableDefinition() {
 		$this -> hasColumn('county', 'varchar', 100);
+		$this -> hasColumn('active', 'int', 5);
 	}//end setTableDefinition
 
 	public function setUp() {

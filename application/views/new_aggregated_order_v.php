@@ -171,7 +171,7 @@
 					<input name="start_date" id="start_date" type="hidden" value="<?php echo date("d",strtotime($start_date));?>">
 					<input name="end_date" id="end_date" type="hidden" value="<?php echo date("d",strtotime($end_date));?>">
 					<input name="reporting_period" id="reporting_period" type="hidden" value="<?php echo date("M-Y",strtotime($end_date));?>">
-					<th >From </th><td><span class="_green"><?php echo date("d-M-Y",strtotime($start_date));?></span></td><th> To</th><td> <span class="_green"><?php echo date("d-M-Y",strtotime($end_date));?></span></td>
+					<th>Reporting Period </th><td colspan="4"><span class="green"><?php echo date("M-Y",strtotime($start_date));?></span></td>
 					
 				</tr>
 			</tbody>
@@ -253,7 +253,7 @@
 			<tr class="ordered_drugs <?php if($x%2==0){?>even<?php }else{?>odd<?php } ?>" drug_id="<?php echo @$commodity -> id;?>">
 				<td class="col_drug" style="width:400px"><?php echo @$commodity -> Drug;?></td>
 				<td class="number">
-				<input id="pack_size" type="text" value="<?php echo @$commodity -> Pack_Size;?>" class="pack_size">
+				<input id="pack_size" type="text" value="<?php echo @$commodity -> Pack_Size;?>" class="pack_size" readonly="readonly">
 				</td>
 				<td class="number calc_count">
 				<input name="opening_balance[]" id="opening_balance_<?php echo @$commodity -> id;?>" type="text" class="opening_balance" value="<?php echo @ceil($cdrr_values['balance']/$commodity -> Pack_Size);?>">

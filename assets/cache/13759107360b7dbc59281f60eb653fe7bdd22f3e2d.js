@@ -24540,6 +24540,10 @@ jQuery.each( ajaxEvents.split("|"),
  *Change password validation
  */
 $(document).ready(function() {
+	  
+	
+	
+	
 	var base_url = $("#base_url").val();
 	$('.dataTables').dataTable({
 		"bJQueryUI" : true,
@@ -24552,37 +24556,7 @@ $(document).ready(function() {
 		"bProcessing" : true,
 		"bServerSide" : false,
 	});
-	//syncOrders();
-	$(".genorder").click(function() {
-		syncOrders();
-	});
-	/*
-	 * Sysnchronization of Orders
-	 */
-	function syncOrders() {
-		var href = window.location.href;
-		var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
-		var _href = href.substr(href.lastIndexOf('/') + 1);
-		var link = base_url + "/ADT/synchronization_management/synchronize_orders";
-		$.ajax({
-			url : link,
-			type : 'POST',
-			success : function(data) {
-				link = "http://localhost/NASCOP/synchronization_management/getSQL";
-				$.ajax({
-					url : link,
-					type : 'POST',
-					data : {
-						"sql" : data
-					},
-					success : function(data) {
-						alert(data);
-					}
-				});
-			}
-		});
-	}
-
+	//syncOrders("13050");
 	/*
 	 * Reports generation
 	 */
@@ -24753,7 +24727,7 @@ $(document).ready(function() {
 			$(".error").css("display", "none");
 			$("#m_loadingDiv").css("display", "block");
 			//$("#fmChangePassword").submit();
-			var _url = base_url + "user_management/save_new_password";
+			var _url = base_url + "user_management/save_new_password/2";
 			var request = $.ajax({
 				url : _url,
 				type : 'post',
@@ -24830,7 +24804,7 @@ function auto_logout() {
 */
 
 //Function to get data for ordering(Cdrr)
-function getPeriodDrugBalance(count,drug, start_date, end_date) {
+function getPeriodDrugBalance(count, drug, start_date, end_date) {
 	var href = window.location.href;
 	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
 	var _href = href.substr(href.lastIndexOf('/') + 1);
@@ -24862,7 +24836,7 @@ function getPeriodDrugBalance(count,drug, start_date, end_date) {
 					'bDestroy' : true
 				});
 			}
-			
+
 		}
 	});
 }
@@ -24887,5 +24861,63 @@ function getPeriodRegimenPatients(start_date, end_date) {
 			});
 		}
 	});
-	
+
+}
+
+/*
+ * Sysnchronization of Orders
+ */
+function syncOrders(facility,session_id) {
+	var href = window.location.href;
+	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
+	var _href = href.substr(href.lastIndexOf('/') + 1);
+	var link = "http://localhost/NASCOP/synchronization_management/getSQL/" + facility;
+	$.ajax({
+		url : link,
+		type : 'POST',
+		success : function(data) {
+			link = base_url + "/ADT/synchronization_management/uploadSQL/"+session_id;
+			$.ajax({
+				url : link,
+				type : 'POST',
+				data : {
+					"sql" : data
+				},
+				success : function(data) {
+					link = base_url + "/ADT/synchronization_management/synchronize_orders";
+					$.ajax({
+						url : link,
+						type : 'POST',
+						success : function(data) {
+							
+							link = "http://localhost/NASCOP/synchronization_management/getSQL/" + facility;
+							$.ajax({
+								url : link,
+								type : 'POST',
+								data : {
+									"sql" : data
+								},
+								success : function(data) {
+									link = base_url + "/ADT/synchronization_management/uploadSQL/"+session_id;
+									$.ajax({
+										url : link,
+										type : 'POST',
+										data : {
+											"sql" : data
+										},
+										success : function(data) {
+											alert("Successful Order Synchronization");
+										}
+									});
+								}
+							});
+						}
+					});
+
+				}
+			});
+
+		}
+	});
+
 }

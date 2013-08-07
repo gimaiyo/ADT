@@ -10,8 +10,9 @@ class Facility_Order extends Doctrine_Record {
 		 * 3 - Dispatched
 		 *
 		 * For the codes
-		 * 0 - Satellite facility order
-		 * 1 - Central facility order
+		 * 0 - Central facility order
+		 * 1 - Aggregated facility order
+		 * 2 - Satellite facility order
 		 */
 
 		$this -> hasColumn('Status', 'varchar', 10);
@@ -30,6 +31,7 @@ class Facility_Order extends Doctrine_Record {
 		$this -> hasColumn('Facility_Id', 'varchar', 10);
 		$this -> hasColumn('Picking_List_Id', 'varchar', 10);
 		$this -> hasColumn('Central_Facility', 'varchar', 10);
+		$this -> hasColumn('Unique_Id', 'varchar','150');
 	}//end setTableDefinition
 
 	public function setUp() {
@@ -57,7 +59,7 @@ class Facility_Order extends Doctrine_Record {
 	}
 
 	public function getPagedFacilityOrders($offset, $items, $status, $facility) {
-		$query = Doctrine_Query::create() -> select("*") -> from("Facility_Order") -> orderBy("abs(id) desc") -> where("Status = '$status' and (Facility_Id = '$facility' or Central_Facility = '$facility')") -> offset($offset);
+		$query = Doctrine_Query::create() -> select("*") -> from("Facility_Order") -> orderBy("abs(id) desc") -> where("Status = '$status' and (Facility_Id = '$facility' or Central_Facility = '$facility')")-> offset($offset);
 		$orders = $query -> execute();
 		return $orders;
 	}

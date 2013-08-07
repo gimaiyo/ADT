@@ -1,13 +1,18 @@
 <script type="text/javascript">
 	
 	$(document).ready( function () {
-		$('.listing_table').dataTable( {
+		$('.listing_table').dataTable({
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "patient_management/listing",
 	        "bJQueryUI": true,
 	        "sPaginationType": "full_numbers"
 		} );
+		 setTimeout(function(){
+			$(".message").fadeOut("2000");
+		},6000);
+		 var oTable = $('.listing_table').dataTable();
+         oTable.fnSort([[3,'desc']]);
 	} );
 
 </script>
@@ -48,51 +53,23 @@ if ($access_level == "facility_administrator") {
 <div class="main-content">
 	
 	<div class="center-content">
-		<div>
-				<?php if($this->session->userdata("msg_save_transaction")){
-					?>
-					
-					<script type="text/javascript">
-						setTimeout(function(){
-							$(".info").fadeOut("2000");
-						},6000)
-					</script>
-					<?php
-					if($this->session->userdata("msg_save_transaction")=="success"){
-						
-						if($this->session->userdata("user_saved")){
-							?>
-							<div class="message success"><?php echo $this->session->userdata("user_saved") ?>'s details were successfully saved !</div>
-							<?php
-							$this->session->unset_userdata('user_saved');
-						}
-						else if($this->session->userdata("user_disabled")){
-							?>
-
-							<div class="message error"> Patient <?php echo $this->session->userdata("user_disabled") ?> was disabled !</div>
-							<?php
-							$this->session->unset_userdata('user_disabled');
-						}
-						else if($this->session->userdata("user_enabled")){
-							?>
-							<div class="message success"> Patient <?php echo $this->session->userdata("user_enabled") ?> was enabled !</div>
-							<?php
-							$this->session->unset_userdata('user_enabled');
-						}
-						?>
-						<?php
-					}
-					else{
-						?>
-
-						<div class="message error">Your data were not saved ! Try again or contact your system administrator.</div>
-						<?php
-					}
-					$this->session->unset_userdata('msg_save_transaction');
-					
-				}
-				?>
-		</div>
+	<div>
+	<?php
+  	if($this->session->userdata("msg_success")){
+  		?>
+  		<span class="message success"><?php echo $this->session->userdata("msg_success")  ?></span>
+  	<?php
+  	$this->session->unset_userdata("msg_success");
+	}
+  		
+  	elseif($this->session->userdata("msg_error")){
+  		?>
+  		<span class="message error"><?php echo $this->session->userdata("msg_error")  ?></span>
+  	<?php
+  	$this->session->unset_userdata("msg_error");
+  	}
+	?>
+	</div>
 		
 		<div>
 			<?php if($this->session->userdata("msg_save_transaction")){

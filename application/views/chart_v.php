@@ -16,7 +16,7 @@ if($resultArraySize>20){
 	$chartSize='1500';
 }
 if($resultArraySize>25){
-	$chartSize='2100';
+	$chartSize='3000';
 }
 
 ?>
@@ -87,7 +87,7 @@ if($resultArraySize>25){
 		});
 </script>
 <div class="graph">
-	<div id="<?php echo $container?>"  style="width:100%"  '>
+	<div id="<?php echo $container?>"  style="width:98%"  '>
 </div>
 </div>
 

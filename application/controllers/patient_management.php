@@ -157,12 +157,18 @@ class Patient_Management extends MY_Controller {
 				} else if ($col == "Date_Enrolled") {
 					$name = date('d-M-Y', strtotime($aRow[$col]));
 				} else if ($col == "NextAppointment") {
-					$name = date('d-M-Y', strtotime($aRow[$col]));
+					if ($aRow[$col]) {
+						$name = date('d-M-Y', strtotime($aRow[$col]));
+					} else {
+						$name = "N/A";
+					}
 				}
 				//Check if phone No does not exist
 				else if ($col == "Phone") {
 					if ($aRow[$col] == "") {
 						$name = str_replace(" ", "", $aRow['Physical']);
+					} else {
+						$name = str_replace(" ", "", $aRow['Phone']);
 					}
 				} else if ($col == "Regimen_Desc") {
 					$name = "<b style='white-space:nowrap;'>" . $aRow[$col] . "</b>";
@@ -176,28 +182,20 @@ class Patient_Management extends MY_Controller {
 				$row[] = $name;
 			}
 			$id = $aRow['id'];
-			$link="";
-			if($access_level=="facility_administrator"){
+			$link = "";
+			if ($access_level == "facility_administrator") {
 				if ($aRow['Active'] == 1) {
 					$link = '| <a href="' . base_url() . 'patient_management/disable/' . $id . '" class="red">Disable</a>';
-	
+
 				} else {
 					$link = '| <a href="' . base_url() . 'patient_management/enable/' . $id . '" class="green">Enable</a>';
 				}
 			}
-			
+
 			$row[] = '<a href="' . base_url() . 'patient_management/viewDetails/' . $id . '">Detail</a> | <a href="' . base_url() . 'patient_management/edit/' . $id . '">Edit</a> ' . $link;
 			$output['aaData'][] = $row;
 		}
 		echo json_encode($output);
-
-		/*
-		 $patients=patient::getAllPatients($facility_code);
-		 $data['patients']=$patients;
-
-		 $data['content_view'] = "patient_listing_v";
-		 $this -> base_params($data);
-		 */
 	}
 
 	public function viewDetails($record_no) {
@@ -231,7 +229,7 @@ class Patient_Management extends MY_Controller {
 		$data['family_planning'] = Family_Planning::getAll();
 		$data['other_illnesses'] = Other_Illnesses::getAll();
 		$data['regimens'] = Regimen::getRegimens();
-		
+
 		$data['content_view'] = 'patient_details_v';
 		//Hide side menus
 		$data['hide_side_menu'] = '1';
@@ -245,7 +243,7 @@ class Patient_Management extends MY_Controller {
 		if ($results) {
 			$data['results'] = $results;
 		}
-		$data['record_no']=$record_no;
+		$data['record_no'] = $record_no;
 		$data['districts'] = District::getPOB();
 		$data['genders'] = Gender::getAll();
 		$data['statuses'] = Patient_Status::getStatus();
@@ -269,11 +267,11 @@ class Patient_Management extends MY_Controller {
 		$other_illness_listing = "";
 		$patient = "";
 
-		$family_planning = $this -> input -> post('family_planning', TRUE);
+		$family_planning = $this -> input -> post('family_planning_holder', TRUE);
 		if ($family_planning == null) {
 			$family_planning = "";
 		}
-		$other_illness_listing = $this -> input -> post('other_illnesses', TRUE);
+		$other_illness_listing = $this -> input -> post('other_illnesses_holder', TRUE);
 		if ($other_illness_listing == null) {
 			$other_illness_listing = "";
 		}
@@ -290,7 +288,6 @@ class Patient_Management extends MY_Controller {
 		$new_patient = new Patient();
 		$new_patient -> Medical_Record_Number = $this -> input -> post('medical_record_number', TRUE);
 		$new_patient -> Patient_Number_CCC = $this -> input -> post('patient_number', TRUE);
-		$new_patient -> Unique_Id = md5($this -> input -> post('patient_number', TRUE) . $this -> session -> userdata('facility'));
 		$new_patient -> First_Name = $this -> input -> post('first_name', TRUE);
 		$new_patient -> Last_Name = $this -> input -> post('last_name', TRUE);
 		$new_patient -> Other_Name = $this -> input -> post('other_name', TRUE);
@@ -327,7 +324,7 @@ class Patient_Management extends MY_Controller {
 		//Program Information
 		$new_patient -> Date_Enrolled = $this -> input -> post('enrolled', TRUE);
 		$new_patient -> Current_Status = $this -> input -> post('current_status', TRUE);
-		$new_patient -> Status_Change_Date = $this -> input -> post('status_started', TRUE);
+		//$new_patient -> Status_Change_Date = $this -> input -> post('status_started', TRUE);
 		$new_patient -> Source = $this -> input -> post('source', TRUE);
 		$new_patient -> Transfer_From = $this -> input -> post('transfer_source', TRUE);
 		$new_patient -> Supported_By = $this -> input -> post('support', TRUE);
@@ -340,9 +337,8 @@ class Patient_Management extends MY_Controller {
 
 		$patient = $this -> input -> post('patient_number', TRUE);
 
-		if ($_POST['save'] == "Submit") {
-			$this -> session -> set_userdata("user_saved",$this -> input -> post('first_name', TRUE));
-			$this -> session -> set_userdata('msg_save_transaction', 'success');
+		if ($_POST['save'] == "Save") {
+			$this -> session -> set_userdata('msg_success', 'Patient: ' . $this -> input -> post('first_name', TRUE) . " " . $this -> input -> post('last_name', TRUE) . ' was Saved');
 			redirect("patient_management");
 		} else if ($_POST['save'] == "Dispense") {
 			redirect("patient_management/dispense/$patient");
@@ -361,18 +357,20 @@ class Patient_Management extends MY_Controller {
 		$appointment = $this -> input -> post('next_appointment_date', TRUE);
 		$facility = $this -> session -> userdata('facility');
 		$patient = $this -> input -> post('patient_number', TRUE);
-		$sql = "select * from patient_appointment where patient='$patient' and appointment='$prev_appointment' and facility='$facility'";
-		$query = $this -> db -> query($sql);
-		$results = $query -> result_array();
-		if ($results) {
-			$record_no = $results[0]['id'];
-			//If exisiting appointment(Update new Record)
-			$sql = "update patient_appointment set appointment='$appointment',patient='$patient',facility='$facility' where id='$record_no'";
-		} else {
-			//If no appointment(Insert new record)
-			$sql = "insert patient_appointment(patient,appointment,facility)VALUES('$patient','$appointment','$facility')";
+		if ($appointment) {
+			$sql = "select * from patient_appointment where patient='$patient' and appointment='$prev_appointment' and facility='$facility'";
+			$query = $this -> db -> query($sql);
+			$results = $query -> result_array();
+			if ($results) {
+				$record_no = $results[0]['id'];
+				//If exisiting appointment(Update new Record)
+				$sql = "update patient_appointment set appointment='$appointment',patient='$patient',facility='$facility' where id='$record_no'";
+			} else {
+				//If no appointment(Insert new record)
+				$sql = "insert patient_appointment(patient,appointment,facility)VALUES('$patient','$appointment','$facility')";
+			}
+			$this -> db -> query($sql);
 		}
-		$this -> db -> query($sql);
 
 		$family_planning = $this -> input -> post('family_planning_holder', TRUE);
 		if ($family_planning == null) {
@@ -391,10 +389,19 @@ class Patient_Management extends MY_Controller {
 			}
 		}
 
-		$data = array('Medical_Record_Number' => $this -> input -> post('medical_record_number', TRUE), 'Patient_Number_CCC' => $this -> input -> post('patient_number', TRUE), 'First_Name' => $this -> input -> post('first_name', TRUE), 'Last_Name' => $this -> input -> post('last_name', TRUE), 'Other_Name' => $this -> input -> post('other_name', TRUE), 'Dob' => $this -> input -> post('dob', TRUE), 'Pob' => $this -> input -> post('pob', TRUE), 'Gender' => $this -> input -> post('gender', TRUE), 'Pregnant' => $this -> input -> post('pregnant', TRUE), 'Start_Weight' => $this -> input -> post('start_weight', TRUE), 'Start_Height' => $this -> input -> post('start_height', TRUE), 'Start_Bsa' => $this -> input -> post('start_bsa', TRUE), 'Weight' => $this -> input -> post('current_weight', TRUE), 'Height' => $this -> input -> post('current_height', TRUE), 'Sa' => $this -> input -> post('current_bsa', TRUE), 'Phone' => $this -> input -> post('phone', TRUE), 'SMS_Consent' => $this -> input -> post('sms_consent', TRUE), 'Physical' => $this -> input -> post('physical', TRUE), 'Alternate' => $this -> input -> post('alternate', TRUE), 'Partner_Status' => $this -> input -> post('partner_status', TRUE), 'Disclosure' => $this -> input -> post('disclosure', TRUE), 'Fplan' => $family_planning, 'Other_Illnesses' => $other_illness_listing, 'Other_Drugs' => $this -> input -> post('other_drugs', TRUE), 'Adr' => $this -> input -> post('other_allergies_listing', TRUE), 'Smoke' => $this -> input -> post('smoke', TRUE), 'Alcohol' => $this -> input -> post('alcohol', TRUE), 'Tb' => $this -> input -> post('tb', TRUE), 'Tbphase' => $this -> input -> post('tbphase', TRUE), 'Startphase' => $this -> input -> post('fromphase', TRUE), 'Endphase' => $this -> input -> post('tophase', TRUE), 'Date_Enrolled' => $this -> input -> post('enrolled', TRUE), 'Current_Status' => $this -> input -> post('current_status', TRUE), 'Status_Change_Date' => $this -> input -> post('status_started', TRUE), 'Source' => $this -> input -> post('source', TRUE), 'Transfer_From' => $this -> input -> post('transfer_source', TRUE), 'Supported_By' => $this -> input -> post('support', TRUE), 'Facility_Code' => $this -> session -> userdata('facility'), 'Service' => $this -> input -> post('service', TRUE), 'Start_Regimen' => $this -> input -> post('regimen', TRUE), 'Start_Regimen_Date' => $this -> input -> post('service_started', TRUE), 'Current_Regimen' => $this -> input -> post('current_regimen', TRUE), 'Nextappointment' => $this -> input -> post('next_appointment_date', TRUE));
+		$other_drugs = $this -> input -> post('other_drugs', TRUE);
+		if (!$other_drugs) {
+			$other_drugs = "";
+		}
+		$other_allergies = $this -> input -> post('other_allergies_listing', TRUE);
+		if (!$other_allergies) {
+			$other_allergies = "";
+		}
+
+		$data = array('Medical_Record_Number' => $this -> input -> post('medical_record_number', TRUE), 'Patient_Number_CCC' => $this -> input -> post('patient_number', TRUE), 'First_Name' => $this -> input -> post('first_name', TRUE), 'Last_Name' => $this -> input -> post('last_name', TRUE), 'Other_Name' => $this -> input -> post('other_name', TRUE), 'Dob' => $this -> input -> post('dob', TRUE), 'Pob' => $this -> input -> post('pob', TRUE), 'Gender' => $this -> input -> post('gender', TRUE), 'Pregnant' => $this -> input -> post('pregnant', TRUE), 'Start_Weight' => $this -> input -> post('start_weight', TRUE), 'Start_Height' => $this -> input -> post('start_height', TRUE), 'Start_Bsa' => $this -> input -> post('start_bsa', TRUE), 'Weight' => $this -> input -> post('current_weight', TRUE), 'Height' => $this -> input -> post('current_height', TRUE), 'Sa' => $this -> input -> post('current_bsa', TRUE), 'Phone' => $this -> input -> post('phone', TRUE), 'SMS_Consent' => $this -> input -> post('sms_consent', TRUE), 'Physical' => $this -> input -> post('physical', TRUE), 'Alternate' => $this -> input -> post('alternate', TRUE), 'Partner_Status' => $this -> input -> post('partner_status', TRUE), 'Disclosure' => $this -> input -> post('disclosure', TRUE), 'Fplan' => $family_planning, 'Other_Illnesses' => $other_illness_listing, 'Other_Drugs' => $other_drugs, 'Adr' => $other_allergies, 'Smoke' => $this -> input -> post('smoke', TRUE), 'Alcohol' => $this -> input -> post('alcohol', TRUE), 'Tb' => $this -> input -> post('tb', TRUE), 'Tbphase' => $this -> input -> post('tbphase', TRUE), 'Startphase' => $this -> input -> post('fromphase', TRUE), 'Endphase' => $this -> input -> post('tophase', TRUE), 'Date_Enrolled' => $this -> input -> post('enrolled', TRUE), 'Current_Status' => $this -> input -> post('current_status', TRUE), 'Status_Change_Date' => $this -> input -> post('status_started', TRUE), 'Source' => $this -> input -> post('source', TRUE), 'Transfer_From' => $this -> input -> post('transfer_source', TRUE), 'Supported_By' => $this -> input -> post('support', TRUE), 'Facility_Code' => $this -> session -> userdata('facility'), 'Service' => $this -> input -> post('service', TRUE), 'Start_Regimen' => $this -> input -> post('regimen', TRUE), 'Start_Regimen_Date' => $this -> input -> post('service_started', TRUE), 'Current_Regimen' => $this -> input -> post('current_regimen', TRUE), 'Nextappointment' => $this -> input -> post('next_appointment_date', TRUE));
 		$this -> db -> where('id', $record_id);
 		$this -> db -> update('patient', $data);
-		
+
 		//Set session for notications
 		$this -> session -> set_userdata('msg_save_transaction', 'success');
 		$this -> session -> set_userdata('user_updated', $this -> input -> post('first_name'));
@@ -613,12 +620,12 @@ ORDER BY p.patient_number_ccc ASC";
 	public function enable($id) {
 		$sql = "update patient set active='1' where id='$id'";
 		$this -> db -> query($sql);
-		$get_user="select first_name FROM patient WHERE id='$id' LIMIT 1";
-		$user_sql=$this -> db -> query($get_user);
-		$user_array=$user_sql->result_array();
-		$first_name="";
+		$get_user = "select first_name FROM patient WHERE id='$id' LIMIT 1";
+		$user_sql = $this -> db -> query($get_user);
+		$user_array = $user_sql -> result_array();
+		$first_name = "";
 		foreach ($user_array as $value) {
-			$first_name=$value['first_name'];
+			$first_name = $value['first_name'];
 		}
 		//Set session for notications
 		$this -> session -> set_userdata('msg_save_transaction', 'success');
@@ -629,12 +636,12 @@ ORDER BY p.patient_number_ccc ASC";
 	public function disable($id) {
 		$sql = "update patient set active='0' where id='$id'";
 		$this -> db -> query($sql);
-		$get_user="select first_name FROM patient WHERE id='$id' LIMIT 1";
-		$user_sql=$this -> db -> query($get_user);
-		$user_array=$user_sql->result_array();
-		$first_name="";
+		$get_user = "select first_name FROM patient WHERE id='$id' LIMIT 1";
+		$user_sql = $this -> db -> query($get_user);
+		$user_array = $user_sql -> result_array();
+		$first_name = "";
 		foreach ($user_array as $value) {
-			$first_name=$value['first_name'];
+			$first_name = $value['first_name'];
 		}
 		//Set session for notications
 		$this -> session -> set_userdata('msg_save_transaction', 'success');
@@ -713,31 +720,31 @@ ORDER BY p.patient_number_ccc ASC";
 
 	public function getAppointmentHistory($patient_no) {
 		$dyn_table = "";
-		$status="";
+		$status = "";
 		$facility = $this -> session -> userdata("facility");
 		$sql = "SELECT pa.appointment,IF(pa.appointment=pv.dispensing_date,'Visited',DATEDIFF(pa.appointment,curdate()))as Days_To FROM(SELECT patient,appointment FROM patient_appointment pa WHERE patient='$patient_no' AND facility='$facility') as pa,(SELECT patient_id,dispensing_date FROM patient_visit WHERE patient_id='$patient_no' AND facility='$facility') as pv GROUP BY pa.appointment ORDER BY pa.appointment desc";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
 			foreach ($results as $result) {
-				
-				if($result['Days_To']>0){
-					$status="<td align='center'>" .$result['Days_To']. " Days To</td>";
-				}else if($result['Days_To']<0){
-					$mysql="select dispensing_date,DATEDIFF(dispensing_date,'".@$result['appointment']."')as days from patient_visit where patient_id='$patient_no' and dispensing_date>'".@$result['appointment']."' and facility='$facility' ORDER BY dispensing_date asc LIMIT 1";
+
+				if ($result['Days_To'] > 0) {
+					$status = "<td align='center'>" . $result['Days_To'] . " Days To</td>";
+				} else if ($result['Days_To'] < 0) {
+					$mysql = "select dispensing_date,DATEDIFF(dispensing_date,'" . @$result['appointment'] . "')as days from patient_visit where patient_id='$patient_no' and dispensing_date>'" . @$result['appointment'] . "' and facility='$facility' ORDER BY dispensing_date asc LIMIT 1";
 					$myquery = $this -> db -> query($mysql);
-		            $myresults = $myquery -> result_array();
-		            $result['dispensing_date']=date('Y-m-d');
-					if($myresults){
-						$result['dispensing_date']=$myresults[0]['dispensing_date'];
-						$result['Days_To']=$myresults[0]['days'];
-					}	
-					$result['Days_To']=str_replace("-","", $result['Days_To']);
-					$status="<td align='center'> Late By " .$result['Days_To']. " Days (".date('d-M-Y',strtotime($result['dispensing_date'])).")</td>";
-				}else{
-					$status="<td align='center' class='green'>".$result['Days_To']. "</td>";
-				}			
-						
+					$myresults = $myquery -> result_array();
+					$result['dispensing_date'] = date('Y-m-d');
+					if ($myresults) {
+						$result['dispensing_date'] = $myresults[0]['dispensing_date'];
+						$result['Days_To'] = $myresults[0]['days'];
+					}
+					$result['Days_To'] = str_replace("-", "", $result['Days_To']);
+					$status = "<td align='center'> Late By " . $result['Days_To'] . " Days (" . date('d-M-Y', strtotime($result['dispensing_date'])) . ")</td>";
+				} else {
+					$status = "<td align='center' class='green'>" . $result['Days_To'] . "</td>";
+				}
+
 				$dyn_table .= "<tbody><tr><td>" . date('d-M-Y', strtotime($result['appointment'])) . "</td>$status</tr></tbody>";
 			}
 		}

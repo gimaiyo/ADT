@@ -3,6 +3,7 @@ class District extends Doctrine_Record {
 
 	public function setTableDefinition() {
 		$this -> hasColumn('Name', 'varchar', 100);
+		$this -> hasColumn('active', 'int', 5);
 	}//end setTableDefinition
 
 	public function setUp() {

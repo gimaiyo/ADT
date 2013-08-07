@@ -125,7 +125,7 @@
 						<?php
 						foreach($regimens_enabled as $regimen){
 						?>
-						<option value="<?php echo $regimen -> id;?>"><?php echo $regimen -> Regimen_Desc;?></option>
+						<option value="<?php echo $regimen -> id;?>"><?php echo $regimen -> Regimen_Code." | ".$regimen -> Regimen_Desc;?></option>
 						<?php }?>
 				</select>
 					</td>

@@ -4,7 +4,6 @@ if (!defined('BASEPATH'))
 
 class Home_Controller extends MY_Controller {
 	function __construct() {
-
 		parent::__construct();
 	}
 
@@ -51,7 +50,7 @@ class Home_Controller extends MY_Controller {
 			$timestamp = strtotime($today);
 			$data['scheduled_patients'] = Patient_Appointment::getAllScheduled($timestamp);
 		}
-
+		
 		$data['title'] = "webADT | System Home";
 		$data['content_view'] = "home_v";
 		$data['banner_text'] = "Home";

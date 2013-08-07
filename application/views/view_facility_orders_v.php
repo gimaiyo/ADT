@@ -80,6 +80,14 @@
 		});
 		
 	});
+		setTimeout(function(){
+			$(".message").fadeOut("2000");
+		},6000);
+		/*Auto-Sync Orders to NASCOP when internet is present*/
+		var online = navigator.onLine;
+		if(online==true){
+		/*syncOrders("<?php //echo $this->session->userdata("facility");?>","<?php //echo $this->session->userdata("user_id"); ?>");*/
+		}
 	});
 	function delete_record(){
 	window.location = url;
@@ -88,7 +96,7 @@
 	
 </script>
 <div class="center-content">
-	<div >
+	<div>
 		<ul class="breadcrumb">
 		  <li><a href="<?php echo site_url().'order_management' ?>">Orders</a> <span class="divider">/</span></li>
 		 
@@ -102,17 +110,38 @@
 		 
 		</ul>
 	</div>
+	<div>
 	<?php
-	$this->load->view('orders_sub_menu');
+  	if($this->session->userdata("msg_success")){
+  		?>
+  		<span class="message success"><?php echo $this->session->userdata("msg_success")  ?></span>
+  	<?php
+  	$this->session->unset_userdata("msg_success");
+	}
+  		
+  	elseif($this->session->userdata("msg_error")){
+  		?>
+  		<span class="message error"><?php echo $this->session->userdata("msg_error")  ?></span>
+  	<?php
+  	$this->session->unset_userdata("msg_error");
+  	}
 	?>
-<table class="dataTables" border="1">
+	</div>
+	<?php
+	if($parent->parent!=$central_facility){
+	$this->load->view('satellite_orders_sub_menu');	
+	}else{
+	$this->load->view('orders_sub_menu');
+	}
+	?>
+<table id="orderlist" class="dataTables" border="1">
 	<thead>
 		<tr>
 			<th width="80px">Order No</th>
 			<th >Facility Name</th>
 			<th>Type of Order</th>
-			<th>Beginning Period</th>
-			<th>Ending Period</th>
+			<th>Reporting Period</th>
+
 			<th>
 				<?php
 				if (isset($parent)) {
@@ -146,16 +175,17 @@
 			<tr>
 				<td><?php echo $order->id;?></td>
 				<td><?php echo $order->Facility_Object->name;?></td>
-				<td><?php echo @$order_types[$order->Code];?></td>
-				<td><?php echo date('d-M-Y',strtotime($period_begin));?></td>
-				<td><?php echo date('d-M-Y',strtotime($period_end));?></td>
-				<td align="center"><?php echo $numberDays; ?> Day (s)</td>
-				<td style="text-align: center">| <a href="<?php echo base_url()."order_management/view_order/".$order->id;?>" >View</a> |
+				<td><b><?php echo @$order_types[$order->Code];?></b></td>
+				<td><?php echo date('M-Y',strtotime($period_begin));?></td>
+				
+				<td align="center"><?php echo $numberDays; ?> Day(s)</td>
+				<td style="text-align: center">
+					 <a  href="<?php echo base_url()."order_management/view_order/".$order->id;?>" ></i>View</a>
 					<?php if(($quick_link != 1 && $quick_link != 3) ||$quick_link == 2 ){?>
-					| <a href="<?php echo base_url()."order_management/edit_order/".$order->id;?>">Edit</a> |
+					 | <a href="<?php echo base_url()."order_management/edit_order/".$order->id;?>"> Edit</a> 
 					<?php }?>
 					<?php if($quick_link == 0){?>
-					| <a order="<?php echo $order->id;?>" class="delete">Delete</a></div></td>
+					 | <a class="delete" order="<?php echo $order->id;?>">Delete</a></div></td>
 					<?php }?>
 					
 			</tr>
@@ -234,7 +264,10 @@
 					$("#fmFillOrderForm").submit();
 				}
 			});
-		})
+			
+		 var oTable = $('#orderlist').dataTable();
+         oTable.fnSort( [ [0,'desc'] ] );
+		});
 	</script>
 </div>
 <!-- Modal to select a satellite facility end -->

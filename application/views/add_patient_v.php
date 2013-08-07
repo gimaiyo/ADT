@@ -6,6 +6,7 @@
 			
 			//Function to Check Patient Numner exists
 			var base_url="<?php echo base_url();?>";
+
 		    $("#patient_number").change(function(){
 				var patient_no=$("#patient_number").val();
 				var link=base_url+"patient_management/checkpatient_no/"+patient_no;
@@ -72,14 +73,8 @@
 					changeYear : true
 			});
 			
-			//Attach date picker for date of status change
-			$("#status_started").datepicker({
-					yearRange : "-30:+0",
-					dateFormat : $.datepicker.ATOM,
-					changeMonth : true,
-					maxDate : "0D",
-					changeYear : true
-			});
+			$("#enrolled").datepicker('setDate', new Date());
+			
 			
 			//Attach date picker for date of start regimen 
 			$("#service_started").datepicker({
@@ -89,6 +84,8 @@
 					changeYear : true,
 					maxDate : "0D"
 			});
+			
+			$("#service_started").datepicker('setDate', new Date());
 			
 			//Function to display transfer from list if patient source is(transfer in)
 				$("#source").change(function() {
@@ -231,13 +228,21 @@
 	    }
 	    
 	    //Function to validate required fields
-	    function processData(form) {
+	    function processData(form){  
 	          var form_selector = "#" + form;
 	          var validated = $(form_selector).validationEngine('validate');
+	            var family_planning = $("select#family_planning").multiselect("getChecked").map(function() {
+					return this.value;
+				}).get();
+				var other_illnesses = $("select#other_illnesses").multiselect("getChecked").map(function() {
+					return this.value;
+				}).get();
+				$("#family_planning_holder").val(family_planning);
+				$("#other_illnesses_holder").val(other_illnesses);
 	            if(!validated) {
                    return false;
 	            }else{
-	            	return true;
+	            	//return true;
 	            }
 	     }
 		</script>
@@ -350,7 +355,7 @@
 						<div class="max-row">
 							<div class="mid-row">
 								<label> Patient's Phone Contact(s)</label>
-								<input  type="text"  name="phone" id="phone" value="" placeholder="e.g 0722123456">
+								<input  type="text"  name="phone" id="phone" value="" placeholder="e.g +254722123456">
 							</div>
 							<div class="mid-row">
 								<label > Receive SMS Reminders</label>
@@ -368,6 +373,18 @@
 						<div class="max-row">
 							<label> Patient's Alternate Contact(s)</label>
 							<input type="text" name="alternate" id="alternate" value="">
+						</div>
+						
+					   <div class="max-row">
+							<label>Does Patient belong to any support group?</label>
+							<label>Yes
+								<input type="checkbox" name="support_group" id="support_group" value="">
+							</label>
+
+							<div class="list">
+								List Them
+							</div>
+							<textarea class="list_area" name="support_group_listing" id="support_group_listing"></textarea>
 						</div>
 
 				</div>
@@ -397,10 +414,11 @@
 						</div>
 						<div class="max-row">
 							<label>Family Planning Method</label>
-							<select name="family_planning" id="family_planning" multiple="multiple" style="width:200px;" >
+							<input type="hidden" id="family_planning_holder" name="family_planning_holder" />
+							<select name="family_planning" id="family_planning" multiple="multiple" style="width:400px;" >
 								<?php
 								    foreach($family_planning as $fplan){
-										echo "<option value='".$fplan['indicator']."'>".$fplan['name']."</option>";
+										echo "<option value='".$fplan['indicator']."'>"." ".$fplan['name']."</option>";
 									}
 								?>
 							</select>
@@ -408,19 +426,20 @@
 						</div>
 						<div class="max-row">
 							<label>Does Patient have other Chronic illnesses</label>
-							<select name="other_illnesses" id="other_illnesses"  multiple="multiple" style="width:200px;">
+							<input type="hidden" id="other_illnesses_holder" name="other_illnesses_holder" />
+							<select name="other_illnesses" id="other_illnesses"  multiple="multiple" style="width:400px;">
 								<?php
 								    foreach($other_illnesses as $other_illness){
-										echo "<option value='".$other_illness['indicator']."'>".$other_illness['name']."</option>";
+										echo "<option value='".$other_illness['indicator']."'>"." ".$other_illness['name']."</option>";
 									}
 								?>	
 							</select>
 						</div>
 						<div class="max-row">
-							<label>If <b>Other Illnesses</b> 
+							If <b>Other Illnesses</b> 
 								<br/>Click Here <input type="checkbox" name="other_other" id="other_other" value=""> 
 								<br/>List Them Below (Use Commas to separate) 
-							</label>
+							
 							<textarea  name="other_chronic" id="other_chronic"></textarea>
 						</div>
 						<div class="max-row">
@@ -441,17 +460,6 @@
 
 							<label>List Them</label>
 							<textarea class="list_area" name="other_allergies_listing" id="other_allergies_listing"></textarea>
-						</div>
-						<div class="max-row">
-							<label>Does Patient belong to any support group?</label>
-							<label>Yes
-								<input type="checkbox" name="support_group" id="support_group" value="">
-							</label>
-
-							<div class="list">
-								List Them
-							</div>
-							<textarea class="list_area" name="support_group_listing" id="support_group_listing"></textarea>
 						</div>
 						<div class="max-row">
 						   <div class="mid-row">
@@ -515,22 +523,23 @@
 							<option value="">--Select--</option>
 								<?php
 								    foreach($statuses as $status){
-										echo "<option value='".$status['id']."'>".$status['Name']."</option>";
+								        if(strtolower($status['Name'])=="active"){
+											echo "<option selected='selected' value='".$status['id']."'>".$status['Name']."</option>";											
+										}else{
+											echo "<option value='".$status['id']."'>".$status['Name']."</option>";
+										}
 									}
 								?>	
 							</select>
 						</div>
-						<div class="max-row">
-							<label class="status_started" style=""><span class='astericks'>*</span>Date of Status Change</label>
-							<input type="text" name="status_started" id="status_started" value="" class="validate[required]">
-						</div>
+
 						<div class="max-row">
 							<label><span class='astericks'>*</span>Source of Patient</label>
 							<select name="source" id="source" class="validate[required]">
 								<option value="">--Select--</option>
 								<?php
 								    foreach($sources as $source){
-										echo "<option value='".$source['id']."'>".$source['Name']."</option>";
+								    	echo "<option value='".$source['id']."'>".$source['Name']."</option>";	
 									}
 								?>	
 							</select>
@@ -585,7 +594,7 @@
 				</div>
 				<div class="button-bar">
 					<div class="btn-group">
-						<input form="add_patient_form" type="submit" class="btn" value="Submit" name="save"/>
+						<input form="add_patient_form" type="submit" class="btn" value="Save" name="save"/>
 						<input form="add_patient_form" type="submit" class="btn" value="Dispense" name="save"/>
 						<input type="reset"  class="btn btn-danger" value="Reset"/>
 					</div>

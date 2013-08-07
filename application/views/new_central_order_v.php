@@ -390,7 +390,7 @@ $counter = 0;
 						<tr class="ordered_drugs" drug_id="<?php echo $commodity -> id;?>">
 							<td class="col_drug"><?php echo $commodity -> Drug;?></td>
 							<td class="number">
-							<input id="pack_size" type="text" value="<?php echo $commodity -> Pack_Size;?>" class="pack_size">
+							<input id="pack_size" type="text" value="<?php echo $commodity -> Pack_Size;?>" class="pack_size" readonly="readonly">
 							</td>
 							<td class="number calc_count">
 							<input name="opening_balance[]" id="opening_balance_<?php echo $commodity -> id;?>" type="text" class="opening_balance">

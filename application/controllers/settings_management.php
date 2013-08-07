@@ -31,5 +31,15 @@ class Settings_Management extends MY_Controller {
 		$data['link'] = "settings_management";
 		$this -> load -> view("template", $data);
 	}
+	
+	public function getMenus(){
+		$menus=Menu::getAllActive();
+		echo json_encode($menus);
+	}
+	
+	public function getAccessLevels(){
+		$access=Access_Level::getAllHydrated();
+		echo json_encode($access);
+	}
 
 }
