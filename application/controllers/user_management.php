@@ -316,7 +316,7 @@ class User_Management extends MY_Controller {
 					$new_access_log -> machine_code = implode(",", $session_data);
 					$new_access_log -> user_id = $this -> session -> userdata('user_id');
 					$new_access_log -> access_level = $this -> session -> userdata('access_level');
-					$new_access_log -> start_time =date("Y-m-d H:i:s a");
+					$new_access_log -> start_time =date("Y-m-d H:i:s");
 					$new_access_log -> facility_code = $this -> session -> userdata('facility');
 					$new_access_log -> access_type = "Login";
 					$new_access_log -> save();
@@ -450,7 +450,7 @@ class User_Management extends MY_Controller {
 		$machine_code = $this -> session -> userdata("machine_code_id");
 		$last_id = Access_Log::getLastUser($this -> session -> userdata('user_id'));
 		$this -> db -> where('id', $last_id);
-		$this -> db -> update("access_log", array('access_type' =>"Logout",'end_time'=>date("Y-m-d H:i:s a")));
+		$this -> db -> update("access_log", array('access_type' =>"Logout",'end_time'=>date("Y-m-d H:i:s")));
 		$this -> session -> sess_destroy();
 		if ($param == "2") {
 			delete_cookie("actual_page");
@@ -507,7 +507,7 @@ class User_Management extends MY_Controller {
 				$this -> email -> clear(TRUE);
 
 			} else {
-				show_error($this -> email -> print_debugger());
+				//show_error($this -> email -> print_debugger());
 			}
 			//ob_end_flush();
 
@@ -633,7 +633,7 @@ class User_Management extends MY_Controller {
 				$this -> email -> clear(TRUE);
 
 			} else {
-				$data['error'] = $this -> email -> print_debugger();
+				//$data['error'] = $this -> email -> print_debugger();
 				//show_error($this -> email -> print_debugger());
 			}
 			//ob_end_flush();

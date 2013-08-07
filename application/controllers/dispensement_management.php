@@ -121,6 +121,7 @@ class Dispensement_Management extends MY_Controller {
 	}
 
 	public function save() {
+		$record_no = $this->session->userdata('record_no');
 		$next_appointment_date = $this -> input -> post("next_appointment_date");
 		$last_appointment_date = $this -> input -> post("last_appointment_date");
 		$dispensing_date = $this -> input -> post("dispensing_date");
@@ -190,7 +191,7 @@ class Dispensement_Management extends MY_Controller {
 
 		}
 		$this -> session -> set_userdata('msg_success', 'Drugs dispensed to Patient No:' . $patient);
-		redirect("patient_management");
+		redirect("patient_management/viewDetails/$record_no");
 	}
 
 	public function save_edit() {

@@ -469,6 +469,8 @@ class Facilitydashboard_Management extends MY_Controller {
 		$dates = array();
 		$x = 7;
 		$y = 0;
+		$missed=array();
+		$visited=array();
 
 		//If no parameters are passed, get enrolled patients for the past 7 days
 		if ($startdate == "" || $enddate == "") {

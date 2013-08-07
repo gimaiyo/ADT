@@ -151,15 +151,7 @@ class admin_management extends MY_Controller {
 		if ($results) {
 			foreach ($results as $result) {
 				$user_id = $result['user_id'];
-				$time_log = $result['time_log'];
-				$now = date('Y-m-d H:i:s');
-				$dd = date_diff(new DateTime($time_log), new DateTime($now));
-
-				if ($dd -> h > 0) {
-					$activity = $dd -> h . " Hour(s)" . $dd -> i . " Minutes and " . $dd -> s . " Seconds";
-				} else {
-					$activity = $dd -> i . " Minutes and " . $dd -> s . " Seconds";
-				}
+				$activity=$this->dateDiff($result['time_log'],date('Y-m-d H:i:s'));
 				$results = Users::getSpecific($user_id);
 				$dyn_table = "<table border='1' id='patient_listing'  cellpadding='5' class='dataTables'>";
 				$dyn_table .= "<thead><tr><th>Full Name</th><th>UserName</th><th>Access Level</th><th>Email Address</th><th>Activity Duration</th></tr></thead><tbody>";
@@ -229,10 +221,25 @@ class admin_management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$dyn_table = "<table border='1' id='patient_listing'  cellpadding='5' class='dataTables'>";
-		$dyn_table .= "<thead><tr><th>User</th><th>Timestamp</th><th>Status</th></tr></thead><tbody>";
+		$dyn_table .= "<thead><tr><th>User</th><th>Start Time</th><th>End Time</th><th>Session Duration</th><th>Status</th></tr></thead><tbody>";
 		if ($results) {
 			foreach ($results as $result) {
-				$dyn_table .= "<tr><td>" . $result['Name'] . "</td><td>" . date('d-M-Y h:i:s a', strtotime($result['timestamp'])) . "</td><td>" . $result['access_type'] . "</td></tr>";
+				$time_log = date('Y-m-d H:i:s', strtotime($result['start_time']));
+				if ($result['end_time']) {
+					$now = date('Y-m-d H:i:s', strtotime($result['end_time']));
+					$next_date=date('d-M-Y h:i:s a',strtotime($result['end_time']));
+				} else {
+					$now = date('Y-m-d H:i:s');
+					$next_date="-";
+				}
+				$dd = date_diff(new DateTime($time_log), new DateTime($now));
+
+				if ($dd -> h > 0) {
+					$activity = $dd -> h . " Hour(s)" . $dd -> i . " Minutes and " . $dd -> s . " Seconds";
+				} else {
+					$activity = $dd -> i . " Minutes and " . $dd -> s . " Seconds";
+				}
+				$dyn_table .= "<tr><td>" . $result['Name'] . "</td><td>" . date('d-M-Y h:i:s a',strtotime($result['start_time'])) . "</td><td>" .$next_date. "</td><td>" . $activity . "</td><td>" . $result['access_type'] . "</td></tr>";
 			}
 		}
 		$dyn_table .= "</tbody></table>";
@@ -252,7 +259,7 @@ class admin_management extends MY_Controller {
 		$dyn_table .= "<thead><tr><th>User</th><th>Timestamp</th></tr></thead><tbody>";
 		if ($results) {
 			foreach ($results as $result) {
-				$dyn_table .= "<tr><td>" . $result['Name'] . "</td><td>" . date('d-M-Y h:i:s a', strtotime($result['timestamp'])) . "</td></tr>";
+				$dyn_table .= "<tr><td>" . $result['Name'] . "</td><td>" . date('d-M-Y h:i:s a',strtotime($result['timestamp'])). "</td></tr>";
 			}
 		}
 		$dyn_table .= "</tbody></table>";
@@ -388,7 +395,7 @@ class admin_management extends MY_Controller {
 				$this -> email -> clear(TRUE);
 
 			} else {
-				show_error($this -> email -> print_debugger());
+				//show_error($this -> email -> print_debugger());
 			}
 			//ob_end_flush();
 		}
@@ -564,8 +571,8 @@ class admin_management extends MY_Controller {
 		$total_series = array();
 		$timestamp = time();
 		$edate = date('Y-m-d', $timestamp);
-		$series=array();
-		$dates=array();
+		$series = array();
+		$dates = array();
 		$columns = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
 		$x = 6;
 		$y = 0;
@@ -585,12 +592,12 @@ class admin_management extends MY_Controller {
 			$start_date = $sdate;
 			$end_date = $edate;
 		} else {
-			$startdate=strtotime($startdate);
+			$startdate = strtotime($startdate);
 			for ($i = 0; $i < $x; $i++) {
-				if (date("D",$startdate) != "Sun") {
-					$sdate = date('Y-m-d',$startdate);
+				if (date("D", $startdate) != "Sun") {
+					$sdate = date('Y-m-d', $startdate);
 					//Store the days in an array
-					
+
 					$dates[$y] = $sdate;
 					$y++;
 				}
@@ -610,10 +617,9 @@ class admin_management extends MY_Controller {
 				$total = $value['total'];
 				$dataArray[] = (int)$total;
 			}
-			$series = array('name' =>"Summary", 'data' => $dataArray);
+			$series = array('name' => "Summary", 'data' => $dataArray);
 		}
 		$total_series[] = $series;
-		
 
 		$resultArray = json_encode($total_series);
 		$categories = json_encode($columns);
@@ -628,6 +634,71 @@ class admin_management extends MY_Controller {
 		$data['resultArray'] = $resultArray;
 		$this -> load -> view('chart_v', $data);
 
+	}
+
+	function dateDiff($time1, $time2, $precision = 6) {
+		// If not numeric then convert texts to unix timestamps
+		if (!is_int($time1)) {
+			$time1 = strtotime($time1);
+		}
+		if (!is_int($time2)) {
+			$time2 = strtotime($time2);
+		}
+
+		// If time1 is bigger than time2
+		// Then swap time1 and time2
+		if ($time1 > $time2) {
+			$ttime = $time1;
+			$time1 = $time2;
+			$time2 = $ttime;
+		}
+
+		// Set up intervals and diffs arrays
+		$intervals = array('year', 'month', 'day', 'hour', 'minute', 'second');
+		$diffs = array();
+
+		// Loop thru all intervals
+		foreach ($intervals as $interval) {
+			// Create temp time from time1 and interval
+			$ttime = strtotime('+1 ' . $interval, $time1);
+			// Set initial values
+			$add = 1;
+			$looped = 0;
+			// Loop until temp time is smaller than time2
+			while ($time2 >= $ttime) {
+				// Create new temp time from time1 and interval
+				$add++;
+				$ttime = strtotime("+" . $add . " " . $interval, $time1);
+				$looped++;
+			}
+
+			$time1 = strtotime("+" . $looped . " " . $interval, $time1);
+			$diffs[$interval] = $looped;
+		}
+
+		$count = 0;
+		$times = array();
+		// Loop thru all diffs
+		foreach ($diffs as $interval => $value) {
+			// Break if we have needed precission
+			if ($count >= $precision) {
+				break;
+			}
+			// Add value and interval
+			// if value is bigger than 0
+			if ($value > 0) {
+				// Add s if value is not 1
+				if ($value != 1) {
+					$interval .= "s";
+				}
+				// Add value and interval to times array
+				$times[] = $value . " " . $interval;
+				$count++;
+			}
+		}
+
+		// Return string with times
+		return implode(", ", $times);
 	}
 
 	public function base_params($data) {

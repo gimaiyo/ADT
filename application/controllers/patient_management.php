@@ -205,6 +205,7 @@ class Patient_Management extends MY_Controller {
 	}
 
 	public function viewDetails($record_no) {
+		$this->session->set_userdata('record_no',$record_no);
 		$patient = "";
 		$facility = "";
 		$sql = "select * from patient where id='$record_no'";
