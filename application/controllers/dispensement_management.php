@@ -59,7 +59,8 @@ class Dispensement_Management extends MY_Controller {
 
 	public function getDrugsRegimens() {
 		$regimen_id = $this -> input -> post('selected_regimen');
-		$get_drugs_sql = $this -> db -> query("SELECT DISTINCT(d.id),d.drug FROM drugcode d LEFT JOIN regimen_drug rd ON d.id=rd.drugcode LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id  WHERE dsb.balance>0 AND dsb.expiry_date>CURDATE() AND rd.regimen='" . $regimen_id . "'");
+		$sql="SELECT DISTINCT(d.id),d.drug FROM drugcode d LEFT JOIN regimen_drug rd ON d.id=rd.drugcode LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id LEFT JOIN regimen r ON r.id = rd.regimen  WHERE dsb.balance>0 AND dsb.expiry_date>CURDATE() AND (rd.regimen='" . $regimen_id . "' OR r.regimen_code =  'OI') and d.enabled='1'";
+		$get_drugs_sql = $this -> db -> query($sql);
 		$get_drugs_array = $get_drugs_sql -> result_array();
 		echo json_encode($get_drugs_array);
 
@@ -79,7 +80,7 @@ class Dispensement_Management extends MY_Controller {
 	}
 
 	public function getIndications() {
-		$get_indication_sql = $this -> db -> query("SELECT id,Name FROM opportunistic_infection");
+		$get_indication_sql = $this -> db -> query("SELECT id,Name,Indication FROM opportunistic_infection where active='1'");
 		$get_indication_array = $get_indication_sql -> result_array();
 		echo json_encode($get_indication_array);
 	}

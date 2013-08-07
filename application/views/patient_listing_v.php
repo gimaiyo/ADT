@@ -1,7 +1,7 @@
 <script type="text/javascript">
 	
 	$(document).ready( function () {
-		$('.listing_table').dataTable( {
+		$('.listing_table').dataTable({
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "patient_management/listing",
@@ -11,6 +11,8 @@
 		 setTimeout(function(){
 			$(".message").fadeOut("2000");
 		},6000);
+		 var oTable = $('.listing_table').dataTable();
+         oTable.fnSort([[3,'desc']]);
 	} );
 
 </script>

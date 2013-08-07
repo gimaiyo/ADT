@@ -2,10 +2,10 @@
 class report_management extends MY_Controller {
 
 	var $counter = 0;
-	var $drug_array=array();
-	var $facility_commodity_row="";
-	var $commodity_details=array();
-	var $count_rows=0;
+	var $drug_array = array();
+	var $facility_commodity_row = "";
+	var $commodity_details = array();
+	var $count_rows = 0;
 	function __construct() {
 		parent::__construct();
 		$this -> load -> database();
@@ -259,7 +259,7 @@ class report_management extends MY_Controller {
 			}
 
 		} else {
-			$row_string .= "<tr><td colspan='8'>No Data Available</td></tr>";
+			//$row_string .= "<tr><td colspan='8'>No Data Available</td></tr>";
 		}
 		$row_string .= "</tbody></table>";
 		$data['from'] = date('d-M-Y', strtotime($from));
@@ -1086,7 +1086,7 @@ class report_management extends MY_Controller {
 		$this -> load -> view('template', $data);
 	}
 
-	public function cumulative_patients($from = "2013-06-06",$type='1') {
+	public function cumulative_patients($from = "2013-06-06", $type = '1') {
 		//Variables
 		$facility_code = $this -> session -> userdata("facility");
 		$from = date('Y-m-d', strtotime($from));
@@ -1303,21 +1303,21 @@ class report_management extends MY_Controller {
 		$data['selected_report_type'] = "Standard Reports";
 		$data['report_title'] = "Cumulative Number of Patients to Date";
 		$data['facility_name'] = $this -> session -> userdata('facility_name');
-		$data['repo_type']=$type;
+		$data['repo_type'] = $type;
 		$data['content_view'] = 'reports/cumulative_patients_v';
-		if($type==1){
+		if ($type == 1) {
 			$this -> load -> view('template', $data);
-		}else{
+		} else {
 			$this -> load -> view('reports/cumulative_patients_v', $data);
 		}
-		
+
 	}
 
 	public function drug_consumption($year = "") {
 		$data['year'] = $year;
 		//Create table to store data
-		$row_string='<table border="1" class="dataTables"  id="drug_listing">';
-		$row_string.='<thead>
+		$row_string = '<table border="1" class="dataTables"  id="drug_listing">';
+		$row_string .= '<thead>
 						<tr><th>Drug</th><th>Unit</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th></tr>
 					  </thead>
 					  <tbody>';
@@ -1355,29 +1355,29 @@ class report_management extends MY_Controller {
 					$drug_consumption[$month] = $row['total_consumed'];
 				}
 
-				$row_string.= "<tr><td>" .$drug_name . "</td><td>" . $unit . "</td>";
+				$row_string .= "<tr><td>" . $drug_name . "</td><td>" . $unit . "</td>";
 				//$columns[] = $drug_name;
 				//$columns[] = $drug_name;
 				//$columns[] = $unit;
 				//Loop untill 12; check if there is a result for each month
 				for ($i = 1; $i <= 12; $i++) {
-					
+
 					if (isset($drug_consumption[$i]) and isset($pack_size) and $pack_size != 0) {
-						$row_string.= "<td>".ceil($drug_consumption[$i] / $pack_size)."</td>";
+						$row_string .= "<td>" . ceil($drug_consumption[$i] / $pack_size) . "</td>";
 						//$columns[] = ceil($drug_consumption[$i] / $pack_size);
 					} else {
-						$row_string.= "<td>-</td>";
+						$row_string .= "<td>-</td>";
 						//$columns[] = '-';
 					}
 				}
 
-				$row_string.= "</tr>";
+				$row_string .= "</tr>";
 				//$this -> table -> add_row($columns);
 
 			}
 
 		}
-		$row_string.= "</tbody></table>";
+		$row_string .= "</tbody></table>";
 		//$drug_display = $this -> table -> generate();
 		$data['drug_listing'] = $row_string;
 		$data['title'] = "webADT | Reports";
@@ -1397,7 +1397,7 @@ class report_management extends MY_Controller {
 		$data['selected_report_type'] = "Drug Inventory";
 		$data['hide_side_menu'] = 1;
 		$data['banner_text'] = "Facility Reports";
-		
+
 		if ($report_type == "drug_stock_on_hand") {
 			$data['report_title'] = "Drug Stock On Hand";
 			$data['content_view'] = 'reports/drugstock_on_hand_v';
@@ -1580,14 +1580,14 @@ class report_management extends MY_Controller {
 		$facility_code = $this -> session -> userdata('facility');
 		$data['facility_name'] = $this -> session -> userdata('facility_name');
 		//$drugs_sql = "SELECT s.id AS id,s.drug AS Drug_Id,d.drug AS Drug_Name,d.pack_size AS pack_size, u.name AS Unit, s.batch_number AS Batch,s.expiry_date AS Date_Expired,DATEDIFF(s.expiry_date,CURDATE()) AS Days_Since_Expiry FROM drugcode d LEFT JOIN drug_unit u ON d.unit = u.id LEFT JOIN drug_stock_movement s ON d.id = s.drug LEFT JOIN transaction_type t ON t.id=s.transaction_type WHERE t.effect=1 AND DATEDIFF(s.expiry_date,CURDATE()) <=180 AND DATEDIFF(s.expiry_date,CURDATE())>=0 AND d.enabled=1 AND s.facility ='" . $facility_code . "' GROUP BY Batch ORDER BY Days_Since_Expiry asc";
-		$drugs_sql="SELECT d.drug as drug_name,d.pack_size,u.name as drug_unit,dsb.batch_number as batch,dsb.balance as stocks_display,dsb.expiry_date,DATEDIFF(dsb.expiry_date,CURDATE()) as expired_days_display FROM drugcode d LEFT JOIN drug_unit u ON d.unit=u.id LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id WHERE DATEDIFF(dsb.expiry_date,CURDATE()) <=180 AND DATEDIFF(dsb.expiry_date,CURDATE())>=0 AND d.enabled=1 AND dsb.facility_code ='" . $facility_code . "' AND dsb.stock_type='".$stock_type."' AND dsb.balance>0 ORDER BY expired_days_display asc";
+		$drugs_sql = "SELECT d.drug as drug_name,d.pack_size,u.name as drug_unit,dsb.batch_number as batch,dsb.balance as stocks_display,dsb.expiry_date,DATEDIFF(dsb.expiry_date,CURDATE()) as expired_days_display FROM drugcode d LEFT JOIN drug_unit u ON d.unit=u.id LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id WHERE DATEDIFF(dsb.expiry_date,CURDATE()) <=180 AND DATEDIFF(dsb.expiry_date,CURDATE())>=0 AND d.enabled=1 AND dsb.facility_code ='" . $facility_code . "' AND dsb.stock_type='" . $stock_type . "' AND dsb.balance>0 ORDER BY expired_days_display asc";
 		$drugs = $this -> db -> query($drugs_sql);
 		$results = $drugs -> result_array();
 		//Get all expiring drugs
 		//foreach ($results as $result => $value) {
 		//	$count = 1;
-			//$this -> getBatchInfo($value['Drug_Id'], $value['Batch'], $value['Unit'], $value['Drug_Name'], $value['Date_Expired'], $value['Days_Since_Expiry'], $value['id'], $value['pack_size'], $stock_type, $facility_code);
-			
+		//$this -> getBatchInfo($value['Drug_Id'], $value['Batch'], $value['Unit'], $value['Drug_Name'], $value['Date_Expired'], $value['Days_Since_Expiry'], $value['id'], $value['pack_size'], $stock_type, $facility_code);
+
 		//}
 		$d = 0;
 		$drugs = $results;
@@ -1608,15 +1608,15 @@ class report_management extends MY_Controller {
 		$facility_code = $this -> session -> userdata('facility');
 		$data['facility_name'] = $this -> session -> userdata('facility_name');
 		//$drugs_sql = "SELECT s.id AS id,s.drug AS Drug_Id,d.drug AS Drug_Name,d.pack_size AS pack_size, u.name AS Unit, s.batch_number AS Batch,s.expiry_date AS Date_Expired,DATEDIFF(CURDATE(),DATE(s.expiry_date)) AS Days_Since_Expiry FROM drugcode d LEFT JOIN drug_unit u ON d.unit = u.id LEFT JOIN drug_stock_movement s ON d.id = s.drug LEFT JOIN transaction_type t ON t.id=s.transaction_type WHERE t.effect=1 AND DATEDIFF(CURDATE(),DATE(s.expiry_date)) >0  AND d.enabled=1 AND s.facility ='" . $facility_code . "' GROUP BY Batch ORDER BY Days_Since_Expiry asc";
-		$drugs_sql="SELECT d.drug as drug_name,d.pack_size,u.name as drug_unit,dsb.batch_number as batch,dsb.balance as stocks_display,dsb.expiry_date,DATEDIFF(CURDATE(),dsb.expiry_date) as expired_days_display FROM drugcode d LEFT JOIN drug_unit u ON d.unit=u.id LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id WHERE DATEDIFF(CURDATE(),DATE(dsb.expiry_date)) >0  AND d.enabled=1 AND d.enabled=1 AND dsb.facility_code ='" . $facility_code . "' AND dsb.stock_type='".$stock_type."' AND dsb.balance>0 ORDER BY expired_days_display asc";
+		$drugs_sql = "SELECT d.drug as drug_name,d.pack_size,u.name as drug_unit,dsb.batch_number as batch,dsb.balance as stocks_display,dsb.expiry_date,DATEDIFF(CURDATE(),dsb.expiry_date) as expired_days_display FROM drugcode d LEFT JOIN drug_unit u ON d.unit=u.id LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id WHERE DATEDIFF(CURDATE(),DATE(dsb.expiry_date)) >0  AND d.enabled=1 AND d.enabled=1 AND dsb.facility_code ='" . $facility_code . "' AND dsb.stock_type='" . $stock_type . "' AND dsb.balance>0 ORDER BY expired_days_display asc";
 		$drugs = $this -> db -> query($drugs_sql);
 		$results = $drugs -> result_array();
 		//Get all expiring drugs
 		//foreach ($results as $result => $value) {
 		//	$count = 1;
-			//$this -> getBatchInfo($value['Drug_Id'], $value['Batch'], $value['Unit'], $value['Drug_Name'], $value['Date_Expired'], $value['Days_Since_Expiry'], $value['id'], $value['pack_size'], $stock_type, $facility_code);
+		//$this -> getBatchInfo($value['Drug_Id'], $value['Batch'], $value['Unit'], $value['Drug_Name'], $value['Date_Expired'], $value['Days_Since_Expiry'], $value['id'], $value['pack_size'], $stock_type, $facility_code);
 		//};
-		
+
 		$d = 0;
 		$drugs = $results;
 		$data['drug_details'] = $drugs;
@@ -1693,13 +1693,12 @@ class report_management extends MY_Controller {
 							$expired_days = $expired_days;
 						}
 						//If pack size is zero or null
-						if($pack_size=="" or $pack_size==0){
-							$batch_stock=$batch_balance;
-						}
-						else{
+						if ($pack_size == "" or $pack_size == 0) {
+							$batch_stock = $batch_balance;
+						} else {
 							$batch_stock = $batch_balance / $pack_size;
 						}
-						
+
 						$expired_days_display = number_format($expired_days);
 
 						$stocks_display = number_format($batch_stock, 1);
@@ -1719,19 +1718,19 @@ class report_management extends MY_Controller {
 	}
 
 	public function commodity_summary($start_date = "", $end_date = "") {
-		$start_date=date('Y-m-d',strtotime($start_date));
-		$end_date=date('Y-m-d',strtotime($end_date));
+		$start_date = date('Y-m-d', strtotime($start_date));
+		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
 		$data['facility_name'] = $this -> session -> userdata('facility_name');
 		$get_facility_sql = $this -> db -> query("SELECT '$facility_code' as facility,d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id where d.Enabled=1 LIMIT 10 ");
-		$get_commodity_array=$get_facility_sql->result_array();
+		$get_commodity_array = $get_facility_sql -> result_array();
 		foreach ($get_commodity_array as $parent_row) {
-			$this->getDrugInfo($facility_code, $parent_row['id'], $parent_row['drug'], $parent_row['name'], $parent_row['pack_size'],$start_date, $end_date, $stock_type="2");
+			$this -> getDrugInfo($facility_code, $parent_row['id'], $parent_row['drug'], $parent_row['name'], $parent_row['pack_size'], $start_date, $end_date, $stock_type = "2");
 		}
-		
-		$data['start_date']=date('d-M-Y',strtotime($start_date));
-		$data['end_date']=date('d-M-Y',strtotime($end_date));
-		$data['drug_details'] = $this->commodity_details;
+
+		$data['start_date'] = date('d-M-Y', strtotime($start_date));
+		$data['end_date'] = date('d-M-Y', strtotime($end_date));
+		$data['drug_details'] = $this -> commodity_details;
 		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu'] = 1;
 		$data['banner_text'] = "Facility Reports";
@@ -1739,129 +1738,129 @@ class report_management extends MY_Controller {
 		$data['report_title'] = "Facility Commodity Summary";
 		$data['content_view'] = 'reports/commodity_summary_v';
 		$this -> load -> view('template', $data);
-		
+
 	}
-	
-	public function getDrugInfo($facility_code, $drug, $drug_name, $drug_unit, $drug_packsize,$start_date,$end_date,$stock_type){
-		
-		$stock_param="";
+
+	public function getDrugInfo($facility_code, $drug, $drug_name, $drug_unit, $drug_packsize, $start_date, $end_date, $stock_type) {
+
+		$stock_param = "";
 		//Store
-		if($stock_type=='1'){
-			$stock_param=" AND (source='".$facility_code."' OR destination='".$facility_code."') AND source!=destination ";
+		if ($stock_type == '1') {
+			$stock_param = " AND (source='" . $facility_code . "' OR destination='" . $facility_code . "') AND source!=destination ";
 		}
 		//Pharmacy
-		elseif($stock_type=='2'){
-			$stock_param=" AND (source=destination) AND(source='".$facility_code."') ";
-			
+		elseif ($stock_type == '2') {
+			$stock_param = " AND (source=destination) AND(source='" . $facility_code . "') ";
+
 		}
 		$stock_status = 0;
 		$counter = 0;
-		$k=0;
+		$k = 0;
 		$batch_status_row_string = "";
 		//Query to get all batches that have not expired
-		$all_batches = "SELECT DISTINCT d.batch_number AS batch FROM drug_stock_balance d WHERE d.drug_id =  '" .$drug. "' AND expiry_date > '".$start_date."' AND facility_code='".$facility_code."' AND stock_type='".$stock_type."' GROUP BY d.batch_number";
-		$get_batches_sql=$this->db->query($all_batches);
-		$get_batches_array=$get_batches_sql->result_array();
-		$get_batches_count=count($get_batches_array);
+		$all_batches = "SELECT DISTINCT d.batch_number AS batch FROM drug_stock_balance d WHERE d.drug_id =  '" . $drug . "' AND expiry_date > '" . $start_date . "' AND facility_code='" . $facility_code . "' AND stock_type='" . $stock_type . "' GROUP BY d.batch_number";
+		$get_batches_sql = $this -> db -> query($all_batches);
+		$get_batches_array = $get_batches_sql -> result_array();
+		$get_batches_count = count($get_batches_array);
 		foreach ($get_batches_array as $batch_row) {
-			if($get_batches_count==0){
-				$this->getSafetyStock($drug, $stock_status, $drug_name, $drug_unit, $drug_packsize,$facility_code, $stock_type,$start_date,$end_date);
+			if ($get_batches_count == 0) {
+				$this -> getSafetyStock($drug, $stock_status, $drug_name, $drug_unit, $drug_packsize, $facility_code, $stock_type, $start_date, $end_date);
 			}
 			$batch_no = $batch_row['batch'];
-			$initial_stock = "SELECT SUM( d.quantity ) AS Initial_stock, d.transaction_date AS transaction_date, '" . $batch_no . "' AS batch,'".$k. "' AS counter FROM drug_stock_movement d WHERE d.drug =  '" . $drug . "' AND facility='" . $facility_code . "' " . $stock_param . " AND transaction_type =  '11' AND d.batch_number =  '" . $batch_no . "'";
-			$initial_stock_sql=$this->db->query($initial_stock);
-			$initial_stock_array=$initial_stock_sql->result_array();
+			$initial_stock = "SELECT SUM( d.quantity ) AS Initial_stock, d.transaction_date AS transaction_date, '" . $batch_no . "' AS batch,'" . $k . "' AS counter FROM drug_stock_movement d WHERE d.drug =  '" . $drug . "' AND facility='" . $facility_code . "' " . $stock_param . " AND transaction_type =  '11' AND d.batch_number =  '" . $batch_no . "'";
+			$initial_stock_sql = $this -> db -> query($initial_stock);
+			$initial_stock_array = $initial_stock_sql -> result_array();
 			foreach ($initial_stock_array as $physical_row) {
 				$init_stock = $physical_row['Initial_stock'];
 				//Check if initial stock is present meaning physical count done
-				if($init_stock != null) {
-					$batch_stock = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out )) AS stock_levels, '" .$physical_row['counter']. "' AS counter, ds.batch_number FROM drug_stock_movement ds WHERE ds.transaction_date BETWEEN  '" .$physical_row['transaction_date']. "' AND '".$end_date."' AND facility='" .$facility_code. "' AND ds.drug ='" .$drug. "' ".$stock_param."  AND ds.batch_number ='" .$physical_row['batch']. "'";
-					$batch_stock_sql=$this->db->query($batch_stock);
-					$batch_stock_array=$batch_stock_sql->result_array();
+				if ($init_stock != null) {
+					$batch_stock = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out )) AS stock_levels, '" . $physical_row['counter'] . "' AS counter, ds.batch_number FROM drug_stock_movement ds WHERE ds.transaction_date BETWEEN  '" . $physical_row['transaction_date'] . "' AND '" . $end_date . "' AND facility='" . $facility_code . "' AND ds.drug ='" . $drug . "' " . $stock_param . "  AND ds.batch_number ='" . $physical_row['batch'] . "'";
+					$batch_stock_sql = $this -> db -> query($batch_stock);
+					$batch_stock_array = $batch_stock_sql -> result_array();
 					foreach ($batch_stock_array as $second_row) {
-						if($second_row['stock_levels'] > 0) {
-							$stock_status += $second_row['stock_levels'];						}
-						if($second_row['counter'] == ($get_batches_count - 1)) {
-							$this->getSafetyStock($drug, $stock_status, $drug_name, $drug_unit, $drug_packsize,$facility_code, $stock_type,$start_date,$end_date);
+						if ($second_row['stock_levels'] > 0) {
+							$stock_status += $second_row['stock_levels'];
+						}
+						if ($second_row['counter'] == ($get_batches_count - 1)) {
+							$this -> getSafetyStock($drug, $stock_status, $drug_name, $drug_unit, $drug_packsize, $facility_code, $stock_type, $start_date, $end_date);
 						}
 					}
-				}
-				else {
-											
-					$batch_stock = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out ) ) AS stock_levels, '" .$physical_row['counter']. "' AS counter, ds.batch_number FROM drug_stock_movement ds WHERE ds.drug =  '" .$drug. "' AND ds.expiry_date > '".$start_date."'AND facility='".$facility_code. "' ".$stock_param." AND date(ds.transaction_date) <= date('".$start_date."') AND ds.batch_number='" .$physical_row['batch']. "'";
-					$batch_stock_sql=$this->db->query($batch_stock);
-					$batch_stock_array=$batch_stock_sql->result_array();
+				} else {
+
+					$batch_stock = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out ) ) AS stock_levels, '" . $physical_row['counter'] . "' AS counter, ds.batch_number FROM drug_stock_movement ds WHERE ds.drug =  '" . $drug . "' AND ds.expiry_date > '" . $start_date . "'AND facility='" . $facility_code . "' " . $stock_param . " AND date(ds.transaction_date) <= date('" . $start_date . "') AND ds.batch_number='" . $physical_row['batch'] . "'";
+					$batch_stock_sql = $this -> db -> query($batch_stock);
+					$batch_stock_array = $batch_stock_sql -> result_array();
 					foreach ($batch_stock_array as $second_row) {
-						if($second_row['stock_levels'] > 0) {
-							$stock_status += $second_row['stock_levels'];						}
-						if($second_row['counter'] == ($get_batches_count - 1)) {
-							$this->getSafetyStock($drug, $stock_status, $drug_name, $drug_unit, $drug_packsize,$facility_code, $stock_type,$start_date,$end_date);
+						if ($second_row['stock_levels'] > 0) {
+							$stock_status += $second_row['stock_levels'];
+						}
+						if ($second_row['counter'] == ($get_batches_count - 1)) {
+							$this -> getSafetyStock($drug, $stock_status, $drug_name, $drug_unit, $drug_packsize, $facility_code, $stock_type, $start_date, $end_date);
 						}
 					}
-					
+
 				}
 			}
 			$k++;
 		}
-		
-		
+
 	}
-	
-	public function getSafetyStock($drug, $stock_status, $drug_name, $drug_unit, $drug_packsize,$facility_code,$stock_type,$start_date,$end_date){
-		$stock_param="";
+
+	public function getSafetyStock($drug, $stock_status, $drug_name, $drug_unit, $drug_packsize, $facility_code, $stock_type, $start_date, $end_date) {
+		$stock_param = "";
 		//Store
-		if($stock_type=='1'){
-			$stock_param=" AND (source='".$facility_code."' OR destination='".$facility_code."') AND source!=destination ";
+		if ($stock_type == '1') {
+			$stock_param = " AND (source='" . $facility_code . "' OR destination='" . $facility_code . "') AND source!=destination ";
 		}
 		//Pharmacy
-		elseif($stock_type=='2'){
-			$stock_param=" AND (source=destination) AND(source='".$facility_code."') ";
+		elseif ($stock_type == '2') {
+			$stock_param = " AND (source=destination) AND(source='" . $facility_code . "') ";
 		}
 		$trans_array = array();
-		$trans_array[]="1";
-		$trans_array[]="3";
-		$trans_array[]="5";
-		$trans_array[]="6";
-		$trans_array[]="8";
-		$trans_array[]="9";
-		$trans_array[]="4";
-		$trans_array[]="7";
-		$trans_array[]="11";
+		$trans_array[] = "1";
+		$trans_array[] = "3";
+		$trans_array[] = "5";
+		$trans_array[] = "6";
+		$trans_array[] = "8";
+		$trans_array[] = "9";
+		$trans_array[] = "4";
+		$trans_array[] = "7";
+		$trans_array[] = "11";
 		$trans_counter = 0;
-		$trans_count=count($trans_array);
+		$trans_count = count($trans_array);
 		$counter = 0;
 		$row_string = "";
-		while ($trans_counter <= ($trans_count-1)) {
-			if($trans_array[$trans_counter] == 1 || $trans_array[$trans_counter] == 2 || $trans_array[$trans_counter] == 3 || $trans_array[$trans_counter] == 4 || $trans_array[$trans_counter] == 11) {
+		while ($trans_counter <= ($trans_count - 1)) {
+			if ($trans_array[$trans_counter] == 1 || $trans_array[$trans_counter] == 2 || $trans_array[$trans_counter] == 3 || $trans_array[$trans_counter] == 4 || $trans_array[$trans_counter] == 11) {
 				$choice = "dsm.quantity";
 			} else {
 				$choice = "dsm.quantity_out";
 			}
-			$sql = "select '" .$drug. "' as drug_id ,'".$drug_name. "' as drug_name ,dsm.transaction_type AS type , SUM(" .$choice.") AS TOTAL FROM transaction_type tt, drug_stock_movement dsm WHERE DATE( dsm.transaction_date ) BETWEEN DATE('" .$start_date. "' ) AND DATE( '" .$end_date. "' ) AND dsm.transaction_type ='" .$trans_array[$trans_counter]. "' AND dsm.drug ='" .$drug. "' AND tt.id = dsm.transaction_type AND dsm.facility='" .$facility_code. "' ".$stock_param;
-			$safety_stock_sql=$this->db->query($sql);
-			$safety_stock_array=$safety_stock_sql->result_array();
+			$sql = "select '" . $drug . "' as drug_id ,'" . $drug_name . "' as drug_name ,dsm.transaction_type AS type , SUM(" . $choice . ") AS TOTAL FROM transaction_type tt, drug_stock_movement dsm WHERE DATE( dsm.transaction_date ) BETWEEN DATE('" . $start_date . "' ) AND DATE( '" . $end_date . "' ) AND dsm.transaction_type ='" . $trans_array[$trans_counter] . "' AND dsm.drug ='" . $drug . "' AND tt.id = dsm.transaction_type AND dsm.facility='" . $facility_code . "' " . $stock_param;
+			$safety_stock_sql = $this -> db -> query($sql);
+			$safety_stock_array = $safety_stock_sql -> result_array();
 			foreach ($safety_stock_array as $first_row) {
 				$default_total = $first_row['TOTAL'];
-				if($default_total == null) {
+				if ($default_total == null) {
 					$default_total = 0;
 				}
-				$default_total_display = number_format($default_total,1);
-				$row_string.="<td align='center'>" .$default_total_display. "</td>";
+				$default_total_display = number_format($default_total, 1);
+				$row_string .= "<td align='center'>" . $default_total_display . "</td>";
 				//Put details for received drugs, return from patients,... in an array
-				$this->commodity_details[$this->count_rows][$counter+2]=$default_total_display;
+				$this -> commodity_details[$this -> count_rows][$counter + 2] = $default_total_display;
 				$counter++;
-				if($counter == 9) {
+				if ($counter == 9) {
 					//After loopin through other columns, add Drug Name and stock status
-					$this->commodity_details[$this->count_rows][0]=$first_row['drug_name'];
-					$this->commodity_details[$this->count_rows][1]=number_format($stock_status);
+					$this -> commodity_details[$this -> count_rows][0] = $first_row['drug_name'];
+					$this -> commodity_details[$this -> count_rows][1] = number_format($stock_status);
 					$counter = 0;
-					$this->count_rows++;
+					$this -> count_rows++;
 				}
-			}	
-			$trans_counter++;		
+			}
+			$trans_counter++;
 		}
 	}
-	
+
 	public function patients_who_changed_regimen($start_date = "", $end_date = "") {
 		$data['from'] = $start_date;
 		$data['to'] = $end_date;
@@ -2116,13 +2115,12 @@ class report_management extends MY_Controller {
 						$total_store_drug_qty = $result['qty'];
 						$overall_store_drug_qty += $total_store_drug_qty;
 						//If drug total ==0
-						if($drug_total==0){
-							$store_drug_qty_percentage="";
-						}
-						else{
+						if ($drug_total == 0) {
+							$store_drug_qty_percentage = "";
+						} else {
 							$store_drug_qty_percentage = number_format(($total_store_drug_qty / $drug_total) * 100, 1);
 						}
-						
+
 						if ($result['drug'] != null) {
 							$row_string .= "<td>" . number_format($total_store_drug_qty) . "</td><td>$store_drug_qty_percentage</td>";
 						}
@@ -2290,15 +2288,14 @@ class report_management extends MY_Controller {
 		$this -> load -> view('template', $data);
 	}
 
-	public function getFamilyPlanning($start_date = "", $end_date = "") {
+	public function getFamilyPlanning($start_date = "") {
 		$data['from'] = $start_date;
-		$data['to'] = $end_date;
 		$start_date = date('Y-m-d', strtotime($start_date));
-		$end_date = date('Y-m-d', strtotime($end_date));
+		//$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
 		$arr = array();
 		$total = 0;
-		$sql = "select fplan from patient where date_enrolled between '$start_date' and '$end_date' and gender='2' and gender !='' and facility_code='$facility_code' AND fplan != '' AND fplan != 'null' AND ROUND(DATEDIFF(curdate(),dob)/360)>=15 AND ROUND(DATEDIFF(curdate(),dob)/360)<=49";
+		$sql = "select fplan from patient where date_enrolled <= '$start_date' and gender='2' and gender !='' and facility_code='$facility_code' AND fplan != '' AND fplan != 'null' AND ROUND(DATEDIFF(curdate(),dob)/360)>=15 AND ROUND(DATEDIFF(curdate(),dob)/360)<=49";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 
@@ -2414,11 +2411,9 @@ class report_management extends MY_Controller {
 		$this -> load -> view('template', $data);
 	}
 
-	public function getChronic($start_date = "", $end_date = "") {
+	public function getChronic($start_date = "") {
 		$data['from'] = $start_date;
-		$data['to'] = $end_date;
 		$start_date = date('Y-m-d', strtotime($start_date));
-		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
 		$total = 0;
 		$total_male_tb = 0;
@@ -2427,7 +2422,7 @@ class report_management extends MY_Controller {
 		$adult_male = array();
 		$adult_female = array();
 		$child = array();
-		$sql = "SELECT other_illnesses, ROUND( DATEDIFF( curdate( ) , dob ) /360 ) AS age,gender FROM patient WHERE date_enrolled BETWEEN '$start_date' AND '$end_date' AND gender != '' AND facility_code = '$facility_code' AND other_illnesses != '' AND other_illnesses != 'null' AND gender !=''";
+		$sql = "SELECT other_illnesses, ROUND( DATEDIFF( curdate( ) , dob ) /360 ) AS age,gender FROM patient WHERE date_enrolled <= '$start_date'  AND gender != '' AND facility_code = '$facility_code' AND other_illnesses != '' AND other_illnesses != 'null' AND gender !=''";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
@@ -2527,7 +2522,7 @@ class report_management extends MY_Controller {
 			}
 		}
 		//Get TB Numbers
-		$sql = "select ROUND( DATEDIFF( curdate( ) , dob ) /360 ) AS age,gender from patient WHERE date_enrolled BETWEEN '$start_date' AND '$end_date' AND gender != '' AND facility_code = '$facility_code' AND tb='1' AND dob !='' AND gender !=''";
+		$sql = "select ROUND( DATEDIFF( curdate( ) , dob ) /360 ) AS age,gender from patient WHERE date_enrolled <= '$start_date'  AND gender != '' AND facility_code = '$facility_code' AND tb='1' AND dob !='' AND gender !=''";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
@@ -2585,11 +2580,11 @@ class report_management extends MY_Controller {
 		$this -> load -> view('template', $data);
 	}
 
-	public function getADR($start_date = "", $end_date = "") {
+	public function getADR($start_date = "") {
 		$data['from'] = $start_date;
-		$data['to'] = $end_date;
+		//$data['to'] = $end_date;
 		$start_date = date('Y-m-d', strtotime($start_date));
-		$end_date = date('Y-m-d', strtotime($end_date));
+		//$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
 		$male_adr = 0;
 		$female_adr = 0;
@@ -2597,7 +2592,7 @@ class report_management extends MY_Controller {
 		$female_noadr = 0;
 
 		//Get Those With ADR
-		$sql = "select gender,count(*)as total from patient WHERE date_enrolled BETWEEN '$start_date' AND '$end_date' and facility_code='$facility_code' and adr !='' and adr !='null' and adr is not null and gender !='' group by gender";
+		$sql = "select gender,count(*)as total from patient WHERE date_enrolled <= '$start_date'  and facility_code='$facility_code' and adr !='' and adr !='null' and adr is not null and gender !='' group by gender";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
@@ -2611,7 +2606,7 @@ class report_management extends MY_Controller {
 		}
 
 		//Get Those Without ADR
-		$sql = "select gender,count(*)as total from patient WHERE date_enrolled BETWEEN '$start_date' AND '$end_date' and facility_code='$facility_code' and adr ='' or adr ='null' or adr is  null and gender !='' group by gender";
+		$sql = "select gender,count(*)as total from patient WHERE date_enrolled <= '$start_date'  and facility_code='$facility_code' and adr ='' or adr ='null' or adr is  null and gender !='' group by gender";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
@@ -2626,13 +2621,23 @@ class report_management extends MY_Controller {
 
 		$percentage_adr = 0;
 		$percentage_noadr = 0;
-		$percentage_adr = (($male_adr + $female_adr) / ($male_adr + $female_adr + $male_noadr + $female_noadr)) * 100;
-		$percentage_noadr = (($male_noadr + $female_noadr) / ($male_adr + $female_adr + $male_noadr + $female_noadr)) * 100;
+		$total_adr_noadr=0;
+		$total_adr_noadr=$male_adr + $female_adr + $male_noadr + $female_noadr;
+		if($total_adr_noadr>0){
+		$percentage_adr = (($male_adr + $female_adr) / ($total_adr_noadr)) * 100;
+		$percentage_noadr = (($male_noadr + $female_noadr) / ($total_adr_noadr)) * 100;
+		}
+		
 
-		$dyn_table = "<table border='1' cellpadding='5'><thead><tr><th colspan='2'>Patients with Allergy</th><th colspan='2'>Patients without Allergy</th><th>Percentage with Allergy</th><th>Percentage without Allergy</th></tr></thead><tbody>";
+		$dyn_table = "<table border='1' cellpadding='5' class='dataTables'>";
+		$dyn_table .= "<thead>";
+		$dyn_table .= "<tr><th colspan='2'>Patients with Allergy</th><th colspan='2'>Patients without Allergy</th><th>Percentage with Allergy</th><th>Percentage without Allergy</th></tr>";
 		$dyn_table .= "<tr><th>Male</th><th>Female</th><th>Male</th><th>Female</th><th>((Male +Female)/total)*100%</th><th>((Male +Female)/total)*100%</th></tr>";
+		$dyn_table .= "</thead>";
+		$dyn_table .= "<tbody>";
 		$dyn_table .= "<tr><td>" . number_format($male_adr) . "</td><td>" . number_format($female_adr) . "</td><td>" . number_format($male_noadr) . "</td><td>" . number_format($female_noadr) . "</td><td>" . number_format($percentage_adr, 1) . "%</td><td>" . number_format($percentage_noadr, 1) . "%</td></tr>";
-		$dyn_table .= "</tbody></table>";
+		$dyn_table .= "</tbody>";
+		$dyn_table .= "</table>";
 		$data['dyn_table'] = $dyn_table;
 		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu'] = 1;
@@ -2749,7 +2754,7 @@ class report_management extends MY_Controller {
 		$pharmacy_drug_qty_percentage = "";
 		$store_drug_qty_percentage = "";
 		$drug_total_percentage = "";
-		$total_drug_qty=0;
+		$total_drug_qty = 0;
 
 		//Select total consumption at facility
 		$sql = "select sum(quantity_out) as total from drug_stock_movement where transaction_date between '$start_date' and '$end_date' and facility='$facility_code' ";
@@ -2786,7 +2791,7 @@ class report_management extends MY_Controller {
 				$current_drug = $result['drug'];
 				$current_drugname = $result['Name'];
 				$unit = $result['unit'];
-				$drug_total=0;
+				$drug_total = 0;
 				$pack_size = $result['pack_size'];
 				$drug_total = $result['qty'];
 				$drug_total_percentage = number_format(($drug_total / $total) * 100, 1);
@@ -2817,7 +2822,7 @@ class report_management extends MY_Controller {
 						$overall_store_drug_qty += $total_store_drug_qty;
 						$store_drug_qty_percentage = number_format(($total_store_drug_qty / $drug_total) * 100, 1);
 						if ($result['drug'] != null) {
-							$row_string .= "<td>".number_format($total_store_drug_qty)."</td><td>$store_drug_qty_percentage</td>";
+							$row_string .= "<td>" . number_format($total_store_drug_qty) . "</td><td>$store_drug_qty_percentage</td>";
 						}
 					}
 				} else {
@@ -3426,7 +3431,7 @@ class report_management extends MY_Controller {
 						$service_code = $result['service_id'];
 						$service_name = $result['name'];
 						if ($service_name == "ART") {
-							$overall_child_male_art +=$total_child_male;
+							$overall_child_male_art += $total_child_male;
 							$total_child_male_art = number_format($total_child_male);
 							$total_child_male_art_percentage = number_format(($total_child_male / $total) * 100, 1);
 						} else if ($service_name == "PEP") {
@@ -3495,17 +3500,17 @@ class report_management extends MY_Controller {
 		} else {
 			$dyn_table = "<h4 style='text-align: center'><span >No Data Available</span></h4>";
 		}
-		 $data['from'] = date('d-M-Y', strtotime($from));
-		 $data['dyn_table'] = $dyn_table;
-		 $data['title'] = "webADT | Reports";
-		 $data['hide_side_menu'] = 1;
-		 $data['banner_text'] = "Facility Reports";
-		 $data['selected_report_type_link'] = "early_warning_report_select";
-		 $data['selected_report_type'] = "Early Warning Indicators";
-		 $data['report_title'] = "Service Statistics";
-		 $data['facility_name'] = $this -> session -> userdata('facility_name');
-		 $data['content_view'] = 'reports/service_statistics_v';
-		 $this -> load -> view('template', $data);
+		$data['from'] = date('d-M-Y', strtotime($from));
+		$data['dyn_table'] = $dyn_table;
+		$data['title'] = "webADT | Reports";
+		$data['hide_side_menu'] = 1;
+		$data['banner_text'] = "Facility Reports";
+		$data['selected_report_type_link'] = "early_warning_report_select";
+		$data['selected_report_type'] = "Early Warning Indicators";
+		$data['report_title'] = "Service Statistics";
+		$data['facility_name'] = $this -> session -> userdata('facility_name');
+		$data['content_view'] = 'reports/service_statistics_v';
+		$this -> load -> view('template', $data);
 	}
 
 	public function base_params($data) {

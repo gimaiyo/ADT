@@ -250,6 +250,9 @@
 						<li>
 							<a href="#" class="nonadherence_management" title="Non Adherence Reason Management">Non Adherence reasons</a>
 						</li>
+						<li>
+							<a href="#" class="visit_management" title="Visit Purpose Management">Visit Purpose</a>
+						</li>
 					</ul>
 				</li>
 				<li class="divider-vertical"></li>
