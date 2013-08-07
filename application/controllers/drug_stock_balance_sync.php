@@ -34,7 +34,7 @@ class Drug_stock_balance_sync extends MY_Controller {
 			$stock_status=0;
 			$drug_id=$value['id'];
 			//Get all the batches
-			$get_batches_sql="SELECT DISTINCT d.batch_number AS batch,expiry_date FROM drug_stock_movement d WHERE d.drug =  '" .$drug_id. "' AND expiry_date > curdate() AND facility='" .$facility_code. "' ".$stock_param." GROUP BY d.batch_number";
+			$get_batches_sql="SELECT DISTINCT d.batch_number AS batch,expiry_date FROM drug_stock_movement d WHERE d.drug =  '" .$drug_id. "' AND facility='" .$facility_code. "' ".$stock_param." GROUP BY d.batch_number";
 			$bacthes=$this -> db -> query($get_batches_sql);
 			$batch_results=$bacthes -> result_array();
 			foreach ($batch_results as $key => $batch_row) {
@@ -54,7 +54,7 @@ class Drug_stock_balance_sync extends MY_Controller {
 						$bacthes_balance=$this -> db -> query($batch_stock_balance_sql);
 						$batch_balance_array=$bacthes_balance -> result_array();
 						foreach ($batch_balance_array as $key => $value3) {
-							//Store balance in drug_stock_balance table
+							//Save balance in drug_stock_balance table
 							if($value3['stock_levels']>0){
 								$batch_balance_save=$value3['stock_levels'];
 							}
@@ -100,6 +100,59 @@ class Drug_stock_balance_sync extends MY_Controller {
 
 			$count_it++."<br>";
 		}
+	}
+
+	public function drug_stock_movement_balance($stock_type="2"){
+		$facility_code = $this -> session -> userdata('facility');
+		$stock_param="";
+		//Store
+		if($stock_type=='1'){
+			$stock_param=" AND (source='".$facility_code."' OR destination='".$facility_code."') AND source!=destination ";
+		}
+		//Pharmacy
+		else if($stock_type=='2'){
+			$stock_param=" AND (source=destination) AND(source='".$facility_code."') ";
+		}
+		//Get all drugs
+		echo "<table border='1'><thead><th>Drug</th><th>Transaction Date</th><th>Transaction_Type</th><th>Batch</th><th>Quantity</th><th>Quantity_Out</th><th>Balance</th></thead>
+				<tbody>";
+		$get_all_drugs="select '" .$facility_code. "' as facility,d.id as id,drug from drugcode d where d.Enabled=1";
+		$drugs=$this -> db -> query($get_all_drugs);
+		$results=$drugs -> result_array();
+		//Loop through each drug to get the batches
+		foreach ($results as $key => $value) {
+			$stock_status=0;
+			$drug_id=$value['id'];
+			//Get all the batches
+			$get_batches_sql="SELECT DISTINCT d.batch_number AS batch,expiry_date FROM drug_stock_movement d WHERE d.drug =  '" .$drug_id. "' AND facility='" .$facility_code. "' ".$stock_param." GROUP BY d.batch_number";
+			$batches=$this -> db -> query($get_batches_sql);
+			$batch_results=$batches -> result_array();
+			foreach ($batch_results as $key => $batch_row) {
+				$batch_number=$batch_row['batch'];
+				//get drug balances
+				$get_balances_sql="SELECT ID,TRANSACTION_DATE,TRANSACTION_TYPE,QUANTITY,QUANTITY_OUT,IF(TRANSACTION_TYPE='11',@BALANCE:=@BALANCE-@BALANCE+QUANTITY,@BALANCE:=@BALANCE+QUANTITY-QUANTITY_OUT) as balance FROM drug_stock_movement ,(SELECT @BALANCE:=0) as DUMMY WHERE drug='" .$drug_id. "' AND batch_number='".$batch_number."' AND facility='" .$facility_code. "' ".$stock_param." ORDER BY ID ASC";
+				$balances=$this -> db -> query($get_balances_sql);
+				$balance_results=$balances -> result_array();
+				//Loop through the array to get the actual values
+				foreach ($balance_results as $key => $balance) {
+					//Update the balance column 
+					$update_balance_sql="UPDATE drug_stock_movement SET balance='".$balance['balance']."' WHERE id=".$balance['ID'];
+					$balances=$this -> db -> query($update_balance_sql);
+					//$balance_results=$balances -> result_array();
+					
+					echo "<tr><td>".$drug_id."</td><td>".$balance['TRANSACTION_DATE']."</td><td>".$balance['TRANSACTION_TYPE']."</td><td>".$batch_number."</td><td>". $balance['QUANTITY']."</td><td> ".$balance['QUANTITY_OUT']." </td><td> ".$balance['balance']."</td></tr>";
+				}
+			}
+		}
+		echo "</tbody></table>";
+		
+	}
+
+	//Update balances in drug_stock_balance
+	public function drug_stock_balance_update(){
+		//SELECT QUANTITY ,QUANTITY_OUT,@BALANCE:=@BALANCE+QUANTITY-QUANTITY_OUT FROM adt.drug_stock_movement ,(SELECT @BALANCE:=0) as DUMMY WHERE transaction_type!='11' AND drug='155' AND batch_number='NVSA12022-' AND source='13050' AND source=destination ORDER BY ID ASC; 
+		//SELECT TRANSACTION_TYPE,QUANTITY ,QUANTITY_OUT,IF(TRANSACTION_TYPE='11',@BALANCE:=@BALANCE-@BALANCE+QUANTITY,@BALANCE:=@BALANCE+QUANTITY-QUANTITY_OUT) FROM adt.drug_stock_movement ,(SELECT @BALANCE:=0) as DUMMY WHERE drug='155' AND batch_number='NVSA12022-' AND source='13050' AND source=destination ORDER BY ID ASC; 
+		
 	}
 
 }

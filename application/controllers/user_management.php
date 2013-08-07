@@ -373,8 +373,8 @@ class User_Management extends MY_Controller {
 		$user -> Name = $this -> input -> post('fullname');
 		$user -> Username = $this -> input -> post('username');
 		$key = $this -> encrypt -> get_key();
-		$password = "md5(123456)";
-		$encrypted_password = $key . $password;
+		$password = "123456";
+		$encrypted_password =md5($key . $password);
 		$user -> Password = $encrypted_password;
 		$user -> Access_Level = $this -> input -> post('access_level');
 		$user -> Facility_Code = $source;

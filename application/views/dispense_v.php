@@ -406,7 +406,14 @@ foreach($results as $result){
 				});
            }
            
+           $("#btn_submit").click(function(event){
+       			processData('dispense_form');
+       			
+       		});
+           
        });
+       		
+       
                //Function to validate required fields
 		    function processData(form) {
 		          var form_selector = "#" + form;
@@ -415,17 +422,17 @@ foreach($results as $result){
 		            	return false;
 		            }else{
 		            	saveData();
-		            	return false;
 		            }
 		     }
 		     
 		     //Function to post data to the server
 		     function saveData(){
 		     	$("#btn_submit").attr("disabled","disabled");
-		     	var facility=<?php echo $facility ?>;
+		     	var facility='<?php echo $facility ?>';
 		     	var timestamp = new Date().getTime();
-		     	var user=<?php echo $user?>;
+		     	var user='<?php echo $user?>';
 		     	var last_row=$('#drugs_table tr:last');
+		     	
 				if(last_row.find(".qty_disp").hasClass("input_error")){
 					alert("The quantity of the last commodity being dispensed is greater that the quantity available!");
 					return;
@@ -505,6 +512,7 @@ foreach($results as $result){
 					sql += "UPDATE patient SET height='" + dump["height"] + "',current_regimen='" + dump["current_regimen"] + "',nextappointment=DATE(STR_TO_DATE('"+dump["next_appointment_date"]+"','%Y-%m-%d')) where patient_number_ccc ='" + dump["patient"] + "';";
 					//After getting the number of drugs issued, create a unique entry (sql statement) for each in the database in this loop
 					for(var i = 0; i < drugs_count; i++) {
+						
 						sql += "INSERT INTO patient_visit (patient_id, visit_purpose, current_height, current_weight, regimen, regimen_change_reason, drug_id, batch_number, brand, indication, pill_count, comment, timestamp, user, facility, dose, dispensing_date, dispensing_date_timestamp,quantity,duration,adherence,missed_pills,non_adherence_reason) VALUES ('" + dump["patient"] + "', '" + dump["purpose"] + "', '" + dump["height"] + "', '" + dump["weight"] + "', '" + dump["current_regimen"] + "', '" + dump["regimen_change_reason"] + "', '" + drugs[i] + "', '" + batches[i] + "', '" + brands[i] + "', '" + indications[i] + "', '" + pill_counts[i] + "', '" + comments[i] + "', '" + timestamp + "', '" + user + "', '" + facility + "', '" + doses[i] + "', DATE(STR_TO_DATE('"+dump["dispensing_date"]+"','%Y-%m-%d')), '" + dispensing_date_timestamp + "','" + quantities[i] + "','" + durations[i] + "','" + dump["adherence"] + "','" + missed_pills[i] + "','" + dump["non_adherence_reasons"] + "');";
 						drug_consumption = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type,source,destination,expiry_date,quantity, quantity_out, facility,timestamp) VALUES ('" + drugs[i] + "', DATE(STR_TO_DATE('"+dump["dispensing_date"]+"','%Y-%m-%d')), '" + batches[i] + "', '" + transaction_type + "','"+facility+"','"+facility+"',DATE(STR_TO_DATE('"+expiry[i]+"','%Y-%m-%d')),0,'" + quantities[i] + "','" + facility + "','" + timestamp + "');";
 						sql += drug_consumption;
@@ -512,6 +520,7 @@ foreach($results as $result){
 						sql += balance_sql;
 						
 						if((i+1)==drugs_count){
+							//console.log(sql);
 							$("#sql").val(sql);
 							$("#dispense_form").submit();
 						}
@@ -559,7 +568,7 @@ foreach($results as $result){
 			</div>
 			<h3>Dispense Drugs</h3>
 
-			<form id="dispense_form" class="dispense_form" method="post"  action="<?php echo base_url().'dispensement_management/save';?>" onsubmit="return processData('dispense_form')" >
+			<form id="dispense_form" class="dispense_form" method="post"  action="<?php echo base_url().'dispensement_management/save';?>" >
 				<textarea name="sql" id="sql" style="display:none"></textarea>
 				<input type="hidden" id="hidden_stock" name="hidden_stock"/>
 				<input type="hidden" id="days_count" name="days_count"/>
@@ -786,7 +795,7 @@ foreach($results as $result){
 				</div>
 				<div id="submit_section">
 					<input type="reset" class="btn" id="reset" value="Reset Fields" />
-					<input form="dispense_form" id="btn_submit" class="btn" id="submit" type="submit" value="Dispense Drugs"/>
+					<input form="dispense_form" id="btn_submit" class="btn" type="button" value="Dispense Drugs"/>
 				</div>
 			</form>
 

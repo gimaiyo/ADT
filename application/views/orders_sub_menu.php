@@ -13,5 +13,4 @@ $quick_link = null;
 	<a class='btn' href="<?php echo base_url().'order_management/new_central_order'?>" style="margin-top:10px;">Aggregated Facility Report</a>
 	<a class='btn' href="<?php echo base_url().'order_management/new_central_order/0'?>" style="margin-top:10px;">Central Facility Report</a>
 	<a class="btn " data-toggle="modal" href="#select_satellite" style="margin-top:10px;">Satellite Facility Report</a>
-	
 </div> 

@@ -1422,8 +1422,9 @@ table#history_table td {
 	}
 }
 #fmChangePassword {
+	margin:0 auto;
 	margin-top: 2%;
-	width: 35%;
+	width: 45%;
 }
 .notCenter {
 	margin: 0;

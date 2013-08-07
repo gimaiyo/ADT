@@ -219,6 +219,7 @@ $(document).ready(function() {
 			$("#error_msg_change_pass").html("You passwords do not match !");
 		} else {
 			$(".error").css("display", "none");
+			$("#m_loadingDiv").css("display", "block");
 			//$("#fmChangePassword").submit();
 			var _url = base_url + "user_management/save_new_password";
 			var request = $.ajax({
@@ -231,6 +232,7 @@ $(document).ready(function() {
 				dataType : "json"
 			});
 			request.done(function(data) {
+				$("#m_loadingDiv").css("display", "none");
 				$.each(data, function(key, value) {
 					if(value == "password_no_exist") {
 						$("#error_msg_change_pass").css("display", "block");
