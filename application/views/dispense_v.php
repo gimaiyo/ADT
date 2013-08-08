@@ -126,6 +126,16 @@ foreach($results as $result){
 					var appointment_timestamp = (1000 * 60 * 60 * 24 * days) + today_timestamp;
 					appointment_date.datepicker("setDate", new Date(appointment_timestamp));
 					retrieveAppointedPatients();
+					
+					//Loop through Table to calculate pill counts for all rows
+					$.each($(".drug"), function(i, v) {
+					    var row=$(this);
+                        var qty_disp=row.closest("tr").find(".qty_disp").val();
+					    var dose_val=row.closest("tr").find(".dose option:selected").attr("dose_val");
+					    var dose_freq=row.closest("tr").find(".dose option:selected").attr("dose_freq");
+					    var pill_count=getPillCount(dose_val,dose_freq,qty_disp);
+					    row.closest("tr").find(".next_pill_count").val(pill_count);
+				    });
 			 });
 			 
 			 //Dynamically change the list of drugs once a current regimen is selected
@@ -174,10 +184,20 @@ foreach($results as $result){
 				row.closest("tr").find(".batch").append($("<option value='0'>Loading ...</option>"));
 				var row=$(this);
 				var selected_drug=$(this).val();
+				var prev_visit_arr=<?php echo $prev_visit; ?>;
 
-				if(selected_drug=){
-					
+           //Loop through prev_dispensing table and chack with current drug selected if a match is found populate pill count
+           $.each(prev_visit_arr, function(i, v) {
+				var prev_drug_id=v['drug_id'];
+				var prev_drug_qty=v['mos'];
+				if(selected_drug==prev_drug_id){
+					row.closest("tr").find(".pill_count").val(prev_drug_qty);
 				}
+		   });
+
+
+
+				
 				
 				var stock_type="2";
 				var dose="";
@@ -598,11 +618,11 @@ foreach($results as $result){
 						error_message+="No Quantity to Dispense Selected \r\n";
 					}					
 				    if(error_message){
-					    alert(error_message);
+					   // alert(error_message);
 				    }else{
 						var drugs_per_day=(dose_qty*dose_frequency);
 				        var total_expected_drugs=(drugs_per_day*days_issued);
-				        var pill_count=(total_expected_drugs-total_actual_drugs);
+				        var pill_count=(total_actual_drugs-total_expected_drugs);
 				        return pill_count;
 					}
 			}
@@ -761,7 +781,7 @@ foreach($results as $result){
 							</div>
 						</div>
                         <div class="max-row">
-						<table class="data-table" id="last_visit_data" style="float:left;">
+						<table class="data-table prev_dispense" id="last_visit_data" style="float:left;">
 							<thead>
 							<th>Drug Dispensed</th>
 							<th>Quantity Dispensed</th>
@@ -771,7 +791,7 @@ foreach($results as $result){
 								<?php 
 								if($visits){
 								foreach($visits as $visit){
-									echo "<tr><td>".$visit['drug']."</td><td>".$visit['quantity']."</td><td class='exp_pill' drug_id='".$visit['drug_id']."'>".$visit['mos']."</td></tr>";
+									echo "<tr><td>".$visit['drug']."</td><td>".$visit['quantity']."</td><td class='exp_pill' drug_id='".$visit['drug_id']."' drug_val='".$visit['mos']."'>".$visit['mos']."</td></tr>";
 								}
 								}
 								?>

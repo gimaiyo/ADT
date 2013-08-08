@@ -37,6 +37,7 @@ class Dispensement_Management extends MY_Controller {
 		$results = $query -> result_array();
 		if ($results) {
 			$data['visits'] = $results;
+			$data['prev_visit']=json_encode($results);
 		}
 
 		$sql = "SELECT appointment FROM patient_appointment pa WHERE pa.patient = '$patient_no' AND pa.facility =  '$facility_code' ORDER BY appointment DESC LIMIT 1";
