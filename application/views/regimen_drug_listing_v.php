@@ -45,7 +45,7 @@
 				<table class="setting_table" id="brand_name_table">
 		        	<thead>
 		        		<tr>
-		        			<th>Regimens</th>
+		        			
 		        			<th>Regimens - Drug Codes</th>
 		        			
 		        			<th>Options</th>
@@ -66,11 +66,7 @@
 							
 					        		?>
 					        		<tr>
-					        			<td><?php 
-					        			echo $regimen -> Regimen_Desc." - <b>". $regimen -> Regimen_Service_Type-> Name ."</b>";
-					        			?>
 					        			
-					        			</td>
 					        			<td><?php echo $drug -> Drug -> Drug; ?></td>
 					        			<td></td>
 		        					</tr>

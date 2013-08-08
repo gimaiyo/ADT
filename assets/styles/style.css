@@ -654,7 +654,7 @@ tr th {
 	display: inline-block;
 }
 .full-content {
-	width: 95%;
+	width: 90%;
 	margin: auto;
 	padding: 10% 1% 5% 1%;
 }
@@ -1160,8 +1160,8 @@ html > body #main_manualcontent li a {
 	margin: auto;
 }
 .column fieldset, .column-2 fieldset, .column-3 fieldset {
-	padding: 5%;
-	width: 90%
+	padding: 2%;
+	width: 96%
 }
 .column input, .column-2 input, .column-3 input {
 	width: 100%;
@@ -1276,9 +1276,7 @@ legend {
 	display: table-row;
 	width: 100%;
 }
-.button-bar input {
-	float: right;
-}
+
 /**
  * 	Customizing Bootstrap
  */
@@ -1533,4 +1531,22 @@ td {
 .dataTables_wrapper {
 	width: auto;
 	margin: 0 auto;
+}
+/**
+ * 	Progress Bar
+ */
+#progressBar {
+	width: 400px;
+	height: 22px;
+	border: 1px solid #111;
+	background-color: #292929;
+}
+
+#progressBar div {
+	height: 100%;
+	color: #fff;
+	text-align: right;
+	line-height: 22px; /* same as #progressBar height if we want text middle aligned */
+	width: 0;
+	background-color: #0099ff;
 }
