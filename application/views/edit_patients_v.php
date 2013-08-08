@@ -208,6 +208,7 @@ foreach($results as $result){
 		   	     if(tbpase ==3) {
 		   	     	$("#fromphase_view").hide();
 				    $("#tophase_view").show();
+				    $("#tb").val(0);
 				 } 
 				 else if(tbpase==0){
 				 	$("#fromphase_view").hide();
@@ -215,7 +216,6 @@ foreach($results as $result){
 				 }else {
 					$("#fromphase_view").show();
 				    $("#tophase_view").show();
-					$("#transfer_source").attr("value",'');
 			     }
 		   });
 		   
@@ -232,6 +232,23 @@ foreach($results as $result){
 					dateFormat : $.datepicker.ATOM,
 					changeMonth : true,
 					changeYear : true
+			});
+			
+			//Function to calculate date ranges for tb stages
+			$("#fromphase").change(function(){
+				  var from_date=$(this).val();
+				  var new_date=new Date(from_date);
+				  var to_date=new Date();
+				  var tbphase=$(".tbphase").val();
+				  if(tbphase==1){
+				  	//Intensive
+				  	 var numberOfDaysToAdd=56;
+				  }else if(tbphase==2){
+				  	//Continuation
+				  	 var numberOfDaysToAdd=112;
+				  }
+				  to_date.setDate(new_date.getDate() + numberOfDaysToAdd);
+				  $("#tophase").datepicker('setDate', new Date(to_date));
 			});
 			
 			//Function to enable textareas for other chronic illnesses
