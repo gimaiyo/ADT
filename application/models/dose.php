@@ -3,7 +3,7 @@ class Dose extends Doctrine_Record {
 
 	public function setTableDefinition() {
 		$this -> hasColumn('Name', 'varchar', 25);
-		$this -> hasColumn('Value', 'varchar', 2);
+		$this -> hasColumn('Value', 'float');
 		$this -> hasColumn('Frequency', 'varchar', 1);
 		$this -> hasColumn('Active', 'varchar', 20);
 	}

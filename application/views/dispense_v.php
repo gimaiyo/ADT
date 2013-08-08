@@ -174,6 +174,11 @@ foreach($results as $result){
 				row.closest("tr").find(".batch").append($("<option value='0'>Loading ...</option>"));
 				var row=$(this);
 				var selected_drug=$(this).val();
+
+				if(selected_drug=){
+					
+				}
+				
 				var stock_type="2";
 				var dose="";
 				//Get batches that have not yet expired and have stock balance
@@ -198,9 +203,10 @@ foreach($results as $result){
 				    	row.closest("tr").find(".dose option").remove();
 				    	row.closest("tr").find(".dose").append("<option value='0'>None</option> ");
 				    	$.each(data,function(key,value){
-				    		row.closest("tr").find(".dose").append("<option value='"+value.Name+"'>"+value.Name+"</option> ");
+				    		row.closest("tr").find(".dose").append("<option value='"+value.Name+"'  dose_val='"+value.value+"' dose_freq='"+value.frequency+"' >"+value.Name+"</option> ");
 				   		});
-				   		$(".dose").val(dose);
+				   		row.closest("tr").find(".dose").val(dose);
+				   		//$(".dose").val(dose);
 				    	
 				    });
 
@@ -215,6 +221,8 @@ foreach($results as $result){
 			    		dose=value.dose;
 			    	});
 			    	var new_url="<?php echo base_url().'dispensement_management/getBrands'; ?>";
+			    	
+
 			    	
 			    	var request_brand=$.ajax({
 				     url: new_url,
@@ -247,9 +255,9 @@ foreach($results as $result){
 				    	row.closest("tr").find(".indication option").remove();
 				    	row.closest("tr").find(".indication").append("<option value='0'>None</option> ");
 				    	$.each(data,function(key,value){
-				    		row.closest("tr").find(".indication").append("<option value='"+value.Name+"'>"+value.Indication+" | "+value.Name+"</option> ");
+				    		row.closest("tr").find(".indication").append("<option value='"+value.Indication+"'>"+value.Indication+" | "+value.Name+"</option> ");
 				   		});
-				   		$(".dose").val(dose);
+				   		//$(".dose").val(dose);
 				    	
 				    });
 					
@@ -289,8 +297,7 @@ foreach($results as $result){
 				    });
 				    request.fail(function(jqXHR, textStatus) {
 					  alert( "Could not retrieve batch details : " + textStatus );
-					});
-					
+					});			
 				}
 			});
 			
@@ -308,12 +315,19 @@ foreach($results as $result){
 				else{
 					row.closest("tr").find(".qty_disp").css("background-color","white");
 					row.closest("tr").find(".qty_disp").removeClass("input_error");
-				}
-				
-				
+				}	
 
 			});
 			
+			$(".next_pill").change(function(){
+				    var row=$(this);
+					var qty_disp=row.closest("tr").find(".qty_disp").val();
+					var dose_val=row.closest("tr").find(".dose option:selected").attr("dose_val");
+					var dose_freq=row.closest("tr").find(".dose option:selected").attr("dose_freq");
+					var pill_count=getPillCount(dose_val,dose_freq,qty_disp);
+					row.closest("tr").find(".next_pill_count").val(pill_count);
+			})
+						
 			$(".add").click(function() {
 				var last_row=$('#drugs_table tr:last');
 				var drug_selected=last_row.find(".drug").val();
@@ -383,6 +397,7 @@ foreach($results as $result){
 		 function resetFields(row){
 			row.closest("tr").find(".qty_disp").val("");
 			row.closest("tr").find(".soh").val("");
+			//row.closest("tr").find(".indication").val("");
 			row.closest("tr").find(".duration").val("");
 			row.closest("tr").find(".expiry").val("");
 			row.closest("tr").find(".pill_count").val("");
@@ -566,6 +581,31 @@ foreach($results as $result){
 				});
 				return dump;
 			}
+			
+			function getPillCount(dose_qty,dose_frequency,total_actual_drugs){
+				var days_issued=$("#days_to_next").val();
+				var error_message="";
+				    if(!days_issued){
+				       error_message+="Days to Next Appointment not Selected \r\n";
+					}
+					if(!dose_qty){
+						error_message+="Dose has no Value \r\n";
+					}
+					if(!dose_frequency){
+						error_message+="Dose has no Frequency \r\n";
+					}
+					if(!total_actual_drugs){
+						error_message+="No Quantity to Dispense Selected \r\n";
+					}					
+				    if(error_message){
+					    alert(error_message);
+				    }else{
+						var drugs_per_day=(dose_qty*dose_frequency);
+				        var total_expected_drugs=(drugs_per_day*days_issued);
+				        var pill_count=(total_expected_drugs-total_actual_drugs);
+				        return pill_count;
+					}
+			}
 
 		</script>
 
@@ -634,7 +674,6 @@ foreach($results as $result){
 						<div class="max-row">
 							<div class="mid-row">
 								<label><span class='astericks'>*</span>Days to Next Appointment</label>
-
 								<input  type="text"name="days_to_next" id="days_to_next" class="validate[required]">
 							</div>
 							<div class="mid-row">
@@ -726,12 +765,13 @@ foreach($results as $result){
 							<thead>
 							<th>Drug Dispensed</th>
 							<th>Quantity Dispensed</th>
+							<th>Pill Count<span class="green">(Expected)</span></th>
 							</thead>
 							<tbody>
 								<?php 
 								if($visits){
 								foreach($visits as $visit){
-									echo "<tr><td>".$visit['drug']."</td><td>".$visit['quantity']."</td></tr>";
+									echo "<tr><td>".$visit['drug']."</td><td>".$visit['quantity']."</td><td class='exp_pill' drug_id='".$visit['drug_id']."'>".$visit['mos']."</td></tr>";
 								}
 								}
 								?>
@@ -744,7 +784,7 @@ foreach($results as $result){
 				<div class="content-rowy" style="height:250px;overflow: scroll">
 					<table border="0" class="data-table" id="drugs_table" style="">
 						<thead>
-							<th class="subsection-title" colspan="14">Select Drugs</th>
+							<th class="subsection-title" colspan="15">Select Drugs</th>
 							<tr style="font-size:0.8em">
 							<th>Drug</th>
 							<th>Unit</th>
@@ -757,6 +797,7 @@ foreach($results as $result){
 							<th>Stock on Hand</th>
 							<th>Indication</th>
 							<th>Pill Count</th>
+							<th>Next Pill Count</th>
 							<th>Comment</th>
 							<th>Missed Pills</th>
 							<th style="">Action</th>
@@ -766,22 +807,22 @@ foreach($results as $result){
 							<td>
 							<input type="text" name="unit[]" class="unit input-small" style="" readonly="" />
 							</td>
-							<td><select name="batch[]" class="batch input-small" style=""></select></td>
+							<td><select name="batch[]" class="batch input-small next_pill" style=""></select></td>
 							<td>
 							<input type="text" name="expiry[]" name="expiry" class="expiry input-small" id="expiry_date" readonly="" size="15"/>
 							</td>
 							<td>
-							<select name="dose[]" class="dose input-small"></select>
+							<select name="dose[]" class="dose input-small next_pill"></select>
 							</td>
 							<td>
 							<input type="text" name="duration[]" class="duration input-small" />
 							</td>
 							<td>
-							<input type="text" name="qty_disp[]" class="qty_disp input-small" />
+							<input type="text" name="qty_disp[]" class="qty_disp input-small next_pill" />
 							</td>
 							<td><select name="brand[]" class="brand input-small"></select></td>
 							<td>
-							<input type="text" name="soh[]" class="soh input-small" disabled="disabled"/>
+							<input type="text" name="soh[]" class="soh input-small" readonly="readonly"/>
 							</td>
 							<td>
 							<select name="indication[]" class="indication input-small" style="">
@@ -789,6 +830,9 @@ foreach($results as $result){
 							</select></td>
 							<td>
 							<input type="text" name="pill_count[]" class="pill_count input-small" />
+							</td>
+							<td>
+							<input type="text" name="next_pill_count[]" class="next_pill_count input-small" readonly="readonly" />
 							</td>
 							<td>
 							<input type="text" name="comment[]" class="comment input-small" />
