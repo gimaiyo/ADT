@@ -1,15 +1,4 @@
-<script type="text/javascript" src="<?php echo base_url().'Scripts/datatable/jquery.dataTables.rowGrouping.js'?>"></script>
-<script>
-	$(document).ready(function() {
-		
-		$("#regimen_drug_listing").accordion({
-			autoHeight : false,
-			navigation : true
-		});
-		
-	});
 
-</script>
 <style>
 	#regimen_drug_listing {
 		width: 90%;
@@ -42,14 +31,12 @@
 	    <div class="span12 span-fixed-sidebar">
 	      	<div class="hero-unit">
 				<?php echo validation_errors('<p class="error">', '</p>');?>
-				<table class="setting_table" id="brand_name_table">
+				<table class="table table-bordered table-hover table-striped setting_table " id="brand_name_table">
 		        	<thead>
 		        		<tr>
 		        			<th>Regimens</th>
-		        			<th>Regimens - Drug Codes</th>
-		        			
+		        			<th>Lines</th>
 		        			<th>Options</th>
-		        			
 		        		</tr>
 		        	</thead>
 		        	<tbody>
@@ -57,48 +44,58 @@
 		        		$access_level=$this -> session -> userdata('user_indicator');
 						
 		        		foreach($regimens as $regimen){
-		        			foreach($regimen->Drugs as $drug){
-		        		?>
-		        		<?php
-		        		if($drug -> Drug ->id !=""){
-		        			if($access_level!="facility_administrator"){
-								if($drug -> Active == 1){
-							
-					        		?>
-					        		<tr>
-					        			<td><?php 
-					        			echo $regimen -> Regimen_Desc." - <b>". $regimen -> Regimen_Service_Type-> Name ."</b>";
-					        			?>
-					        			
-					        			</td>
-					        			<td><?php echo $drug -> Drug -> Drug; ?></td>
-					        			<td></td>
-		        					</tr>
-		        		<?php	
-								}
+		        			if($regimen->Regimen_Desc!=""){
+		        			?>
+		        			<tr>
+		        				<td><?php echo "<b>".$regimen -> Regimen_Code."</b> | ".$regimen -> Regimen_Desc; ?></td>
+		        				<td><?php echo $regimen -> Regimen_Service_Type-> Name ?></td>
+		        				<td><a href="#show_drugs_<?php echo $regimen ->id ?>" data-toggle="modal">View List of drugs</a></td>
+		        			</tr>
+		        			<!-- Hide list of drugs for each regimen -->
+			        		<div style="width:680px;margin-left:-340px" id="show_drugs_<?php echo $regimen ->id ?>" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		        				<div class="modal-header">
+								   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								   <h3>Drug List for Regimen <?php echo $regimen -> Regimen_Code; ?></h3>
+								</div>
+								<div class="modal-body">
+											<div class="reg_drug_name f_left"><strong>Drug</strong></div>
+											<div class="reg_drug_name f_right"><strong>Option</strong></div>
+											<div><hr size='1'></div>
+											<?php
+							        			foreach($regimen->Drugs as $drug){
+								        		?>
+								        		<div>
+								        		<?php
+								        		if($drug -> Drug ->id !=""){
+												?>
+													<div class="reg_drug_name f_left"><?php echo $drug -> Drug -> Drug; ?></div>
+													<div class="reg_drug_name f_right">
+													<?php 
+								        			if ($drug -> Active == 1) {
+														echo anchor("regimen_drug_management/disable/" . $drug -> Drug -> id ,'Disable',array('class'=>'disable_user')) ;
+													} else {
+														echo anchor("regimen_drug_management/enable/" . $drug -> Drug -> id ,'Enable',array('class'=>'enable_user')) ;
+													}
+													?>
+													</div>
+													<?php
+								        		}
+												?>
+												</div>
+												<?php
+							        		  }
+											?>
+										
+										
+								</div>
+    			 				<div class="modal-footer">
+						    		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+						   	 		<input type="submit" class="btn btn-primary" value="Save changes">
+						  		</div>
+	        			</div>
+	        			<!-- Hide list of drugs for each regimen end -->
+							<?php
 							}
-							else{
-							?>
-								<tr>
-					        			<td><?php 
-					        			echo $regimen -> Regimen_Desc." - <b>". $regimen -> Regimen_Service_Type-> Name ."</b>";
-					        			?>
-					        			
-					        			</td>
-					        			<td><?php echo $drug -> Drug -> Drug; ?></td>
-					        			<td><?php 
-					        			if ($drug -> Active == 1) {
-											echo anchor("regimen_drug_management/disable/" . $drug -> Drug -> id ,'Disable',array('class'=>'disable_user')) ;
-										} else {
-											echo anchor("regimen_drug_management/enable/" . $drug -> Drug -> id ,'Enable',array('class'=>'enable_user')) ;
-										}
-							
-		        			 			?></td>
-		        					</tr>
-			        		<?php
-								}
-			        		}
-		        		  }
 		        		} ?>
 		        	</tbody>
 		        </table>

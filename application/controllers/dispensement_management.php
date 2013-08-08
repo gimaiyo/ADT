@@ -32,11 +32,12 @@ class Dispensement_Management extends MY_Controller {
 			$dispensing_date = $results[0]['dispensing_date'];
 		}
 
-		$sql = "select d.drug,pv.quantity from patient_visit pv,drugcode d where pv.patient_id = '$patient_no' and pv.dispensing_date = '$dispensing_date' and pv.drug_id = d.id order by pv.id desc";
+		$sql = "select d.drug,pv.quantity,pv.months_of_stock as mos,pv.drug_id from patient_visit pv,drugcode d where pv.patient_id = '$patient_no' and pv.dispensing_date = '$dispensing_date' and pv.drug_id = d.id order by pv.id desc";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
 			$data['visits'] = $results;
+			$data['prev_visit']=json_encode($results);
 		}
 
 		$sql = "SELECT appointment FROM patient_appointment pa WHERE pa.patient = '$patient_no' AND pa.facility =  '$facility_code' ORDER BY appointment DESC LIMIT 1";
@@ -74,7 +75,7 @@ class Dispensement_Management extends MY_Controller {
 	}
 
 	public function getDoses() {
-		$get_doses_sql = $this -> db -> query("SELECT id,Name FROM dose");
+		$get_doses_sql = $this -> db -> query("SELECT id,Name,value,frequency FROM dose");
 		$get_doses_array = $get_doses_sql -> result_array();
 		echo json_encode($get_doses_array);
 	}
@@ -122,6 +123,7 @@ class Dispensement_Management extends MY_Controller {
 	}
 
 	public function save() {
+		$record_no = $this->session->userdata('record_no');
 		$next_appointment_date = $this -> input -> post("next_appointment_date");
 		$last_appointment_date = $this -> input -> post("last_appointment_date");
 		$dispensing_date = $this -> input -> post("dispensing_date");
@@ -191,7 +193,7 @@ class Dispensement_Management extends MY_Controller {
 
 		}
 		$this -> session -> set_userdata('msg_success', 'Drugs dispensed to Patient No:' . $patient);
-		redirect("patient_management");
+		redirect("patient_management/viewDetails/$record_no");
 	}
 
 	public function save_edit() {

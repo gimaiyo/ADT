@@ -18,8 +18,8 @@ class System_management extends MY_Controller {
 		$this -> load -> library('carabiner');
 		$this -> carabiner -> empty_cache();
 		// add a js file
-		$jsArray = array( array('bootstrap/jquery_bootstrap.js'),array('jquery-1.7.2.min.js'), array('highcharts/highcharts.js'), array('highcharts/modules/exporting.js'),array('highcharts/highcharts-more.js')
-		,array('highcharts/adapters/prototype-adapter.js'),array('highcharts/modules/canvas-tools.js'),array('jquery.form.js'),array('bootstrap/bootstrap.min.js')
+		$jsArray = array(array('jquery-1.10.2.min.js'), array('highcharts/highcharts.js'), array('highcharts/modules/exporting.js')
+		,array('jquery.form.js'),array('bootstrap/bootstrap.min.js')
 		,array('datatable/jquery.dataTables.js'),array('jquery-migrate-1.2.1.js')
 		, array('jquery.multiselect.js'),array('Merged_JS.js'));
 		$cssArray = array( array('style.css'), array('bootstrap.css'),array('jquery-ui.css'),array('style_report.css'),array('jquery.dataTables_themeroller.css')

@@ -8,9 +8,14 @@
  *Change password validation
  */
 $(document).ready(function() {
-	  
 	
-	
+	//Progress Bar  
+	function progress(percent, $element) {
+    var progressBarWidth = percent * $element.width() / 100;
+    $element.find('div').animate({ width: progressBarWidth }, 500).html(percent + "%&nbsp;");
+
+}
+
 	
 	var base_url = $("#base_url").val();
 	$('.dataTables').dataTable({

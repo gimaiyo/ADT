@@ -1,4 +1,4 @@
-<script type="text/javascript" src="<?php echo base_url().'Scripts/datatable/jquery.dataTables.rowGrouping.js'?>"></script>
+<script type="text/javascript" src="<?php echo base_url().'assets/Scripts/datatable/jquery.dataTables.rowGrouping.js'?>"></script>
 
 
 <script>
