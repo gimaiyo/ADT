@@ -35,6 +35,7 @@ class Dispensement_Management extends MY_Controller {
 		$sql = "select d.drug,pv.quantity,pv.months_of_stock as mos,pv.drug_id from patient_visit pv,drugcode d where pv.patient_id = '$patient_no' and pv.dispensing_date = '$dispensing_date' and pv.drug_id = d.id order by pv.id desc";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
+		$data['prev_visit']="";
 		if ($results) {
 			$data['visits'] = $results;
 			$data['prev_visit']=json_encode($results);
@@ -142,6 +143,7 @@ class Dispensement_Management extends MY_Controller {
 		$brand = $this -> input -> post("brand");
 		$soh = $this -> input -> post("soh");
 		$indication = $this -> input -> post("indication");
+		$mos=$this->input->post("next_pill_count");
 		$pill_count = $this -> input -> post("pill_count");
 		$comment = $this -> input -> post("comment");
 		$missed_pill = $this -> input -> post("missed_pills");
@@ -178,7 +180,7 @@ class Dispensement_Management extends MY_Controller {
 		 */
 
 		for ($i = 0; $i < sizeof($drugs); $i++) {
-			$sql .= "insert into patient_visit (patient_id, visit_purpose, current_height, current_weight, regimen, regimen_change_reason, drug_id, batch_number, brand, indication, pill_count, comment, `timestamp`, user, facility, dose, dispensing_date, dispensing_date_timestamp,quantity,duration,adherence,missed_pills,non_adherence_reason) VALUES ('$patient','$purpose', '$height', '$weight', '$current_regimen', '$regimen_change_reason', '$drugs[$i]', '$batch[$i]', '$brand[$i]', '$indication[$i]', '$pill_count[$i]','$comment[$i]', '$timestamp', '$user','$facility', '$dose[$i]','$dispensing_date', '$dispensing_date_timestamp','$quantity[$i]','$duration[$i]','$adherence','$missed_pill[$i]','$non_adherence_reasons');";
+			$sql .= "insert into patient_visit (patient_id, visit_purpose, current_height, current_weight, regimen, regimen_change_reason, drug_id, batch_number, brand, indication, pill_count, comment, `timestamp`, user, facility, dose, dispensing_date, dispensing_date_timestamp,quantity,duration,adherence,missed_pills,non_adherence_reason,months_of_stock) VALUES ('$patient','$purpose', '$height', '$weight', '$current_regimen', '$regimen_change_reason', '$drugs[$i]', '$batch[$i]', '$brand[$i]', '$indication[$i]', '$pill_count[$i]','$comment[$i]', '$timestamp', '$user','$facility', '$dose[$i]','$dispensing_date', '$dispensing_date_timestamp','$quantity[$i]','$duration[$i]','$adherence','$missed_pill[$i]','$non_adherence_reasons','$mos[$i]');";
 			$sql .= "insert into drug_stock_movement (drug, transaction_date, batch_number, transaction_type,source,destination,expiry_date,quantity, quantity_out, facility,`timestamp`) VALUES ('$drugs[$i]','$dispensing_date','$batch[$i]','$transaction_type','$facility','$facility','$expiry[$i]',0,'$quantity[$i]','$facility','$dispensing_date_timestamp');";
 			$sql .= "update drug_stock_balance SET balance=balance - '$quantity[$i]' WHERE drug_id='$drugs[$i]' AND batch_number='$batch[$i]' AND expiry_date='$expiry[$i]' AND stock_type='2' AND facility_code='$facility';";
 		}
@@ -192,7 +194,8 @@ class Dispensement_Management extends MY_Controller {
 			}
 
 		}
-		$this -> session -> set_userdata('msg_success', 'Drugs dispensed to Patient No:' . $patient);
+		$this -> session -> set_userdata('msg_save_transaction', 'success');
+		$this -> session -> set_userdata('dispense_updated','Drugs dispensed to Patient No:' . $patient);
 		redirect("patient_management/viewDetails/$record_no");
 	}
 

@@ -184,16 +184,23 @@ foreach($results as $result){
 				row.closest("tr").find(".batch").append($("<option value='0'>Loading ...</option>"));
 				var row=$(this);
 				var selected_drug=$(this).val();
+				<?php 
+				if($prev_visit){
+				?>
 				var prev_visit_arr=<?php echo $prev_visit; ?>;
-
-           //Loop through prev_dispensing table and chack with current drug selected if a match is found populate pill count
-           $.each(prev_visit_arr, function(i, v) {
-				var prev_drug_id=v['drug_id'];
-				var prev_drug_qty=v['mos'];
-				if(selected_drug==prev_drug_id){
-					row.closest("tr").find(".pill_count").val(prev_drug_qty);
+				   //Loop through prev_dispensing table and chack with current drug selected if a match is found populate pill count
+		           $.each(prev_visit_arr, function(i, v) {
+						var prev_drug_id=v['drug_id'];
+						var prev_drug_qty=v['mos'];
+						if(selected_drug==prev_drug_id){
+							row.closest("tr").find(".pill_count").val(prev_drug_qty);
+						}
+				   });
+				<?php 
 				}
-		   });
+				?>
+
+           
 
 
 
@@ -816,7 +823,7 @@ foreach($results as $result){
 							<th>Brand Name</th>
 							<th>Stock on Hand</th>
 							<th>Indication</th>
-							<th>Pill Count</th>
+							<th>Prev Pill Count</th>
 							<th>Next Pill Count</th>
 							<th>Comment</th>
 							<th>Missed Pills</th>
@@ -852,7 +859,7 @@ foreach($results as $result){
 							<input type="text" name="pill_count[]" class="pill_count input-small" />
 							</td>
 							<td>
-							<input type="text" name="next_pill_count[]" class="next_pill_count input-small" readonly="readonly" />
+							<input type="text" name="next_pill_count[]" class="next_pill_count input-small"  />
 							</td>
 							<td>
 							<input type="text" name="comment[]" class="comment input-small" />
