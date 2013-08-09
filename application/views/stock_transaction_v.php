@@ -403,14 +403,21 @@
 			var unit_costs = retrieveFormValues_Array('unit_cost');
 			var comments = retrieveFormValues_Array('comment');
 			var amounts = retrieveFormValues_Array('amount');
+			var available_quantity=retrieveFormValues_Array('available_quantity');
+			var balance=0;
 			
 			//If transaction is from store
 			var stock_type=<?php echo $stock_type; ?>;
 			if(stock_type=='1'){
+				//Stockin coming in
 				if(dump["transaction_type"] == 1 || dump["transaction_type"] == 2 || dump["transaction_type"] == 3 || dump["transaction_type"] == 4 || dump["transaction_type"] == 11) {
+					//Balance is the quantity received
+					balance=quantities;
 					var quantity_choice = "quantity";
 					var quantity_out_choice = "quantity_out";
 				} else {
+					//Substract balance from qty going out
+					balance=available_quantity-quantities;
 					var quantity_choice = "quantity_out";
 					var quantity_out_choice = "quantity";
 				}
@@ -419,11 +426,15 @@
 			else if(stock_type=='2'){
 				//If transaction is received from
 				if(dump["transaction_type"] == 1 || dump["transaction_type"] == 2 || dump["transaction_type"] == 3 || dump["transaction_type"] == 4 || dump["transaction_type"] == 11) {
+					//Balance is the quantity received
+					balance=quantities;
 					var quantity_choice = "quantity";
 					var quantity_out_choice = "quantity_out";
 					
 					
 				} else {
+					//Substract balance from qty going out
+					balance=available_quantity-quantities;
 					var quantity_choice = "quantity_out";
 					var quantity_out_choice = "quantity";
 				}
@@ -477,7 +488,7 @@
 				
 				
 				
-				var sql = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type, source, destination, expiry_date, packs," + quantity_choice + "," + quantity_out_choice + ", unit_cost, amount, remarks, operator, order_number, facility) VALUES ('" + drugs[i] + "', '" + dump["transaction_date"] + "', '" + batches[i] + "', '" + dump["transaction_type"] + "', '" + source + "', '" + destination + "', '" + expiries[i] + "', '" + packs[i] + "', '" + quantities[i] + "','0','" + unit_costs[i] + "', '" + amounts[i] + "', '" + comments[i] + "','" + user + "','" + dump["reference_number"] + "','" + facility + "');";
+				var sql = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type, source, destination, expiry_date, packs," + quantity_choice + "," + quantity_out_choice + ",balance, unit_cost, amount, remarks, operator, order_number, facility) VALUES ('" + drugs[i] + "', '" + dump["transaction_date"] + "', '" + batches[i] + "', '" + dump["transaction_type"] + "', '" + source + "', '" + destination + "', '" + expiries[i] + "', '" + packs[i] + "', '" + quantities[i] + "','0','" + balance + "','" + unit_costs[i] + "', '" + amounts[i] + "', '" + comments[i] + "','" + user + "','" + dump["reference_number"] + "','" + facility + "');";
 				sql_queries += sql;
 				
 				
@@ -491,10 +502,11 @@
 					}
 					destination=dump['destination'];
 					//If transaction type is issued to, insert another transaction as a received from
-					var transaction_type=1;
-					sql_queries += "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number,transaction_type, source, destination, expiry_date, packs," + quantity_out_choice + "," + quantity_choice + ", unit_cost, amount, remarks, operator, order_number, facility) VALUES ('" + drugs[i] + "', '" + dump["transaction_date"] + "', '" + batches[i] + "', '" + transaction_type + "', '" + source + "', '" + destination + "', '" + expiries[i] + "', '" + packs[i] + "', '" + quantities[i] + "','0','" + unit_costs[i] + "', '" + amounts[i] + "', '" + comments[i] + "','" + user + "','" + dump["reference_number"] + "','" +  destination + "');";
+					//var transaction_type=1;
+					//sql_queries += "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number,transaction_type, source, destination, expiry_date, packs," + quantity_out_choice + "," + quantity_choice + ", unit_cost, amount, remarks, operator, order_number, facility) VALUES ('" + drugs[i] + "', '" + dump["transaction_date"] + "', '" + batches[i] + "', '" + transaction_type + "', '" + source + "', '" + destination + "', '" + expiries[i] + "', '" + packs[i] + "', '" + quantities[i] + "','0','" + unit_costs[i] + "', '" + amounts[i] + "', '" + comments[i] + "','" + user + "','" + dump["reference_number"] + "','" +  destination + "');";
 				}
 				
+				//??? How to get received from main store. How do we update pharmacy balance
 				//If received from main store to pharmacy, insert an issued to from main store
 				else if(dump["transaction_type"]=='1' && stock_type=='2' && dump['source']==1 ){
 					var transaction_type=6;

@@ -1419,8 +1419,9 @@ table#history_table td {
 	}
 }
 #fmChangePassword {
+	margin:0 auto;
 	margin-top: 2%;
-	width: 35%;
+	width: 45%;
 }
 .notCenter {
 	margin: 0;
@@ -1549,4 +1550,11 @@ td {
 	line-height: 22px; /* same as #progressBar height if we want text middle aligned */
 	width: 0;
 	background-color: #0099ff;
+}
+/**
+ * 	Regimen drugs
+ */
+.reg_drug_name{
+	width:85%;
+	display:inline;
 }

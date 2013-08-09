@@ -52,7 +52,7 @@
 			$("input[type='text']").attr("required","required");
 			$("#loadingDiv").css("display","none");
 			$(".settings").css("display","block");
-				if(linkSub=="regimen_drug_management" || linkSub=="brandname_management"){
+				if( linkSub=="brandname_management"){
 						$('#brand_name_table').dataTable({
 		    			"sScrollY": "200px",
 		    			"bLengthChange": false,
@@ -126,6 +126,7 @@
 					$("input[type='text']").attr("required","required");
 					$("#loadingDiv").css("display","none");
 					$(".settings").css("display","block");
+					/*
 						if(linkSub=="regimen_drug_management"){
 								$('#brand_name_table').dataTable({
 				    			"sScrollY": "240px",
@@ -163,13 +164,16 @@
 				        };
 						}
 						else{
+					*/
 							oTable = $('.setting_table').dataTable({
 								"sScrollY" : "240px",
 								"bJQueryUI" : true,
 								"sPaginationType" : "full_numbers",
 								"bDestroy":true
 							});
+					/*		
 						}
+						*/
 						
 				});
 
@@ -285,6 +289,6 @@
 		</ul>
 	</div>
 	<div class="settings well"></div>
-	<div id="loadingDiv" style="display: none"><img style="width: 30px" src="<?php echo asset_url().'images/loading_spin.gif' ?>"</div>
+	<div id="loadingDiv" style="display: none"><img style="width: 30px" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>
 </div>
 </div>
