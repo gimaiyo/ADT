@@ -64,7 +64,7 @@ h3{line-height:2em;-webkit-margin-before:0.5em;color:#fff;font-size:1em;padding:
 ul{font-size:0.9em}.center-content
 h3{margin:0
 0 1% 0}.center-content{float:right;padding:10% 1% 1% 1%;width:80%;margin:0
-0 0 1%;padding-bottom:5%;display:inline-block}.full-content{width:95%;margin:auto;padding:10% 1% 5% 1%}.full-content
+0 0 1%;padding-bottom:5%;display:inline-block}.full-content{width:90%;margin:auto;padding:10% 1% 5% 1%}.full-content
 form{width:100%}.right-content{width:19%;float:right}ul,li{list-style:none;margin:0}ul{text-align:left}ul
 li{display:block}ul
 li.last{margin-right:0}#stock_level
@@ -104,15 +104,14 @@ a{display:block;padding:10px
 a{width:auto}#main_manualcontent li a:hover{background-color:#00B831;color:#fff}#weekly_summary{font-size:10px;background:rgb(222, 245, 247)}#weekly_summary
 th{background:#DDD}#weekly_summary td+td{text-align:center}#chart_area,#chart_area2,#chart_area3,#table1{height:80%}.dataTables_wrapper{width:100%}.content-row{display:table-row}.full-content
 form{border-radius:5px}.column{display:table-cell;width:1111px;margin-left:1%;height:inherit}.column-2{width:1111px;background:#f9f;display:table-cell}.column-3{width:30%;margin:auto}.column-5{width:50%;margin:auto}.column fieldset, .column-2 fieldset, .column-3
-fieldset{padding:5%;width:90%}.column input, .column-2 input, .column-3
+fieldset{padding:2%;width:96%}.column input, .column-2 input, .column-3
 input{width:100%}.column input[type=checkbox]{width:45%}.column select, .column-2 select, .column-3
 select{width:100%}.max-row{margin-top:0.5em;clear:both;width:100%;display:block}.mid-row{width:45%;display:inline-block}.mid-row input, .mid-row
 textarea{width:100%}.column
 textarea{width:100%;height:6em}input[readonly]{background:#aac8e0;border:1px
 solid #D9D9D9}.mid-row input[type=radio]{width:auto}.mid-row
 select{width:100%}.mid-row:nth-child(even){float:right}.actions_panel{width:200px;margin-top:5px}.hovered
-td{background-color:#E5E5E5 !important}a{text-decoration:none}.enable_user{color:green;font-weight:bold}.disable_user{color:red;font-weight:bold}.edit_user{color:blue;font-weight:bold}.passmessage{display:none;background:#0C3;color:black;text-align:center;height:20px;padding:5px;font:bold 1px;border-radius:8px;width:30%;margin-left:30%;margin-right:10%;font-size:16px;font-weight:bold}.errormessage{display:none;background:#F00;color:black;text-align:center;height:20px;padding:5px;font:bold 1px;border-radius:8px;width:30%;margin-left:30%;margin-right:10%;font-size:16px;font-weight:bold}#DataTables_Table_0_wrapper{font-size:15px}.red{color:red;font-style:italic}input[type='text'],input[type='email'],input[type='tel'],input[type='password']{height:30px}legend{font-size:18px}.button-bar{display:table-row;width:100%}.button-bar
-input{float:right}.badge{color:white;margin-left:3%}.btn-danger
+td{background-color:#E5E5E5 !important}a{text-decoration:none}.enable_user{color:green;font-weight:bold}.disable_user{color:red;font-weight:bold}.edit_user{color:blue;font-weight:bold}.passmessage{display:none;background:#0C3;color:black;text-align:center;height:20px;padding:5px;font:bold 1px;border-radius:8px;width:30%;margin-left:30%;margin-right:10%;font-size:16px;font-weight:bold}.errormessage{display:none;background:#F00;color:black;text-align:center;height:20px;padding:5px;font:bold 1px;border-radius:8px;width:30%;margin-left:30%;margin-right:10%;font-size:16px;font-weight:bold}#DataTables_Table_0_wrapper{font-size:15px}.red{color:red;font-style:italic}input[type='text'],input[type='email'],input[type='tel'],input[type='password']{height:30px}legend{font-size:18px}.button-bar{display:table-row;width:100%}.badge{color:white;margin-left:3%}.btn-danger
 a{color:white}.report_category
 a{font-size:12px}#patient_listing,.dataTable{margin:0
 auto;width:100%;border:none;font-size:13px;letter-spacing:0.8px}.astericks{color:red;font-size:18px;font-weight:bold}.start_regimen{color:red;font-weight:bold}.icondose{background:#FFF url(http://localhost/ADT/assets/styles/Images/dropdown.png) no-repeat 55px 4px;padding:4px
@@ -143,7 +142,9 @@ auto}#commodity-table tbody
 tr{font-size:14px}.regimen-table tbody
 td{font-size:0.75em;color:#000;padding:3px}.ui-state-active{background:#e6e6e6 url(http://localhost/ADT/assets/styles/images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x}.regimen-table thead
 .col_drug{font-size:14px}.dataTables_wrapper{width:auto;margin:0
-auto}
+auto}#progressBar{width:400px;height:22px;border:1px
+solid #111;background-color:#292929}#progressBar
+div{height:100%;color:#fff;text-align:right;line-height:22px;width:0;background-color:#09f}.reg_drug_name{width:85%;display:inline}
 
 /*
  * Bootstrap v2.3.2
