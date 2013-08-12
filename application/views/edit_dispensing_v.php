@@ -404,7 +404,7 @@ foreach ($expiries as $expiry) {
 					<option value=" ">None</option>
 					<?php 
 					foreach($indications as $indication){
-						echo "<option value='".$indication['id']."'>".$indication['Name']."</option>";
+						echo "<option value='".$indication['Indication']."'>".$indication['Indication']." | ".$indication['Name']."</option>";
 					}
 					?>
 					</select></td>

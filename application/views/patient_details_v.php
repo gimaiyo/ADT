@@ -647,7 +647,7 @@ if(isset($results)){
 			</script>
 			<?php
 			if($this->session->userdata("msg_save_transaction")=="success"){
-				if($this->session->userdata("user_updated")){
+				   if($this->session->userdata("user_updated")){
 						?>
 						<p class="info"><span class="message success"><?php echo $this->session->userdata("user_updated") ?>'s details were successfully updated !</span></p>
 						<?php

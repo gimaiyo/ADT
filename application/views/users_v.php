@@ -18,7 +18,7 @@
 				$("#msg_error").text("Some fields are missing !");
 			}
 			else if ($.trim(username)!="" && $.trim(username).length<7 ){
-				$("#msg_error").text("Username is supposed to be more than 6 characters");
+				$("#msg_error").text("The Username field must be at least 6 characters in length!");
 			}
 			else{
 				$("#msg_error").text("");
@@ -289,7 +289,7 @@
 			</div>
 			<div class="modal-footer">
 			   <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-			   <input type="submit" value="Save" class="btn btn-primary " />
+			   <input type="submit" id="btn_save_user" value="Save" class="btn btn-primary " />
 			</div>
 			</form>
 			

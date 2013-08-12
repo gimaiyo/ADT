@@ -28,9 +28,9 @@
 
 <script>
 	$(document).ready(function() {
-
-		$('#new_password').keyup(function() {
-			$('#result').html(checkStrength($('#new_password').val()))
+		$("#m_error_msg_change_pass").css("display","none");
+		$('#m_new_password').keyup(function() {
+			$('#m_result').html(checkStrength($('#m_new_password').val()))
 		})
 		function checkStrength(password) {
 
@@ -39,8 +39,8 @@
 
 			//if the password length is less than 6, return message.
 			if (password.length < 6) {
-				$('#result').removeClass()
-				$('#result').addClass('short')
+				$('#m_result').removeClass()
+				$('#m_result').addClass('short')
 				return 'Too short'
 			}
 
@@ -70,37 +70,82 @@
 
 			//if value is less than 2
 			if (strength < 2) {
-				$('#result').removeClass()
-				$('#result').addClass('weak')
+				$('#m_result').removeClass()
+				$('#m_result').addClass('weak')
 				return 'Weak'
 			} else if (strength == 2) {
-				$('#result').removeClass()
-				$('#result').addClass('good')
+				$('#m_result').removeClass()
+				$('#m_result').addClass('good')
 				return 'Good'
 			} else {
-				$('#result').removeClass()
-				$('#result').addClass('strong')
+				$('#m_result').removeClass()
+				$('#m_result').addClass('strong')
 				return 'Strong'
 			}
 		}
 
 
-		$("#register").click(function(event) {
-			$('#result_confirm').html("");
+		$("#m_btn_submit_change_pass").click(function(event) {
+			var base_url = $("#base_url").val();
+			$(".error").css("display", "none");
+			$('#m_result_confirm').html("");
 			event.preventDefault();
-			var new_password = $("#new_password").attr("value");
-
-			var new_password_confirm = $("#new_password_confirm").attr("value");
-			if (new_password == "") {
-
-			} else if ($("#result").attr("class") == "weak" || $('#new_password').val().length < 6) {
-
-			} else if (new_password != new_password_confirm) {
-				$('#result_confirm').removeClass()
-				$('#result_confirm').addClass('short')
-				$('#result_confirm').html("You passwords do not match !");
+			var old_password = $("#m_old_password").attr("value");
+			var new_password = $("#m_new_password").attr("value");
+			var new_password_confirm = $("#m_new_password_confirm").attr("value");
+	
+			if(new_password == "" || new_password_confirm == "" || old_password == "") {
+				$(".error").css("display", "block");
+				$("#m_error_msg_change_pass").html("All fields are required !");
+			} else if(new_password.length < 6) {
+				$(".error").css("display", "block");
+				$("#m_error_msg_change_pass").html("Your password must have more than 6 characters!");
+			} else if($("#m_result").attr("class") == "weak") {
+				$(".error").css("display", "block");
+				$("#m_error_msg_change_pass").html("Please enter a strong password!");
+			} else if(new_password != new_password_confirm) {
+				$(".error").css("display", "block");
+				$('#m_result_confirm').removeClass();
+				$('#m_result_confirm').addClass('short');
+				$("#m_error_msg_change_pass").html("You passwords do not match !");
 			} else {
-				$("#fmChangePassword").submit();
+				$(".error").css("display", "none");
+				$("#loadingDiv").css("display", "block");
+				//$("#fmChangePassword").submit();
+				var _url = base_url + "user_management/save_new_password";
+				var request = $.ajax({
+					url : _url,
+					type : 'post',
+					data : {
+						"old_password" : old_password,
+						"new_password" : new_password
+					},
+					dataType : "json"
+				});
+				request.done(function(data) {
+					$("#loadingDiv").css("display", "none");
+					$.each(data, function(key, value) {
+						if(value == "password_no_exist") {
+							$("#m_error_msg_change_pass").css("display", "block");
+							$("#m_error_msg_change_pass").html("You entered a wrong password!");
+						} else if(value == "password_exist") {
+							$("#m_error_msg_change_pass").css("display", "block");
+							$("#m_error_msg_change_pass").html("Your new password matches one of your three pevious passwords!");
+						} else if(value == "password_changed") {
+							$("#m_error_msg_change_pass").css("display", "block");
+							$("#m_error_msg_change_pass").removeClass("error");
+							$("#m_error_msg_change_pass").addClass("success");
+							$("#m_error_msg_change_pass").html("Your password was successfully updated!");
+							<?php delete_cookie('actual_page') ?>
+							window.setTimeout('location="login"', 3000);
+						} else {
+							alert(value);
+						}
+					});
+				});
+				request.fail(function(jqXHR, textStatus) {
+					alert("An error occured while updating your password : " + textStatus + ". Please try again or contact your system administrator!");
+				});
 			}
 		});
 
@@ -108,36 +153,28 @@
 
 </script>
 
-<div class="full-content">
-	<?php
-	echo validation_errors('
-	<p class="error">', '</p>
-	');
-	if ($this -> session -> userdata("matching_password")) {
-		$message = $this -> session -> userdata("matching_password");
-		echo "<p class='message error'>" . $message . "</p>";
-		$this -> session -> set_userdata("matching_password", "");
-	}
-	?>
+<div class="center-content">
 	<form id="fmChangePassword" action="<?php echo base_url().'user_management/save_new_password'?>" method="post" class="well">
 	<legend>Change Password</legend>
-	
+	<span class="message error" id="m_error_msg_change_pass"></span>
+	<div id="loadingDiv" style="display: none"><img style="width: 30px" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>
+	<br>
 	<br>
 	<table>
 	<tr>
-	<td><label >Old Password</label></td><td><input type="password" name="old_password" id="old_password" required=""></td>
+	<td><label >Old Password</label></td><td><input type="password" name="old_password" id="m_old_password" required=""></td>
 	</tr>
 	<tr>
-	<td><label >New Password</label></td><td><input type="password" name="new_password" id="new_password" required=""><span id="result"></span></td>
+	<td><label >New Password</label></td><td><input type="password" name="new_password" id="m_new_password" required=""><span id="m_result"></span></td>
 	</tr>
 	<tr>
 	<td><label >Confirm New Password</label></td><td>
-	<input type="password" name="new_password_confirm" id="new_password_confirm" required="">
-	<span id="result_confirm"></span></td>
+	<input type="password" name="new_password_confirm" id="m_new_password_confirm" required="">
+	<span id="m_result_confirm"></span></td>
 	</tr>
 	<tr>
 		<td colspan="2">
-		<input type="submit" class="btn" name="register" id="register" value=" Submit ">
+		<input type="button" class="btn btn_submit_pass" name="register" id="m_btn_submit_change_pass" value=" Submit ">
 		</td>
 	</tr>
 	</table>
