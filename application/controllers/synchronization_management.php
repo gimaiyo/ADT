@@ -7,10 +7,6 @@ class Synchronization_Management extends MY_Controller {
 		parent::__construct();
 	}
 
-	public function index() {
-
-	}
-
 	public function synchronize_orders() {
 		$mainstrSQl = "";
 		$table_lists = array("facility_order", "cdrr_item", "maps_item", "order_comment");
@@ -41,8 +37,11 @@ class Synchronization_Management extends MY_Controller {
 			}
 			$mainstrSQl .= $strSQl;
 		}
-		echo $mainstrSQl=$this->encrypt->encode($mainstrSQl);
-
+		if ($mainstrSQl != '') {
+			echo $mainstrSQl = base64_encode($mainstrSQl);
+		} else {
+			echo $mainstrSQl = "";
+		}
 	}
 
 	public function uploadSQL($session_id) {
@@ -69,11 +68,14 @@ class Synchronization_Management extends MY_Controller {
 		$this -> session -> set_userdata($menus);
 		$sql = "";
 		if ($this -> input -> post("sql")) {
-			$sql = $this -> encrypt -> decode($this -> input -> post("sql"));
-			$queries = explode(";", $sql);
-			foreach ($queries as $query) {
-				if (strlen($query) > 0) {
-					$this -> db -> query($query);
+			$sql = $this -> input -> post("sql");
+			if ($sql != '') {
+				$sql = base64_decode($sql);
+				$queries = explode(";", $sql);
+				foreach ($queries as $query) {
+					if (strlen($query) > 0) {
+						$this -> db -> query($query);
+					}
 				}
 			}
 		}

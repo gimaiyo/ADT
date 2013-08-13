@@ -459,12 +459,12 @@ class Order_Management extends MY_Controller {
 		$regimen_counter = 0;
 		$last_id = 0;
 		$initial_order_number = 0;
-		$this -> session -> set_userdata('msg_success', 'Order No:' . $order_number . ' was Added');
+		$this -> session -> set_userdata('msg_success', 'Order was Added');
 		//Save the cdrr
 		if ($is_editing) {
 			//Retrieve the order being edited
 			$order_object = Facility_Order::getOrder($order_number);
-			$this -> session -> set_userdata('msg_success', 'Order No:' . $order_number . ' was Updated');
+			$this -> session -> set_userdata('msg_success', 'Order was Updated');
 			//Delete all items for that order
 			$initial_order_number = $order_number;
 			$order_number = md5($order_number . $facility);

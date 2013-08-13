@@ -340,16 +340,16 @@ function getPeriodRegimenPatients(start_date, end_date) {
 /*
  * Sysnchronization of Orders
  */
-function syncOrders(facility,session_id) {
+function syncOrders(facility,session_id,nascop_url) {
 	var href = window.location.href;
 	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
 	var _href = href.substr(href.lastIndexOf('/') + 1);
-	var link = "http://localhost/NASCOP/synchronization_management/getSQL/" + facility;
+	var link = nascop_url+"/synchronization_management/getSQL/" + facility; //Get Any Satellite and Agregated Orders from Nascop
 	$.ajax({
 		url : link,
 		type : 'POST',
 		success : function(data) {
-			link = base_url + "/ADT/synchronization_management/uploadSQL/"+session_id;
+			link = base_url + "/ADT/synchronization_management/uploadSQL/"+session_id; //Executed Received Data in webADT
 			$.ajax({
 				url : link,
 				type : 'POST',
@@ -357,13 +357,12 @@ function syncOrders(facility,session_id) {
 					"sql" : data
 				},
 				success : function(data) {
-					link = base_url + "/ADT/synchronization_management/synchronize_orders";
+					link = base_url + "/ADT/synchronization_management/synchronize_orders"; //In webADT,upload all orders from System to Nascop
 					$.ajax({
 						url : link,
 						type : 'POST',
-						success : function(data) {
-							
-							link = "http://localhost/NASCOP/synchronization_management/getSQL/" + facility;
+						success : function(data) {					
+							link = nascop_url+"/synchronization_management/getSQL/" + facility;//Execute Data at Nascop
 							$.ajax({
 								url : link,
 								type : 'POST',
