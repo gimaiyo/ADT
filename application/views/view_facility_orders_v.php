@@ -86,7 +86,10 @@
 		/*Auto-Sync Orders to NASCOP when internet is present*/
 		var online = navigator.onLine;
 		if(online==true){
-		/*syncOrders("<?php //echo $this->session->userdata("facility");?>","<?php //echo $this->session->userdata("user_id"); ?>");*/
+		<?php
+		$nascop_url = file_get_contents(base_url() . 'assets/nascop.txt');	
+		?>
+		syncOrders("<?php echo $this->session->userdata("facility");?>","<?php echo $this->session->userdata("user_id"); ?>","<?php echo $nascop_url;?>");
 		}
 	});
 	function delete_record(){
