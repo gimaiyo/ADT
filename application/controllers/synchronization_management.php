@@ -1,8 +1,9 @@
 <?php
+include_once('system_management.php');
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
 
-class Synchronization_Management extends MY_Controller {
+class Synchronization_Management extends System_Management {
 	function __construct() {
 		parent::__construct();
 	}
@@ -66,6 +67,7 @@ class Synchronization_Management extends MY_Controller {
 		}
 		$this -> session -> set_userdata($menu_data);
 		$this -> session -> set_userdata($menus);
+		$this->load_assets();
 		$sql = "";
 		if ($this -> input -> post("sql")) {
 			$sql = $this -> input -> post("sql");

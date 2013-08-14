@@ -8,7 +8,6 @@
 		<title><?php echo $title;?></title>
 		<link rel="SHORTCUT ICON" href="<?php echo asset_url() . 'Images/favicon.ico';?>">
 		<?php
-
 		$this -> load -> view('sections/head');
 		?>
 		
