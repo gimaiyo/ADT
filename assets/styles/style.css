@@ -506,7 +506,6 @@ fieldset {
 	-o--box-shadow: 0 2px 6px 0.5px #000;
 	text-align: center;
 	margin: 3% auto 1% auto;
-	width: auto;
 	text-align: center;
 	font-weight: bold;
 }
@@ -1557,4 +1556,13 @@ td {
 .reg_drug_name{
 	width:85%;
 	display:inline;
+}
+/**
+ * 	BLOCK
+ */
+.progress{
+	margin:auto;
+	margin-top:5%;
+	width:80%;
+	
 }
