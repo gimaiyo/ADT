@@ -35,8 +35,8 @@ $this -> input -> set_cookie("actual_page", $actual_page, 3600);
 //
 if ($this -> session -> userdata("prev_page")) {
 	if ($this -> input -> cookie("actual_page") and $this -> input -> cookie("actual_page") != "") {
-		$actual_page = $this -> input -> cookie("actual_page");
 		$this -> session -> unset_userdata("prev_page");
+		$actual_page = $this -> uri -> segment(1);
 		redirect($actual_page);
 		die();
 	}
