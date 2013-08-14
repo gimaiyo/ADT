@@ -320,7 +320,7 @@
 					<input name="end_date" id="period_end_date" type="hidden"/>
 					<th>Reporting Period : </th>
 					<td colspan="2">
-					<input name="reporting_period" id="reporting_period" type="text" placeholder="Click here to select period"/>
+					<input name="reporting_period" id="reporting_period" type="text" placeholder="Click here to select period" required="required"/>
 					</td>
 					<td colspan="1">
 						<?php
@@ -433,7 +433,7 @@
 				<td class="number col_resupply">
 				<input tabindex="-1" name="resupply[]" id="CdrrItem_10_resupply" type="text" class="resupply">
 				</td>
-				<input type="hidden" name="commodity[]" value="<?php echo $commodity -> id;?>"/>
+				<input type="hidden" name="commodity[]" value="<?php echo $commodity -> Drug;?>"/>
 			</tr>
 			<?php }}?>
 		</tbody>
@@ -471,7 +471,7 @@
 				<td regimen_id="<?php echo $regimen -> id;?>" class="regimen_desc col_drug"><?php echo $regimen -> Regimen_Desc;?></td>
 				<td regimen_id="<?php echo $regimen -> id;?>" class="regimen_numbers">
 				<input name="patient_numbers[]" id="patient_numbers_<?php echo $regimen -> id;?>" type="text">
-				<input name="patient_regimens[]" value="<?php echo $regimen -> id;?>" type="hidden">
+				<input name="patient_regimens[]" value="<?php echo $regimen -> Regimen_Code." | ".$regimen -> Regimen_Desc;?>" type="hidden">
 				</td>
 			</tr>
 			<?php

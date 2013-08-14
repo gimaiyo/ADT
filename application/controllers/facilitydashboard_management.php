@@ -19,7 +19,7 @@ class Facilitydashboard_Management extends MY_Controller {
 
 	public function order_notification() {
 		$facility_code = $this -> session -> userdata("facility");
-		$sql = "SELECT status ,COUNT(*) AS total FROM `facility_order` WHERE facility_id ='$facility_code' GROUP BY STATUS";
+		$sql = "SELECT status ,COUNT(*) AS total FROM `facility_order` WHERE facility_id ='$facility_code' AND code='1' GROUP BY STATUS";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$status = "";

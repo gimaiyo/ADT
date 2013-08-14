@@ -415,7 +415,7 @@ $counter = 0;
 							<td class="number col_resupply">
 							<input tabindex="-1" name="resupply[]" id="CdrrItem_10_resupply" type="text" class="resupply">
 							</td>
-							<input type="hidden" name="commodity[]" value="<?php echo $commodity -> id;?>"/>
+							<input type="hidden" name="commodity[]" value="<?php echo $commodity -> Drug;?>"/>
 						</tr>
 						<?php }}?>
 					</tbody>
@@ -454,7 +454,7 @@ foreach($regimens as $regimen){
 					<td regimen_id="<?php echo $regimen -> id;?>" class="regimen_desc col_drug"><?php echo $regimen -> Regimen_Desc;?></td>
 					<td regimen_id="<?php echo $regimen -> id;?>" class="regimen_numbers">
 					<input name="patient_numbers[]" id="patient_numbers_<?php echo $regimen -> id;?>" type="text">
-					<input name="patient_regimens[]" value="<?php echo $regimen -> id;?>" type="hidden">
+					<input name="patient_regimens[]" value="<?php echo $regimen -> Regimen_Code." | ".$regimen -> Regimen_Desc;?>" type="hidden">
 					</td>
 				</tr>
 				<?php

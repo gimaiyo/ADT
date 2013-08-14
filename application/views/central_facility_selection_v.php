@@ -34,14 +34,7 @@ $(document).ready(function() {
 		float: left;
 	}
 	
-	#proceed{
-		width:120px;
-		height:40px;
-		text-align:center;
-		vertical-align:middle;
-		font-size:14px;
-		font-weight:bold;
-	}
+
  	table td{
  		color: #00B831;
  	}
@@ -71,13 +64,14 @@ $(document).ready(function() {
 <div class="alert-bootstrap alert-info">
     <b>Select the period that you want to create an order for then click 'Proceed'</b>
 </div>
+<p>&nbsp;</p>
 <?php
 echo validation_errors('
 <p class="error">','</p>
 '); 
 ?>
 <form  action="<?php echo base_url().'order_management/new_central_order'?>" method="post" style="margin:0 auto; width:700px;">
-		<table class="table" >
+		<table class="table">
 			<tbody>
 				<tr>
 					<th>Facility code:</th><td><?php echo $facility_object->facilitycode;?></td>
@@ -95,13 +89,13 @@ echo validation_errors('
 					<th>County:</th><td><?php echo $facility_object ->County->county;?></td>
 				</tr>
 				<tr>
-					<th>Reporting Period : </th><td><input name="reporting_period" id="reporting_period" type="text"></td>
+					<th>Reporting Period : </th><td><input name="reporting_period" id="reporting_period" type="text" required="required"></td>
 					<input name="start_date" id="period_start_date" type="hidden">
 					<input name="end_date" id="period_end_date" type="hidden"></td>
 				</tr>
 				
 					<th colspan='4' align="center">
-						<input type="submit" class="btn btn-large" name="btn_period_select_proceed" id="proceed" value="Proceed">
+						<input type="submit" class="btn green" name="btn_period_select_proceed" id="proceed" value="Proceed">
 					</th>
 				</tr>
 			</tbody>

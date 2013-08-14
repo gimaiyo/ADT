@@ -145,14 +145,7 @@ class Fcdrr_Management extends MY_Controller {
 				$quantity_required_for_supply = $arr[$i]['L'];
 				$drug_name = $arr[$i]['A'];
 				if ($quantity_required_for_supply != 0) {
-					$this -> load -> database();
-					$query = $this -> db -> query("SELECT id FROM drugcode WHERE drug LIKE '%$drug_name%'");
-					$results = $query -> result_array();
-					@$drug_id = $results[0]['id'];
-					if ($results[0]['id'] == "") {
-						$drug_id = $drug_name;
-					}
-
+                    $drug_id = $drug_name;
 					$basic_unit = $arr[$i]['B'];
 					$beginning_balance = $arr[$i]['C'];
 					$quantity_received_in_period = $arr[$i]['D'];
@@ -178,10 +171,7 @@ class Fcdrr_Management extends MY_Controller {
 				$quantity_required_for_supply = $arr[$i]['L'];
 				$drug_name = $arr[$i]['A'];
 				if ($quantity_required_for_supply != 0) {
-					$this -> load -> database();
-					$query = $this -> db -> query("SELECT id FROM drugcode WHERE drug LIKE '%$drug_name%'");
-					$results = $query -> result_array();
-					@$drug_id = $results[0]['id'];
+					$drug_id = $drug_name;
 					$basic_unit = $arr[$i]['B'];
 					$beginning_balance = $arr[$i]['C'];
 					$quantity_received_in_period = $arr[$i]['D'];
@@ -209,10 +199,7 @@ class Fcdrr_Management extends MY_Controller {
 				$quantity_required_for_supply = $arr[$i]['L'];
 				$drug_name = $arr[$i]['A'];
 				if ($quantity_required_for_supply != 0) {
-					$this -> load -> database();
-					$query = $this -> db -> query("SELECT id FROM drugcode WHERE drug LIKE '%$drug_name%'");
-					$results = $query -> result_array();
-					@$drug_id = $results[0]['id'];
+					$drug_id = $drug_name;
 					$basic_unit = $arr[$i]['B'];
 					$beginning_balance = $arr[$i]['C'];
 					$quantity_received_in_period = $arr[$i]['D'];
@@ -239,10 +226,7 @@ class Fcdrr_Management extends MY_Controller {
 				$regimen_desc = $arr[$i]['T'];
 				$no_of_clients_dispensed_in_period = $arr[$i]['V'] . $arr[$i]['W'];
 				if ($no_of_clients_dispensed_in_period) {
-					$this -> load -> database();
-					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
-					$results = $query -> result_array();
-					@$regimen_id = $results[0]['id'];
+					$regimen_id = $regimen_code." | ".$regimen_desc;
 					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
 					$results = $query -> result_array();
 					$last_id = $results[0]['id'];
@@ -264,9 +248,7 @@ class Fcdrr_Management extends MY_Controller {
 				$no_of_clients_dispensed_in_period = $arr[$i]['V'] . $arr[$i]['W'];
 				if ($no_of_clients_dispensed_in_period) {
 					$this -> load -> database();
-					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
-					$results = $query -> result_array();
-					@$regimen_id = $results[0]['id'];
+					$regimen_id = $regimen_code." | ".$regimen_desc;
 					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
 					$results = $query -> result_array();
 					$last_id = $results[0]['id'];
@@ -287,10 +269,7 @@ class Fcdrr_Management extends MY_Controller {
 				$regimen_desc = $arr[$i]['T'];
 				$no_of_clients_dispensed_in_period = $arr[$i]['V'] . $arr[$i]['W'];
 				if ($no_of_clients_dispensed_in_period) {
-					$this -> load -> database();
-					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
-					$results = $query -> result_array();
-					@$regimen_id = $results[0]['id'];
+					$regimen_id = $regimen_code." | ".$regimen_desc;
 					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
 					$results = $query -> result_array();
 					$last_id = $results[0]['id'];
@@ -311,10 +290,7 @@ class Fcdrr_Management extends MY_Controller {
 				$regimen_desc = $arr[$i]['T'];
 				$no_of_clients_dispensed_in_period = $arr[$i]['V'] . $arr[$i]['W'];
 				if ($no_of_clients_dispensed_in_period) {
-					$this -> load -> database();
-					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
-					$results = $query -> result_array();
-					@$regimen_id = $results[0]['id'];
+					$regimen_id = $regimen_code." | ".$regimen_desc;
 					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
 					$results = $query -> result_array();
 					$last_id = $results[0]['id'];
@@ -335,10 +311,7 @@ class Fcdrr_Management extends MY_Controller {
 				$regimen_desc = $arr[$i]['T'];
 				$no_of_clients_dispensed_in_period = $arr[$i]['V'] . $arr[$i]['W'];
 				if ($no_of_clients_dispensed_in_period) {
-					$this -> load -> database();
-					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
-					$results = $query -> result_array();
-					@$regimen_id = $results[0]['id'];
+					$regimen_id = $regimen_code." | ".$regimen_desc;
 					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
 					$results = $query -> result_array();
 					$last_id = $results[0]['id'];
@@ -359,10 +332,7 @@ class Fcdrr_Management extends MY_Controller {
 				$regimen_desc = $arr[$i]['T'];
 				$no_of_clients_dispensed_in_period = $arr[$i]['V'] . $arr[$i]['W'];
 				if ($no_of_clients_dispensed_in_period) {
-					$this -> load -> database();
-					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
-					$results = $query -> result_array();
-					@$regimen_id = $results[0]['id'];
+					$regimen_id = $regimen_code." | ".$regimen_desc;
 					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
 					$results = $query -> result_array();
 					$last_id = $results[0]['id'];
@@ -383,10 +353,7 @@ class Fcdrr_Management extends MY_Controller {
 				$regimen_desc = $arr[$i]['T'];
 				$no_of_clients_dispensed_in_period = $arr[$i]['V'] . $arr[$i]['W'];
 				if ($no_of_clients_dispensed_in_period) {
-					$this -> load -> database();
-					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
-					$results = $query -> result_array();
-					@$regimen_id = $results[0]['id'];
+					$regimen_id = $regimen_code." | ".$regimen_desc;
 					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
 					$results = $query -> result_array();
 					$last_id = $results[0]['id'];
@@ -407,10 +374,7 @@ class Fcdrr_Management extends MY_Controller {
 				$regimen_desc = $arr[$i]['T'];
 				$no_of_clients_dispensed_in_period = $arr[$i]['V'] . $arr[$i]['W'];
 				if ($no_of_clients_dispensed_in_period) {
-					$this -> load -> database();
-					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
-					$results = $query -> result_array();
-					@$regimen_id = $results[0]['id'];
+					$regimen_id = $regimen_code." | ".$regimen_desc;
 					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
 					$results = $query -> result_array();
 					$last_id = $results[0]['id'];
@@ -431,10 +395,7 @@ class Fcdrr_Management extends MY_Controller {
 				$regimen_desc = $arr[$i]['T'];
 				$no_of_clients_dispensed_in_period = $arr[$i]['V'] . $arr[$i]['W'];
 				if ($no_of_clients_dispensed_in_period) {
-					$this -> load -> database();
-					$query = $this -> db -> query("SELECT id FROM regimen WHERE regimen_code='$regimen_code'");
-					$results = $query -> result_array();
-					@$regimen_id = $results[0]['id'];
+					$regimen_id = $regimen_code." | ".$regimen_desc;
 					$query = $this -> db -> query("SELECT MAX(id) AS id FROM maps_item");
 					$results = $query -> result_array();
 					$last_id = $results[0]['id'];

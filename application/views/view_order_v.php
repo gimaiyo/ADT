@@ -180,7 +180,7 @@ $overall_patients=0;
 foreach($regimens as $regimen){
 			?>
 			<tr>
-				<td regimen_id="<?php echo $regimen -> id;?>" class="regimen_desc col_drug"><?php echo "<b>" . $regimen -> Regimen_Object -> Regimen_Code . "</b> | " . $regimen -> Regimen_Object -> Regimen_Desc;?></td>
+				<td regimen_id="<?php echo $regimen -> id;?>" class="regimen_desc col_drug"><?php echo "<b>" . $regimen -> Regimen_Id. "</b>";?></td>
 				<td regimen_id="<?php echo $regimen -> id;?>" class="regimen_numbers"><?php $overall_patients+=(double)$regimen -> Total;echo number_format((double)$regimen -> Total);?></td>
 			</tr>
 			<?php
