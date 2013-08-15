@@ -146,7 +146,7 @@
 						
 				</script>
 				<div><span class="title">Transactions Information</span></div>
-				<table class="table table-bordered table-hover sortable" id="transaction_table">
+				<table border="1" class="table table-bordered table-hover sortable" id="transaction_table">
 					<thead>
 						<tr>
 							<th>Ref./Order No</th>
