@@ -100,7 +100,30 @@ if (isset($styles)) {
 
 <script>
    	$(document).ready(function(){
+   		<?php 
+   		
+   		$message = $this->session->flashdata('message');
+		echo $message;
+		if($message==0){
+		
+		?>
+   			/*$.gritter.add({
+				// (string | mandatory) the heading of the notification
+				title: 'Welcome.',
+				// (string | mandatory) the text inside the notification
+				text: '<?php //echo $this -> session -> userdata('facility_name');?>',
+				// (string | optional) the image to display on the left
+				// (bool | optional) if you want it to fade out on its own or just sit there
+			/*	sticky: false,
+				// (int | optional) the time you want it to be alive for before fading out
+				time: ''
+			});
+   		*/
+   		
    	<?php 
+   	$message = 1;
+   	
+		}
 	 if($user_is_pharmacist){
 	 ?>
 	    $('#notification1').load('<?php echo base_url() . 'facilitydashboard_management/order_notification';?>');

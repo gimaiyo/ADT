@@ -21,11 +21,13 @@ class User_Management extends MY_Controller {
 	}
 
 	public function login() {
+		$this->session->set_flashdata('message',0);
 		$data = array();
 		$data['title'] = "webADT | System Login";
 		$this -> load -> view("login_v", $data);
 
 	}
+	
 
 	public function listing() {
 		$access_level = $this -> session -> userdata('user_indicator');
