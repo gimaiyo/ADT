@@ -1,14 +1,11 @@
 <?php
+include_once('system_management.php');
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
 
-class Synchronization_Management extends MY_Controller {
+class Synchronization_Management extends System_Management {
 	function __construct() {
 		parent::__construct();
-	}
-
-	public function index() {
-
 	}
 
 	public function synchronize_orders() {
@@ -41,8 +38,11 @@ class Synchronization_Management extends MY_Controller {
 			}
 			$mainstrSQl .= $strSQl;
 		}
-		echo $mainstrSQl=$this->encrypt->encode($mainstrSQl);
-
+		if ($mainstrSQl != '') {
+			echo $mainstrSQl = base64_encode($mainstrSQl);
+		} else {
+			echo $mainstrSQl = "";
+		}
 	}
 
 	public function uploadSQL($session_id) {
@@ -67,13 +67,17 @@ class Synchronization_Management extends MY_Controller {
 		}
 		$this -> session -> set_userdata($menu_data);
 		$this -> session -> set_userdata($menus);
+		$this->load_assets();
 		$sql = "";
 		if ($this -> input -> post("sql")) {
-			$sql = $this -> encrypt -> decode($this -> input -> post("sql"));
-			$queries = explode(";", $sql);
-			foreach ($queries as $query) {
-				if (strlen($query) > 0) {
-					$this -> db -> query($query);
+			$sql = $this -> input -> post("sql");
+			if ($sql != '') {
+				$sql = base64_decode($sql);
+				$queries = explode(";", $sql);
+				foreach ($queries as $query) {
+					if (strlen($query) > 0) {
+						$this -> db -> query($query);
+					}
 				}
 			}
 		}

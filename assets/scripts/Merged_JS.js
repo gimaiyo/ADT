@@ -8,15 +8,16 @@
  *Change password validation
  */
 $(document).ready(function() {
-	
-	//Progress Bar  
+
+	//Progress Bar
 	function progress(percent, $element) {
-    var progressBarWidth = percent * $element.width() / 100;
-    $element.find('div').animate({ width: progressBarWidth }, 500).html(percent + "%&nbsp;");
+		var progressBarWidth = percent * $element.width() / 100;
+		$element.find('.bar').animate({
+			width : progressBarWidth
+		}, 500).html(percent + "%&nbsp;");
 
-}
+	}
 
-	
 	var base_url = $("#base_url").val();
 	$('.dataTables').dataTable({
 		"bJQueryUI" : true,
@@ -337,19 +338,44 @@ function getPeriodRegimenPatients(start_date, end_date) {
 
 }
 
+function getPercentage(count, total) {
+	return (count / total) * 100;
+}
+
 /*
  * Sysnchronization of Orders
  */
-function syncOrders(facility,session_id) {
+function syncOrders(facility, session_id, nascop_url) {
 	var href = window.location.href;
 	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
 	var _href = href.substr(href.lastIndexOf('/') + 1);
-	var link = "http://localhost/NASCOP/synchronization_management/getSQL/" + facility;
+	var link = nascop_url + "/synchronization_management/getSQL/" + facility;
+	var total = 5;
+	var countval = 0;
+	var percent = 0;
+	percent = getPercentage(countval, total);
+	var unblock_element = '<div class="progress"><div class="bar" ></div></div><ul class="nav nav-list status"></ul>';
+	//Get Any Satellite and Agregated Orders from Nascop
+	$.blockUI({
+		message : unblock_element,
+			});
+
+	$(".bar").css("width", percent + "%");
+	$(".bar").text(percent + "%");
+	$(".status").append('<li class="active"><a href="#">Starting...</a></li>');
 	$.ajax({
 		url : link,
 		type : 'POST',
 		success : function(data) {
-			link = base_url + "/ADT/synchronization_management/uploadSQL/"+session_id;
+			countval++;
+			percent = getPercentage(countval, total);
+			$(".bar").css("width", percent + "%");
+			$(".bar").text(percent + "%");
+			$(".status").find("li").removeClass('active');
+			$(".status").append('<li class="active"><a href="#">Downloading Data from NASCOP</a></li>');
+			link = base_url + "/ADT/synchronization_management/uploadSQL/" + session_id;
+			
+			//Executed Received Data in webADT
 			$.ajax({
 				url : link,
 				type : 'POST',
@@ -357,13 +383,27 @@ function syncOrders(facility,session_id) {
 					"sql" : data
 				},
 				success : function(data) {
+					countval++;
+					percent = getPercentage(countval, total);
+					$(".bar").css("width", percent + "%");
+					$(".bar").text(percent + "%");
+					$(".status").find("li").removeClass('active');
+					$(".status").append('<li class="active"><a href="#">Merging Changes to webADT</a></li>');
 					link = base_url + "/ADT/synchronization_management/synchronize_orders";
+					//In webADT,upload all orders from System to Nascop
 					$.ajax({
 						url : link,
 						type : 'POST',
 						success : function(data) {
+							countval++;
+							percent = getPercentage(countval, total);
+							$(".bar").css("width", percent + "%");
+							$(".bar").text(percent + "%");
+							$(".status").find("li").removeClass('active');
+							$(".status").append('<li class="active"><a href="#">Uploading Data to NASCOP</a></li>');
 							
-							link = "http://localhost/NASCOP/synchronization_management/getSQL/" + facility;
+							link = nascop_url + "/synchronization_management/getSQL/" + facility;
+							//Execute Data at Nascop
 							$.ajax({
 								url : link,
 								type : 'POST',
@@ -371,7 +411,13 @@ function syncOrders(facility,session_id) {
 									"sql" : data
 								},
 								success : function(data) {
-									link = base_url + "/ADT/synchronization_management/uploadSQL/"+session_id;
+									countval++;
+									percent = getPercentage(countval, total);
+									$(".bar").css("width", percent + "%");
+									$(".bar").text(percent + "%");
+									$(".status").find("li").removeClass('active');
+									$(".status").append('<li class="active"><a href="#">Merging Changes to NASCOP</a></li>');
+									link = base_url + "/ADT/synchronization_management/uploadSQL/" + session_id;
 									$.ajax({
 										url : link,
 										type : 'POST',
@@ -379,7 +425,14 @@ function syncOrders(facility,session_id) {
 											"sql" : data
 										},
 										success : function(data) {
-											alert("Successful Order Synchronization");
+											countval++;
+											percent = getPercentage(countval, total);
+											$(".bar").css("width", percent + "%");
+											$(".bar").text(percent + "%");
+											$(".status").find("li").removeClass('active');
+											$(".status").append('<li class="active"><a href="#">Successful Order Synchronization</a></li>');
+										$.unblockUI({ fadeOut: 2000 });
+											
 										}
 									});
 								}

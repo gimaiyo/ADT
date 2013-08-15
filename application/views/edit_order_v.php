@@ -295,7 +295,7 @@
 				<td class="number col_resupply">
 				<input tabindex="-1" name="resupply[]" id="CdrrItem_10_resupply" type="text" class="resupply" value="<?php echo $commodity['resupply'];?>">
 				</td>
-				<input type="hidden" name="commodity[]" value="<?php echo $commodity['did'];?>"/>
+				<input type="hidden" name="commodity[]" value="<?php echo $commodity['drug'];?>"/>
 			</tr>
 			<?php }?>
 		</tbody>
@@ -357,7 +357,7 @@
 				<td regimen_id="<?php echo $regimen -> id;?>" class="regimen_desc col_drug"><?php echo $regimen -> Regimen_Desc;?></td>
 				<td regimen_id="<?php echo $regimen -> id;?>" class="regimen_numbers">
 				<input name="patient_numbers[]" id="patient_numbers_<?php echo $regimen -> id;?>" type="text" value="<?php if(isset($regimen_totals[$regimen->id])){ echo $regimen_totals[$regimen->id-1]['total'];}?>">
-				<input name="patient_regimens[]" value="<?php echo $regimen -> id;?>" type="hidden">
+				<input name="patient_regimens[]" value="<?php echo $regimen -> Regimen_Code." | ".$regimen -> Regimen_Desc;?>" type="hidden">
 				</td>				 
 			   </tr>
 			<?php

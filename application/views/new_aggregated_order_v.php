@@ -241,8 +241,8 @@
 			foreach($commodities as $commodity){
 			$cdrr_values = array("balance"=>'',"received"=>'',"dispensed_units"=>'',"dispensed_packs"=>'',"losses"=>'',"adjustments"=>'',"resupply"=>'',"count"=>'');
 			//check if this drug has aggregated data available
-			if(isset($cdrr_totals[$commodity->id])){
-			$cdrr_values = $cdrr_totals[$commodity->id];
+			if(isset($cdrr_totals[$commodity->Drug])){
+			$cdrr_values = $cdrr_totals[$commodity->Drug];
 			}
 			$counter++;
 			if($counter == 10){
@@ -280,7 +280,7 @@
 				<td class="number col_resupply">
 				<input tabindex="-1" name="resupply[]" id="CdrrItem_10_resupply" type="text" class="resupply" value="<?php echo @ceil($cdrr_values['resupply']/@$commodity -> Pack_Size);?>">
 				</td>
-				<input type="hidden" name="commodity[]" value="<?php echo $commodity -> id;?>"/>
+				<input type="hidden" name="commodity[]" value="<?php echo $commodity -> Drug;?>"/>
 			</tr>
 			<?php 
 			$x++;
@@ -320,8 +320,8 @@
 				foreach($regimens as $regimen){
 				$maps_values = array("total"=>'');
 				//check if this drug has aggregated data available
-				if(isset($maps_totals[$regimen->id])){
-				$maps_values = $maps_totals[$regimen->id];
+				if(isset($maps_totals[$regimen -> Regimen_Code." | ".$regimen -> Regimen_Desc])){
+				$maps_values = $maps_totals[$regimen -> Regimen_Code." | ".$regimen -> Regimen_Desc];
 				}
 				?>
 
@@ -329,7 +329,7 @@
 					<td regimen_id="<?php echo $regimen -> id;?>" class="regimen_desc col_drug"><?php echo $regimen -> Regimen_Desc;?></td>
 					<td regimen_id="<?php echo $regimen -> id;?>" class="regimen_numbers">
 					<input name="patient_numbers[]" id="patient_numbers_<?php echo $regimen -> id;?>" type="text" value="<?php echo $maps_values['total'];?>">
-					<input name="patient_regimens[]" value="<?php echo $regimen -> id;?>" type="hidden">
+					<input name="patient_regimens[]" value="<?php echo $regimen -> Regimen_Code." | ".$regimen -> Regimen_Desc;?>" type="hidden">
 					</td>
 				</tr>
 				<?php

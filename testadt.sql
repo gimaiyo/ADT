@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 08, 2013 at 12:33 PM
+-- Generation Time: Aug 14, 2013 at 05:25 PM
 -- Server version: 5.5.27
 -- PHP Version: 5.4.7
 
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `access_log` (
   `facility_code` varchar(150) NOT NULL,
   `access_type` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=104 ;
 
 --
 -- Dumping data for table `access_log`
@@ -75,7 +75,7 @@ INSERT INTO `access_log` (`id`, `machine_code`, `user_id`, `access_level`, `star
 (7, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-07 11:25:28', '2013-08-07 11:35:56', '13050', 'Logout'),
 (8, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-07 11:36:14', '2013-08-07 12:56:53', '13050', 'Logout'),
 (9, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-07 12:57:27', '2013-08-07 13:04:27', '13050', 'Logout'),
-(10, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-07 14:04:52', '', '13050', 'Login'),
+(10, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-07 14:04:52', '', '13050', 'Logout'),
 (11, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-07 14:32:32', '2013-08-07 15:18:16', '13050', 'Logout'),
 (12, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-07 15:18:27', '2013-08-07 15:49:22', '13050', 'Logout'),
 (13, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-07 15:49:51', '2013-08-07 16:18:40', '13050', 'Logout'),
@@ -84,7 +84,91 @@ INSERT INTO `access_log` (`id`, `machine_code`, `user_id`, `access_level`, `star
 (16, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-08 09:10:44', '2013-08-08 09:37:09', '13050', 'Logout'),
 (17, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-08 09:37:32', '2013-08-08 10:44:36', '13050', 'Logout'),
 (18, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-08 10:49:42', '2013-08-08 13:25:51', '13050', 'Logout'),
-(19, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-08 13:27:01', '', '13050', 'Login');
+(19, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-08 13:27:01', '2013-08-08 13:46:17', '13050', 'Logout'),
+(20, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-08 13:46:30', '2013-08-08 14:26:37', '13050', 'Logout'),
+(21, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-08 14:28:32', '2013-08-08 14:52:30', '13050', 'Logout'),
+(22, '1,system_administrator,Liverpool VCT,1,sysadmin,webADT Admin,webadt.chai@gmail.com,0722123456,13050,3496,1', '1', 1, '2013-08-08 14:52:39', '2013-08-08 14:55:38', '13050', 'Logout'),
+(23, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-08 14:55:58', '2013-08-08 15:09:10', '13050', 'Logout'),
+(24, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-08 15:19:18', '2013-08-08 15:49:54', '13050', 'Logout'),
+(25, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-08 15:52:45', '2013-08-08 16:17:12', '13050', 'Logout'),
+(26, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-09 21:56:36', '', '13050', 'Logout'),
+(27, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-09 22:38:32', '2013-08-09 22:38:52', '13050', 'Logout'),
+(28, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-10 13:57:26', '2013-08-10 13:57:50', '13050', 'Logout'),
+(29, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-12 12:02:41', '', '13050', 'Logout'),
+(30, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-12 12:03:30', '2013-08-12 12:04:44', '13050', 'Logout'),
+(31, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-12 12:06:21', '2013-08-12 12:09:52', '13050', 'Logout'),
+(32, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-12 14:19:51', '2013-08-12 14:20:05', '13050', 'Logout'),
+(33, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-12 14:26:43', '2013-08-12 14:27:26', '13050', 'Logout'),
+(34, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-12 14:50:32', '2013-08-12 14:50:56', '13050', 'Logout'),
+(35, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 10:28:53', '2013-08-13 10:41:42', '13050', 'Logout'),
+(36, '1,system_administrator,Liverpool VCT,1,sysadmin,webADT Admin,webadt.chai@gmail.com,0722123456,13050,3496,1', '1', 1, '2013-08-13 10:41:54', '2013-08-13 10:42:21', '13050', 'Logout'),
+(37, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 10:42:32', '2013-08-13 10:46:03', '13050', 'Logout'),
+(38, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 10:54:29', '', '13050', 'Login'),
+(39, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 11:05:32', '2013-08-13 11:06:21', '13050', 'Logout'),
+(40, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 11:08:26', '', '13050', 'Login'),
+(41, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 11:35:03', '', '13050', 'Login'),
+(42, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 11:47:54', '2013-08-13 12:07:50', '13050', 'Logout'),
+(43, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 12:33:43', '2013-08-13 14:13:14', '13050', 'Logout'),
+(44, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 14:17:01', '', '13050', 'Login'),
+(45, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 15:00:31', '2013-08-13 15:10:36', '13050', 'Logout'),
+(46, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 15:18:31', '', '13050', 'Login'),
+(47, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 15:40:38', '', '13050', 'Login'),
+(48, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 15:54:59', '', '13050', 'Login'),
+(49, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 15:56:01', '', '13050', 'Login'),
+(50, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 15:56:58', '', '13050', 'Login'),
+(51, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 15:57:16', '', '13050', 'Login'),
+(52, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-13 16:08:38', '2013-08-13 16:09:42', '13050', 'Logout'),
+(53, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 09:59:51', '2013-08-14 10:03:41', '13050', 'Logout'),
+(54, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 10:03:56', '2013-08-14 10:05:26', '13050', 'Logout'),
+(55, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 10:06:33', '2013-08-14 10:07:39', '13050', 'Logout'),
+(56, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 10:13:52', '2013-08-14 10:23:56', '13050', 'Logout'),
+(57, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 10:27:51', '2013-08-14 10:27:59', '13050', 'Logout'),
+(58, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 10:28:13', '2013-08-14 10:29:42', '13050', 'Logout'),
+(59, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 10:29:56', '2013-08-14 10:33:30', '13050', 'Logout'),
+(60, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 10:33:48', '2013-08-14 10:36:57', '13050', 'Logout'),
+(61, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 10:37:13', '2013-08-14 10:38:16', '13050', 'Logout'),
+(62, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 10:38:30', '2013-08-14 10:43:06', '13050', 'Logout'),
+(63, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 10:43:57', '', '13050', 'Login'),
+(64, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 10:49:41', '2013-08-14 10:52:34', '13050', 'Logout'),
+(65, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 10:52:56', '2013-08-14 10:54:08', '13050', 'Logout'),
+(66, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 10:54:52', '2013-08-14 10:55:47', '13050', 'Logout'),
+(67, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 10:59:34', '2013-08-14 11:01:12', '13050', 'Logout'),
+(68, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 11:01:29', '2013-08-14 11:07:55', '13050', 'Logout'),
+(69, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 11:21:46', '', '13050', 'Login'),
+(70, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 11:40:12', '2013-08-14 11:44:00', '13050', 'Logout'),
+(71, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 11:44:37', '2013-08-14 11:50:04', '13050', 'Logout'),
+(72, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 11:50:35', '2013-08-14 11:59:42', '13050', 'Logout'),
+(73, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 12:01:56', '2013-08-14 12:13:47', '13050', 'Logout'),
+(74, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 12:14:14', '2013-08-14 12:16:20', '13050', 'Logout'),
+(75, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 12:16:38', '2013-08-14 12:17:17', '13050', 'Logout'),
+(76, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 12:17:54', '2013-08-14 12:19:35', '13050', 'Logout'),
+(77, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 12:19:53', '2013-08-14 12:30:56', '13050', 'Logout'),
+(78, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 12:31:12', '2013-08-14 12:34:08', '13050', 'Logout'),
+(79, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 12:34:25', '2013-08-14 12:36:25', '13050', 'Logout'),
+(80, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 12:36:42', '2013-08-14 12:39:28', '13050', 'Logout'),
+(81, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 12:39:44', '2013-08-14 12:40:46', '13050', 'Logout'),
+(82, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 12:41:03', '2013-08-14 12:41:43', '13050', 'Logout'),
+(83, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 13:37:12', '2013-08-14 13:43:00', '13050', 'Logout'),
+(84, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 13:43:20', '2013-08-14 13:45:52', '13050', 'Logout'),
+(85, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 13:46:05', '2013-08-14 13:47:41', '13050', 'Logout'),
+(86, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 13:48:03', '2013-08-14 13:50:32', '13050', 'Logout'),
+(87, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 13:50:48', '2013-08-14 13:51:11', '13050', 'Logout'),
+(88, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 13:51:24', '2013-08-14 13:51:44', '13050', 'Logout'),
+(89, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 13:53:41', '', '13050', 'Login'),
+(90, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 14:02:44', '2013-08-14 14:03:04', '13050', 'Logout'),
+(91, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 14:13:45', '2013-08-14 14:16:06', '13050', 'Logout'),
+(92, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 14:29:56', '', '13050', 'Login'),
+(93, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 14:49:54', '', '13050', 'Login'),
+(94, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 15:32:57', '', '13050', 'Login'),
+(95, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 15:39:23', '', '13050', 'Login'),
+(96, '2,2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 15:44:09', '', '13050', 'Login'),
+(97, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 15:46:15', '2013-08-14 15:59:12', '13050', 'Logout'),
+(98, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 16:00:19', '2013-08-14 16:11:23', '13050', 'Logout'),
+(99, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 16:12:26', '2013-08-14 16:13:33', '13050', 'Logout'),
+(100, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 16:14:42', '2013-08-14 17:51:08', '13050', 'Logout'),
+(101, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 17:52:51', '2013-08-14 17:53:33', '13050', 'Logout'),
+(102, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 18:09:42', '2013-08-14 18:10:16', '13050', 'Logout'),
+(103, '2,facility_administrator,Liverpool VCT,3,rmbugua,Rufus Mbugua,rmbugua@gmail.com,+254723520935,13050,3496,1', '2', 3, '2013-08-14 18:15:58', '2013-08-14 18:16:34', '13050', 'Logout');
 
 -- --------------------------------------------------------
 
@@ -120,7 +204,15 @@ CREATE TABLE IF NOT EXISTS `aggregated_order` (
   `aggregated_order_id` int(11) NOT NULL,
   `child_order_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+
+--
+-- Dumping data for table `aggregated_order`
+--
+
+INSERT INTO `aggregated_order` (`id`, `aggregated_order_id`, `child_order_id`) VALUES
+(5, 3, 1),
+(6, 3, 2);
 
 -- --------------------------------------------------------
 
@@ -159,7 +251,25 @@ CREATE TABLE IF NOT EXISTS `cdrr_item` (
   `unique_id` varchar(150) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `unique_id` (`unique_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=25 ;
+
+--
+-- Dumping data for table `cdrr_item`
+--
+
+INSERT INTO `cdrr_item` (`id`, `balance`, `received`, `dispensed_units`, `dispensed_packs`, `losses`, `adjustments`, `count`, `resupply`, `aggr_consumed`, `aggr_on_hand`, `publish`, `cdrr_id`, `drug_id`, `unique_id`) VALUES
+(1, '90', '', '80', NULL, '', '', '10', '230', NULL, NULL, '0', '572b32bde8dcd42e5964d23e7a69e138', 'ABACAVIR (ABC)300MG TABS', '572b32bde8dcd42e5964d23e7a69e138'),
+(2, '70', '', '80', NULL, '', '', '-10', '250', NULL, NULL, '0', '572b32bde8dcd42e5964d23e7a69e138', 'ACYCLOVIR 200MG TABS', 'f0c1d0aa67a4f68ddd258f8c7db11570'),
+(3, '60', '', '70', NULL, '', '', '-10', '220', NULL, NULL, '0', '46ae68428a9a69fddacff52ef49a2595', 'ABACAVIR 20MG SYRUP', '38b5c42288c708cd6bbb0f35bcb3d470'),
+(4, '90', '', '80', NULL, '', '', '10', '230', NULL, NULL, '0', '46ae68428a9a69fddacff52ef49a2595', 'ABACAVIR 60/LAMIVUDINE 30MG TABS', '7fe2193d1ab70ddd135c70bf778589ed'),
+(5, '2', '0', '2', NULL, '0', '0', '1', '4', NULL, NULL, '0', '38b5c42288c708cd6bbb0f35bcb3d470', 'ABACAVIR (ABC)300MG TABS', 'd4a1c8e31469a1881c9e8714ba6af712'),
+(6, '1', '0', '1', NULL, '0', '0', '-0', '1', NULL, NULL, '0', '38b5c42288c708cd6bbb0f35bcb3d470', 'ABACAVIR 20MG SYRUP', '3922a5e049025651b692ab5de3ec0694'),
+(7, '2', '0', '2', NULL, '0', '0', '1', '4', NULL, NULL, '0', '38b5c42288c708cd6bbb0f35bcb3d470', 'ABACAVIR 60/LAMIVUDINE 30MG TABS', '2a1caa0c0535f601735022aa4d4390ed'),
+(8, '3', '0', '3', NULL, '0', '0', '-0', '9', NULL, NULL, '0', '38b5c42288c708cd6bbb0f35bcb3d470', 'ACYCLOVIR 200MG TABS', '20e8040dcd1a1af4c09f187166fc6820'),
+(21, '50', '100', '100', NULL, '', '50', '50', '150', NULL, NULL, '0', '9e4f3db3c00fd2d41b0853ec9e6e731d', 'ABACAVIR (ABC) Liquid 20MG/ML (240ml)', '9e4f3db3c00fd2d41b0853ec9e6e731d'),
+(22, '60', '150', '120', NULL, '', '50', '100', '140', NULL, NULL, '0', '9e4f3db3c00fd2d41b0853ec9e6e731d', 'ABACAVIR (ABC)300MG TABS', '9e4f3db3c00fd2d41b0853ec9e6e731d'),
+(23, '70', '200', '150', NULL, '', '50', '40', '260', NULL, NULL, '0', '9e4f3db3c00fd2d41b0853ec9e6e731d', 'ABC/3TC 60/30 FDC Tabs', '9e4f3db3c00fd2d41b0853ec9e6e731d'),
+(24, '100', '50', '100', NULL, '', '40', '100', '100', NULL, NULL, '0', '9e4f3db3c00fd2d41b0853ec9e6e731d', 'ACYCLOVIR 200MG TABS', '9e4f3db3c00fd2d41b0853ec9e6e731d');
 
 -- --------------------------------------------------------
 
@@ -834,7 +944,25 @@ CREATE TABLE IF NOT EXISTS `drug_destination` (
   `name` varchar(100) NOT NULL,
   `active` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=13 ;
+
+--
+-- Dumping data for table `drug_destination`
+--
+
+INSERT INTO `drug_destination` (`id`, `name`, `active`) VALUES
+(1, 'Outpatient Pharmacy', 1),
+(2, 'Maternity Ward', 1),
+(3, 'MCH Clinic', 1),
+(4, 'CCC Internal Adjustment', 1),
+(5, 'Mbagathi District Hospital', 1),
+(6, 'Thika Level 5 Disctrict Hospital', 1),
+(7, 'Olakalao Disctrict Hopsital', 1),
+(8, 'Kayole sub disctrict Hospital', 1),
+(9, 'Riruta Health Centre', 1),
+(10, 'Nyahururu District Hospital', 1),
+(11, 'K.U', 1),
+(12, 'lvct-kisumu', 1);
 
 -- --------------------------------------------------------
 
@@ -847,7 +975,18 @@ CREATE TABLE IF NOT EXISTS `drug_source` (
   `name` varchar(100) NOT NULL,
   `active` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+
+--
+-- Dumping data for table `drug_source`
+--
+
+INSERT INTO `drug_source` (`id`, `name`, `active`) VALUES
+(1, 'Main Store', 1),
+(2, 'Kenya Pharma', 1),
+(3, 'Outpatient', 1),
+(4, 'CCC Internal Adjustment', 1),
+(5, 'Donation', 1);
 
 -- --------------------------------------------------------
 
@@ -867,7 +1006,7 @@ CREATE TABLE IF NOT EXISTS `drug_stock_balance` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `drug_id` (`drug_id`,`batch_number`,`expiry_date`,`stock_type`,`facility_code`),
   UNIQUE KEY `drug_id_2` (`drug_id`,`batch_number`,`expiry_date`,`stock_type`,`facility_code`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4632 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4633 ;
 
 --
 -- Dumping data for table `drug_stock_balance`
@@ -1077,7 +1216,7 @@ INSERT INTO `drug_stock_balance` (`id`, `drug_id`, `batch_number`, `expiry_date`
 (201, 16, '121305', '2014-06-01', 2, '13050', 0, '2013-05-22 07:50:30'),
 (202, 16, '14144', '2014-11-01', 2, '13050', 0, '2013-05-22 07:50:30'),
 (203, 16, '1A134', '2014-01-01', 2, '13050', 4197, '2013-05-22 07:50:31'),
-(204, 16, '1A316', '2013-12-01', 2, '13050', 560, '2013-05-22 07:50:31'),
+(204, 16, '1A316', '2013-12-01', 2, '13050', 559, '2013-08-08 13:02:40'),
 (205, 16, '1B131', '2014-01-31', 2, '13050', 0, '2013-05-22 07:50:32'),
 (206, 16, '1B20', '2014-01-01', 2, '13050', 0, '2013-05-22 07:50:32'),
 (207, 16, '1F133', '2014-05-01', 2, '13050', 0, '2013-05-22 07:50:33'),
@@ -3338,7 +3477,7 @@ INSERT INTO `drug_stock_balance` (`id`, `drug_id`, `batch_number`, `expiry_date`
 (2459, 13, '100383', '2013-08-01', 2, '13050', 0, '2013-07-22 13:28:18'),
 (2460, 13, '1012c', '2016-03-01', 2, '13050', 0, '2013-07-22 13:28:19'),
 (2461, 13, '101632', '2015-08-01', 2, '13050', 0, '2013-07-22 13:28:20'),
-(2462, 13, '1020228', '2015-01-31', 2, '13050', 46, '2013-07-22 13:28:21'),
+(2462, 13, '1020228', '2015-01-31', 2, '13050', 45, '2013-08-08 13:16:37'),
 (2463, 13, '110440', '2015-03-01', 2, '13050', 0, '2013-07-22 13:28:22'),
 (2464, 13, '1110199', '2015-10-01', 2, '13050', 540, '2013-07-22 13:28:23'),
 (2465, 13, '11295', '2014-02-01', 2, '13050', 0, '2013-07-22 13:28:24'),
@@ -4023,7 +4162,7 @@ INSERT INTO `drug_stock_balance` (`id`, `drug_id`, `batch_number`, `expiry_date`
 (3143, 66, 'T410E', '2014-03-01', 2, '13050', 0, '2013-07-22 13:43:17'),
 (3144, 66, 'V2495', '2013-11-30', 2, '13050', 105203, '2013-07-22 13:43:18'),
 (3145, 66, 'V2498', '2013-11-01', 2, '13050', 8023, '2013-07-22 13:43:19'),
-(3146, 66, 'v2593', '2013-11-01', 2, '13050', 25398, '2013-07-22 13:43:20'),
+(3146, 66, 'v2593', '2013-11-01', 2, '13050', 25278, '2013-08-08 13:08:27'),
 (3147, 66, 'V2689', '2013-12-01', 2, '13050', 56899, '2013-07-22 13:43:21'),
 (3148, 66, 'V2779', '2013-12-31', 2, '13050', 108575, '2013-07-22 13:43:22'),
 (3149, 66, 'V2780', '2013-12-01', 2, '13050', 73439, '2013-07-22 13:43:23'),
@@ -5510,7 +5649,8 @@ INSERT INTO `drug_stock_balance` (`id`, `drug_id`, `batch_number`, `expiry_date`
 (4628, 216, '120259', '2014-02-01', 2, '13050', 0, '2013-07-22 14:14:04'),
 (4629, 216, '120376', '2014-01-01', 2, '13050', 0, '2013-07-22 14:14:05'),
 (4630, 8, 'NIGGA', '2016-09-29', 1, '13050', 2100, '2013-07-29 07:12:08'),
-(4631, 2, 'NIGGA PLEASE', '2017-07-27', 1, '13050', 36000, '2013-07-29 07:12:46');
+(4631, 2, 'NIGGA PLEASE', '2017-07-27', 1, '13050', 36000, '2013-07-29 07:12:46'),
+(4632, 6, 'NMASD', '2017-08-30', 1, '13050', 1200, '2013-08-12 09:08:51');
 
 -- --------------------------------------------------------
 
@@ -5530,6 +5670,7 @@ CREATE TABLE IF NOT EXISTS `drug_stock_movement` (
   `packs` varchar(10) NOT NULL,
   `quantity` varchar(10) NOT NULL,
   `quantity_out` varchar(10) NOT NULL DEFAULT '0',
+  `balance` double NOT NULL DEFAULT '0',
   `unit_cost` varchar(10) NOT NULL,
   `amount` varchar(10) NOT NULL,
   `remarks` text NOT NULL,
@@ -5540,14 +5681,20 @@ CREATE TABLE IF NOT EXISTS `drug_stock_movement` (
   `merged_from` varchar(50) NOT NULL,
   `timestamp` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
 
 --
 -- Dumping data for table `drug_stock_movement`
 --
 
-INSERT INTO `drug_stock_movement` (`id`, `drug`, `transaction_date`, `batch_number`, `transaction_type`, `source`, `destination`, `expiry_date`, `packs`, `quantity`, `quantity_out`, `unit_cost`, `amount`, `remarks`, `operator`, `order_number`, `facility`, `machine_code`, `merged_from`, `timestamp`) VALUES
-(1, '7', '2013-08-07', '10494', '', '13050', '13050', '2013-12-01', '', '0', '30', '', '', '', '', '', '13050', '', '', '1375826400');
+INSERT INTO `drug_stock_movement` (`id`, `drug`, `transaction_date`, `batch_number`, `transaction_type`, `source`, `destination`, `expiry_date`, `packs`, `quantity`, `quantity_out`, `balance`, `unit_cost`, `amount`, `remarks`, `operator`, `order_number`, `facility`, `machine_code`, `merged_from`, `timestamp`) VALUES
+(1, '7', '2013-08-07', '10494', '', '13050', '13050', '2013-12-01', '', '0', '30', 0, '', '', '', '', '', '13050', '', '', '1375826400'),
+(2, '66', '2013-08-08', 'v2593', '', '13050', '13050', '2013-11-01', '', '0', '60', 0, '', '', '', '', '', '13050', '', '', '1375912800'),
+(3, '16', '2013-08-08', '1A316', '', '13050', '13050', '2013-12-01', '', '0', '1', 0, '', '', '', '', '', '13050', '', '', '1375912800'),
+(4, '66', '2013-08-08', 'v2593', '', '13050', '13050', '2013-11-01', '', '0', '60', 0, '', '', '', '', '', '13050', '', '', '1375912800'),
+(5, '13', '2013-08-08', '1020228', '', '13050', '13050', '2015-01-31', '', '0', '1', 0, '', '', '', '', '', '13050', '', '', '1375912800'),
+(6, '6', '2013-08-12', 'NMASD', '1', '2', '13050', '2017-08-30', '70', '4200', '0', 4200, '', '', '', '2', 'GHIAJ', '13050', '', '', ''),
+(7, '6', '2013-08-12', 'NMASD', '7', '0', '13050', '2017-08-30', '50', '0', '3000', 1200, '', '', '', '2', 'GHIAJ', '13050', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -12413,7 +12560,17 @@ CREATE TABLE IF NOT EXISTS `facility_order` (
   `unique_id` varchar(150) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_id` (`unique_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+
+--
+-- Dumping data for table `facility_order`
+--
+
+INSERT INTO `facility_order` (`id`, `status`, `created`, `updated`, `code`, `period_begin`, `period_end`, `comments`, `reports_expected`, `reports_actual`, `services`, `sponsors`, `delivery_note`, `order_id`, `facility_id`, `picking_list_id`, `central_facility`, `unique_id`) VALUES
+(1, '0', '1376487745', '1376487745', '2', '2013-07-01', '2013-07-31', NULL, NULL, NULL, '', '', NULL, NULL, '16662', '', '13050', '572b32bde8dcd42e5964d23e7a69e138'),
+(2, '0', '1376487975', '1376487975', '0', '2013-07-01', '2013-07-31', NULL, NULL, NULL, '', '', NULL, NULL, '13050', '', '13050', '46ae68428a9a69fddacff52ef49a2595'),
+(3, '0', '1376489840', '1376489840', '1', '2013-07-01', '2013-07-31', NULL, NULL, NULL, '', '', NULL, NULL, '13050', '', '13050', '38b5c42288c708cd6bbb0f35bcb3d470'),
+(4, '0', '2013-08-14', '1376491767', '2', '2013-05-01', '2013-05-31', 'Nigga Please', NULL, NULL, '', '', NULL, NULL, '16662', '', '13050', '9e4f3db3c00fd2d41b0853ec9e6e731d');
 
 -- --------------------------------------------------------
 
@@ -12517,7 +12674,85 @@ CREATE TABLE IF NOT EXISTS `generic_name` (
   `name` text NOT NULL,
   `active` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=77 ;
+
+--
+-- Dumping data for table `generic_name`
+--
+
+INSERT INTO `generic_name` (`id`, `name`, `active`) VALUES
+(1, 'abacavir', 1),
+(2, 'stavudine/lamivudine/nevirapine', 1),
+(3, 'stavudine/lamividune/efavirenz', 1),
+(4, 'stavudine/lamivudine', 1),
+(5, 'zidovudine/lamivudine/nevirapine', 1),
+(6, 'Didanosine', 1),
+(7, 'Tenofovir/Lamivudine/Efavirenz', 1),
+(8, 'Efavirenz', 1),
+(9, 'tenofovir/emtricitabine', 1),
+(10, 'Indinavir', 1),
+(11, 'Tenofovir/Lamivudine', 1),
+(12, 'Lamivudine', 1),
+(13, 'Lopinavir/Ritonavir', 1),
+(14, 'Nelfinavir', 1),
+(15, 'Nevirapine', 1),
+(16, 'Stavudine', 1),
+(17, 'Zidovudine', 1),
+(18, 'Zidovudine/Lamivudine', 1),
+(19, 'Tenofovir', 1),
+(20, 'EMTRICITABINE', 1),
+(21, 'abacavir/lamivudine', 1),
+(22, 'Atazanavir', 1),
+(23, 'ACYCLOVIR', 1),
+(24, 'AMPHOTERICIN B', 1),
+(25, 'AMINOSIDINE', 1),
+(26, 'Amitriptyline', 1),
+(27, 'AMOXYCILLIN', 1),
+(28, 'ANUSOL', 1),
+(29, 'ARTEMETHER/LUMEFANTRINE', 1),
+(34, 'BENZATHINE PENICILLIN', 1),
+(35, 'CEFUROXIME', 1),
+(36, 'CEFTRIAXONE', 1),
+(37, 'CHLOPHENIRAMINE', 1),
+(38, 'CIPROFLOXACIN', 1),
+(39, 'CLOTRIMAZOLE', 1),
+(40, 'COTRIMOXAZOLE', 1),
+(41, 'Dapsone', 1),
+(42, 'DIFLUCAN', 1),
+(43, 'DOXYCYCLINE', 1),
+(44, 'FERROUS SULPHATE', 1),
+(45, 'Fluconazole', 1),
+(46, 'FOLIC ACID', 1),
+(47, 'FRUSEMIDE', 1),
+(48, 'GRISEOFULVIN', 1),
+(49, 'HYOSCINE BUTYL BROMIDE', 1),
+(50, 'IBUPRUFEN', 1),
+(51, 'KETOCONAZOLE', 1),
+(52, 'AZITHROMYCIN', 1),
+(53, 'ALBEDAZOLE', 1),
+(54, 'SALBUTAMOL', 1),
+(55, 'MICONAZOLE NITRATE', 1),
+(56, 'MULTIVITAMIN', 1),
+(57, 'NYSTASTIN', 1),
+(58, 'PYRIDOXINE', 1),
+(59, 'AMOXYCILLIN/CLAVULAMIC', 1),
+(60, 'ERYTHROMYCIN', 1),
+(61, 'LEVONORGESTREL', 1),
+(62, 'LOPERAMIDE', 1),
+(63, 'MEDROXYPROGESTERONE', 1),
+(64, 'METRONIDAZOLE', 1),
+(65, 'ORAL REHYDRATION SALTS', 1),
+(66, 'PREDINISOLONE', 1),
+(67, 'PARACETAMOL', 1),
+(68, 'Streptomycin', 1),
+(69, 'RIFAMPICIN/ISONIAZID', 1),
+(70, 'RIFAMPICIN/ISONIAZID/PYRAZINAMIDE/ETHAMBUTOL', 1),
+(71, 'RIFAMPICIN/ISONIAZID/PYRAZINAMIDE', 1),
+(72, 'HYDROCORTISONE', 1),
+(73, 'FLUCLOXACILLIN', 1),
+(74, 'GENTAMYCIN', 1),
+(75, 'MICONAZOLE', 1),
+(76, 'Marete', 1);
 
 -- --------------------------------------------------------
 
@@ -12528,12 +12763,32 @@ CREATE TABLE IF NOT EXISTS `generic_name` (
 CREATE TABLE IF NOT EXISTS `maps_item` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `total` int(11) NOT NULL,
-  `regimen_id` int(11) unsigned NOT NULL,
+  `regimen_id` text NOT NULL,
   `maps_id` varchar(150) NOT NULL,
   `unique_id` varchar(150) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `unique_id` (`unique_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=29 ;
+
+--
+-- Dumping data for table `maps_item`
+--
+
+INSERT INTO `maps_item` (`id`, `total`, `regimen_id`, `maps_id`, `unique_id`) VALUES
+(1, 60, 'AF1A | AZT + 3TC + NVP', '572b32bde8dcd42e5964d23e7a69e138', '572b32bde8dcd42e5964d23e7a69e138'),
+(2, 90, 'AF1B | AZT + 3TC + EFV', '572b32bde8dcd42e5964d23e7a69e138', 'f0c1d0aa67a4f68ddd258f8c7db11570'),
+(3, 50, 'AS1A | AZT + 3TC + LPV/r', '572b32bde8dcd42e5964d23e7a69e138', 'ffeee10a9a0ec8232ebc94b949641ef3'),
+(4, 60, 'AS1B | AZT + 3TC + ATV/r', '572b32bde8dcd42e5964d23e7a69e138', '9e4f3db3c00fd2d41b0853ec9e6e731d'),
+(5, 80, 'AS1A | AZT + 3TC + LPV/r', '46ae68428a9a69fddacff52ef49a2595', 'd4a1c8e31469a1881c9e8714ba6af712'),
+(6, 120, 'AS1B | AZT + 3TC + ATV/r', '46ae68428a9a69fddacff52ef49a2595', '3922a5e049025651b692ab5de3ec0694'),
+(7, 60, 'AF1A | AZT + 3TC + NVP', '38b5c42288c708cd6bbb0f35bcb3d470', '2a1caa0c0535f601735022aa4d4390ed'),
+(8, 90, 'AF1B | AZT + 3TC + EFV', '38b5c42288c708cd6bbb0f35bcb3d470', '20e8040dcd1a1af4c09f187166fc6820'),
+(9, 130, 'AS1A | AZT + 3TC + LPV/r', '38b5c42288c708cd6bbb0f35bcb3d470', '1c38d80d1b331c6dffd4fd5064a2cc7a'),
+(10, 180, 'AS1B | AZT + 3TC + ATV/r', '38b5c42288c708cd6bbb0f35bcb3d470', 'e6f0cb56ef72f85e7992580280cea90c'),
+(11, 200, 'OI | OI Medicines', '38b5c42288c708cd6bbb0f35bcb3d470', '79c09a8db45ea068dc23f6da4208fc9b'),
+(26, 80, 'PM8 | Nevirapine (NVP) Single Dose (SD) 200mg stat', '9e4f3db3c00fd2d41b0853ec9e6e731d', '9e4f3db3c00fd2d41b0853ec9e6e731d'),
+(27, 100, 'AF1A | AZT + 3TC + NVP', '9e4f3db3c00fd2d41b0853ec9e6e731d', '9e4f3db3c00fd2d41b0853ec9e6e731d'),
+(28, 50, 'PC3 | NVP 2 mg/kg stat + AZT 4mg/kg bd for 6 weeks + 3TC 4mg/kg bd for 1 week', '9e4f3db3c00fd2d41b0853ec9e6e731d', '9e4f3db3c00fd2d41b0853ec9e6e731d');
 
 -- --------------------------------------------------------
 
@@ -12703,7 +12958,17 @@ CREATE TABLE IF NOT EXISTS `order_comment` (
   `unique_id` varchar(150) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `unique_id` (`unique_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
+
+--
+-- Dumping data for table `order_comment`
+--
+
+INSERT INTO `order_comment` (`id`, `order_number`, `timestamp`, `user`, `comment`, `unique_id`) VALUES
+(1, '572b32bde8dcd42e5964d23e7a69e138', '1376487746', '2', 'Marete good', '572b32bde8dcd42e5964d23e7a69e138'),
+(2, '46ae68428a9a69fddacff52ef49a2595', '1376487976', '2', 'LVCT Main', '46ae68428a9a69fddacff52ef49a2595'),
+(3, '38b5c42288c708cd6bbb0f35bcb3d470', '1376489841', '2', 'Marete Aggregate', '38b5c42288c708cd6bbb0f35bcb3d470'),
+(7, '9e4f3db3c00fd2d41b0853ec9e6e731d', '1376491768', '2', 'Nigga Please Good Work', '9e4f3db3c00fd2d41b0853ec9e6e731d');
 
 -- --------------------------------------------------------
 
@@ -12821,13 +13086,13 @@ CREATE TABLE IF NOT EXISTS `patient` (
 --
 
 INSERT INTO `patient` (`id`, `medical_record_number`, `patient_number_ccc`, `first_name`, `last_name`, `other_name`, `dob`, `pob`, `gender`, `pregnant`, `weight`, `height`, `sa`, `phone`, `physical`, `alternate`, `other_illnesses`, `other_drugs`, `adr`, `tb`, `smoke`, `alcohol`, `date_enrolled`, `source`, `supported_by`, `timestamp`, `facility_code`, `service`, `start_regimen`, `start_regimen_date`, `current_status`, `migration_id`, `machine_code`, `sms_consent`, `partner_status`, `fplan`, `tbphase`, `startphase`, `endphase`, `disclosure`, `non_commun`, `status_change_date`, `partner_type`, `support_group`, `current_regimen`, `Start_Regimen_Merged_From`, `Current_Regimen_Merged_From`, `nextappointment`, `start_height`, `start_weight`, `start_bsa`, `transfer_from`, `active`) VALUES
-(1, '9797', '9797', 'John', 'Doe', 'D', '1981-08-05', '178', '1', '0', '80', '156', '1.8618986725025255', '+254723520935', 'Kibera Ndogo', '+254734678345', '-7-,-1-,Madawa', 'Food Poison,Mambo bad', 'Ngaut', '0', '0', '0', '2013-08-07', '1', '2', '', '13050', '1', '1', '2013-08-07', '1', '', '0', '1', '2', '-1-,-7-', '0', '', '', '0', '', '', '', 'Jamii Bora Self Help', '1', '', '', '', '156', '80', '1.8618986725025255', '', 1),
+(1, '9797', '9797', 'John', 'Doe', 'D', '1981-08-05', '178', '1', '0', '80', '156', '1.8618986725025255', '+254723520935', 'Kibera Ndogo', '+254734678345', '-7-,-1-,Madawa', 'Food Poison,Mambo bad', 'Ngaut', '0', '0', '0', '2013-08-07', '1', '2', '', '13050', '1', '1', '2013-08-07', '1', '', '0', '1', '2', '-1-,-7-', '0', '', '', '0', '', '', '', 'Jamii Bora Self Help', '2', '', '', '2013-09-17', '156', '80', '1.8618986725025255', '', 1),
 (2, '1020', '1020', 'Patrick', 'Kinyua', 'Ndwiga', '1978-08-10', '93', '1', '0', '67', '160', '1.7256238807393047', '+25472809344', 'Langata', '+254723764539', '-3-', '', '', '0', '0', '0', '2013-08-07', '2', '2', '', '13050', '5', '33', '2013-08-07', '1', '', '0', '1', '1', '-5-', '0', '', '', '0', '', '', '', '', '33', '', '', '', '160', '67', '1.7256238807393047', '', 1),
 (3, '2030', '2030', 'Ruina', 'Omera', 'dogo', '1976-08-04', '168', '2', '0', '70', '180', '1.8708286933869707', '+254745567890', 'Kasarani', '+254787256498', '-1-', '', '', '0', '0', '0', '2013-08-07', '3', '1', '', '13050', '5', '33', '2013-08-07', '1', '', '0', '0', '1', '-5-', '0', '', '', '1', '', '', '', '', '1', '', '', '2013-08-22', '180', '70', '1.8708286933869707', '10011', 1),
 (4, '7676', '7676', 'Wendy', 'Mkubwa', ' Mabati', '1981-08-05', '207', '2', '0', '89', '155', '1.9575352983904133', '+254746548234', 'Kileleshwa Nairobi,Kenya', '+254735890324', '-11-', 'Now dtrv', '', '0', '0', '0', '2013-08-07', '3', '2', '', '13050', '1', '4', '2013-08-07', '1', '', '0', '1', '2', '-5-', '0', '', '', '0', '', '', '', '', '1', '', '', '2013-09-26', '155', '89', '1.9575352983904133', '10008', 1),
-(5, '6665', '6665', 'Kevin', 'Nditika', 'Mwangi', '1987-08-13', ' ', '1', '0', '89', '130', '1.7927322412699809', '+254735678345', 'Kabete Nairobi', '', '-7-,-11-,-1-', '0', '0', '0', '0', '0', '2013-08-07', '4', '1', '', '13050', '1', '34', '2013-08-07', '1', '', '0', '1', '2', '-9-,-7-,-6-,-5-', '0', '', '', '1', '', '', '', '', '1', '', '', '', '130', '89', '1.7927322412699809', '', 1),
+(5, '6665', '6665', 'Kevin', 'Nditika', 'Mwangi', '1987-08-13', ' ', '1', '0', '89', '130', '1.7927322412699809', '+254735678345', 'Kabete Nairobi', '', '-7-,-11-,-1-', '', '', '0', '0', '0', '2013-08-07', '4', '1', '', '13050', '1', '34', '2013-08-07', '1', '', '0', '1', '2', '-9-,-7-,-6-,-5-', '0', '', '', '1', '', '', '', '', '4', '', '', '2013-09-07', '130', '89', '1.7927322412699809', '', 1),
 (6, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '13050', '', '', '', '', '', '0', '', '', '', '0', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 1),
-(7, '8990', '8990', 'Collins', 'Ojenge', '', '1989-06-07', ' ', '1', '0', '78', '190', '2.0289570391377603', '+254756980451', '', '', '-7-,-11-,-1-', '', '', '0', '0', '0', '2013-08-07', '5', '1', '', '13050', '5', '33', '2013-08-07', '1', '', '0', '0', '1', '-9-,-7-,-6-,-5-', '0', '', '', '1', '', '', '', '', '33', '', '', '', '190', '78', '2.0289570391377603', '', 1);
+(7, '8990', '8990', 'Collins', 'Ojenge', '', '1989-06-07', ' ', '1', '0', '78', '190', '2.0289570391377603', '+254756980451', '', '', '-7-,-11-,-1-', '', '', '0', '0', '0', '2013-08-07', '5', '1', '', '13050', '5', '33', '2013-08-07', '1', '', '0', '0', '1', '-9-,-7-,-6-,-5-', '0', '', '', '1', '', '', '', '', '33', '', '', '2013-10-07', '190', '78', '2.0289570391377603', '', 1);
 
 -- --------------------------------------------------------
 
@@ -12844,7 +13109,7 @@ CREATE TABLE IF NOT EXISTS `patient_appointment` (
   PRIMARY KEY (`id`),
   KEY `patient_index` (`patient`),
   KEY `facility_index` (`facility`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
 
 --
 -- Dumping data for table `patient_appointment`
@@ -12852,7 +13117,10 @@ CREATE TABLE IF NOT EXISTS `patient_appointment` (
 
 INSERT INTO `patient_appointment` (`id`, `patient`, `appointment`, `facility`, `machine_code`) VALUES
 (1, '7676', '2013-09-26', '13050', '0'),
-(2, '2030', '2013-08-22', '13050', '0');
+(2, '2030', '2013-08-22', '13050', '0'),
+(3, '8990', '2013-10-07', '13050', '0'),
+(4, '9797', '2013-09-17', '13050', '0'),
+(5, '6665', '2013-09-07', '13050', '0');
 
 -- --------------------------------------------------------
 
@@ -12953,14 +13221,18 @@ CREATE TABLE IF NOT EXISTS `patient_visit` (
   PRIMARY KEY (`id`),
   KEY `patient_visit_index` (`patient_id`),
   KEY `facility_index` (`facility`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
 
 --
 -- Dumping data for table `patient_visit`
 --
 
 INSERT INTO `patient_visit` (`id`, `patient_id`, `visit_purpose`, `current_height`, `current_weight`, `regimen`, `regimen_change_reason`, `drug_id`, `batch_number`, `brand`, `indication`, `pill_count`, `comment`, `timestamp`, `user`, `facility`, `dose`, `dispensing_date`, `dispensing_date_timestamp`, `migration_id`, `quantity`, `machine_code`, `last_regimen`, `duration`, `months_of_stock`, `adherence`, `missed_pills`, `non_adherence_reason`, `merged_from`, `regimen_merged_from`, `last_regimen_merged_from`, `active`) VALUES
-(1, '2030', '1', '180', '90', '1', '', '7', '10494', '', ' ', '0', '', '1375878390', 'rmbugua', '13050', '1/2OD', '2013-08-07', '1375826400', '', '30', '0', '', '30', '0', ' ', '0', '', '', '', '', 1);
+(1, '2030', '1', '180', '90', '1', '', '7', '10494', '', ' ', '0', '', '1375878390', 'rmbugua', '13050', '1/2OD', '2013-08-07', '1375826400', '', '30', '0', '', '30', '0', ' ', '0', '', '', '', '', 1),
+(2, '8990', '1', '190', '90', '33', '', '66', 'v2593', '0', 'IND01', '', '', '1375966960', 'rmbugua', '13050', '1OD', '2013-08-08', '1375912800', '', '60', '0', '', '60', '0', ' ', '', '', '', '', '', 1),
+(3, '8990', '1', '190', '90', '33', '', '16', '1A316', '0', '0', '', '', '1375966960', 'rmbugua', '13050', '1/2QID', '2013-08-08', '1375912800', '', '1', '0', '', '5', '1', ' ', '', '', '', '', '', 1),
+(4, '9797', '1', '156', '70', '2', '', '66', 'v2593', '0', 'IND02', '0', '', '1375967307', 'rmbugua', '13050', '1OD', '2013-08-08', '1375912800', '', '60', '0', '', '60', '20', ' ', '', '', '', '', '', 1),
+(5, '6665', '1', '130', '68', '4', '', '13', '1020228', '0', 'IND12', '0', '', '1375967797', 'rmbugua', '13050', '1OD', '2013-08-08', '1375912800', '', '1', '0', '', '1', '-29', ' ', '0', '', '', '', '', 1);
 
 -- --------------------------------------------------------
 
@@ -13778,135 +14050,31 @@ CREATE TABLE IF NOT EXISTS `user_sessions` (
 --
 
 INSERT INTO `user_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('0043a6489ee99638943d139219af8d77', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947899, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('00c4c676d3b1573701949bec1fcbf15b', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947877, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('03fcce78ae838f554e365ed3ba1d60d1', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947913, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('05d080d321d2afb8ab0c6ba592aa20db', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('05fae9e07d2cedaca083dba854f5f661', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947919, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('09dd769787dd7fd1eea92c2dff6ad286', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375957551, 'a:17:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}s:9:"record_no";s:1:"3";}'),
-('0acfcd6b999b20af265b36ca4dd7ac90', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('0ba4576c66349d93ed04a3ae5a2a4c2f', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947875, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('0c1d7d773254ab7567b355ddafdc6397', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947876, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('0d2a31314582554303c823cbe9d98f2b', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947874, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('0fc95a09664b7ace1b85dee6546fb4b5', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947920, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('119351cf002e99b04ee25501cd6f0afa', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947924, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('1472a91fb087127da31bbad9e45824dc', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947889, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('14ae58a9a9c3ed272564e0824ce835f2', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947875, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('18a3d5509c76e9c1716d9cec98095a11', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947915, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('18ce1f1a199cc5bd027414c8f65c26c9', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947877, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('1cf45b953a8545fe03cb7cf74d688a40', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947925, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('1f976c06e67fd9c9ec7d28534a5cfda6', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947876, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('1f9c8f806b85b960cf4f3680d3ac0e2b', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947910, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('203bfbf8225fd79dfac644ab7a37fad2', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('21feede39eaae83c74343469afa243d2', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947877, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('287dd631cfcb49ee0fcf54f7c4893840', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947889, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('28b727ecfce73f11fedd4663eff70bb5', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947914, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('2c86531a4ce47d82ec3221b88025ad45', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947876, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('316e6c0e53ffb43cf2db4dbff5f90c9f', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947915, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('323205a84ffa3bfe62273c1719fffb19', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947899, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('33889ce7a8684dff7ce8cb39e0471d78', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947924, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('338aec9ceda011e304a34f84dc6cdeec', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947928, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('34d28686269221dc3771e971cd7a1926', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947874, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('36005ac5102a612b411b8ca5a01efe77', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947914, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('37c98f53c974eba3c715fee6e1bf2351', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947926, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('3cb4cc11c8b9b4a70bfd0b8020582945', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947899, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('3ebc98122df16cbc9d834d0b926cdf8c', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947897, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('3ee264990a846d75411d9d351557f5fa', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947915, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('44f45777a832dd44edb398632a407d7e', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947877, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('463ee1b387697d00636cad4a72c1f277', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('4685ca367f4883fa12ba21d8a8dd9b38', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947912, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('46eeb93e9fa1cdb5377b2a62adf1012a', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947899, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('4796204e9d357b2685ee90f89d5add5d', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('47a9e963dbb1422ad14c0f1351d68c36', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947915, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('48c2e3d870c63e77a9b365c9ef711326', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947875, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('48dda60a135604a2ca69cc98bbf33197', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947875, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('4a3b2c731b03a5f593b29e1fcf2f3426', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947876, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('4a91e9f18991fc41e329df0d9be28820', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947879, ''),
-('4bbc186c7d66a2d1731dab551d75911c', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('526f520255ab83050f43f5d0667d292c', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947914, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('5324a37fc2a50a89e4588a8e61e567b9', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947876, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('58d83e363f19ca6109ce3fb318d67394', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947891, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('5ab54247711cf352cbae657897797565', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947875, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('5b1bec8b276df57bfe52cee54ee498ec', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947914, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('5b7aa7769aab41c8e86ddcb55176c533', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947891, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('5b85e61bae14d4c12d6069df93ad432f', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('5da75a1a4fa1ab52dca9b88d8d6ae0bf', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947927, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('5f93bd95722bac9015209bb500d22b09', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947911, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('61a366b410d0a1ee4d20bd236657b77f', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947926, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('62655015d18091b239f2eaf34a2c994e', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947875, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('65641fdabcce5522a2ce282f1c40e534', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947875, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('6651a0059a01d06404a5bcc93cb9d635', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947876, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('67824c7bd17709c34226c6736ce44342', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947910, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('68bdfed88a61ae356657d98d3e4a8880', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('69238803da7ac1806627e0fe0abf6405', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947917, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('6b4371195ba4207715e06ec23c885605', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947890, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('6b55373d0487bfba8f1b273aee33b753', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947925, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('6e943ad605151a707495e400db3c7189', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('721c5f7def08951604bff5ecd43eb3de', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('72c2ec7ea1e7dc3211eb1d6343b35497', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('76d0a83efd39398f2cab4e7d58e8fbb7', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947889, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('78c690eaa066a2c1e4e0c5457944c06e', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947929, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('79f2cb939b509e149934a00fb5a338dd', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947926, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('7cedd1f41b0e77ab9a2063554ef8f4a8', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947891, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('81459abed577bdbfddeb9dae7730fcc3', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947914, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('82107dd6782204f58955d744f2a60512', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947924, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('86f87b31b4f35f7346d898d19c1d3a03', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947928, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('8c3aaafd97ddd75d7b07698a1463ab2d', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947876, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('8d0e8db86214005f84463ca1e3e9d1e8', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947897, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('94b771c6f2db00063fbae198f3ee5c9f', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947914, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('9ecf45c4a5f744ef4e33856343c01b15', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947874, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('9f73e134d00b381676c85fde8bb9154e', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947929, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('a0de439082652005048e532d97a4077d', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947877, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('a17caaf1127a3db8bfe1688c026a6508', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947891, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('a49635b5d4bde381e85fda1a037b3e97', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947911, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('a678566eba2018c2e6d0ea988dc66814', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947891, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('a7513dc4c099d9b6869dbf3fe75f3013', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947914, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('a8fc4697113280ed4d7145e763b89195', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947878, 'a:2:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";}'),
-('ae4128821a4a91add082e915007ecec3', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947875, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('b3c5510099d3911883a17546005e5ecd', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947875, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('b41b9c57716b6fc4faff21afc3d3cf07', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947876, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('b4776eeeefe2f7e49498657d7e881c5f', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947915, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('b6e8ef3e44c5d09252e94fa362044eda', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('bef9229f0bd514bc9a6649d43d482bc2', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947874, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('c06fe08bf9a738daa75c4ea254fbc0aa', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947915, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('c1636ebff6ac7d7131bf4f0230e76f07', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('c22d314980e7bf63296878bf6d204e37', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('c388ca90ca355d222f5b24cfc7fee7a6', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947874, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('c603f52b9d9687f6cd4ec5ae7ece5514', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947919, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('c818491fe402063502daf0249c7b7a13', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947915, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('c852200e8675f2e81228ba42e9b8ed76', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947899, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('c8f3f7866edb25b746b6a98829a07758', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947877, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('cc4622de66df2bb540ccaf06dc63dd00', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947924, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('ccc103863df7a3b26bf8410219e1f366', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947914, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('cf50ac1dec25695d10776595bb83fa8c', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947875, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('cfab3ba6d7d44188ffec84cb6679ded3', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947899, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('d3626822b72e23bd2f78136757896183', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('d3da694bbdce32ec1a5b3a84735b08e1', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947876, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('d50fb6e8848e29a13a2614a0e4516d48', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947917, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('d625a0546b32705e2297a62776dd611b', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947915, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('d698091549da43e1cc9c5b5dae2fbb0c', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947899, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('da60991a6c22758fc7549674cec9fca9', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947929, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('dae1814594d9e37990ea845416d8ae3b', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947874, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('db543bca1c431da90fd494cf14e4b8d3', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947873, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('debf7e43b2bba3675074897c60806573', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947890, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('df1720a88a06348fa719bb1541010540', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947914, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('e152f454f034609420a010aa1c6f62c4', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947875, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('e1a67aa30810967f53f154badfe5931d', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947878, 'a:1:{s:7:"link_id";s:5:"index";}'),
-('e261dc4535a47320b96349a0c33649f3', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947875, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('e36c945a5dc20f21376bc12cf4fa9048', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947877, 'a:1:{s:7:"link_id";s:5:"index";}'),
-('e40899ab31ecb68ec8dfc0a59859fc0a', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947924, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('e41d53a7cb4aad0de1bfa676c8ffcee4', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947914, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('e5c6b5f3c94b5fc6436d4f0b94b461c2', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('e641d4194d8e9f48751651f353d38c52', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('e8f8fe26ba48288a49193f7a2be1245e', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947878, 'a:2:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";}'),
-('e931cc9990a318b13700d3842b7f1680', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947897, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('ec6c70788ea4df5b51a22ed77e235022', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947924, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('eca9fe9f36b99216f91a06c73358bce1', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('ef41c471f533814a983a3713be26c697', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947876, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('ef6ea5ea484f0dd8a235538975a4200f', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947915, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('f0211ad2194bb5da151acaf015047272', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('f5d932b7a7e96da3ff2b6c559cf91721', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947874, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
-('f8fe6922d02a071f8e2711616c3a0ae7', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1375947916, 'a:3:{s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}');
+('0627483c9d22a1e6df0538f0818f02d8', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376493891, 'a:4:{s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
+('13104fb505f0fe60a2b136313ae378f4', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376492967, 'a:17:{s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}}'),
+('13c1cf0648157c2d623e2767684bf4e4', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko', 1376485961, 'a:17:{s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
+('212dd2870bf9ed50542022c2aad5db0e', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376491168, 'a:14:{s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";}'),
+('27d4cbf24c1c96da3cd9e021d34948e7', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko', 1376486013, 'a:4:{s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
+('33d379c0973f7227832c6e9318cdb56f', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376493331, 'a:17:{s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}}'),
+('38b2bb983b8df8da317489a551e10358', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376491868, 'a:17:{s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}}'),
+('4b5cb7858ad480b4cd7baa16faabd678', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376491997, 'a:14:{s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";}'),
+('596bf29c41d96823edfa9b2d80dba8be', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376491344, 'a:14:{s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";}'),
+('621ce6e21fbc0241034af10095729ccf', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376491298, 'a:17:{s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
+('6ccad62fd7a4ce240c5e425d9fa25d52', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376493366, 'a:14:{s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";}'),
+('7a37e5d5ae6bfebd97d1bbe2bf440628', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376493394, 'a:4:{s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
+('8f074dcd484603f650e2fc4554db3558', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376491174, 'a:17:{s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
+('a1f500dd1e1b71fce96422a571986aa9', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376492013, 'a:4:{s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
+('ae30da556506c0aa4103a40232fd00fa', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376491383, 'a:14:{s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";}'),
+('bc0abc4fb2e96aeb7c940838e7c7d6d5', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko', 1376485980, 'a:17:{s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
+('c949d079c58f9203aaf3500a85599eb7', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376489054, 'a:17:{s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}}'),
+('ca55653651b88fdf49af220eb16f42b2', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko', 1376485974, 'a:14:{s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";}'),
+('cb59f972f05f514f639b40b3ff30853e', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376491292, 'a:14:{s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";}'),
+('d05818c0e9259229289c8f31d7ef9ee0', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko', 1376485886, 'a:17:{s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}}'),
+('d637f4cc65391b87d010f7660189092a', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376491350, 'a:17:{s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
+('d8d7df40ad61b45b0c62c02b9df4bbc7', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko', 1376485991, 'a:14:{s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";}'),
+('daee93d14d25007eb00820d31be2c38a', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376493016, 'a:4:{s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";s:7:"link_id";s:5:"index";s:7:"linkSub";s:15:"user_management";s:9:"linkTitle";s:16:"Users Management";}'),
+('eb3a08baccfee2743b2645dda4f24d89', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko', 1376485954, 'a:14:{s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";}'),
+('f6881334ffa784b9cbc18623479c0812', '0.0.0.0', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53', 1376492990, 'a:14:{s:7:"user_id";s:1:"2";s:14:"user_indicator";s:22:"facility_administrator";s:13:"facility_name";s:13:"Liverpool VCT";s:12:"access_level";s:1:"3";s:8:"username";s:7:"rmbugua";s:9:"full_name";s:12:"Rufus Mbugua";s:13:"Email_Address";s:17:"rmbugua@gmail.com";s:12:"Phone_Number";s:13:"+254723520935";s:8:"facility";s:5:"13050";s:11:"facility_id";s:4:"3496";s:6:"county";s:1:"1";s:5:"menus";a:5:{i:4;s:1:"4";i:7;s:1:"4";i:5;s:1:"4";i:1;s:1:"4";i:6;s:1:"4";}s:10:"menu_items";a:5:{i:0;a:3:{s:3:"url";s:18:"patient_management";s:4:"text";s:8:"Patients";s:7:"offline";s:1:"0";}i:1;a:3:{s:3:"url";s:20:"inventory_management";s:4:"text";s:9:"Inventory";s:7:"offline";s:1:"0";}i:2;a:3:{s:3:"url";s:16:"order_management";s:4:"text";s:5:"Order";s:7:"offline";s:1:"0";}i:3;a:3:{s:3:"url";s:19:"settings_management";s:4:"text";s:8:"Settings";s:7:"offline";s:1:"0";}i:4;a:3:{s:3:"url";s:17:"report_management";s:4:"text";s:7:"Reports";s:7:"offline";s:1:"0";}}s:6:"assets";s:290:"<link type="text/css" rel="stylesheet" href="http://localhost/ADT/assets/cache/137647217981fd783c6cebb794adc2ba21b61c348d.css" media="screen" />\r\n<script type="text/javascript" src="http://localhost/ADT/assets/cache/1376473242c87e99010a1d07308f249d1a39a130c6.js" charset="UTF-8"></script>\r\n";}');
 
 -- --------------------------------------------------------
 

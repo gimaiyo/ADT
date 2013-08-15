@@ -1,1 +1,1 @@
-http//41.57.109.241/NASCOP
+http://localhost/NASCOP

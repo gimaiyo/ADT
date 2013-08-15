@@ -21,7 +21,7 @@ class Cdrr_Item extends Doctrine_Record {
 
 	public function setUp() {
 		$this -> setTableName('cdrr_item');
-		$this -> hasOne('Drugcode as Drugcode_Object', array('local' => 'Drug_Id', 'foreign' => 'id'));
+		$this -> hasOne('Drugcode as Drugcode_Object', array('local' => 'Drug_Id', 'foreign' => 'Drug'));
 	}//end setUp
 
 	public static function getOrderItems($order) {

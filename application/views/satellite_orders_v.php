@@ -38,7 +38,7 @@ table#table_new_central_facility_report{
 </div>
 
 <form method="post" action="<?php echo site_url('order_management/combine_orders')?>" id="frmSubmitAggregated">
-<table class="table table-bordered table-striped" id="table_new_central_facility_report">
+<table class="table table-bordered table-striped dataTables" id="table_new_central_facility_report">
 	<input type="hidden" name="start_date" value="<?php echo $period_start_date;?>" />
 	<input type="hidden" name="end_date" value="<?php echo $period_end_date;?>" />
 	<thead>

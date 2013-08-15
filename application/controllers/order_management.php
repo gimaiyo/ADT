@@ -36,11 +36,11 @@ class Order_Management extends MY_Controller {
 		$data['hide_side_menu'] = 1;
 		$this -> load -> database();
 		//Get all drugs, ordered or not
-		$sql = "select d.drug,d.id as did,d.pack_size,c.* from drugcode d left join cdrr_item c on d.id = c.drug_id and c.cdrr_id = '$order' where d.supplied = '1' order by d.id";
+		$sql = "select d.drug,d.id as did,d.pack_size,c.* from drugcode d left join cdrr_item c on d.drug = c.drug_id and c.cdrr_id = '$order' where d.supplied = '1' order by d.id";
 		$query = $this -> db -> query($sql);
 		$data['commodities'] = $query -> result_array();
 		//Get all regimens; ordered or not
-		$regimen_sql = "select r.regimen_desc,r.id as rid,m.* from regimen r left join maps_item m on r.id = m.regimen_id and m.maps_id = '$order' order by r.id";
+		$regimen_sql = "select r.regimen_desc,r.id as rid,m.* from regimen r left join maps_item m on CONCAT(r.regimen_code,concat(' | ',r.regimen_desc)) = m.regimen_id and m.maps_id = '$order' order by r.id";
 		$regimen_query = $this -> db -> query($regimen_sql);
 		//$data['commodities'] = $query -> result_array();
 		//var_dump($data['commodities']);
@@ -459,12 +459,12 @@ class Order_Management extends MY_Controller {
 		$regimen_counter = 0;
 		$last_id = 0;
 		$initial_order_number = 0;
-		$this -> session -> set_userdata('msg_success', 'Order No:' . $order_number . ' was Added');
+		$this -> session -> set_userdata('msg_success', 'Order was Added');
 		//Save the cdrr
 		if ($is_editing) {
 			//Retrieve the order being edited
 			$order_object = Facility_Order::getOrder($order_number);
-			$this -> session -> set_userdata('msg_success', 'Order No:' . $order_number . ' was Updated');
+			$this -> session -> set_userdata('msg_success', 'Order was Updated');
 			//Delete all items for that order
 			$initial_order_number = $order_number;
 			$order_number = md5($order_number . $facility);
@@ -600,6 +600,7 @@ class Order_Management extends MY_Controller {
 			foreach ($regimens as $regimen) {
 				//Check if any patient numbers have been reported for this regimen
 				if ($patient_numbers[$regimen_counter] > 0) {
+					echo $regimens[$regimen_counter]."-".$patient_numbers[$regimen_counter]."<br/>";
 					$maps_item = new Maps_Item();
 					$maps_item -> Total = $patient_numbers[$regimen_counter];
 					$maps_item -> Regimen_Id = $regimens[$regimen_counter];
@@ -730,7 +731,6 @@ class Order_Management extends MY_Controller {
 				$cdrr_portion .= "'" . $order . "' ";
 				$maps_portion .= "'" . $order . "' ";
 			}
-
 			$counter++;
 		}
 
