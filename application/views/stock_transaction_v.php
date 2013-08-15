@@ -548,6 +548,9 @@
 			    });
 			    request.always(function(data){
 					console.log(data);
+					if(remaining_drugs==0){
+						windows.location='<?php echo base_url().'inventory_management'?>';
+					}
 			    });
 			  
 			};

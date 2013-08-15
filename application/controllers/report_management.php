@@ -1412,7 +1412,7 @@ class report_management extends MY_Controller {
 
 	public function drug_stock_on_hand($stock_type) {
 		$facility_code = $this -> session -> userdata('facility');
-
+		
 		//Store
 		if ($stock_type == '1') {
 			$stock_param = " AND (source='" . $facility_code . "' OR destination='" . $facility_code . "') AND source!=destination ";
