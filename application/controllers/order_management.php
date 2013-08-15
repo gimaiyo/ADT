@@ -414,7 +414,7 @@ class Order_Management extends MY_Controller {
 	public function save() {
 		$facility = $this -> input -> post('facility_id');
 		$central_facility = $this -> input -> post('central_facility');
-		$user_id = $this -> session -> userdata('user_id');
+		$user_id = $this -> session -> userdata('full_name');
 		$updated_on = date("U");
 
 		$reporting_period = $this -> input -> post("reporting_period");
@@ -566,7 +566,8 @@ class Order_Management extends MY_Controller {
 					$cdrr_item -> Losses = $losses[$commodity_counter];
 					$cdrr_item -> Adjustments = $adjustments[$commodity_counter];
 					$cdrr_item -> Count = $physical_count[$commodity_counter];
-					$cdrr_item -> Resupply = $resupply[$commodity_counter];
+					$cdrr_item -> Resupply = $newresupply[$commodity_counter];
+					$cdrr_item -> Newresupply =$resupply[$commodity_counter];
 					//The following not required for fcdrrs
 					/*$cdrr_item->Aggr_Consumed = $opening_balances[$commodity_counter];
 					 $cdrr_item->Aggr_On_Hand = $opening_balances[$commodity_counter];

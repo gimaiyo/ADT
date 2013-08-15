@@ -121,7 +121,7 @@ class Fcdrr_Management extends MY_Controller {
 			
 			$query = $this -> db -> query("INSERT INTO facility_order (`id`, `status`, `created`, `updated`, `code`, `period_begin`, `period_end`, `comments`, `reports_expected`, `reports_actual`, `services`, `sponsors`, `delivery_note`, `order_id`, `facility_id`,`central_facility`,`unique_id`) VALUES ('$order_number', '0', CURDATE(), '$updated_on', '2', '$beginning', '$ending', '$comments', NULL, NULL, '$services_offered', '$programme_sponsor', NULL, NULL, '$facility_code','$central_site','$unique_id');");
 			$facility_id = $unique_id;
-			$user_id = $this -> session -> userdata('user_id');
+			$user_id = $this -> session -> userdata('full_name');
 
 			$query = $this -> db -> query("SELECT MAX(id) AS id FROM order_comment");
 			$results = $query -> result_array();
