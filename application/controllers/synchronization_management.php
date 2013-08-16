@@ -1,5 +1,5 @@
 <?php
-include_once('system_management.php');
+include_once ('system_management.php');
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
 
@@ -67,7 +67,7 @@ class Synchronization_Management extends System_Management {
 		}
 		$this -> session -> set_userdata($menu_data);
 		$this -> session -> set_userdata($menus);
-		$this->load_assets();
+		$this -> load_assets();
 		$sql = "";
 		if ($this -> input -> post("sql")) {
 			$sql = $this -> input -> post("sql");
@@ -81,6 +81,47 @@ class Synchronization_Management extends System_Management {
 				}
 			}
 		}
+	}
+
+	public function upload_to_nascop() {
+		//Variables
+		$main_array = array();
+		$temp_array = array();
+		$table_array = array("cdrr_item", "maps_item", "order_comment");
+		$sql = "";
+		$unique_column = "";
+		$order_number = "";
+
+		foreach ($table_array as $table) {
+			$sql = "select * from facility_order where is_uploaded='0'";
+			$query = $this -> db -> query($sql);
+			$order_array = $query -> result_array();
+			if ($order_array) {
+				$main_array["facility_order"] = $order_array;
+				foreach ($table_array as $table) {
+					if ($table == "cdrr_item") {
+						$unique_column = "cdrr_id";
+					} else if ($table == "maps_item") {
+						$unique_column = "maps_id";
+					} else if ($table == "order_comment") {
+						$unique_column = "order_number";
+					}
+					foreach ($order_array as $order) {
+						$order_number = $order['unique_id'];
+						$sql = "select * from $table where $unique_column='$order_number'";
+						$query = $this -> db -> query($sql);
+						$temp_array = $query -> result_array();
+						$sql = "update facility_order set is_uploaded='1' where unique_id='$order_number' ";
+						$this -> db -> query($sql);
+					}
+					$main_array[$table] = $temp_array;
+					unset($temp_array);
+				}
+			}
+		}
+		header('Content-type: application/json');
+		echo json_encode($main_array);
+
 	}
 
 	public function base_params($data) {
