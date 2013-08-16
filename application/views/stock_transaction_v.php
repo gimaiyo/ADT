@@ -52,7 +52,6 @@
 	}
 </style>
 
-
 <script type="text/javascript">
 	$(document).ready(function(){
 		var today = new Date();
@@ -118,8 +117,16 @@
 					$("#select_drug ").html("<option value='0'>Loading drugs ...</option> ");
 					var stock_type=<?php echo  $stock_type ?>;
 					var _url="<?php echo base_url().'inventory_management/getStockDrugs'; ?>";
-					$(".t_destination").css("display","block");
-					$(".t_source").css("display","none");
+					//In case of dispensed to patients,adjustments(-),returns,losses,expiries, hide destination
+					if($("#select_transtype").attr("value")==5 || $("#select_transtype").attr("value")==7|| $("#select_transtype").attr("value")==8 || $("#select_transtype").attr("value")==9 || $("#select_transtype").attr("value")==10){
+						$(".t_destination").css("display","none");
+						$(".t_source").css("display","none");
+					}
+					else{
+						$(".t_destination").css("display","block");
+						$(".t_source").css("display","none");
+					}
+					
 					//Get drugs that have a balance
 					var request=$.ajax({
 				     url: _url,
@@ -427,11 +434,35 @@
 		$("#btn_submit").click(function(){
 			var stock_type=<?php echo  $stock_type ?>;
 			var last_row=$('#drugs_table tr:last');
+			/*
+			 * Validate fields
+			 */
 			if(last_row.find(".quantity").hasClass("stock_add_form_input_error")){
 				alert("There is a commodity that has a quantity greater that the quantity available!");
 				return;
 			}
-			
+			//Check if select source is visible and not selected
+			else if($("#select_source").is(":visible")){
+				if($("#select_source").val()==0){
+					alert("Please select source!");
+					$("#select_source").css("border-color","#CF0808");
+					return;
+				}
+				else{
+					$("#select_source").css("border-color","none");
+				}
+			}
+			//Check if select source is visible and not selected
+			else if($("#select_destination").is(":visible")){
+				if($("#select_destination").val()==0){
+					alert("Please select source!");
+					$("#select_destination").css("border-color","#CF0808");
+					return;
+				}
+				else{
+					$("#select_destination").css("border-color","none");
+				}
+			}
 			var rowCount = $('#drugs_table tr').length;
 			//Check if details were entered before submiting
 			if(rowCount==2){
@@ -448,6 +479,9 @@
 				
 			}
 			
+			/*
+			 * Validate fields end
+			 */
 			
 			var facility=<?php echo $facility ?>;
 			var user=<?php echo $user_id ?>;
@@ -467,7 +501,7 @@
 			var dump = retrieveFormValues();
 			//Call this function to do a special retrieve function for elements with several values
 			var drugs = retrieveFormValues_Array('drug');
-			if(dump["transaction_type"] == 1 || dump["transaction_type"] == 3 || dump["transaction_type"] == 4 || dump["transaction_type"] == 11 || dump["transaction_type"] == 0) {
+			if(dump["transaction_type"] == 1 || dump["transaction_type"] == 2 || dump["transaction_type"] == 3 || dump["transaction_type"] == 4 || dump["transaction_type"] == 11 || dump["transaction_type"] == 0) {
 				//If transction is from Main Store to Pharmacy,get batch selected
 				if(dump["transaction_type"] == 1 && dump["source"] == 1 && stock_type=='2'){
 					var batches = retrieveFormValues_Array('batchselect');
@@ -520,7 +554,6 @@
 			var destination="";
 			var remaining_drugs=drugs_count;
 			for(var i = 0; i < drugs_count; i++) {
-				remaining_drugs=remaining_drugs-i;
 				var _url="<?php echo base_url().'inventory_management/save'; ?>";
 				var get_qty_choice=quantity_choice;
 				var get_qty_out_choice=quantity_out_choice;
@@ -543,13 +576,24 @@
 				var request=$.ajax({
 			     url: _url,
 			     type: 'post',
-			     data: {"remaining_drugs":remaining_drugs,"quantity_choice":get_qty_choice,"quantity_out_choice":get_qty_out_choice,"source":get_source,"destination":get_destination,"transaction_date":get_transaction_date,"reference_number":ref_number,"transaction_type":get_transaction_type,"drug_id":get_drug_id,"batch":get_batch,"expiry":get_expiry,"packs":get_packs,"quantity":get_qty,"available_qty":get_available_qty,"unit_cost":get_unit_cost,"amount":get_amount,"comment":get_comment,"stock_type":get_stock_type},
+			     data: {"remaining_drugs":i,"quantity_choice":get_qty_choice,"quantity_out_choice":get_qty_out_choice,"source":get_source,"destination":get_destination,"transaction_date":get_transaction_date,"reference_number":ref_number,"transaction_type":get_transaction_type,"drug_id":get_drug_id,"batch":get_batch,"expiry":get_expiry,"packs":get_packs,"quantity":get_qty,"available_qty":get_available_qty,"unit_cost":get_unit_cost,"amount":get_amount,"comment":get_comment,"stock_type":get_stock_type},
 			     dataType: "json"
 			    });
 			    request.always(function(data){
-					console.log(data);
+				remaining_drugs-=1;
 					if(remaining_drugs==0){
-						windows.location='<?php echo base_url().'inventory_management'?>';
+						//Set session after completing transactions
+						var _url="<?php echo base_url().'inventory_management/set_transaction_session'; ?>";
+						var request=$.ajax({
+							url: _url,
+						    type: 'post',
+						    data: {"remaining_drugs":remaining_drugs},
+						    dataType: "json"
+						});
+						request.always(function(data){
+							window.location.replace('<?php echo base_url().'inventory_management'?>');
+						});
+						console.log(data);
 					}
 			    });
 			  
@@ -563,6 +607,7 @@
 	function resetFields(row){
 		row.closest("tr").find(".pack").val("");
 		row.closest("tr").find(".quantity").val("");
+		row.closest("tr").find(".batch").val("");
 		row.closest("tr").find(".expiry").val("");
 		row.closest("tr").find(".quantity_available").val("");
 		row.closest("tr").find(".unit_cost").val("");
@@ -581,8 +626,28 @@
 			
 			//Transaction coming in
 			if($("#select_transtype").attr("value") == 1 || $("#select_transtype").attr("value") == 2 || $("#select_transtype").attr("value") == 3 ||$("#select_transtype").attr("value") == 4 || $("#select_transtype").attr("value") == 11 || $("#select_transtype").attr("value") == 0) {
-				quantity_holder.css("background-color","#FFF");
-				quantity_holder.attr("value",qty );
+				var stock_type=<?php echo  $stock_type ?>;
+				var selected_source=$("#select_source").val();
+				var transaction_type=$("#select_transtype").attr("value");
+				//Check if transaction if from Main Store to Pharmacy
+				if(transaction_type==1 && selected_source==1 && stock_type=='2'){
+					if(available_quantity>=qty){
+						quantity_holder.css("background-color","#FFF");
+						quantity_holder.attr("value",qty );
+						quantity_holder.removeClass("stock_add_form_input_error");
+					}
+					else{
+						quantity_holder.attr("value",qty );
+						alert("Error !Quantity issued is greater than qty available!");
+						quantity_holder.addClass("stock_add_form_input_error");
+						quantity_holder.css("background-color","rgb(255, 92, 52)");
+					}
+				}
+				else{
+					quantity_holder.css("background-color","#FFF");
+					quantity_holder.attr("value",qty );
+				}
+				
 				
 			} 
 			//Transaction going out
@@ -692,6 +757,7 @@
 								<option value="0" selected="">-- Select Type --</option>
 								<?php
 								foreach ($transaction_types as $transaction_type) {
+									//If transaction is a pharmacy transaction,
 									if($stock_type==2){
 										//Hide issued to
 										if($transaction_type['id']!=6){
@@ -701,9 +767,12 @@
 										}
 									}
 									else{
+										////If transaction is a store transaction,hide dispensed to
+										if($transaction_type['id']!=5){
 										?>
 										<option value="<?php echo $transaction_type['id'] ?>"><?php echo $transaction_type['Name'] ?></option>
 										<?php
+										}
 									}
 								}
 								?>
@@ -721,6 +790,10 @@
 							foreach ($drug_sources as $drug_source) {
 								//If stock type is main store, don't display main store as source
 								if($stock_type==1 && $drug_source['id']==1){
+									continue;
+								}
+								//If transaction type is pharmacy, don't display pipeline
+								else if ($stock_type==2 && $drug_source['id']==2){
 									continue;
 								}
 							?>

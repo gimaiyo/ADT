@@ -11,8 +11,9 @@ class Drug_Stock_Movement extends Doctrine_Record {
 		$this -> hasColumn('Destination', 'varchar', 10);
 		$this -> hasColumn('Expiry_date', 'varchar', 10);
 		$this -> hasColumn('Packs', 'varchar', 10);
-		$this -> hasColumn('Quantity', 'varchar', 10);
-		$this -> hasColumn('Quantity_Out', 'varchar', 10);
+		$this -> hasColumn('Quantity', 'int', 15);
+		$this -> hasColumn('Quantity_Out', 'int', 15);
+		$this -> hasColumn('Balance', 'real', 15);
 		$this -> hasColumn('Unit_Cost', 'varchar', 10);
 		$this -> hasColumn('Amount', 'varchar', 10);
 		$this -> hasColumn('Remarks', 'text');
@@ -58,15 +59,16 @@ class Drug_Stock_Movement extends Doctrine_Record {
 	public function getDrugTransactions($drug_id,$facility,$stock_type=1){
 		$where="";
 		$today = date('Y-m-d');
-			
+		//Stock transaction
 		if($stock_type==1){
 			$where="and (ds.source='$facility'  or ds.destination='$facility') and ds.source!=ds.destination";
 		}
+		//Pharmacy transaction
 		else if($stock_type==2){
 			$where="and ds.source='$facility'  and ds.source=ds.destination";
 		}
 		
-		$query = Doctrine_Query::create() -> select("*") -> from("Drug_Stock_Movement ds")-> where("ds.Facility='$facility' and ds.expiry_date>'$today' and ds.drug='$drug_id' $where")->orderBy("ds.transaction_date desc");
+		$query = Doctrine_Query::create() -> select("*") -> from("Drug_Stock_Movement ds")-> where("ds.Facility='$facility' and ds.expiry_date>'$today' and ds.drug='$drug_id' $where")->orderBy("ds.id desc");
 		$drug_transactions = $query -> execute();
 		return $drug_transactions;
 	}

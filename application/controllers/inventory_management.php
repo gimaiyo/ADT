@@ -433,6 +433,7 @@ class Inventory_Management extends MY_Controller {
 	
 
 	public function save() {
+		
 		/*
 		 * Get posted data from the client
 		 */
@@ -456,7 +457,6 @@ class Inventory_Management extends MY_Controller {
 		$get_amount=$this->input->post("amount");
 		$get_comment=$this->input->post("comment");
 		$get_stock_type=$this->input->post("stock_type");
-		$remaining_drugs=$this->input->post("remaining_drugs");
 		$balance=0;
 		$pharma_balance=0;
 		$store_balance=0;
@@ -471,8 +471,14 @@ class Inventory_Management extends MY_Controller {
 				//Get remaining balance for the drug
 				$get_balance_sql=$this->db->query("SELECT dsb.balance FROM drug_stock_balance dsb  WHERE dsb.facility_code='$facility' AND dsb.stock_type='$get_stock_type' AND dsb.drug_id='$get_drug_id' AND dsb.batch_number='$get_batch' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE() AND dsb.expiry_date='$get_expiry' LIMIT 1");
 				$balance_array=$get_balance_sql->result_array();
+				
+				//If transaction is physical count, set actual quantity as physical count
+				if($get_transaction_type == 11){
+					$bal=0;
+				}
+				
 				//Check if drug exists in the drug_stock_balance table
-				if(count($balance_array>0)){
+				else if(count($balance_array>0)){
 					$bal=$balance_array[0]["balance"];
 				}
 				else{
@@ -515,8 +521,12 @@ class Inventory_Management extends MY_Controller {
 				//Get remaining balance for the drug
 				$get_balance_sql=$this->db->query("SELECT dsb.balance FROM drug_stock_balance dsb  WHERE dsb.facility_code='$facility' AND dsb.stock_type='$get_stock_type' AND dsb.drug_id='$get_drug_id' AND dsb.batch_number='$get_batch' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE() AND dsb.expiry_date='$get_expiry' LIMIT 1");
 				$balance_array=$get_balance_sql->result_array();
+				//If transaction is physical count, set actual quantity as physical count
+				if($get_transaction_type == 11){
+					$bal=0;
+				}
 				//Check if drug exists in the drug_stock_balance table
-				if(count($balance_array>0)){
+				else if(count($balance_array>0)){
 					$bal=$balance_array[0]["balance"];
 				}
 				else{
@@ -548,15 +558,13 @@ class Inventory_Management extends MY_Controller {
 		/*
 		 * Calculate remaining balance end
 		 */
-		
 		//Check if destination is not the same as facility code, which would be a pharmacy transaction
 		if($get_destination==$facility && $get_transaction_type == 6){
 			$destination="";
 			$source=$facility;
 		}
-		
-		//When dispensing to patients from pharmacy
-		else if($get_transaction_type == 5 && $get_stock_type=='2'){
+		//Any pharmacy transaction, source and destination is facility code
+		else if(($get_transaction_type == 2 || $get_transaction_type == 3 || $get_transaction_type == 4 || $get_transaction_type == 5 || $get_transaction_type == 7 || $get_transaction_type == 8 || $get_transaction_type == 9 || $get_transaction_type == 10 || $get_transaction_type == 11) && $get_stock_type=='2'){
 			$source=$facility;
 			$destination=$facility;
 		}
@@ -575,11 +583,6 @@ class Inventory_Management extends MY_Controller {
 		else if($get_transaction_type==11 && $get_stock_type=='1'){
 			$source=$facility;
 			$destination="";
-		}
-		//Physical count pharmacy
-		else if($get_transaction_type==11 && $get_stock_type=='2'){
-			$source=$facility;
-			$destination=$facility;
 		}
 		else{
 			$destination=$facility;
@@ -644,13 +647,19 @@ class Inventory_Management extends MY_Controller {
 			$balance_sql="UPDATE drug_stock_balance SET balance=balance - ".$get_qty." WHERE drug_id='".$get_drug_id."' AND batch_number='".$get_batch."' AND expiry_date='".$get_expiry."' AND stock_type='".$get_stock_type."' AND facility_code='".$facility."';";
 			$sql3=$this->db->query($balance_sql);
 		}
-		echo json_encode($remaining_drugs);
-		if(remaining_drugs==0){
-			redirect("inventory_management");
-		}
+		
 		
 	}
 	
+	public function set_transaction_session(){
+		$remaining_drugs=$this->input->post("remaining_drugs");
+		if($remaining_drugs==0){
+			$this->session->set_userdata("msg_save_transaction","success"); 
+		}
+		else{
+			$this->session->set_userdata("msg_save_transaction","failure");
+		}
+	}
 	public function save_edit() {
 		$this->load->database();
 		$sql = $this->input->post("sql");

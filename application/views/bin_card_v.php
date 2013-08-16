@@ -157,12 +157,14 @@
 							<th>Pack Size</th>
 							<th>No. of Packs</th>
 							<th>Quantity</th>
+							<th>Balance</th>
 							<th>Unit Cost</th>
 							<th>Total Price</th>
 						</tr>
 					</thead>
 					<tbody>
 						<?php foreach ($drug_transactions as $drug_transaction) {
+							$facility_code=	$drug_transaction->Facility_Object->facilitycode;
 						?>
 							<tr>
 								<td><?php echo  $drug_transaction->Order_Number ?></td>
@@ -176,24 +178,25 @@
 									if($drug_transaction->Quantity==0){
 										$qty=$drug_transaction->Quantity_Out;
 										//From Main Store to pharmacy
-										if($drug_transaction->Destination==""){
+										if($drug_transaction->Destination=="" || ($drug_transaction->Destination==$facility_code && $drug_transaction->Transaction_Object->id==6)){
 											$transaction_type.=" Pharmacy";
 										}
 										//If destination is not a facility,get the destination name
 										else if($drug_transaction->Destination < 10000){
-											$transaction_type.=" ".$drug_transaction->Destination_Object->Name;
+											//$transaction_type.=" <b>".$drug_transaction->Destination_Object->Name."</b>";
 										}
 										//If destination is a facility,get the destination name
 										else if($drug_transaction->Destination >= 10000){
-											$transaction_type.=" ".$drug_transaction->Facility_Object->name;
+											//$transaction_type.=" <b>".$drug_transaction->Facility_Object->name."</b>";
 										}
 									}
 									
 									//Stock coming in, received
 									else if($drug_transaction->Quantity>0){
 										$qty=$drug_transaction->Quantity;
+										
 										if($drug_transaction->Source=="" and $drug_transaction->Source!=""){
-											$transaction_type.=" ".$drug_transaction->Facility_Object->Name;
+											//$transaction_type.=" <b>".$drug_transaction->Facility_Object->name."</b>";
 										}
 										//Source is not a facility
 										else if($drug_transaction->Source < 10000){
@@ -201,7 +204,7 @@
 										}
 										//Source is a facility
 										else if($drug_transaction->Source >= 10000){
-											$transaction_type.=" ".$drug_transaction->Facility_Object->Name;
+											//$transaction_type.=" <b>".$drug_transaction->Facility_Object->name."</b>";
 										}
 									}
 								}	
@@ -220,7 +223,7 @@
 									}
 									
 									else if($drug_transaction->Quantity==0 or $drug_transaction->Quantity==""){
-										$transaction_type.=" Patients";
+										//$transaction_type.=" Patients";
 										$qty=$drug_transaction->Quantity_Out;
 									}
 									else if($drug_transaction->Quantity_Out==0){
@@ -235,6 +238,7 @@
 								<td><?php echo  $drug_transaction->Drug_Object->Pack_Size ?></td>
 								<td><?php echo  $drug_transaction->Packs ?></td>
 								<td><?php echo  $qty ?></td>
+								<td><?php echo  $drug_transaction->Balance ?></td>
 								<td><?php echo  $drug_transaction->Unit_Cost ?></td>
 								<td><?php echo  $drug_transaction->Amount ?></td>
 							</tr>
