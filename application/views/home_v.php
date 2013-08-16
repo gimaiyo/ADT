@@ -41,6 +41,21 @@ $(document).ready(function() {
       var period=30;
       var location=2;
       $('h3 .btn-danger').hide();
+      <?php
+      if($user_is_facilityadmin){
+      ?>
+      /*Auto-Sync Orders to NASCOP when internet is present*/
+		var online = navigator.onLine;
+		if(online==true){
+		<?php
+		$nascop_url = file_get_contents(base_url() . 'assets/nascop.txt');	
+		?>
+		//syncOrders("<?php //echo $this->session->userdata("facility");?>","<?php //echo $this->session->userdata("user_id"); ?>","<?php //echo $nascop_url;?>");
+		}
+		
+		<?php
+	     }
+		?>
       
       //Get Today's Date and Upto Saturday
       var someDate = new Date();
