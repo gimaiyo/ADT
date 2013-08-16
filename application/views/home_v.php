@@ -94,7 +94,11 @@ $(document).ready(function() {
 var chartID;
 var graphID;
 var chartLink;
+
 	$('.more').click(function(){
+	
+		
+
 		$('h3 .btn-success').hide();
 		$('h3 .btn-danger').show();
 		var myID = $(this).attr('id');
