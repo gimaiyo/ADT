@@ -122,12 +122,12 @@ class Synchronization_Management extends System_Management {
 				}
 			}
 		}
-		header('Content-type: application/json');
-		return json_encode($main_array);
+		//header('Content-type: application/json');
+		return $main_array;
 
 	}
 
-	public function synchronize($data_array=array()) {
+	public function synchronize($data_array = array()) {
 		//Variables
 		$sql = '';
 		$order_number = '';
@@ -175,22 +175,56 @@ class Synchronization_Management extends System_Management {
 		/*
 		 * Initialize the Sysnchronization Library
 		 * Get Order array from webADT
+		 * Get Nascop Function Url
 		 * Send Array of data from webADT to Nascop(function called 'synchronize')
 		 */
+		$string = '';
 		$new_sync = new Synchronization();
-		$order_array = array();
-		$order_array = $this -> upload_to_nascop();
-		$response = $new_sync -> connect("synchronize", $order_array);
+		$main_url = file_get_contents(base_url() . 'assets/nascop.txt');
+		$target_url = $main_url . "/synchronization_management/synchronize";
+		$response = $new_sync -> upload_connect($target_url, $this -> upload_to_nascop());
 		//$facility=$this->session->userdata("facility");
-		$facility='13050';
-		if($response){
-			//If successful download from nascop
-			$response = $new_sync -> connect("download_to_adt/".$facility, $order_array);
-			if($response){
-				//If data Synchronize in webADT 
-				$this->synchronize($response);
+		$facility = '13050';
+		if ($response == true) {
+			//Download Data from Nascop
+			$target_url = $main_url . "/synchronization_management/download_to_adt/" . $facility;
+			$download = file_get_contents($target_url);
+			$message = "Upload Successful(100%) \n";
+			if ($download) {
+				/*
+				 * 1.Removes the last string character ']' from the json
+				 * 2.Remove the first 12 string characters which includes a '<pre>' tag up to the '['
+				 * 3.Decoding the json array
+				 * 4.This is where I convert String Manual to array
+				 */
+				$download = substr($download, 0, -1);
+				$download = substr($download, 12);
+				$string = $download;
+				$download = json_decode($download, TRUE);
+				$download = $this -> objectToArray($download);
+				$this -> synchronize($download);
+				$message .= "Download Successful(100%) \n";
+				$message .= "Synchronization Complete(100%)";
+			} else {
+				$message .= "Download encountered Problems(0%)";
+				$message .= "Synchronization Failed(50%)";
 			}
+
+		} else {
+			$message = "Upload encountered Problems(0%)";
+			$message .= "Synchronization Failed(0%)";
 		}
+		echo $message;
+	}
+
+	public function objectToArray($object) {
+		if (!is_object($object) && !is_array($object)) {
+			return $object;
+		}
+		if (is_object($object)) {
+			$object = (array)$object;
+		}
+		return array_map('objectToArray', $object);
 	}
 
 	public function base_params($data) {
