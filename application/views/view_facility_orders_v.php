@@ -83,6 +83,14 @@
 		setTimeout(function(){
 			$(".message").fadeOut("2000");
 		},6000);
+		
+	    /*Auto-Sync Orders to NASCOP when internet is present*/
+		var online = navigator.onLine;
+		if(online==true){
+		    syncOrders();
+		}
+		
+		
 	});
 	function delete_record(){
 	window.location = url;
