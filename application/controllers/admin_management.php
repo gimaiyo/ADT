@@ -609,8 +609,9 @@ class admin_management extends MY_Controller {
 			$start_date = $startdate;
 			$end_date = $enddate;
 		}
+//print_r($dates);die();
 		foreach ($dates as $date_period) {
-			$sql = "SELECT count(*) as total FROM access_log WHERE DATE_FORMAT(start_time,'%Y-%m-%d')='$date_period' ORDER BY start_time LIMIT 1";
+			$sql = "SELECT count(*) as total FROM access_log WHERE DATE_FORMAT(start_time,'%Y-%m-%d')='$date_period' ORDER BY start_time ";
 			$query = $this -> db -> query($sql);
 			$results = $query -> result_array();
 			foreach ($results as $value) {

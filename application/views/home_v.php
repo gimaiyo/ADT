@@ -47,8 +47,8 @@ $(document).ready(function() {
       var dd = ("0" + someDate.getDate()).slice(-2);
       var mm = ("0" + (someDate.getMonth() + 1)).slice(-2);
       var y = someDate.getFullYear();
-      var fromDate =y+'-'+mm+'-'+dd;
-      
+      var fromDate="<?php echo $monday = date('Y-m-d',strtotime('monday this week'));?>";  
+       
       var numberOfDaysToAdd = 5;
       var to_date=new Date(someDate.setDate(someDate.getDate() + numberOfDaysToAdd)); 
       var dd = ("0" + to_date.getDate()).slice(-2);
