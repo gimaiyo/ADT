@@ -236,6 +236,12 @@ $(document).ready(function() {
 			});
 		}
 	});
+	$.extend($.gritter.options, { 
+        position: 'bottom-left', // defaults to 'top-right' but can be 'bottom-left', 'bottom-right', 'top-left', 'top-right' (added in 1.7.1)
+	fade_in_speed: 'medium', // how fast notifications fade in (string or int)
+	fade_out_speed: 2000, // how fast the notices fade out
+	time: 6000 // hang on the screen for...
+});
 });
 /**
  * End Change password validation
@@ -354,7 +360,21 @@ function syncOrders() {
 		url : link,
 		type : 'POST',
 		success : function(data) {
-            alert(data)
+
+				$.gritter.add({
+					position: 'bottom-right',
+	// (string | mandatory) the heading of the notification
+	title: 'Welcome.',
+	// (string | mandatory) the text inside the notification
+	text: data,
+		// (string | optional) the image to display on the left
+		// (bool | optional) if you want it to fade out on its own or just sit there
+			sticky: false,
+		// (int | optional) the time you want it to be alive for before fading out
+		time: ''
+		});
+		
+            //alert(data)
 		}
 	});
 

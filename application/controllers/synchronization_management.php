@@ -114,7 +114,7 @@ class Synchronization_Management extends System_Management {
 			//Download Data from Nascop
 			$target_url = $main_url . "/synchronization_management/download_to_adt/" . $facility;
 			$download = file_get_contents($target_url);
-			$message = "Upload Successful(100%) \r\n";
+			$message = "Upload Successful(100%) \r\n </br>";
 			if ($download) {
 				/*
 				 * 1.Removes the last string character ']' from the json
@@ -124,16 +124,16 @@ class Synchronization_Management extends System_Management {
 				 *
 				 */
 				$this -> synchronize($download);
-				$message .= "Download Successful(100%) \r\n";
-				$message .= "Synchronization Complete(100%)";
+				$message .= "Download Successful(100%) \r\n </br>";
+				$message .= "Synchronization Complete(100%) </br>";
 			} else {
-				$message .= "Download encountered Problems(0%)\r\n";
-				$message .= "Synchronization Failed(50%)\r\n";
+				$message .= "Download encountered Problems(0%)\r\n </br>";
+				$message .= "Synchronization Failed(50%)\r\n</br>";
 			}
 
 		} else {
-			$message = "Upload encountered Problems(0%)\r\n";
-			$message .= "Synchronization Failed(0%)\r\n";
+			$message = "Upload encountered Problems(0%)\r\n </br>";
+			$message .= "Synchronization Failed(0%)\r\n </br>";
 		}
 		echo $message;
 	}
