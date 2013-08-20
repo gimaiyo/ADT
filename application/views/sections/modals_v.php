@@ -57,7 +57,7 @@
   </div>
   <div class="modal-body">
    <input type="hidden" name="base_url" id="base_url" value="<?php echo base_url() ?>" />
-   <form id="fmChangePassword" action="<?php echo base_url().'user_management/save_new_password'?>" method="post" class="well">
+   <form id="fmChangePassword" action="<?php echo base_url().'user_management/save_new_password/1'?>" method="post" class="well">
 		<span class="message error" id="error_msg_change_pass"></span>
 		<div id="m_loadingDiv" style="display: none"><img style="width: 30px" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>
 		<br>

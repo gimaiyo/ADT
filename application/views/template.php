@@ -134,12 +134,12 @@ if (isset($styles)) {
 	}
 	if($user_is_administrator){
 	 ?>
-	    $('#span1').load('<?php echo base_url() . 'admin_management/inactive_users';?>
-		');
-		$('#span2').load('
-<?php echo base_url() . 'admin_management/online_users';?>');<?php
+	    $('#span1').load('<?php echo base_url() . 'admin_management/inactive_users';?>');
+		$('#span2').load('<?php echo base_url() . 'admin_management/online_users';?>');
+	<?php
 	}
-	 ?>});</script>
+	?>});
+	</script>
 <script>
 	  		$(document).ready(function(){
 		 $(".error").css("display","block");
