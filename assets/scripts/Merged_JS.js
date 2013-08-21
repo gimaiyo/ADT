@@ -151,6 +151,13 @@ $(document).ready(function() {
 			});
 		}
 	});
+	$.extend($.gritter.options, { 
+        position: 'bottom-right', // defaults to 'top-right' but can be 'bottom-left', 'bottom-right', 'top-left', 'top-right' (added in 1.7.1)
+	fade_in_speed: 'medium', // how fast notifications fade in (string or int)
+	fade_out_speed: 2000, // how fast the notices fade out
+	time: 6000 // hang on the screen for...
+});
+	
 });
 /**
  * End Change password validation
@@ -162,7 +169,7 @@ $(document).ready(function() {
 var timer = 0;
 function set_interval() {
 	// the interval 'timer' is set as soon as the page loads
-	timer = setInterval("auto_logout()", 600000);
+	timer = setInterval("auto_logout()", 1200000);
 	// the figure '180000' above indicates how many milliseconds the timer be set to.
 	// Eg: to set it to 5 mins, calculate 3min = 3x60 = 180 sec = 180,000 millisec.
 	// So set it to 180000
@@ -263,104 +270,29 @@ function testAlert(){
 /*
  * Sysnchronization of Orders
  */
-function syncOrders(facility, session_id, nascop_url) {
+function syncOrders() {
 	var href = window.location.href;
 	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
 	var _href = href.substr(href.lastIndexOf('/') + 1);
-	var link = nascop_url + "/synchronization_management/getSQL/" + facility;
-	var total = 5;
-	var countval = 0;
-	var percent = 0;
-	percent = getPercentage(countval, total);
-	var unblock_element = '<div class="progress"><div class="bar" ></div></div><ul class="nav nav-list status"></ul>';
-	//Get Any Satellite and Agregated Orders from Nascop
-	$.blockUI({
-		message : unblock_element,
-			});
-
-	$(".bar").css("width", percent + "%");
-	$(".bar").text(percent + "%");
-	$(".status").append('<li class="active"><a href="#">Starting...</a></li>');
+	var link = base_url + "/ADT/synchronization_management/startSync"
 	$.ajax({
 		url : link,
 		type : 'POST',
 		success : function(data) {
-			countval++;
-			percent = getPercentage(countval, total);
-			$(".bar").css("width", percent + "%");
-			$(".bar").text(percent + "%");
-			$(".status").find("li").removeClass('active');
-			$(".status").append('<li class="active"><a href="#">Downloading Data from NASCOP</a></li>');
-			link = base_url + "/ADT/synchronization_management/uploadSQL/" + session_id;
-			
-			//Executed Received Data in webADT
-			$.ajax({
-				url : link,
-				type : 'POST',
-				data : {
-					"sql" : data
-				},
-				success : function(data) {
-					countval++;
-					percent = getPercentage(countval, total);
-					$(".bar").css("width", percent + "%");
-					$(".bar").text(percent + "%");
-					$(".status").find("li").removeClass('active');
-					$(".status").append('<li class="active"><a href="#">Merging Changes to webADT</a></li>');
-					link = base_url + "/ADT/synchronization_management/synchronize_orders";
-					//In webADT,upload all orders from System to Nascop
-					$.ajax({
-						url : link,
-						type : 'POST',
-						success : function(data) {
-							countval++;
-							percent = getPercentage(countval, total);
-							$(".bar").css("width", percent + "%");
-							$(".bar").text(percent + "%");
-							$(".status").find("li").removeClass('active');
-							$(".status").append('<li class="active"><a href="#">Uploading Data to NASCOP</a></li>');
-							
-							link = nascop_url + "/synchronization_management/getSQL/" + facility;
-							//Execute Data at Nascop
-							$.ajax({
-								url : link,
-								type : 'POST',
-								data : {
-									"sql" : data
-								},
-								success : function(data) {
-									countval++;
-									percent = getPercentage(countval, total);
-									$(".bar").css("width", percent + "%");
-									$(".bar").text(percent + "%");
-									$(".status").find("li").removeClass('active');
-									$(".status").append('<li class="active"><a href="#">Merging Changes to NASCOP</a></li>');
-									link = base_url + "/ADT/synchronization_management/uploadSQL/" + session_id;
-									$.ajax({
-										url : link,
-										type : 'POST',
-										data : {
-											"sql" : data
-										},
-										success : function(data) {
-											countval++;
-											percent = getPercentage(countval, total);
-											$(".bar").css("width", percent + "%");
-											$(".bar").text(percent + "%");
-											$(".status").find("li").removeClass('active');
-											$(".status").append('<li class="active"><a href="#">Successful Order Synchronization</a></li>');
-										$.unblockUI({ fadeOut: 2000 });
-											
-										}
-									});
-								}
-							});
-						}
-					});
 
-				}
-			});
-
+				$.gritter.add({
+	// (string | mandatory) the heading of the notification
+	title: 'Synchronization.',
+	// (string | mandatory) the text inside the notification
+	text: data,
+		// (string | optional) the image to display on the left
+		// (bool | optional) if you want it to fade out on its own or just sit there
+			sticky: false,
+		// (int | optional) the time you want it to be alive for before fading out
+		time: ''
+		});
+		
+            //alert(data)
 		}
 	});
 

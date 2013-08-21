@@ -96,7 +96,7 @@
 									<td>Min Stock Level</td><th id="minimum_consumption"><?php echo $minimum_consumption ?></th>
 								</tr>
 								<tr >
-									<td>Avg Monthly Consumptio</td><th id="avg_consumption"><?php echo $avg_consumption ?></th>
+									<td>Avg Monthly Consumption</td><th id="avg_consumption"><?php echo $avg_consumption ?></th>
 								</tr>
 							</tbody>
 						</table>

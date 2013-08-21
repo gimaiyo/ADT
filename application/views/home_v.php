@@ -41,29 +41,14 @@ $(document).ready(function() {
       var period=30;
       var location=2;
       $('h3 .btn-danger').hide();
-      <?php
-      if($user_is_facilityadmin){
-      ?>
-      /*Auto-Sync Orders to NASCOP when internet is present*/
-		var online = navigator.onLine;
-		if(online==true){
-		<?php
-		$nascop_url = file_get_contents(base_url() . 'assets/nascop.txt');	
-		?>
-		//syncOrders("<?php //echo $this->session->userdata("facility");?>","<?php //echo $this->session->userdata("user_id"); ?>","<?php //echo $nascop_url;?>");
-		}
-		
-		<?php
-	     }
-		?>
-      
+    
       //Get Today's Date and Upto Saturday
       var someDate = new Date();
       var dd = ("0" + someDate.getDate()).slice(-2);
       var mm = ("0" + (someDate.getMonth() + 1)).slice(-2);
       var y = someDate.getFullYear();
-      var fromDate =y+'-'+mm+'-'+dd;
-      
+      var fromDate="<?php echo $monday = date('Y-m-d',strtotime('monday this week'));?>";  
+       
       var numberOfDaysToAdd = 5;
       var to_date=new Date(someDate.setDate(someDate.getDate() + numberOfDaysToAdd)); 
       var dd = ("0" + to_date.getDate()).slice(-2);

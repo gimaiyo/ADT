@@ -6,81 +6,7 @@ if (!defined('BASEPATH'))
 class Synchronization_Management extends System_Management {
 	function __construct() {
 		parent::__construct();
-	}
-
-	public function synchronize_orders() {
-		$mainstrSQl = "";
-		$table_lists = array("facility_order", "cdrr_item", "maps_item", "order_comment");
-		foreach ($table_lists as $table_list) {
-			$strSQl = "";
-			$table_name = $table_list;
-			$sql = "select * from  $table_name";
-			$query = $this -> db -> query($sql);
-			$results = $query -> result_array();
-			if ($results) {
-				foreach ($results as $val => $value_array) {
-					$fields = "";
-					$values = "";
-					$temp_val = "";
-					$strSQl .= "INSERT INTO $table_list (";
-					foreach ($value_array as $col => $value) {
-						if ($col != 'id') {
-							$temp_val .= "," . $col . "=" . "\"" . trim($value) . "\"";
-							$fields .= "," . $col;
-							$values .= ",\"" . trim($value) . "\"";
-						}
-					}
-					$fields = substr($fields, 1);
-					$values = substr($values, 1);
-					$temp_val = substr($temp_val, 1);
-					$strSQl .= $fields . ")VALUES(" . $values . ") ON DUPLICATE KEY UPDATE $temp_val ;";
-				}
-			}
-			$mainstrSQl .= $strSQl;
-		}
-		if ($mainstrSQl != '') {
-			echo $mainstrSQl = base64_encode($mainstrSQl);
-		} else {
-			echo $mainstrSQl = "";
-		}
-	}
-
-	public function uploadSQL($session_id) {
-		$sql = "select machine_code from access_log where user_id='$session_id' and access_type='Login' order by id desc LIMIT 1";
-		$query = $this -> db -> query($sql);
-		$results = $query -> result_array();
-		$session_array = explode(",", $results[0]['machine_code']);
-		$session_data = array('user_id' => $session_array[0], 'user_indicator' => $session_array[1], 'facility_name' => $session_array[2], 'access_level' => $session_array[3], 'username' => $session_array[4], 'full_name' => $session_array[5], 'Email_Address' => $session_array[6], 'Phone_Number' => $session_array[7], 'facility' => $session_array[8], 'facility_id' => $session_array[9], 'county' => $session_array[10]);
-		$this -> session -> set_userdata($session_data);
-
-		//Setup menus
-		$rights = User_Right::getRights($session_array[3]);
-		$menu_data = array();
-		$menus = array();
-		$counter = 0;
-		foreach ($rights as $right) {
-			$menu_data['menus'][$right -> Menu] = $right -> Access_Type;
-			$menus['menu_items'][$counter]['url'] = $right -> Menu_Item -> Menu_Url;
-			$menus['menu_items'][$counter]['text'] = $right -> Menu_Item -> Menu_Text;
-			$menus['menu_items'][$counter]['offline'] = $right -> Menu_Item -> Offline;
-			$counter++;
-		}
-		$this -> session -> set_userdata($menu_data);
-		$this -> session -> set_userdata($menus);
-		$this -> load_assets();
-		$sql = "";
-		if ($this -> input -> post("sql")) {
-			$sql = $this -> input -> post("sql");
-			if ($sql != '') {
-				$sql = base64_decode($sql);
-				$queries = explode(";", $sql);
-				foreach ($queries as $query) {
-					if (strlen($query) > 0) {
-						$this -> db -> query($query);
-					}
-				}
-			}
-		}
+		$this -> load -> library('Synchronization');
 	}
 
 	public function upload_to_nascop() {
@@ -119,9 +45,97 @@ class Synchronization_Management extends System_Management {
 				}
 			}
 		}
-		header('Content-type: application/json');
-		echo json_encode($main_array);
+		return $main_array;
 
+	}
+
+	public function synchronize($data_array = array()) {
+
+		//Variables
+		$sql = '';
+		$order_number = '';
+		$unique_column = 'unique_id';
+		$table_array = array();
+		$table_array = json_decode($data_array, TRUE);
+		foreach ($table_array as $table => $table_contents) {
+			if ($table == "facility_order") {
+				foreach ($table_contents as $contents) {
+					$order_number = $contents['unique_id'];
+					$sql = "select is_uploaded as available from facility_order where unique_id='$order_number'";
+					$query = $this -> db -> query($sql);
+					$results = $query -> result_array();
+					unset($contents['id']);
+					if ($results) {
+						if ($results[0]['available'] == 1) {
+							//Record has not been uploaded(Hence Update)
+							$this -> db -> where($unique_column, $order_number);
+							$this -> db -> update($table, $contents);
+						}
+					} else {
+						//No record Hence Insert
+						$this -> db -> insert($table, $contents);
+					}
+				}
+			} else {
+				foreach ($table_contents as $contents) {
+					foreach ($contents as $content) {
+						$unique_id = $content['unique_id'];
+						$sql = "select * from $table where $unique_column='$unique_id'";
+						$query = $this -> db -> query($sql);
+						$results = $query -> result_array();
+						unset($content['id']);
+						if ($results) {
+							$order_number = $contents['unique_id'];
+							$this -> db -> where($unique_column, $unique_id);
+							$this -> db -> update($table, $content);
+						} else {
+							$this -> db -> insert($table, $content);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public function startSync() {
+		/*
+		 * Initialize the Sysnchronization Library
+		 * Get Order array from webADT
+		 * Get Nascop Function Url
+		 * Send Array of data from webADT to Nascop(function called 'synchronize')
+		 */
+		$string = '';
+		$new_sync = new Synchronization();
+		$main_url = file_get_contents(base_url() . 'assets/nascop.txt');
+		$target_url = $main_url . "/synchronization_management/synchronize";
+		$response = $new_sync -> upload_connect($target_url, $this -> upload_to_nascop());
+		$facility = $this -> session -> userdata("facility");
+		if ($response == true) {
+			//Download Data from Nascop
+			$target_url = $main_url . "/synchronization_management/download_to_adt/" . $facility;
+			$download = file_get_contents($target_url);
+			$message = "Upload Successful(100%) <br/>";
+			if ($download) {
+				/*
+				 * 1.Removes the last string character ']' from the json
+				 * 2.Remove the first 12 string characters which includes a '<pre>' tag up to the '['
+				 * 3.Decoding the json array
+				 * 4.This is where I convert String Manual to array
+				 *
+				 */
+				$this -> synchronize($download);
+				$message .= "Download Successful(100%) <br/>";
+				$message .= "Synchronization Complete(100%)<br/>";
+			} else {
+				$message .= "Download encountered Problems(0%)<br/>";
+				$message .= "Synchronization Failed(50%)<br/>";
+			}
+
+		} else {
+			$message = "Upload encountered Problems(0%)<br/>";
+			$message .= "Synchronization Failed(0%)<br/>";
+		}
+		echo $message;
 	}
 
 	public function base_params($data) {

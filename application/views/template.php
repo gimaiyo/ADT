@@ -9,8 +9,8 @@ if (!$this -> session -> userdata('user_id') && $content_view !='resend_password
 if (!isset($link)) {
 	$link = null;
 }
-$actual_page = $this -> uri -> segment(1);
 
+$actual_page=$this -> uri -> segment(1);
 if ($this -> uri -> segment(2) != "") {
 	$actual_page .= "/" . $this -> uri -> segment(2);
 }
@@ -30,19 +30,28 @@ if ($this -> uri -> segment(6) != "") {
 if ($this -> uri -> segment(7) != "") {
 	$actual_page .= "/" . $this -> uri -> segment(7);
 }
-$this -> input -> set_cookie("actual_page", $actual_page, 3600);
 
-//
-if ($this -> session -> userdata("prev_page")) {
-	if ($this -> input -> cookie("actual_page") and $this -> input -> cookie("actual_page") != "") {
-		$this -> session -> unset_userdata("prev_page");
-		$actual_page = $this -> uri -> segment(1);
+/*
+ * Manage Actual Page When auto logged out
+ * Check prev page session is set
+ * if(present)check if actual page cookie exist and unset prev_page session
+ * if cookie exists redirect to cookie
+ * if cookie does not exists set cookie to current url
+ * if(not present)go to current url
+ * 
+*/
+
+if ($this -> session -> userdata("prev_page") !='') {
+	$this -> session -> set_userdata("prev_page","");
+	if ($this -> input -> cookie("actual_page") !='') {
+		$actual_page=$this -> input -> cookie("actual_page");
 		redirect($actual_page);
-		die();
+	}else{
+		$this -> input -> set_cookie("actual_page", $actual_page, 3600);
 	}
+}else{
+	$this -> input -> set_cookie("actual_page", $actual_page, 3600);
 }
-
-//setcookie("actual_page",$actual_page,3600);
 
 $access_level = $this -> session -> userdata('user_indicator');
 $user_is_administrator = false;
@@ -106,48 +115,46 @@ if (isset($styles)) {
 		if($message==0){
 		
 		?>
-   			/*$.gritter.add({
+   						/*$.gritter.add({
 				// (string | mandatory) the heading of the notification
 				title: 'Welcome.',
 				// (string | mandatory) the text inside the notification
-				text: '<?php //echo $this -> session -> userdata('facility_name');?>',
-				// (string | optional) the image to display on the left
-				// (bool | optional) if you want it to fade out on its own or just sit there
-			/*	sticky: false,
-				// (int | optional) the time you want it to be alive for before fading out
-				time: ''
-			});
-   		*/
-   		
-   	<?php 
-   	$message = 1;
-   	
-		}
-	 if($user_is_pharmacist){
+				text: '<?php //echo $this -> session -> userdata('facility_name');?>
+					',
+					// (string | optional) the image to display on the left
+					// (bool | optional) if you want it to fade out on its own or just sit there
+					/*	sticky: false,
+					// (int | optional) the time you want it to be alive for before fading out
+					time: ''
+					});
+					*/
+   	<?php
+			$message = 1;
+
+			}
+			if($user_is_pharmacist){
 	 ?>
-	    $('#notification1').load('<?php echo base_url() . 'facilitydashboard_management/order_notification';?>');
-	<?php
-	 }
-	 if($user_is_facility_administrator){
+	    $('#notification1').load('<?php echo base_url() . 'facilitydashboard_management/order_notification';?>');<?php
+	}
+	if($user_is_facility_administrator){
 	 ?>
-		$('#notification1').load('<?php echo base_url() . 'facilitydashboard_management/order_notification';?>');
-	<?php
-	 }
-	 if($user_is_administrator){
+		$('#notification1').load('<?php echo base_url() . 'facilitydashboard_management/order_notification';?>');<?php
+	}
+	if($user_is_administrator){
 	 ?>
 	    $('#span1').load('<?php echo base_url() . 'admin_management/inactive_users';?>');
-	    $('#span2').load('<?php echo base_url() . 'admin_management/online_users';?>');
-    <?php
-	 }
-	 ?>
-	 });</script>
+		$('#span2').load('<?php echo base_url() . 'admin_management/online_users';?>');
+	<?php
+	}
+	?>});
+	</script>
 <script>
-	  	$(document).ready(function(){
+	  		$(document).ready(function(){
 		 $(".error").css("display","block");
 		 $("#inactive_users").click(function(){<?php
-			$this -> session -> set_userdata("link_id", "index");
-			$this -> session -> set_userdata("linkSub", "user_management");
-			$this -> session -> set_userdata("linkTitle", "Users Management");
+		$this -> session -> set_userdata("link_id", "index");
+		$this -> session -> set_userdata("linkSub", "user_management");
+		$this -> session -> set_userdata("linkTitle", "Users Management");
 		 	?>
 				});
 				});
