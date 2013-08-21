@@ -101,7 +101,6 @@ if (isset($styles)) {
 <script>
    	$(document).ready(function(){
    		<?php 
-   		
    		$message = $this->session->flashdata('message');
 		echo $message;
 		if($message==0){
@@ -158,13 +157,13 @@ if (isset($styles)) {
 if(isset($report_title)){
 	?>
 	<style type="text/css" title="currentStyle">
-		@import "../../media/css/demo_page.css";
-		@import "../../media/css/demo_table.css";
-		@import "<?php echo base_url().'css/datatable/TableTools.css' ?>
+		@import "<?php echo base_url().'assets/styles/datatable/demo_page.css'; ?>";
+		@import "<?php echo base_url().'assets/styles/datatable/demo_table.css'; ?>";
+		@import "<?php echo base_url().'assets/styles/datatable/TableTools.css' ?>
 			";
 	</style>
-	<script type="text/javascript" charset="utf-8" src="<?php echo base_url().'Scripts/datatable/ZeroClipboard.js' ?>"></script>
-	<script type="text/javascript" charset="utf-8"  src="<?php echo base_url().'Scripts/datatable/TableTools.js' ?>"></script>
+	<script type="text/javascript" charset="utf-8" src="<?php echo base_url().'assets/Scripts/datatable/ZeroClipboard.js' ?>"></script>
+	<script type="text/javascript" charset="utf-8"  src="<?php echo base_url().'assets/Scripts/datatable/TableTools.js' ?>"></script>
 	<?php
 	}
 ?>      
@@ -236,7 +235,7 @@ if($menus){
 <div  class="btn-group" id="div_profile" >
 	<a href="#" class="top_menu_link btn dropdown-toggle" data-toggle="dropdown"  id="my_profile"><i class="icon-user icon-black"></i> Profile  <span class="caret"></span></a>
 	<ul class="dropdown-menu" id="profile_list" role="menu">
-		<li><a href="#edit_user_profile" data-toggle="modal"><i class="icon-edit"></i> Edit Profile</a></li>
+		<li><a href="#drug_stock_balance_synch" data-toggle="modal"><i class="icon-edit"></i> Edit Profile</a></li>
 		<li id="change_password_link"><a href="#user_change_pass" data-toggle="modal"><i class=" icon-asterisk"></i> Change Password</a></li>
 	</ul>
 </div>

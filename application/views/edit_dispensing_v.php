@@ -149,6 +149,13 @@ foreach ($expiries as $expiry) {
               getBrands(drug);
 		   });
 		   
+		   //Validate quantity dispensed
+		   $(".qty_disp").keyup(function() {
+				checkQtyDispense();
+			});
+			
+			
+		   
 		   function getDrugBatches(drug){
 		   	  var base_url="<?php echo base_url();?>";
 		   	  var link=base_url+"inventory_management/getDrugsBatches/"+drug;
@@ -205,16 +212,18 @@ foreach ($expiries as $expiry) {
 		   
 		   function getBatchInfo(){
 		   	 var base_url="<?php echo base_url();?>";
+			 var stock_type='2';
 		   	 var drug=$("#drug").val();
 		   	 var batch=$("#batch").val();
-		   	 var link=base_url+"inventory_management/getBatchInfo/"+drug+"/"+batch;
+		   	 var link=base_url+"inventory_management/getBacthDetails";
 		   	 $.ajax({
 				    url: link,
 				    type: 'POST',
+					data: {"stock_type":stock_type,"selected_drug":drug,"batch_selected":batch},
 				    dataType: "json",
 				    success: function(data) {	
-				    		$("#expiry").val(data[0].expiry_date);
-				    	    $("#soh").val(data[0].balance);
+				    	$("#expiry").val(data[0].expiry_date);
+				    	$("#soh").val(data[0].balance);
 				    }
 				});
 		   }
@@ -223,6 +232,23 @@ foreach ($expiries as $expiry) {
 		   
 		   		  
 		});
+			function checkQtyDispense(){
+				var selected_value = $("#qty_disp").attr("value");
+				var stock_at_hand =  $("#soh").attr("value");
+				var stock_validity = stock_at_hand - selected_value;
+				if(stock_validity < 0) {
+					alert("Quantity Cannot Be larger Than Stock at Hand");
+					$("#qty_disp").css("background-color","red");
+					$("#qty_disp").addClass("input_error");
+					return false;	
+				}
+				else{
+					$("#qty_disp").css("background-color","white");
+					$("#qty_disp").removeClass("input_error");
+					return true;
+				}	
+				
+			}
 			 //Function to validate required fields
 		    function processData(form) {
 		          var form_selector = "#" + form;
@@ -230,7 +256,20 @@ foreach ($expiries as $expiry) {
 		            if(!validated) {
 	                   return false;
 		            }else{
-		            	return true;
+		            	//Validate quantity dispensed
+		            	var check=checkQtyDispense();
+		            	var last_row=$('#drugs_table tr:last');
+		            	if(check==false){
+		            		return false;
+		            	}
+		     			else if(last_row.find(".qty_disp").hasClass("input_error")){
+							alert("The quantity of the last commodity being dispensed is greater that the quantity available!");
+							return false;
+						}
+						else{
+							return true;
+						}
+		            	
 		            }
 		     }
 			
