@@ -415,6 +415,7 @@ foreach($results as $result){
 			$(".confirm").click(function(){
 				var test_confirm=confirm("Are You Sure?");
 				if(test_confirm){
+					alert("Marete")
 					return true;
 				}else{
 					return false;
