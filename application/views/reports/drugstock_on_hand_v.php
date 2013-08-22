@@ -1,13 +1,13 @@
 <script type="text/javascript">
 	
 	$(document).ready( function () {
-		
+	//"sDom": 'T<"clear">lfrtip',
+		var base_url='<?php echo $base_url ?>';
 		var stock_type=<?php echo $stock_type; ?>;
 		var _url=<?php echo "'".$base_url."report_management/drug_stock_on_hand/".$stock_type."'"; ?>;
 		$('#drug_table').dataTable( {
-			"sDom": 'T<"clear">lfrtip',
-	   		"oTableTools": {
-				"sSwfPath": base_url+"scripts/datatable/copy_csv_xls_pdf.swf",
+			"oTableTools": {
+				"sSwfPath": base_url+"assets/scripts/datatable/copy_csv_xls_pdf.swf",
 				"aButtons": [ "copy", "print","xls","pdf" ]
 			},
 			"bProcessing": true,
@@ -18,12 +18,7 @@
           	{'bSortable': false, 'aTargets': [ 2,3 ,4,5,6] }
     		],
 	        "sPaginationType": "full_numbers"
-		} ).columnFilter({ sPlaceHolder: "head:after",
-                           aoColumns: [
-                            		 { type: "text" },
-                                     { type: "text" }
-                                     ]
-           });
+		} );
 		
 	} );
 

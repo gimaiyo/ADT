@@ -15,6 +15,12 @@ class Transaction_Type extends Doctrine_Record {
 		$transaction_types = $query -> execute();
 		return $transaction_types;
 	}
+	
+	public function getTransactionType($filter,$effect){
+		$query = Doctrine_Query::create() -> select("*") -> from("transaction_type")->where("name LIKE '%$filter%' AND effect='$effect' ");
+		$transaction_type = $query -> execute();
+		return $transaction_type[0];
+	}
 }
 ?>
 	
