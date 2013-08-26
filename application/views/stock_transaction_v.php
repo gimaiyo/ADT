@@ -63,6 +63,7 @@
 		
 		$(".t_source").css("display","none");
 		$(".t_destination").css("display","none");
+		$(".t_picking_list").css("display","none");
 		$("#drug_details").css("pointer-events","none");
 		
 		//Transaction type change
@@ -159,7 +160,11 @@
 		//Source change
 		$("#select_source").change(function(){
 			var stock_type=<?php echo  $stock_type ?>;
+			var trans_type=$("#select_transtype option:selected").text().toLowerCase().replace(/ /g,'');
 			var selected_source=$("#select_source option:selected").text().toLowerCase().replace(/ /g,'');
+			var supplier_name='<?php echo $supplier_name ?>';
+			var pipeline_name=supplier_name.toLowerCase().replace(/ /g,'');
+			
 			//Check if transaction if pharmacy and source is Main Store
 			if(stock_type==2 && (selected_source.indexOf('mainstore')!= -1 || selected_source.indexOf('store')!= -1)){
 			
@@ -188,7 +193,76 @@
 				});
 			}
 			
+			//If stock type is main store, transaction type is receive from and source i Pipeline, get orders dispatched
+			else if(stock_type==1 && trans_type.indexOf('received') != -1 &&  selected_source.indexOf(pipeline_name) != -1){
+				$(".t_picking_list").css("display","block");
+			}
+			else{
+				$(".t_picking_list").css("display","none");
+			}
+			
 		})
+		
+		//Picking list changed
+		$("#picking_list_name").change(function(){
+			var rowCount = $('#drugs_table tr').length;
+			//Check if details were entered before submiting
+			if(rowCount==2){
+			
+			}
+			var link="<?php echo base_url().'inventory_management/getOrderDetails' ?>";
+			//Get list of orders
+			var order_id=$("#picking_list_name").val();
+			$.ajax({
+			url : link,
+			type : 'POST',
+			dataType : 'json',
+			data: {"order_id":order_id},
+			success : function(data) {
+				var data_count=data.length;
+				var x=1;
+				var last_row=$('#drugs_table tr:last');
+				$.each(data, function(i, jsondata) {
+					var drug_id=data[i]['id'];
+					var resupply=data[i]['resupply'];
+					var pack_size=data[i]['pack_size'];
+					var drug_selected=last_row.find(".drug").val();
+					var cloned_object = $('#drugs_table tr:last').clone(true);
+					var drug_row = cloned_object.attr("drug_row");
+					var next_drug_row = parseInt(drug_row) + 1;
+					cloned_object.attr("drug_row", next_drug_row);
+					cloned_object.find(".remove").show();
+					var packs = cloned_object.find(".pack");
+					var expiry_id = "expiry_date_" + next_drug_row;
+					cloned_object.find(".drug").attr('value',drug_id);
+					cloned_object.find(".pack").attr('value',resupply);
+					cloned_object.find(".pack_size").attr('value',pack_size);
+					var expiry_selector = "#" + expiry_id;
+					$(expiry_selector).datepicker({
+						defaultDate : new Date(),
+						changeYear : true,
+						changeMonth : true
+					});
+					
+					//Validity check
+					if(!isNaN(pack_size) && pack_size.length > 0 && !isNaN(resupply) && resupply.length > 0) {
+						var qty=resupply * pack_size;
+						cloned_object.find(".quantity ").attr('value',qty);
+					}
+					cloned_object.insertAfter('#drugs_table tr:last');
+					refreshDatePickers();
+					if(x==data_count){
+						$('#drugs_table tbody tr:first').remove();
+					}
+					x++;
+					
+				});
+
+			}
+		});
+			
+			
+		});
 		
 		//Drug change
 		$("#select_drug").change(function(){
@@ -473,7 +547,39 @@
 			
 			//Before going any further, first calculate the number of drugs being recorded
 			var drugs_count = 0;
+			var batch_type=0;
+			//Check if transaction is coming in,validate batch number first
+			if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balance')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('ajustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1 ) {
+				//If transction is from Main Store to Pharmacy,get batch selected
+				if(trans_type.indexOf('received') != -1 && (selected_source.indexOf('mainstore')!= -1 || selected_source.indexOf('store')!= -1) && stock_type=='2'){
+					batch_type=1;
+				}
+				else{
+					batch_type=0;
+					
+				}
+			}
+			var c=0;
 			$.each($(".drug"), function(i, v) {
+				//Check if batch number was entered
+				if(batch_type==0){
+					if($(this).closest("tr").find(".batch").attr("value")=="" || $(this).closest("tr").find(".expiry ").attr("value")==""){
+						c=1;
+						alert("Please make sure you have entered a batch number and selected an expiry date for all drugs!");
+						return false;
+					}
+				}
+				//Check if batch number was selected
+				else if(batch_type==1){
+					if($(this).closest("tr").find(".batch").attr("value")==0){
+						c=1;
+						alert("Please make sure you have selected a batch number and selected an expiry date for all the drugs!");
+						return false;
+					}
+				}
+				
+				
+				
 				if($(this).attr("value")) {
 					drugs_count++;
 				}
@@ -493,6 +599,7 @@
 				}
 				else{
 					var batches = retrieveFormValues_Array('batch');
+					
 				}
 				
 			} 
@@ -539,6 +646,10 @@
 			var destination="";
 			var remaining_drugs=drugs_count;
 			for(var i = 0; i < drugs_count; i++) {
+				//Check if batch number was entered or selected for all drugs
+				if(c==1){
+					return false;
+				}
 				var _url="<?php echo base_url().'inventory_management/save'; ?>";
 				var get_qty_choice=quantity_choice;
 				var get_qty_out_choice=quantity_out_choice;
@@ -567,17 +678,31 @@
 			    request.always(function(data){
 					remaining_drugs-=1;
 					if(remaining_drugs==0){
-						//Set session after completing transactions
-						var _url="<?php echo base_url().'inventory_management/set_transaction_session'; ?>";
+					
+						//Update status for order, from dispatched to delivered
+						var order_id=$("#picking_list_name").val();
+						var _url="<?php echo base_url().'inventory_management/set_order_status'; ?>";
 						var request=$.ajax({
 							url: _url,
 						    type: 'post',
-						    data: {"remaining_drugs":remaining_drugs},
+						    data: {"order_id":order_id,"status":"4"},
 						    dataType: "json"
 						});
 						request.always(function(data){
-							window.location.replace('<?php echo base_url().'inventory_management'?>');
+							//Set session after completing transactions
+							var _url="<?php echo base_url().'inventory_management/set_transaction_session'; ?>";
+							var request=$.ajax({
+								url: _url,
+								type: 'post',
+								data: {"remaining_drugs":remaining_drugs},
+								dataType: "json"
+							});
+							request.always(function(data){
+								window.location.replace('<?php echo base_url().'inventory_management'?>');
+							});
 						});
+						
+						
 					}
 			    });
 			  
@@ -822,6 +947,23 @@
 								}
 								?>
 							</select>
+						</td>
+					</tr>
+					
+					<!-- Select from orders dispacthed -->
+					<tr class="t_picking_list"><th>Select Order </th></tr>
+					<tr class="t_picking_list">
+						<td>
+						<select id="picking_list_name" name="picking_list_name" class="input-large" >
+							<option value="0">-- Select One --</option>
+							<?php
+							foreach($picking_lists as $picking_list){
+							?>
+							<option value="<?php echo $picking_list['id'] ?>" ><?php echo $picking_list['id'] ?></option>
+							<?php
+							}
+							?>
+						</select>
 						</td>
 					</tr>
 					

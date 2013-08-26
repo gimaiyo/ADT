@@ -204,7 +204,11 @@ class Order_Management extends MY_Controller {
 		} elseif ($status == 3) {
 			$data['page_title'] = "Dispatched Orders";
 			$data['days_pending'] = "Delivery";
+		}elseif ($status == 4) {
+			$data['page_title'] = "Delivered Orders";
+			$data['days_pending'] = "Since Delivery";
 		}
+		
 		$facility = $this -> session -> userdata('facility');
 		$items_per_page = 10;
 		$number_of_orders = Facility_Order::getTotalFacilityNumber($status, $facility);
@@ -566,7 +570,7 @@ class Order_Management extends MY_Controller {
 					$cdrr_item -> Losses = $losses[$commodity_counter];
 					$cdrr_item -> Adjustments = $adjustments[$commodity_counter];
 					$cdrr_item -> Count = $physical_count[$commodity_counter];
-					$cdrr_item -> Resupply = $newresupply[$commodity_counter];
+					$cdrr_item -> Resupply = $resupply[$commodity_counter];
 					$cdrr_item -> Newresupply =$resupply[$commodity_counter];
 					//The following not required for fcdrrs
 					/*$cdrr_item->Aggr_Consumed = $opening_balances[$commodity_counter];

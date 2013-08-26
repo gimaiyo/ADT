@@ -9,7 +9,7 @@ class Suppliers extends Doctrine_Record {
 	}
 	
 	public function getAll() {
-		$query = Doctrine_Query::create() -> select("*") -> from("gender");
+		$query = Doctrine_Query::create() -> select("*") -> from("suppliers");
 		$gender = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
 		return $gender;
 	}
