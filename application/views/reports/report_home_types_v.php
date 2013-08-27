@@ -15,7 +15,7 @@
 				<option class="donor_date_range_report" value="getStartedonART">Number of Patients Started on ART in the Period</option>
 				<option class="annual_report" value="graph_patients_enrolled_in_year">Graph of Number of Patients Enrolled Per Month in a Given Year</option>
 				<option class="single_date_report" value="cumulative_patients">Cumulative Number of Patients to Date</option>
-				<option class="single_date_report" value="patient_active_byregimen">Number of Active Patients Receiving ART (by Regimen)</option>
+				<option class="single_date_report" value="service_statistics">Number of Active Patients Receiving ART (by Regimen)</option>
 				<option class="single_date_report" value="getFamilyPlanning">Family Planning Summary</option>
 				<option class="date_range_report" value="getIndications">Patient Indications Summary</option>
 				<option class="date_range_report" value="getTBPatients">TB Stages Summary</option>
@@ -46,7 +46,7 @@
 				<option class="date_range_report" value="patients_who_changed_regimen">Active Patients who Have Changed Regimens</option>
 				<option class="date_range_report" value="patients_starting">List of Patients Starting (By Regimen)</option>
 				<option class="date_range_report" value="early_warning_indicators">HIV Early Warning Indicators</option>
-				<option class="single_date_report" value="service_statistics">Service Statistics (By Regimen)</option>
+				<!--<option class="single_date_report" value="service_statistics">Service Statistics (By Regimen)</option>-->
 				<option class="single_date_report" value="getBMI">Patient BMI Summary</option>
 			</select></td>
 		</tr>
