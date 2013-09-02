@@ -1,11 +1,6 @@
 <script type="text/javascript">
 	
-	$(document).ready( function () {
-		
-		var stock_type=<?php echo $stock_type; ?>;
-		//var start_date=<?php echo $start_date; ?>;
-		//var end_date=<?php echo $end_date; ?>;
-		var base_url='<?php echo $base_url ?>';
+	$(document).ready( function () {	
 		var _url=<?php echo "'".$base_url."report_management/commodity_summary/".$stock_type."/".$start_date."/".$end_date."'"; ?>;
 		$('#drug_table').dataTable( {
 			"oTableTools": {
@@ -29,7 +24,7 @@
 		<h4 style="text-align: center">Monthly Report on Drug Stock for the Period From <span class="_date" id="start_date"><?php echo $start_date ?></span> To <span class="_date" id="end_date"><?php echo $end_date ?></span> - <?php echo $stock_type_n ?></h4>
 		<hr size="1" style="width:80%">
 		
-		<table id="drug_table" class="dataTables" style="font-size:0.8em" border="1">
+		<table id="drug_table" class="dataTables" style="font-size:0.8em" border="1" width="100%">
 			<thead>
 				<tr>
 					<th style="min-width: 300px">Drug Name</th><th>Beginning Balance </th>

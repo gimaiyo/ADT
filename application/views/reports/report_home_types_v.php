@@ -58,7 +58,7 @@
 				<option value="0" class="none">-- Select a Report  --</option>
 				<option id="drug_consumption" class="annual_report" value="stock_report/drug_consumption">Drug Consumption Report</option>
 				<option id="drug_stock_on_hand" class="no_filter" value="stock_report/drug_stock_on_hand">Drug Stock on Hand Report</option>
-				<option id="commodity_summary" class="date_range_report" value="commodity_summary">Facility Summary Commodity Report</option>
+				<option id="commodity_summary" class="date_range_report" value="stock_report/commodity_summary">Facility Summary Commodity Report</option>
 				<option id="expiring_drugs" class="no_filter" value="expiring_drugs">Short Dated Stocks &lt;6 Months to Expiry</option>
 				<option id="expired_drugs" class="no_filter" value="expired_drugs">List of Expired Drugs</option>
 				<option id="getFacilityConsumption" class="date_range_report" value="getFacilityConsumption">Stock Consumption</option>
