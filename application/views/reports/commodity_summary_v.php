@@ -1,4 +1,28 @@
+<script type="text/javascript">
+	
+	$(document).ready( function () {
+		
+		var stock_type=<?php echo $stock_type; ?>;
+		//var start_date=<?php echo $start_date; ?>;
+		//var end_date=<?php echo $end_date; ?>;
+		var base_url='<?php echo $base_url ?>';
+		var _url=<?php echo "'".$base_url."report_management/commodity_summary/".$stock_type."/".$start_date."/".$end_date."'"; ?>;
+		$('#drug_table').dataTable( {
+			"oTableTools": {
+				"sSwfPath": base_url+"assets/scripts/datatable/copy_csv_xls_pdf.swf",
+				"aButtons": [ "copy", "print","xls","pdf" ]
+			},
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": _url,
+	        "bJQueryUI": true,
+	        "sPaginationType": "full_numbers",
+			"bDestroy":true
+		} );
+		
+	} );
 
+</script>
 <div id="wrapperd">
 	<div id="commodity_summary" class="full-content">
 		<?php $this->load->view("reports/reports_top_menus_v") ?>
@@ -19,24 +43,7 @@
 					?>
 				</tr>
 			</thead>
-			<tbody>
-				<?php 
-				foreach ($drug_details as $drug) {
-					?>
-					<tr><td><?php echo $drug["drug_name"] ?></td><td><?php echo $drug["stock_status"] ?></td>
-						<?php
-						//Looping through every transaction
-						foreach($trans_names as $trans){
-							?>
-							<td><?php echo $drug[$trans['name']] ?></td>
-							<?php
-						}
-						?>
-					</tr>
-					<?php
-				}
-				?>
-			</tbody>
+			<tbody></tbody>
 		</table>
 	</div>
 </div>
