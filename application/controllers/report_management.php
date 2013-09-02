@@ -2336,6 +2336,7 @@ class report_management extends MY_Controller {
 				$this -> getSafetyStock($drug, $stock_status, $drug_name, $drug_unit, $drug_packsize, $facility_code, $stock_type, $start_date, $end_date, $transaction_names, $phys_count_id, $output, $row);
 			}
 			$batch_no = $batch_row['batch'];
+			//Check if there is a physical count
 			$initial_stock = "SELECT SUM( d.quantity ) AS Initial_stock, d.transaction_date AS transaction_date, '" . $batch_no . "' AS batch,'" . $k . "' AS counter FROM drug_stock_movement d WHERE d.drug =  '" . $drug . "' AND facility='" . $facility_code . "' " . $stock_param . " AND transaction_type =  '$phys_count_id' AND d.batch_number =  '" . $batch_no . "'";			
 			$initial_stock_sql = $this -> db -> query($initial_stock);
 			$initial_stock_array = $initial_stock_sql -> result_array();
@@ -2416,18 +2417,20 @@ class report_management extends MY_Controller {
 				$default_total_display = number_format($default_total, 1);
 				$row_string .= "<td align='center'>" . $default_total_display . "</td>";
 				//Put details for received drugs, return from patients,... in an array
-				$this -> commodity_details[$this -> count_rows][$trans_name] = $default_total_display;
+				//$this -> commodity_details[$this -> count_rows][$trans_name] = $default_total_display;
 
 				if ($counter == 0) {
+					//Add drug name
 					$row[0] = $first_row['drug_name'];
+					//Add begining balance
 					$row[1] = number_format($stock_status);
 				}
 				$row[] = $default_total_display;
 				$counter++;
 				if ($counter == 9) {
 					//After loopin through other columns, add Drug Name and stock status
-					$this -> commodity_details[$this -> count_rows]["drug_name"] = $first_row['drug_name'];
-					$this -> commodity_details[$this -> count_rows]["stock_status"] = number_format($stock_status);
+					//$this -> commodity_details[$this -> count_rows]["drug_name"] = $first_row['drug_name'];
+					//$this -> commodity_details[$this -> count_rows]["stock_status"] = number_format($stock_status);
 
 					$counter = 0;
 					$this -> count_rows++;

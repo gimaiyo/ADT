@@ -429,11 +429,65 @@ function syncOrders() {
 									synch_drug_movement_balance(2);
 								}
 								else if(stock_type==2){
-									$(".sync_complete").html("Synchronization successfully completed !<i class='icon-ok'></i>");
-									$(".modal-footer").css("display","block");
+									//$(".sync_complete").html("Synchronization successfully completed !<i class='icon-ok'></i>");
+									//$(".modal-footer").css("display","block");
+									drug_cons_synch();
 								}
 								
 							}
+						}
+					});
+				
+				});
+			}
+		});
+	}
+	
+	//Drug consumption balance
+	function drug_cons_synch(){
+		var base_url = $("#base_url").val();
+		$(".bar_dcb").css("width","0%");
+		$(".modal-footer").css("display","none");
+		//Get number total number of drugs
+		var _url=base_url+"drug_stock_balance_sync/get_drug_details_cons";
+		var stock_type=2;
+		$.ajax({
+			url : _url,
+			type : 'POST',
+			data : {
+				"check_if_malicious_posted" : "1"
+			},
+			success : function(data) {
+				console.log(data);
+				data = $.parseJSON(data);
+				//Count number of drugs
+				var count_drugs=data.count;
+				var remaining_drugs=1;
+				$.each(data.drugs,function(key,value){
+					
+					//Start synch
+					var drug_id=value.drug_id;
+					var period=value.period;
+					var total=value.total;
+					var link=base_url+"drug_stock_balance_sync/drug_consumption";
+					var div_width=(remaining_drugs/count_drugs)*100;
+					$.ajax({
+						url : link,
+						type : 'POST',
+						data : {
+							"check_if_malicious_posted" : "1","drug_id":drug_id,"stock_type":stock_type,"period":period,"total":total
+						},
+						success : function(data1) {
+							remaining_drugs+=1;
+							div_width1=(remaining_drugs/count_drugs)*100;
+							div_width=div_width1+"%";
+							$(".bar_dcb").css("width",div_width);
+							
+							if(remaining_drugs==count_drugs){
+								$(".sync_complete").html("Synchronization successfully completed !<i class='icon-ok'></i>");
+								$(".modal-footer").css("display","block");
+							}
+								
 						}
 					});
 				

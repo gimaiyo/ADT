@@ -121,6 +121,11 @@
 			  <div class="bar bar_dsm bar_pharmacy_dsm" style="width: 0%;">Pharmacy - Stock transactions</div> 
 			</div>
 			</p>
+			<p>
+		    <div class="progress progress_pharmacy_dsm progress-striped active">  
+			  <div class="bar bar_dcb" style="width: 0%;">Drug Consumption</div> 
+			</div>
+			</p>
 			<a class="sync_complete" href="#"></a>
 	    </div>  
 	    <div class="modal-footer">

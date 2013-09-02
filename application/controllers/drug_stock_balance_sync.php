@@ -110,7 +110,8 @@ class Drug_stock_balance_sync extends MY_Controller {
 			}
 
 	}
-
+	
+	//Synchronizes drug stock moment balance
 	public function drug_stock_movement_balance(){
 		$stock_type=$this->input->post("stock_type");
 		$drug_id=$this->input->post("drug_id");
@@ -148,17 +149,27 @@ class Drug_stock_balance_sync extends MY_Controller {
 		
 	}
 	
+	//Get drug details for drug consumpition balance table
+	public function get_drug_details_cons(){
+		$check=$this->input->post('check_if_malicious_posted');
+		if($check!=""){
+			$get_consumption=$this->db->query("SELECT drug_id,'2',DATE_FORMAT(dispensing_date,'%Y-%m-01') as period, SUM( quantity ) AS total FROM  `patient_visit`  GROUP BY drug_id,period ORDER BY  `patient_visit`.`drug_id`");
+			$get_cons_array=$get_consumption->result_array();
+			$data['drugs']=$get_cons_array;
+			$data['count']=count($get_cons_array);
+			echo json_encode($data);
+		}
+		
+	}
+	
 	//Drug consumption balance
 	public function drug_consumption(){
 		$facility_code = $this -> session -> userdata('facility');
-		$get_consumption=$this->db->query("SELECT drug_id,'2',DATE_FORMAT(dispensing_date,'%Y-%m-01') as period, SUM( quantity ) AS total FROM  `patient_visit`  GROUP BY drug_id,period ORDER BY  `patient_visit`.`drug_id`");
-		$get_cons_array=$get_consumption->result_array();
-		foreach ($get_cons_array as $value) {
-			$drug_id=$value['drug_id'];
-			$period=$value['period'];
-			$total=$value['total'];
-			$get_consumption=$this->db->query("INSERT INTO drug_cons_balance(drug_id,stock_type,period,facility,amount) VALUES('$drug_id','2','$period','$facility_code','$total') ON DUPLICATE KEY UPDATE amount='$total',facility='$facility_code'");
-		}
+		$drug_id=$this->input->post('drug_id');
+		$period=$this->input->post('period');
+		$total=$this->input->post('total');
+		$get_consumption=$this->db->query("INSERT INTO drug_cons_balance(drug_id,stock_type,period,facility,amount) VALUES('$drug_id','2','$period','$facility_code','$total') ON DUPLICATE KEY UPDATE amount='$total',facility='$facility_code'");
+		
 	}
 
 	//Update balances in drug_stock_balance
