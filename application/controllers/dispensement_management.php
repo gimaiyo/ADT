@@ -124,6 +124,7 @@ class Dispensement_Management extends MY_Controller {
 	}
 
 	public function save() {
+		$period=date("M-Y");
 		$record_no = $this->session->userdata('record_no');
 		$next_appointment_date = $this -> input -> post("next_appointment_date");
 		$last_appointment_date = $this -> input -> post("last_appointment_date");
@@ -153,6 +154,7 @@ class Dispensement_Management extends MY_Controller {
 		$regimen_change_reason = $this -> input -> post("regimen_change_reason");
 		$non_adherence_reasons = $this -> input -> post("non_adherence_reasons");
 		$timestamp = date('U');
+		$period=date("Y-m-01");
 		$user = $this -> session -> userdata("username");
 		$adherence = $this -> input -> post("adherence");
 		//Get transaction type
@@ -186,6 +188,9 @@ class Dispensement_Management extends MY_Controller {
 			$sql .= "insert into patient_visit (patient_id, visit_purpose, current_height, current_weight, regimen, regimen_change_reason, drug_id, batch_number, brand, indication, pill_count, comment, `timestamp`, user, facility, dose, dispensing_date, dispensing_date_timestamp,quantity,duration,adherence,missed_pills,non_adherence_reason,months_of_stock) VALUES ('$patient','$purpose', '$height', '$weight', '$current_regimen', '$regimen_change_reason', '$drugs[$i]', '$batch[$i]', '$brand[$i]', '$indication[$i]', '$pill_count[$i]','$comment[$i]', '$timestamp', '$user','$facility', '$dose[$i]','$dispensing_date', '$dispensing_date_timestamp','$quantity[$i]','$duration[$i]','$adherence','$missed_pill[$i]','$non_adherence_reasons','$mos[$i]');";
 			$sql .= "insert into drug_stock_movement (drug, transaction_date, batch_number, transaction_type,source,destination,expiry_date,quantity, quantity_out,balance, facility,`timestamp`) VALUES ('$drugs[$i]','$dispensing_date','$batch[$i]','$transaction_type','$facility','$facility','$expiry[$i]',0,'$quantity[$i]',$remaining_balance,'$facility','$dispensing_date_timestamp');";
 			$sql .= "update drug_stock_balance SET balance=balance - '$quantity[$i]' WHERE drug_id='$drugs[$i]' AND batch_number='$batch[$i]' AND expiry_date='$expiry[$i]' AND stock_type='2' AND facility_code='$facility';";
+			
+			$sql.="INSERT INTO drug_cons_balance(drug_id,stock_type,period,facility,amount) VALUES('$drugs[$i]','2','$period','$facility','$quantity[$i]') ON DUPLICATE KEY UPDATE amount=amount+'$quantity[$i]';";
+			
 		}
 		$queries = explode(";", $sql);
 		$count = count($queries);

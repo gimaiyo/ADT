@@ -359,6 +359,7 @@ class Inventory_Management extends MY_Controller {
 		$drug_destination=Drug_Destination::getAll();
 		$satelittes=facilities::getSatellites($facility_code);
 		$data['supplier_name']=$facility_detail->supplier->name;
+		$data['picking_lists']=facility_order::getPickingList('3',$facility_code);
 		$data['satelittes']=$satelittes;
 		$data['user_id']=$user_id;
 		$data['facility']=$facility_code;
@@ -704,6 +705,23 @@ class Inventory_Management extends MY_Controller {
 		if($results){
 		echo json_encode($results);
 		}
+	}
+	
+	//Get orders for a picking list
+	public function getOrderDetails(){
+		$order_id=$this->input->post("order_id");
+		$sql=$this->db->query("SELECT dc.id,dc.pack_size,ci.drug_id,ci.newresupply,ci.resupply FROM cdrr_item ci LEFT JOIN drugcode dc ON dc.drug=ci.drug_id LEFT JOIN facility_order fo ON fo.unique_id=ci.cdrr_id WHERE fo.id='$order_id'");
+		$order_list=$sql->result_array();
+		echo json_encode($order_list);
+	}
+	
+	//Set order status
+	public function set_order_status(){
+		$order_id=$this->input->post("order_id");
+		$status=$this->input->post("status");
+		$updated_on = date("U");
+		$this->db->query("UPDATE facility_order SET status='$status',updated='$updated_on' WHERE id='$order_id'");
+		
 	}
 	public function base_params($data) {
 		$data['title'] = "webADT | Inventory";
