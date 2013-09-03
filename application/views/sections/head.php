@@ -3,5 +3,6 @@
 <title><?php echo $title; ?></title>
 <link rel="SHORTCUT ICON" href="<?php echo asset_url().'Images/favicon.ico'?>">
 
-
+<link rel="stylesheet" href="<?php echo asset_url().'styles/style.css'?>">
 <?php echo $this->session->userdata('assets'); ?>
+
