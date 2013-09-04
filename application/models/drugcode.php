@@ -70,6 +70,11 @@ class Drugcode extends Doctrine_Record {
 		$drugsandcodes = $query -> execute();
 		return $drugsandcodes;
 	}
+	public function getEnabledDrugs() {
+		$query = Doctrine_Query::create() -> select("id,Drug") -> from("Drugcode") -> where("Enabled='1'");
+		$drugsandcodes = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
+		return $drugsandcodes;
+	}
 
 	public function getTotalNumber($source = 0) {
 		$query = Doctrine_Query::create() -> select("count(*) as Total_Drugs") -> from("Drugcode") -> where('Source = "' . $source . '" or Source ="0"');
@@ -93,9 +98,6 @@ class Drugcode extends Doctrine_Record {
 		$drugs = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
 		return $drugs;
 	}
-	
-	
-
 	public function deleteBrand($id){
 		$query = Doctrine_Query::create()->delete('brand b')->where("b.id ='$id'");
 		$rows = $query->execute();

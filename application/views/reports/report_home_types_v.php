@@ -12,9 +12,12 @@
 				var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
 				month = parseInt(month);
 				var last_day_month = LastDayOfMonth(year, month + 1);
-				$("#period_start_date").val("01");
-				$("#period_end_date").val(last_day_month);
 				$(this).datepicker('setDate', new Date(year, month, 1));
+				month=month + 1;
+				month=("0" +month).slice(-2);
+				$("#period_start_date").val(year+"-"+month+"-01");
+				$("#period_end_date").val(year+"-"+month+"-"+last_day_month);
+				
 			}
 		});
 		$('#reporting_period').focusin(function() {
@@ -28,7 +31,7 @@
 </script>
 <style>
 	select {
-		width: auto;
+		width: 100%;
 	}
 </style>
 <div id="standard_report_sub">
@@ -176,17 +179,17 @@
 					<td class="show_report_type"><label>Select Report Type :</label></td>
 					<td class="show_report_type">
 					<select name="commodity_summary_report_type" id="commodity_summary_report_type" class="report_type input-large">
-						<option value="0">-- Select Report Type --</option>
-						<option value="1">Main Store</option>
+						<!--<option value="0">-- Select Report Type --</option>-->
+						<option value="1" selected="selected">Main Store</option>
 						<option value="2">Pharmacy</option>
 					</select></td>
 					<td>
 					<input class="_green" name="reporting_period" id="reporting_period" type="text" placeholder="Select Period">
-					<input name="date_range_from" id="date_range_from" type="hidden">
-					<input name="date_range_to" id="date_range_to" type="hidden">
+					<input name="date_range_from" id="period_start_date" type="hidden">
+					<input name="date_range_to" id="period_end_date" type="hidden">
 					</td>
 					<td>
-					<input type="button" id="generate_date_range_report" class="btn generate_btn" value="Generate Report">
+					<input type="button" id="generate_month_range_report" class="btn generate_btn" value="Generate Report">
 					</td>
 				</tr>
 			</table>

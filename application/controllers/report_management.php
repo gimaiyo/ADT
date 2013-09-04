@@ -18,6 +18,72 @@ class report_management extends MY_Controller {
 		$this -> listing();
 	}
 
+	public function getHelp($stock_type = '2', $start_date = '2013-08-01', $end_date = '2013-08-31') {
+		/*
+		 * Loop through all respective transaction types and add beginning balance at the beginning
+		 * Outer Loop through all active drugs
+		 * Inner Loop through all respective transaction types for the outer drug
+		 */
+
+		if ($stock_type == 1) {
+			//Main Store
+			$first_value = "AND source != destination";
+			$second_value = "AND dst.source != dst.destination";
+		} else if ($stock_type == 2) {
+			//Pharmacy
+			$first_value = "AND source=destination";
+			$second_value = "AND dst.source=dst.destination";
+		}
+
+		$drugs = Drugcode::getEnabledDrugs();
+		$transactions = Transaction_Type::getAllTypes();
+		$overall_array = array();
+		$trans_sections = array();
+		$prev_start = date("Y-m-d", strtotime("-1 month", strtotime($start_date)));
+		$prev_end = date("Y-m-d", strtotime("-1 month", strtotime($end_date)));
+		$trans_sections['Beginning Balance'] = 0;
+		foreach ($transactions as $transaction) {
+			$trans_sections[$transaction['Name']] = $transaction['id'];
+		}
+		foreach ($drugs as $drug) {
+			$drug_id = $drug['id'];
+			$drug_name = $drug['Drug'];
+			foreach ($trans_sections as $section_index => $sections) {
+				if ($sections == 0) {
+					/*
+					 * Runs when transaction is beginngin balance
+					 * Get Beginning Balance of drug
+					 */
+					$sql = "SELECT SUM( dst.balance ) AS total FROM drug_stock_movement dst, (SELECT drug, batch_number, MAX( transaction_date ) AS trans_date FROM  `drug_stock_movement` WHERE transaction_date BETWEEN  '$prev_start' AND  '$prev_end' AND drug ='$drug_id' $first_value GROUP BY batch_number) AS temp WHERE dst.drug = temp.drug AND dst.batch_number = temp.batch_number AND dst.transaction_date = temp.trans_date $second_value";
+				} else {
+					$effect = Transaction_Type::getEffect($sections);
+					if ($effect['Effect'] == 1) {
+						$balance_value = "quantity";
+					} else {
+						$balance_value = "quantity_out";
+					}
+					$sql = "SELECT SUM($balance_value) AS total FROM  `drug_stock_movement` WHERE transaction_date BETWEEN  '$start_date' AND  '$end_date' $first_value AND transaction_type ='$sections' AND drug='$drug_id'";
+				}
+				$query = $this -> db -> query($sql);
+				$results = $query -> result_array();
+				if ($results) {
+					if ($results[0]['total'] != null) {
+						$overall_array[$drug_name][$section_index] = $results[0]['total'];
+					} else {
+						$overall_array[$drug_name][$section_index] =0;
+					}
+				} else {
+					$overall_array[$drug_name][$section_index] = 0;
+				}
+			}
+		}
+
+		echo "<pre>";
+		print_r($overall_array);
+		echo "</pre>";
+
+	}
+
 	public function listing($data = "") {
 		$data['content_view'] = "report_v";
 		$this -> base_params($data);
@@ -1845,8 +1911,8 @@ class report_management extends MY_Controller {
 			$get_transaction_names = $this -> db -> query("SELECT id,name,effect FROM transaction_type WHERE name LIKE '%received%' OR name LIKE '%adjustment%' OR name LIKE '%return%' OR name LIKE '%dispense%' OR name LIKE '%issue%' OR name LIKE '%loss%' OR name LIKE '%ajustment%' OR name LIKE '%physical%count%' OR name LIKE '%starting%stock%' ");
 			$get_transaction_array = $get_transaction_names -> result_array();
 			$data['trans_names'] = $get_transaction_array;
-			$data['start_date'] = $this -> uri -> segment(5);
-			$data['end_date'] = $this -> uri -> segment(6);
+			$data['start_date'] = date('d-M-Y', strtotime($this -> uri -> segment(5)));
+			$data['end_date'] = date('d-M-Y', strtotime($this -> uri -> segment(6)));
 			$data['report_title'] = "Facility Commodity Summary";
 			$data['content_view'] = 'reports/commodity_summary_v';
 
@@ -2164,17 +2230,17 @@ class report_management extends MY_Controller {
 
 	public function commodity_summary($stock_type = "1", $start_date = "", $end_date = "") {
 
-		$start_date = date('Y-m-d', strtotime($start_date));
-		$end_date = date('Y-m-d', strtotime($end_date));
+		//$start_date = date('Y-m-d', strtotime($start_date));
+		//$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
 		$data['facility_name'] = $this -> session -> userdata('facility_name');
 		//Get All Drugs,Unit Size and Pack size
-		$sql="SELECT '$facility_code' as facility,d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id where d.Enabled=1";
+		$sql = "SELECT '$facility_code' as facility,d.id as id,drug, pack_size, name from drugcode d left join drug_unit u on d.unit = u.id where d.Enabled=1";
 		$get_facility_sql = $this -> db -> query($sql);
 		$get_commodity_array = $get_facility_sql -> result_array();
 
 		//Get transaction names
-		$sql="SELECT id,name,effect FROM transaction_type WHERE name LIKE '%received%' OR name LIKE '%adjustment%' OR name LIKE '%return%' OR name LIKE '%dispense%' OR name LIKE '%issue%' OR name LIKE '%loss%' OR name LIKE '%ajustment%' OR name LIKE '%physical%count%' OR name LIKE '%starting%stock%'";
+		$sql = "SELECT id,name,effect FROM transaction_type WHERE name LIKE '%received%' OR name LIKE '%adjustment%' OR name LIKE '%return%' OR name LIKE '%dispense%' OR name LIKE '%issue%' OR name LIKE '%loss%' OR name LIKE '%ajustment%' OR name LIKE '%physical%count%' OR name LIKE '%starting%stock%'";
 		$get_transaction_names = $this -> db -> query($sql);
 		$get_transaction_array = $get_transaction_names -> result_array();
 
@@ -2237,7 +2303,7 @@ class report_management extends MY_Controller {
 		$this -> db -> join("drug_unit u", "u.id=dc.unit", 'left outer');
 		$this -> db -> where("dc.Enabled", 1);
 		$rResult = $this -> db -> get();
-		
+
 		// Data set length after filtering
 		$this -> db -> select('FOUND_ROWS() AS found_rows');
 		$iFilteredTotal = $this -> db -> get() -> row() -> found_rows;
@@ -2262,7 +2328,7 @@ class report_management extends MY_Controller {
 			$this -> com_summary = "";
 
 		}
-		$output['aaData'] = array_filter($output['aaData']); 
+		$output['aaData'] = array_filter($output['aaData']);
 		$output['aaData'] = array_values($output['aaData']);
 		//echo "<pre>";
 		//print_r($output);
@@ -2327,7 +2393,7 @@ class report_management extends MY_Controller {
 		$k = 0;
 		$batch_status_row_string = "";
 		//Query to get all batches that have not expired
-		$all_batches = "SELECT DISTINCT d.batch_number AS batch FROM drug_stock_balance d WHERE d.drug_id =  '" . $drug . "' AND expiry_date > '" . $start_date . "' AND facility_code='" . $facility_code . "' AND stock_type='" . $stock_type . "' GROUP BY d.batch_number";	
+		$all_batches = "SELECT DISTINCT d.batch_number AS batch FROM drug_stock_balance d WHERE d.drug_id =  '" . $drug . "' AND expiry_date > '" . $start_date . "' AND facility_code='" . $facility_code . "' AND stock_type='" . $stock_type . "' GROUP BY d.batch_number";
 		$get_batches_sql = $this -> db -> query($all_batches);
 		$get_batches_array = $get_batches_sql -> result_array();
 		$get_batches_count = count($get_batches_array);
@@ -2337,7 +2403,7 @@ class report_management extends MY_Controller {
 			}
 			$batch_no = $batch_row['batch'];
 			//Check if there is a physical count
-			$initial_stock = "SELECT SUM( d.quantity ) AS Initial_stock, d.transaction_date AS transaction_date, '" . $batch_no . "' AS batch,'" . $k . "' AS counter FROM drug_stock_movement d WHERE d.drug =  '" . $drug . "' AND facility='" . $facility_code . "' " . $stock_param . " AND transaction_type =  '$phys_count_id' AND d.batch_number =  '" . $batch_no . "'";			
+			$initial_stock = "SELECT SUM( d.quantity ) AS Initial_stock, d.transaction_date AS transaction_date, '" . $batch_no . "' AS batch,'" . $k . "' AS counter FROM drug_stock_movement d WHERE d.drug =  '" . $drug . "' AND facility='" . $facility_code . "' " . $stock_param . " AND transaction_type =  '$phys_count_id' AND d.batch_number =  '" . $batch_no . "'";
 			$initial_stock_sql = $this -> db -> query($initial_stock);
 			$initial_stock_array = $initial_stock_sql -> result_array();
 			foreach ($initial_stock_array as $physical_row) {
