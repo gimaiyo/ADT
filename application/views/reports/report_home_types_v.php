@@ -1,6 +1,34 @@
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#reporting_period").datepicker({
+			yearRange : "-120:+0",
+			maxDate : "0D",
+			changeMonth : true,
+			changeYear : true,
+			showButtonPanel : true,
+			dateFormat : 'MM-yy',
+			onClose : function(dateText, inst) {
+				var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+				var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+				month = parseInt(month);
+				var last_day_month = LastDayOfMonth(year, month + 1);
+				$("#period_start_date").val("01");
+				$("#period_end_date").val(last_day_month);
+				$(this).datepicker('setDate', new Date(year, month, 1));
+			}
+		});
+		$('#reporting_period').focusin(function() {
+			$('.ui-datepicker-calendar').hide();
+		});
+		
+	});
+	function LastDayOfMonth(Year, Month) {
+		return (new Date((new Date(Year, Month, 1)) - 1)).getDate();
+	}
+</script>
 <style>
-	select{
-		width:auto;
+	select {
+		width: auto;
 	}
 </style>
 <div id="standard_report_sub">
@@ -9,7 +37,7 @@
 		<tr id="standard_report_row" class="reports_types">
 			<td><label >Select Report </label></td>
 			<td>
-			<select id="standard_report_select" class="input-large select_report">
+			<select id="standard_report_select" class="input-xlarge select_report">
 				<option  value="0" class="none">-- Select a Report  --</option>
 				<option class="donor_date_range_report" value="patient_enrolled">Number of Patients Enrolled in Period</option>
 				<option class="donor_date_range_report" value="getStartedonART">Number of Patients Started on ART in the Period</option>
@@ -27,7 +55,7 @@
 		<tr id="visiting_patient_report_row" class="reports_types">
 			<td><label >Select Report </label></td>
 			<td>
-			<select id="visiting_patient_report_select" class="input-large select_report">
+			<select id="visiting_patient_report_select" class="input-xlarge select_report">
 				<option value="0" class="none">-- Select a Report  --</option>
 				<option class="date_range_report" value="getScheduledPatients">List of Patients Scheduled to Visit</option>
 				<option class="date_range_report" value="getPatientsStartedonDate">List of Patients Started (on a Particular Date)</option>
@@ -41,7 +69,7 @@
 		<tr id="early_warning_report_row" class="reports_types">
 			<td><label >Select Report </label></td>
 			<td>
-			<select id="early_warning_report_select" class="input-large select_report">
+			<select id="early_warning_report_select" class="input-xlarge select_report">
 				<option value="0" class="none">-- Select a Report  --</option>
 				<option class="date_range_report" value="patients_who_changed_regimen">Active Patients who Have Changed Regimens</option>
 				<option class="date_range_report" value="patients_starting">List of Patients Starting (By Regimen)</option>
@@ -54,11 +82,11 @@
 		<tr id="drug_inventory_report_row" class="reports_types">
 			<td><label >Select Report </label></td>
 			<td>
-			<select id="drug_inventory_report__select" class="input-large select_report">
+			<select id="drug_inventory_report__select" class="input-xlarge select_report">
 				<option value="0" class="none">-- Select a Report  --</option>
 				<option id="drug_consumption" class="annual_report" value="stock_report/drug_consumption">Drug Consumption Report</option>
 				<option id="drug_stock_on_hand" class="no_filter" value="stock_report/drug_stock_on_hand">Drug Stock on Hand Report</option>
-				<option id="commodity_summary" class="date_range_report" value="stock_report/commodity_summary">Facility Summary Commodity Report</option>
+				<option id="commodity_summary" class="month_range_report" value="stock_report/commodity_summary">Facility Summary Commodity Report</option>
 				<option id="expiring_drugs" class="no_filter" value="expiring_drugs">Short Dated Stocks &lt;6 Months to Expiry</option>
 				<option id="expired_drugs" class="no_filter" value="expired_drugs">List of Expired Drugs</option>
 				<option id="getFacilityConsumption" class="date_range_report" value="getFacilityConsumption">Stock Consumption</option>
@@ -136,6 +164,26 @@
 					<td><label >To: </label></td>
 					<td>
 					<input type="text" name="date_range_to" id="date_range_to" class="input-medium input_dates_to">
+					</td>
+					<td>
+					<input type="button" id="generate_date_range_report" class="btn generate_btn" value="Generate Report">
+					</td>
+				</tr>
+			</table>
+			<!-- Report Month range -->
+			<table id="month_range_report" class="select_types">
+				<tr>
+					<td class="show_report_type"><label>Select Report Type :</label></td>
+					<td class="show_report_type">
+					<select name="commodity_summary_report_type" id="commodity_summary_report_type" class="report_type input-large">
+						<option value="0">-- Select Report Type --</option>
+						<option value="1">Main Store</option>
+						<option value="2">Pharmacy</option>
+					</select></td>
+					<td>
+					<input class="_green" name="reporting_period" id="reporting_period" type="text" placeholder="Select Period">
+					<input name="date_range_from" id="date_range_from" type="hidden">
+					<input name="date_range_to" id="date_range_to" type="hidden">
 					</td>
 					<td>
 					<input type="button" id="generate_date_range_report" class="btn generate_btn" value="Generate Report">
