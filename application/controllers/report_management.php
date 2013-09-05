@@ -18,6 +18,73 @@ class report_management extends MY_Controller {
 		$this -> listing();
 	}
 
+	public function getMoreHelp($stock_type = '2', $start_date = '2013-08-01', $end_date = '2013-08-31') {
+		/*
+		 * Outer Loop through all active drugs
+		 */
+		if ($stock_type == 1) {
+			//Main Store
+			$first_value = "AND source != destination";
+			$second_value = "AND dst.source != dst.destination";
+		} else if ($stock_type == 2) {
+			//Pharmacy
+			$first_value = "AND source=destination";
+			$second_value = "AND dst.source=dst.destination";
+		}
+		$drugs = Drugcode::getEnabledDrugs();
+		$overall_array = array();
+		$prev_start = date("Y-m-d", strtotime("-1 month", strtotime($start_date)));
+		$prev_end = date("Y-m-d", strtotime("-1 month", strtotime($end_date)));
+
+		foreach ($drugs as $drug) {
+			$drug_id = $drug['id'];
+			$drug_name = $drug['Drug'];
+			//Start of Beginning Balance
+			$sql = "SELECT SUM( dst.balance ) AS total FROM drug_stock_movement dst, (SELECT drug, batch_number, MAX( transaction_date ) AS trans_date FROM  `drug_stock_movement` WHERE transaction_date BETWEEN  '$prev_start' AND  '$prev_end' AND drug ='$drug_id' $first_value GROUP BY batch_number) AS temp WHERE dst.drug = temp.drug AND dst.batch_number = temp.batch_number AND dst.transaction_date = temp.trans_date $second_value";
+			$query = $this -> db -> query($sql);
+			$results = $query -> result_array();
+			if ($results) {
+				if ($results[0]['total'] != null) {
+					$overall_array[$drug_name]["Beginning Balance"] = $results[0]['total'];
+				} else {
+					$overall_array[$drug_name]["Beginning Balance"] = 0;
+				}
+			} else {
+				$overall_array[$drug_name]["Beginning Balance"] = 0;
+			}
+			//End of Beginning Balance
+			//Start of Other Transactions
+			$sql = "SELECT trans.name, trans.id, trans.effect, dsm.in_total, dsm.out_total FROM (SELECT id, name, effect FROM transaction_type WHERE name LIKE  '%received%' OR name LIKE  '%adjustment%' OR name LIKE  '%return%' OR name LIKE  '%dispense%' OR name LIKE  '%issue%' OR name LIKE  '%loss%' OR name LIKE  '%ajustment%' OR name LIKE  '%physical%count%' OR name LIKE  '%starting%stock%') AS trans LEFT JOIN (SELECT transaction_type, SUM( quantity ) AS in_total, SUM( quantity_out ) AS out_total FROM drug_stock_movement WHERE transaction_date BETWEEN  '$start_date' AND  '$end_date' AND drug =  '$drug_id' $first_value GROUP BY transaction_type) AS dsm ON trans.id = dsm.transaction_type GROUP BY trans.name";
+			$query = $this -> db -> query($sql);
+			$results = $query -> result_array();
+			if ($results) {
+				foreach ($results as $result) {
+					$effect = $result['effect'];
+					$trans_name = $result['name'];
+					if ($effect == 1) {
+						if ($result['in_total'] != null) {
+							$total = $result['in_total'];
+						} else {
+							$total = 0;
+						}
+					} else {
+						if ($result['out_total'] != null) {
+							$total = $result['out_total'];
+						} else {
+							$total = 0;
+						}
+					}
+					$overall_array[$drug_name][$trans_name] = $total;
+				}
+			}
+			//End of Other Transactions
+		}
+		echo "<pre>";
+		print_r($overall_array);
+		echo "</pre>";
+
+	}
+
 	public function getHelp($stock_type = '2', $start_date = '2013-08-01', $end_date = '2013-08-31') {
 		/*
 		 * Loop through all respective transaction types and add beginning balance at the beginning
@@ -56,13 +123,14 @@ class report_management extends MY_Controller {
 					 */
 					$sql = "SELECT SUM( dst.balance ) AS total FROM drug_stock_movement dst, (SELECT drug, batch_number, MAX( transaction_date ) AS trans_date FROM  `drug_stock_movement` WHERE transaction_date BETWEEN  '$prev_start' AND  '$prev_end' AND drug ='$drug_id' $first_value GROUP BY batch_number) AS temp WHERE dst.drug = temp.drug AND dst.batch_number = temp.batch_number AND dst.transaction_date = temp.trans_date $second_value";
 				} else {
-					$effect = Transaction_Type::getEffect($sections);
-					if ($effect['Effect'] == 1) {
-						$balance_value = "quantity";
-					} else {
-						$balance_value = "quantity_out";
-					}
-					$sql = "SELECT SUM($balance_value) AS total FROM  `drug_stock_movement` WHERE transaction_date BETWEEN  '$start_date' AND  '$end_date' $first_value AND transaction_type ='$sections' AND drug='$drug_id'";
+					 $effect = Transaction_Type::getEffect($sections);
+					 if ($effect['Effect'] == 1) {
+					 $balance_value = "quantity";
+					 } else {
+					 $balance_value = "quantity_out";
+					 }
+					 $sql = "SELECT SUM($balance_value) AS total FROM  `drug_stock_movement` WHERE transaction_date BETWEEN  '$start_date' AND  '$end_date' $first_value AND transaction_type ='$sections' AND drug='$drug_id'";
+					
 				}
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
@@ -70,7 +138,7 @@ class report_management extends MY_Controller {
 					if ($results[0]['total'] != null) {
 						$overall_array[$drug_name][$section_index] = $results[0]['total'];
 					} else {
-						$overall_array[$drug_name][$section_index] =0;
+						$overall_array[$drug_name][$section_index] = 0;
 					}
 				} else {
 					$overall_array[$drug_name][$section_index] = 0;
