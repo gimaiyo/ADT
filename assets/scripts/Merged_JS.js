@@ -302,7 +302,7 @@ function syncOrders() {
  */
 function synch_drug_balance(stock_type) {
 	var base_url = $("#base_url").val();
-	
+	$(".bar_dsb").css("width", "0%");
 	//Get number total number of drugs
 	var _url = base_url + "drug_stock_balance_sync/getDrugs";
 	var stock_type = stock_type;

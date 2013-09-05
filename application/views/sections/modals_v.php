@@ -108,12 +108,12 @@
 			</p>
 		    <p> 
 		    <div class="progress progress_store progress-striped active">  
-			  <div class="bar bar_store" style="width: 0%;">Main Store - Stock balance</div> 
+			  <div class="bar bar_dsb bar_store" style="width: 0%;">Main Store - Stock balance</div> 
 			</div>  
 			</p> 
 			<p>
 		    <div class="progress progress_pharmacy progress-striped active">  
-			  <div class="bar bar_pharmacy" style="width: 0%;">Pharmacy - Stock balance</div> 
+			  <div class="bar bar_dsb bar_pharmacy" style="width: 0%;">Pharmacy - Stock balance</div> 
 			</div>
 			</p>
 			 <p> 
