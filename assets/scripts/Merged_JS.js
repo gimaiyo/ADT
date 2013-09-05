@@ -78,7 +78,17 @@ $(document).ready(function() {
 					if($(".report_type").is(":visible")) {
 						report = report + "/" + $(".report_type:visible").attr("value");
 					}
+					var report_url = base_url + "report_management/" + report + "/" + from + "/" + to;
+					window.location = report_url;
+				}else if(id == "generate_month_range_report") {
 
+					var report = $(".select_report:visible").attr("value");
+					var from = $("#period_start_date").attr("value");
+					var to = $("#period_end_date").attr("value");
+					//Check if report type has to be added on the link
+					if($(".report_type").is(":visible")) {
+						report = report + "/" + $(".report_type:visible").attr("value");
+					}
 					var report_url = base_url + "report_management/" + report + "/" + from + "/" + to;
 					window.location = report_url;
 				} else if(id == "generate_single_date_report") {
