@@ -242,7 +242,7 @@ if($menus){
 <div  class="btn-group" id="div_profile" >
 	<a href="#" class="top_menu_link btn dropdown-toggle" data-toggle="dropdown"  id="my_profile"><i class="icon-user icon-black"></i> Profile  <span class="caret"></span></a>
 	<ul class="dropdown-menu" id="profile_list" role="menu">
-		<li><a href="#drug_stock_balance_synch" data-toggle="modal"><i class="icon-edit"></i> Edit Profile</a></li>
+		<li><a href="#edit_user_profile" data-toggle="modal"><i class="icon-edit"></i> Edit Profile</a></li>
 		<li id="change_password_link"><a href="#user_change_pass" data-toggle="modal"><i class=" icon-asterisk"></i> Change Password</a></li>
 	</ul>
 </div>
