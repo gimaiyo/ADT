@@ -302,9 +302,7 @@ function syncOrders() {
  */
 function synch_drug_balance(stock_type) {
 	var base_url = $("#base_url").val();
-	$(".bar").css("width", "0%");
-	$(".sync_complete").html("");
-	$(".modal-footer").css("display", "none");
+	
 	//Get number total number of drugs
 	var _url = base_url + "drug_stock_balance_sync/getDrugs";
 	var stock_type = stock_type;
@@ -444,6 +442,9 @@ function synch_drug_movement_balance(stock_type) {
 //Drug consumption balance
 function drug_cons_synch() {
 	var base_url = $("#base_url").val();
+	$(".bar").css("width", "0%");
+	$(".sync_complete").html("");
+	$(".modal-footer").css("display", "none");
 	$(".bar_dcb").css("width", "0%");
 	$(".modal-footer").css("display", "none");
 	//Get number total number of drugs
