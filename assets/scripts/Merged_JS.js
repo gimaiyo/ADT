@@ -568,7 +568,7 @@ $(document).ready(function() {
 				} else if(id == "generate_month_range_report") {
 					var report = $(".select_report:visible").attr("value");
 					var from = $("#period_start_date").attr("value");
-					var to = $("#date_range_to").attr("value");
+					var to = $("#period_end_date").attr("value");
 					if($(".report_type").is(":visible")) {
 						report = report + "/" + $(".report_type:visible").attr("value");
 					}

@@ -17,7 +17,6 @@
 				month=("0" +month).slice(-2);
 				$("#period_start_date").val(year+"-"+month+"-01");
 				$("#period_end_date").val(year+"-"+month+"-"+last_day_month);
-				
 			}
 		});
 		$('#reporting_period').focusin(function() {
