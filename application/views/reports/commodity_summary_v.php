@@ -1,7 +1,7 @@
 <script type="text/javascript">
 	
 	$(document).ready( function () {	
-		var _url=<?php echo "'".$base_url."report_management/commodity_summary/".$stock_type."/".$start_date."/".$end_date."'"; ?>;
+		var _url=<?php echo "'".$base_url."report_management/getMoreHelp/".$stock_type."/".$start_date."/".$end_date."'"; ?>;
 		$('#drug_table').dataTable( {
 			"oTableTools": {
 				"sSwfPath": base_url+"assets/scripts/datatable/copy_csv_xls_pdf.swf",
@@ -29,7 +29,7 @@
 				<tr>
 					<th style="min-width: 300px">Drug Name</th><th>Beginning Balance </th>
 					<?php
-					//Looping through every transaction
+					//Looping through every transaction name
 					foreach($trans_names as $trans){
 						?>
 						<th><?php echo $trans['name'] ?></th>
