@@ -1,12 +1,13 @@
 <script type="text/javascript">
 	
-	$(document).ready( function () {	
+	$(document).ready( function () {
 		var _url=<?php echo "'".$base_url."report_management/getMoreHelp/".$stock_type."/".$start_date."/".$end_date."'"; ?>;
 		$('#drug_table').dataTable( {
 			"oTableTools": {
-				"sSwfPath": base_url+"assets/scripts/datatable/copy_csv_xls_pdf.swf",
+				"sSwfPath":"<?php echo base_url() ?>assets/scripts/datatable/copy_csv_xls_pdf.swf",
 				"aButtons": [ "copy", "print","xls","pdf" ]
 			},
+			"sDom" : '<"H"Tfr>t<"F"ip>',
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": _url,

@@ -10,6 +10,7 @@
 				"sSwfPath": base_url+"assets/scripts/datatable/copy_csv_xls_pdf.swf",
 				"aButtons": [ "copy", "print","xls","pdf" ]
 			},
+			"sDom" : '<"H"Tfr>t<"F"ip>',
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": _url,

@@ -427,9 +427,9 @@ function synch_drug_movement_balance(stock_type) {
 							if(stock_type == 1) {
 								synch_drug_movement_balance(2);
 							} else if(stock_type == 2) {
-								//$(".sync_complete").html("Synchronization successfully completed !<i class='icon-ok'></i>");
-								//$(".modal-footer").css("display","block");
-								drug_cons_synch();
+								$(".sync_complete").html("Synchronization successfully completed !<i class='icon-ok'></i>");
+								$(".modal-footer").css("display","block");
+								//drug_cons_synch();
 							}
 
 						}
@@ -486,8 +486,9 @@ function drug_cons_synch() {
 						$(".bar_dcb").css("width", div_width);
 
 						if(remaining_drugs == count_drugs) {
-							$(".sync_complete").html("Synchronization successfully completed !<i class='icon-ok'></i>");
-							$(".modal-footer").css("display", "block");
+							//$(".sync_complete").html("Synchronization successfully completed !<i class='icon-ok'></i>");
+							//$(".modal-footer").css("display", "block");
+							synch_drug_balance(1);
 						}
 
 					}
