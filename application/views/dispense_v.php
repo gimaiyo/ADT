@@ -134,7 +134,8 @@ foreach($results as $result){
 					    var dose_val=row.closest("tr").find(".dose option:selected").attr("dose_val");
 					    var dose_freq=row.closest("tr").find(".dose option:selected").attr("dose_freq");
 					    var pill_count=getPillCount(dose_val,dose_freq,qty_disp);
-					    row.closest("tr").find(".next_pill_count").val(pill_count);
+					    var current_pill_count=row.closest("tr").find(".pill_count").val();
+					    row.closest("tr").find(".next_pill_count").val(parseFloat(pill_count)+parseFloat(current_pill_count));
 				    });
 			 });
 			 
@@ -192,8 +193,23 @@ foreach($results as $result){
 		           $.each(prev_visit_arr, function(i, v) {
 						var prev_drug_id=v['drug_id'];
 						var prev_drug_qty=v['mos'];
-						if(selected_drug==prev_drug_id){
-							row.closest("tr").find(".pill_count").val(prev_drug_qty);
+						var prev_qty=v['quantity'];
+						var prev_date=v['dispensing_date'];
+						var prev_value=v['value'];
+						var prev_frequency=v['frequency'];
+						
+						
+					if(selected_drug==prev_drug_id){
+						var base_date = new Date();
+						var today = new Date(base_date.getFullYear(), base_date.getMonth(), base_date.getDate());
+						var today_timestamp = today.getTime();
+						var one_day = 1000 * 60 * 60 * 24;
+						var appointment_timestamp = Date.parse(prev_date);
+						var difference = today_timestamp-appointment_timestamp;
+						var days_difference = difference / one_day;
+						days_difference=days_difference.toFixed(0);
+						prev_drug_qty=getActualPillCount(days_difference,prev_value,prev_frequency,prev_qty);
+						row.closest("tr").find(".pill_count").val(prev_drug_qty);
 						}
 				   });
 				<?php 
@@ -352,7 +368,8 @@ foreach($results as $result){
 					var dose_val=row.closest("tr").find(".dose option:selected").attr("dose_val");
 					var dose_freq=row.closest("tr").find(".dose option:selected").attr("dose_freq");
 					var pill_count=getPillCount(dose_val,dose_freq,qty_disp);
-					row.closest("tr").find(".next_pill_count").val(pill_count);
+					var current_pill_count=row.closest("tr").find(".pill_count").val();
+					row.closest("tr").find(".next_pill_count").val(parseFloat(pill_count)+parseFloat(current_pill_count));
 			})
 						
 			$(".add").click(function() {
@@ -641,6 +658,27 @@ foreach($results as $result){
 				        return pill_count;
 					}
 			}
+			
+			function getActualPillCount(days_issued,dose_qty,dose_frequency,total_actual_drugs){
+				var error_message="";
+					if(!dose_qty){
+						error_message+="Dose has no Value \r\n";
+					}
+					if(!dose_frequency){
+						error_message+="Dose has no Frequency \r\n";
+					}
+					if(!total_actual_drugs){
+						error_message+="No Quantity to Dispense Selected \r\n";
+					}					
+				    if(error_message){
+					   //alert(error_message);
+				    }else{
+						var drugs_per_day=(dose_qty*dose_frequency);
+				        var total_expected_drugs=(drugs_per_day*days_issued);
+				        var pill_count=(total_actual_drugs-total_expected_drugs);			       
+				        return pill_count;
+					}
+			}
 
 		</script>
 
@@ -830,8 +868,8 @@ foreach($results as $result){
 							<th>Brand Name</th>
 							<th>Stock on Hand</th>
 							<th>Indication</th>
-							<th>Prev Pill Count</th>
-							<th>Next Pill Count</th>
+							<th>Current <br/>Pill Count</th>
+							<th>Next <br/> Pill Count</th>
 							<th>Comment</th>
 							<th>Missed Pills</th>
 							<th style="">Action</th>

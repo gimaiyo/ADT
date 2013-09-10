@@ -24,7 +24,7 @@ $(document).ready(function() {
 		"sPaginationType" : "full_numbers",
 		"sDom" : '<"H"Tfr>t<"F"ip>',
 		"oTableTools" : {
-			"sSwfPath" : base_url + "scripts/datatable/copy_csv_xls_pdf.swf",
+			"sSwfPath" : base_url + "assets/scripts/datatable/copy_csv_xls_pdf.swf",
 			"aButtons" : ["copy", "print", "xls", "pdf"]
 		},
 		"bProcessing" : true,

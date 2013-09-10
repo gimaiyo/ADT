@@ -342,7 +342,7 @@ class Patient_Management extends MY_Controller {
 			$this -> session -> set_userdata('msg_success', 'Patient: ' . $this -> input -> post('first_name', TRUE) . " " . $this -> input -> post('last_name', TRUE) . ' was Saved');
 			redirect("patient_management");
 		} else if ($_POST['save'] == "Dispense") {
-			redirect("patient_management/dispense/$patient");
+			redirect("dispensement_management/dispense/$patient");
 		}
 	}
 

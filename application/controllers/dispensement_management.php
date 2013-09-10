@@ -32,7 +32,7 @@ class Dispensement_Management extends MY_Controller {
 			$dispensing_date = $results[0]['dispensing_date'];
 		}
 
-		$sql = "select d.drug,pv.quantity,pv.months_of_stock as mos,pv.drug_id from patient_visit pv,drugcode d where pv.patient_id = '$patient_no' and pv.dispensing_date = '$dispensing_date' and pv.drug_id = d.id order by pv.id desc";
+		$sql = "select d.drug,pv.quantity,pv.months_of_stock as mos,pv.drug_id,pv.dispensing_date,ds.value,ds.frequency from patient_visit pv,drugcode d left join dose ds on ds.Name=d.dose where pv.patient_id = '$patient_no' and pv.dispensing_date = '$dispensing_date' and pv.drug_id = d.id order by pv.id desc";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$data['prev_visit']="";

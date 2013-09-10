@@ -483,6 +483,9 @@ class report_management extends MY_Controller {
 				$total_child_female_pep_percentage = "-";
 				$total_child_female_pmtct_percentage = "-";
 				$total_child_female_oi_percentage = "-";
+				$overall_child_female=0;
+				$service_name="";
+				$overall_child_male=0;
 				if ($results) {
 					foreach ($results as $result) {
 						$total_child_female = $result['total_child_female'];
@@ -2693,13 +2696,17 @@ class report_management extends MY_Controller {
 		$facility_code = $this -> session -> userdata('facility');
 		$start_date = date('Y-m-d', strtotime($start_date));
 		$end_date = date('Y-m-d', strtotime($end_date));
-		$tot_patients_sql = $this -> db -> query("SELECT COUNT( * ) AS Total_Patients FROM patient p WHERE DATE(start_regimen_date) between DATE('" . $start_date . "') and  DATE('" . $end_date . "') and p.facility_code='" . $facility_code . "' AND p.service=1");
+		//Get Total Patients started in selected period
+		$sql="SELECT COUNT( * ) AS Total_Patients FROM patient p LEFT JOIN regimen_service_type rst ON rst.id=p.service LEFT JOIN regimen r ON r.id=p.start_regimen LEFT JOIN patient_source ps ON ps.id = p.source WHERE DATE(start_regimen_date) between DATE('" . $start_date . "') and  DATE('" . $end_date . "') and p.facility_code='" . $facility_code . "' AND rst.name LIKE  '%art%' AND ps.name NOT LIKE '%transfer%'";
+		$tot_patients_sql = $this -> db -> query($sql);
 		$tot_patients = 0;
 		$patients = $tot_patients_sql -> result_array();
 		foreach ($patients as $value) {
 			$tot_patients = $value['Total_Patients'];
 		}
-		$first_line_sql = $this -> db -> query("SELECT COUNT( * ) AS First_Line FROM patient p LEFT JOIN regimen r ON r.id = p.start_regimen WHERE DATE(p.start_regimen_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "') AND r.line=1 AND p.facility_code='" . $facility_code . "' AND p.service=1");
+		//Get Total Patients started on first line in selected period
+		$sql="SELECT COUNT( * ) AS First_Line FROM patient p LEFT JOIN regimen_service_type rst ON rst.id=p.service LEFT JOIN regimen r ON r.id = p.start_regimen LEFT JOIN patient_source ps ON ps.id = p.source WHERE DATE(p.start_regimen_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "') AND r.line=1 AND p.facility_code='" . $facility_code . "' AND rst.name LIKE  '%art%' AND ps.name NOT LIKE '%transfer%'";
+		$first_line_sql = $this -> db -> query($sql);
 		$first_line = 0;
 		$first_line_array = $first_line_sql -> result_array();
 		foreach ($first_line_array as $value) {
@@ -2715,10 +2722,11 @@ class report_management extends MY_Controller {
 			$percentage_onotherline = 100 - $percentage_firstline;
 		}
 
-		//Gets patients started 12 months from selected period
-		$to_date = "";
-		$future_date = "";
-		$patient_from_period_sql = $this -> db -> query("SELECT COUNT( * ) AS Total_Patients FROM patient p LEFT JOIN regimen r ON r.id = p.start_regimen WHERE DATE(p.start_regimen_date) BETWEEN DATE('" . $to_date . "') and DATE('" . $future_date . "') and p.facility_code='" . $facility_code . "'");
+		//Gets patients started a year ago within selected period
+		$to_date=date('Y-m-d', strtotime($start_date." -1 year"));
+		$future_date =date('Y-m-d', strtotime($end_date." -1 year"));
+		$sql="SELECT COUNT( * ) AS Total_Patients FROM patient p LEFT JOIN regimen r ON r.id = p.start_regimen WHERE DATE(p.start_regimen_date) BETWEEN DATE('" . $to_date . "') and DATE('" . $future_date . "') and p.facility_code='" . $facility_code . "'";
+		$patient_from_period_sql = $this -> db -> query($sql);
 		$total_from_period_array = $patient_from_period_sql -> result_array();
 		$total_from_period = 0;
 		foreach ($total_from_period_array as $value) {
@@ -2761,7 +2769,7 @@ class report_management extends MY_Controller {
 			$percentage_lost_to_follow = ($lost_to_follow / $total_before_period) * 100;
 		}
 		$data['tot_patients'] = $tot_patients;
-		$data['first_line'] = number_format($first_line, 1);
+		$data['first_line'] = $first_line;
 		$data['percentage_firstline'] = $percentage_firstline;
 		$data['percentage_onotherline'] = $percentage_onotherline;
 		$data['total_patients'] = $tot_patients;

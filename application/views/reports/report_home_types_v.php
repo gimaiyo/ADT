@@ -63,7 +63,6 @@
 				<option class="date_range_report" value="getPatientsStartedonDate">List of Patients Started (on a Particular Date)</option>
 				<option class="date_range_report" value="getPatientsforRefill">List of Patients Visited For Refill</option>
 				<option class="date_range_report" value="getPatientMissingAppointments">Patients Missing Appointments</option>
-				<option class="date_range_report" value="patients_adherence">Patients Adherence Report</option>
 				<option class="date_range_report" value="patients_disclosure">Patients Status &amp; Disclosure</option>
 			</select></td>
 		</tr>
@@ -76,6 +75,7 @@
 				<option class="date_range_report" value="patients_who_changed_regimen">Active Patients who Have Changed Regimens</option>
 				<option class="date_range_report" value="patients_starting">List of Patients Starting (By Regimen)</option>
 				<option class="date_range_report" value="early_warning_indicators">HIV Early Warning Indicators</option>
+				<option class="date_range_report" value="patients_adherence">Patients Adherence Report</option>
 				<!--<option class="single_date_report" value="service_statistics">Service Statistics (By Regimen)</option>-->
 				<option class="single_date_report" value="getBMI">Patient BMI Summary</option>
 			</select></td>
