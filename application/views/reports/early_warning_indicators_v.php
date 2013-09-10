@@ -24,7 +24,7 @@
 					<th> Total Patients Starting 12 months from selected period </th>
 					<th> Percentage(%) Patients Retained in First Line</th>
 				</tr>
-				<tr><td align="center"><?php echo $total_from_period; ?></td><td align="center"><?php echo $stil_in_first_line ?></td><td align="center"><?php echo $percentage_stillfirstline ?></td></tr>
+				<tr><td align="center"><?php echo $stil_in_first_line; ?></td><td align="center"><?php echo $total_from_period;?></td><td align="center"><?php echo $percentage_stillfirstline ?></td></tr>
 			</table>
 		</div>
 		<div class="lost_to_follow_up_percentage" cellpadding="5">
