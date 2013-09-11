@@ -204,11 +204,11 @@ class Order_Management extends MY_Controller {
 		} elseif ($status == 3) {
 			$data['page_title'] = "Dispatched Orders";
 			$data['days_pending'] = "Delivery";
-		}elseif ($status == 4) {
+		} elseif ($status == 4) {
 			$data['page_title'] = "Delivered Orders";
 			$data['days_pending'] = "Since Delivery";
 		}
-		
+
 		$facility = $this -> session -> userdata('facility');
 		$items_per_page = 10;
 		$number_of_orders = Facility_Order::getTotalFacilityNumber($status, $facility);
@@ -571,7 +571,7 @@ class Order_Management extends MY_Controller {
 					$cdrr_item -> Adjustments = $adjustments[$commodity_counter];
 					$cdrr_item -> Count = $physical_count[$commodity_counter];
 					$cdrr_item -> Resupply = $resupply[$commodity_counter];
-					$cdrr_item -> Newresupply =$resupply[$commodity_counter];
+					$cdrr_item -> Newresupply = $resupply[$commodity_counter];
 					//The following not required for fcdrrs
 					/*$cdrr_item->Aggr_Consumed = $opening_balances[$commodity_counter];
 					 $cdrr_item->Aggr_On_Hand = $opening_balances[$commodity_counter];
@@ -605,7 +605,7 @@ class Order_Management extends MY_Controller {
 			foreach ($regimens as $regimen) {
 				//Check if any patient numbers have been reported for this regimen
 				if ($patient_numbers[$regimen_counter] > 0) {
-					echo $regimens[$regimen_counter]."-".$patient_numbers[$regimen_counter]."<br/>";
+					echo $regimens[$regimen_counter] . "-" . $patient_numbers[$regimen_counter] . "<br/>";
 					$maps_item = new Maps_Item();
 					$maps_item -> Total = $patient_numbers[$regimen_counter];
 					$maps_item -> Regimen_Id = $regimens[$regimen_counter];
@@ -776,6 +776,49 @@ class Order_Management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		echo json_encode($results);
+	}
+
+	public function getPeriodDrugs($drug_id, $start_date, $end_date) {
+		$prev_start = date("Y-m-d", strtotime("-1 month", strtotime($start_date)));
+		$prev_end = date("Y-m-d", strtotime("-1 month", strtotime($end_date)));
+		$sql = "SELECT $drug_id as drug_id,SUM(dst.balance) AS beginning_balance FROM drug_stock_movement dst, (SELECT drug, batch_number, MAX( transaction_date ) AS trans_date FROM  `drug_stock_movement` WHERE transaction_date BETWEEN  '$prev_start' AND  '$prev_end' AND drug ='$drug_id' GROUP BY batch_number) AS temp WHERE dst.drug = temp.drug AND dst.batch_number = temp.batch_number AND dst.transaction_date = temp.trans_date";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$row = array();
+		$row["drug"] = (int)$drug_id;
+		if ($results) {
+			if ($results[0]['beginning_balance'] != null) {
+				$row["beginning_balance"] = (int)$results[0]['beginning_balance'];
+			} else {
+				$row["beginning_balance"] = 0;
+			}
+		} else {
+			$row["beginning_balance"] = 0;
+		}
+		$sql = "SELECT trans.name, trans.id, trans.effect, dsm.in_total, dsm.out_total FROM (SELECT id, name, effect FROM transaction_type WHERE name LIKE  '%received%' OR name LIKE  '%adjustment%' OR name LIKE  '%return%' OR name LIKE  '%dispense%' OR name LIKE  '%issue%' OR name LIKE  '%loss%' OR name LIKE  '%ajustment%' OR name LIKE  '%physical%count%' OR name LIKE  '%starting%stock%') AS trans LEFT JOIN (SELECT transaction_type, SUM( quantity ) AS in_total, SUM( quantity_out ) AS out_total FROM drug_stock_movement WHERE transaction_date BETWEEN  '$start_date' AND  '$end_date' AND drug =  '$drug_id'  GROUP BY transaction_type) AS dsm ON trans.id = dsm.transaction_type GROUP BY trans.name";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			foreach ($results as $result) {
+				$effect = $result['effect'];
+				$trans_name = str_replace(array(" ","(-)","(+)","/"),array("_","_","plus","_"),$result['name']);
+				if ($effect == 1) {
+					if ($result['in_total'] != null) {
+						$total = (int)$result['in_total'];
+					} else {
+						$total = 0;
+					}
+				} else {
+					if ($result['out_total'] != null) {
+						$total = (int)$result['out_total'];
+					} else {
+						$total = 0;
+					}
+				}
+				$row[$trans_name] = $total;
+			}
+		}
+		echo json_encode($row);	
 	}
 
 	public function getPeriodRegimenPatients($from, $to) {

@@ -167,7 +167,7 @@ $(document).ready(function() {
 var timer = 0;
 function set_interval() {
 	// the interval 'timer' is set as soon as the page loads
-	timer = setInterval("auto_logout()", 1200000);
+	timer = setInterval("auto_logout()", 3600000);
 	// the figure '180000' above indicates how many milliseconds the timer be set to.
 	// Eg: to set it to 5 mins, calculate 3min = 3x60 = 180 sec = 180,000 millisec.
 	// So set it to 180000
@@ -202,24 +202,42 @@ function getPeriodDrugBalance(count, drug, start_date, end_date) {
 	var href = window.location.href;
 	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
 	var _href = href.substr(href.lastIndexOf('/') + 1);
-	var link = base_url + '/ADT/order_management/getPeriodDrugBalance/' + drug + '/' + start_date + '/' + end_date;
+	var link = base_url + '/ADT/order_management/getPeriodDrugs/' + drug + '/' + start_date + '/' + end_date;
 	$.ajax({
 		url : link,
 		type : 'POST',
 		dataType : 'json',
 		success : function(data) {
+			var total_beginning_balance = 0;
 			var total_received = 0;
 			var total_dispensed = 0;
+			var total_losses = 0;
+			var total_adjustment = 0;
+			var total_physical = 0;
 			var drug_id = 0;
-			$.each(data, function(i, jsondata) {
-				total_received = jsondata.total_received;
-				total_dispensed = jsondata.total_dispensed;
-				drug_id = jsondata.drug;
-			});
+			total_beginning_balance = data.beginning_balance;
+			total_received = data.Received_From;
+			total_dispensed = data.Dispensed_to_Patients;
+			total_losses = data.Losses__;
+			total_adjustment += parseFloat(data.Adjustment_plus);
+			total_adjustment += parseFloat(data.Adjustment__);
+			total_physical = data.Starting_Stock_Physical_Count;
+			drug_id = data.drug;
+
+			var beginning_balance_div = "#opening_balance_" + drug_id;
 			var total_received_div = "#received_in_period_" + drug_id;
 			var total_dispensed_div = "#dispensed_in_period_" + drug_id;
+			var losses_div = "#losses_in_period_" + drug_id;
+			var adjustments_div = "#adjustments_in_period_" + drug_id;
+			var physical_div = "#physical_in_period_" + drug_id;
+			
+			
+			$(beginning_balance_div).attr("value", total_beginning_balance);
 			$(total_received_div).attr("value", total_received);
 			$(total_dispensed_div).attr("value", total_dispensed);
+			$(losses_div).attr("value", total_losses);
+			$(adjustments_div).attr("value", total_adjustment);
+			$(physical_div).attr("value", total_physical);
 			calculateResupply($(total_dispensed_div));
 			//Once the calculations are done for the whole table, put back the pagination
 			if($(".ordered_drugs").length == count) {
@@ -426,7 +444,7 @@ function synch_drug_movement_balance(stock_type) {
 								synch_drug_movement_balance(2);
 							} else if(stock_type == 2) {
 								$(".sync_complete").html("Synchronization successfully completed !<i class='icon-ok'></i>");
-								$(".modal-footer").css("display","block");
+								$(".modal-footer").css("display", "block");
 								//drug_cons_synch();
 							}
 

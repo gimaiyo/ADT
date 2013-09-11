@@ -42,7 +42,7 @@ class Drugcode extends Doctrine_Record {
 			$displayed_enabled="(Source='$source' or Source='0') AND Enabled='1'";
 		}
 		
-		$query = Doctrine_Query::create() -> select("id,Drug,Pack_Size,Safety_Quantity,Quantity,Duration,Enabled,Merged_To") -> from("Drugcode") -> where($displayed_enabled) -> orderBy("id asc");
+		$query = Doctrine_Query::create() -> select("id,Drug,Pack_Size,Dose,Safety_Quantity,Quantity,Duration,Enabled,Merged_To") -> from("Drugcode") -> where($displayed_enabled) -> orderBy("id asc");
 		$drugsandcodes = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
 		return $drugsandcodes;
 	}

@@ -406,10 +406,10 @@ $counter = 0;
 							<input name="losses[]" id="losses_in_period_<?php echo $commodity -> id;?>" type="text" class="losses">
 							</td>
 							<td class="number calc_count">
-							<input name="adjustments[]" id="CdrrItem_10_adjustments" type="text" class="adjustments">
+							<input name="adjustments[]" id="adjustments_in_period_<?php echo $commodity -> id;?>" type="text" class="adjustments">
 							</td>
 							<td class="number calc_resupply col_count">
-							<input tabindex="-1" name="physical_count[]" id="CdrrItem_10_count" type="text" class="physical_count">
+							<input tabindex="-1" name="physical_count[]" id="physical_in_period_<?php echo $commodity -> id;?>" type="text" class="physical_count">
 							</td>
 							<!-- aggregate -->
 							<td class="number col_resupply">
