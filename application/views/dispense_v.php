@@ -38,6 +38,7 @@ foreach($results as $result){
 				?>
 				
 				var last_visit_date ="<?php echo @$last_regimens['dispensing_date']; ?>";
+				var last_visit_date ="<?php echo date('d-M-Y',strtotime(@$last_regimens['dispensing_date'])); ?>";
 				$("#last_visit_date").attr("value", last_visit_date);
 				
 				//Get Prev Appointment
@@ -57,6 +58,7 @@ foreach($results as $result){
 				$("#days_late").append(html);
 				$("#days_count").attr("value", diffDays);
 				$("#last_appointment_date").attr("value","<?php echo @$appointments['appointment']; ?>");
+				$("#last_appointment_date").attr("value","<?php echo date('d-M-Y',strtotime(@$appointments['appointment'])); ?>");
 				<?php
 				}
 				?>
@@ -78,7 +80,7 @@ foreach($results as $result){
 			//Add listener to check purpose
 			$("#purpose").change(function() {
 					$("#adherence").attr("value", " ");
-					$("#adherence").removeAttr("disabled");
+					$("#adherence").removeAttr("readonly");
 					var selected_value = $(this).val();
 					var day_percentage = 0;
 					if(selected_value == 2 || selected_value == 5) {
@@ -93,7 +95,7 @@ foreach($results as $result){
 							day_percentage = "<85%";
 						}
 						$("#adherence").attr("value", day_percentage);
-						$("#adherence").attr("disabled", "disabled");
+						$("#adherence").attr("readonly", "readonly");
 					}
 
 			});
@@ -133,9 +135,11 @@ foreach($results as $result){
                         var qty_disp=row.closest("tr").find(".qty_disp").val();
 					    var dose_val=row.closest("tr").find(".dose option:selected").attr("dose_val");
 					    var dose_freq=row.closest("tr").find(".dose option:selected").attr("dose_freq");
+					    /*
 					    var pill_count=getPillCount(dose_val,dose_freq,qty_disp);
 					    var current_pill_count=row.closest("tr").find(".pill_count").val();
 					    row.closest("tr").find(".next_pill_count").val(parseFloat(pill_count)+parseFloat(current_pill_count));
+					    */
 				    });
 			 });
 			 
@@ -367,9 +371,11 @@ foreach($results as $result){
 					var qty_disp=row.closest("tr").find(".qty_disp").val();
 					var dose_val=row.closest("tr").find(".dose option:selected").attr("dose_val");
 					var dose_freq=row.closest("tr").find(".dose option:selected").attr("dose_freq");
+					/*
 					var pill_count=getPillCount(dose_val,dose_freq,qty_disp);
 					var current_pill_count=row.closest("tr").find(".pill_count").val();
 					row.closest("tr").find(".next_pill_count").val(parseFloat(pill_count)+parseFloat(current_pill_count));
+					*/
 			})
 						
 			$(".add").click(function() {
@@ -414,6 +420,7 @@ foreach($results as $result){
 					row_element.find(".soh").attr("value", "");
 					row_element.find(".indication").attr("value", "");
 					row_element.find(".pill_count").attr("value", "");
+					row_element.find(".next_pill_count").attr("value", "");
 					row_element.find(".pill_count").removeAttr("disabled");
 					row_element.find(".comment").attr("value", "");
 					row_element.find(".missed_pills").attr("value", "");
@@ -707,7 +714,7 @@ foreach($results as $result){
 							</div>
 							<div class="mid-row">
 								<label>Patient Name</label>
-								<input readonly="" id="patient_details"  class="validate[required]"/>
+								<input readonly="" id="patient_details"  class="validate[required]" style='width:300px;'/>
 							</div>
 						</div>
 
@@ -720,7 +727,7 @@ foreach($results as $result){
 							<div class="mid-row">
 								<label><span class='astericks'>*</span>Purpose of Visit</label>
 
-								<select  type="text"name="purpose" id="purpose" class="validate[required]">
+								<select  type="text"name="purpose" id="purpose" class="validate[required]" style='width:300px;'>
 									<option value="">--Select One--</option>
 									<?php 
 									foreach($purposes as $purpose){
@@ -740,26 +747,28 @@ foreach($results as $result){
 							<div class="mid-row">
 								<label><span class='astericks'>*</span>Current Weight(kg)</label>
 
-								<input  type="text"name="weight" id="weight" class="validate[required]">
+								<input  type="text"name="weight" id="weight" class="validate[required]" style='width:300px;'>
 							</div>
 						</div>
 						<div class="max-row">
 							<div class="mid-row">
 								<label><span class='astericks'>*</span>Days to Next Appointment</label>
-								<input  type="text"name="days_to_next" id="days_to_next" class="validate[required]">
+								<input  type="text" name="days_to_next" id="days_to_next" class="validate[required]">
 							</div>
 							<div class="mid-row">
 								<label><span class='astericks'>*</span>Date of Next Appointment</label>
 
-								<input  type="text"name="next_appointment_date" id="next_appointment_date" class="validate[required]">
+								<input  type="text" name="next_appointment_date" id="next_appointment_date" class="validate[required]" style='width:300px;'>
 							</div>
 						</div>
                             
                             
                        <div class="max-row">
-						<span id="scheduled_patients" class="message"  style="display:none;background:#9CF;">
+                       	<br/>
+						<span id="scheduled_patients" style="display:none;background:#9CF;padding:5px;">
 							
 						</span>
+
 						</div>
 						<div class="max-row">
 							<div class="mid-row">
@@ -770,7 +779,7 @@ foreach($results as $result){
 
 							<div class="mid-row">
 								<label><span class='astericks'>*</span>Current Regimen</label>
-								<select type="text"name="current_regimen" id="current_regimen"  class="validate[required]">
+								<select type="text"name="current_regimen" id="current_regimen"  class="validate[required]" style='width:300px;'>
 									<option value="">-Select One--</option>
 										<?php 
 									       foreach($regimens as $regimen){
@@ -784,7 +793,7 @@ foreach($results as $result){
 							<div class="mid-row">
 								<div style="display:none" id="regimen_change_reason_container">
 									<label>Regimen Change Reason</label>
-									<select type="text"name="regimen_change_reason" id="regimen_change_reason">
+									<select type="text"name="regimen_change_reason" id="regimen_change_reason" style='width:300px;'>
 										<option value="">--Select One--</option>
 										 <?php
 										   foreach($regimen_changes as $changes){
@@ -798,11 +807,11 @@ foreach($results as $result){
 						<div class="max-row">
 							<div class="mid-row">
 								<label>Appointment Adherence (%)</label>
-								<input type="text"name="adherence" id="adherence">
+								<input type="text" name="adherence" id="adherence"/>
 							</div>
 							<div class="mid-row">
 								<label> Poor/Fair Adherence Reasons </label>
-								<select type="text"name="non_adherence_reasons" id="non_adherence_reasons" >
+								<select type="text"name="non_adherence_reasons" id="non_adherence_reasons"  style='width:300px;'>
 									<option value="">-Select One--</option>
 										<?php 
 									       foreach($non_adherence_reasons as $reasons){
@@ -837,13 +846,14 @@ foreach($results as $result){
 							<thead>
 							<th>Drug Dispensed</th>
 							<th>Quantity Dispensed</th>
-							<th>Pill Count<span class="green">(Expected)</span></th>
+							<!--<th>Pill Count<span class="green">(Expected)</span></th>-->
 							</thead>
 							<tbody>
 								<?php 
 								if($visits){
 								foreach($visits as $visit){
-									echo "<tr><td>".$visit['drug']."</td><td>".$visit['quantity']."</td><td class='exp_pill' drug_id='".$visit['drug_id']."' drug_val='".$visit['mos']."'>".$visit['mos']."</td></tr>";
+									echo "<tr><td>".$visit['drug']."</td><td style='text-align:center'>".$visit['quantity']."</td></tr>";
+								 //<td class='exp_pill' drug_id='".$visit['drug_id']."' drug_val='".$visit['mos']."'>".$visit['mos']."</td>
 								}
 								}
 								?>
@@ -853,7 +863,7 @@ foreach($results as $result){
 					</fieldset>
 				</div>
 
-				<div class="content-rowy" style="height:250px;overflow: scroll">
+				<div class="content-rowy" style="height:auto;">
 					<table border="0" class="data-table" id="drugs_table" style="">
 						<thead>
 							<th class="subsection-title" colspan="15">Select Drugs</th>
@@ -868,8 +878,8 @@ foreach($results as $result){
 							<th>Brand Name</th>
 							<th>Stock on Hand</th>
 							<th>Indication</th>
-							<th>Current <br/>Pill Count</th>
-							<th>Next <br/> Pill Count</th>
+							<th><b>Expected</b><br/>Pill Count</th>
+							<th><b>Actual</b><br/> Pill Count</th>
 							<th>Comment</th>
 							<th>Missed Pills</th>
 							<th style="">Action</th>
@@ -901,7 +911,7 @@ foreach($results as $result){
 							<option value="0">None</option>
 							</select></td>
 							<td>
-							<input type="text" name="pill_count[]" class="pill_count input-small" />
+							<input type="text" name="pill_count[]" class="pill_count input-small" readonly="readonly" />
 							</td>
 							<td>
 							<input type="text" name="next_pill_count[]" class="next_pill_count input-small"  />
