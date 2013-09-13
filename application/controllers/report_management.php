@@ -525,8 +525,8 @@ class report_management extends MY_Controller {
 
 			$overall_art_childmale_percent = number_format(($overall_child_male_art / $total) * 100, 1);
 			$overall_pep_childmale_percent = number_format(($overall_child_male_pep / $total) * 100, 1);
-			$overall_oi_childmale_percent = number_format(($overall_child_male_pmtct / $total) * 100, 1);
-			$overall_pmtct_childmale_percent = number_format(($overall_child_male_oi / $total) * 100, 1);
+			$overall_pmtct_childmale_percent = number_format(($overall_child_male_pmtct / $total) * 100, 1);
+			$overall_oi_childmale_percent = number_format(($overall_child_male_oi / $total) * 100, 1);
 
 			$overall_art_childfemale_percent = number_format(($overall_child_female_art / $total) * 100, 1);
 			$overall_pep_childfemale_percent = number_format(($overall_child_female_pep / $total) * 100, 1);
