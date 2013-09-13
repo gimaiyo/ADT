@@ -19,18 +19,29 @@ $(document).ready(function() {
 	}
 
 	var base_url = $("#base_url").val();
+	var report_title=$("#report_title").text();
+	var facility=$("#facility_name").text();
 	$('.dataTables').dataTable({
 		"bJQueryUI" : true,
 		"sPaginationType" : "full_numbers",
-		"sDom" : '<"H"Tfr>t<"F"ip>',
+		"sDom" : '<"H"T<"clear">lfr>t<"F"ip>',
 		"oTableTools" : {
 			"sSwfPath" : base_url + "assets/scripts/datatable/copy_csv_xls_pdf.swf",
-			"aButtons" : ["copy", "print", "xls", "pdf"]
+			"aButtons" : ["copy", 
+			{
+				"sExtends" : "xls",
+				"sTitle" : report_title+" ("+facility+")",
+			},  
+			{
+				"sExtends" : "pdf",
+				"sPdfOrientation" : "landscape",
+				"sPdfSize" : "A3",
+				"sTitle" : report_title+" ("+facility+")",
+			}]
 		},
 		"bProcessing" : true,
 		"bServerSide" : false,
 	});
-	//syncOrders("13050");
 
 	var base_url = $("#base_url").val();
 	$("#change_password_link").click(function() {
@@ -230,8 +241,7 @@ function getPeriodDrugBalance(count, drug, start_date, end_date) {
 			var losses_div = "#losses_in_period_" + drug_id;
 			var adjustments_div = "#adjustments_in_period_" + drug_id;
 			var physical_div = "#physical_in_period_" + drug_id;
-			
-			
+
 			$(beginning_balance_div).attr("value", total_beginning_balance);
 			$(total_received_div).attr("value", total_received);
 			$(total_dispensed_div).attr("value", total_dispensed);
