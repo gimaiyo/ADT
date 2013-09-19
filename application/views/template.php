@@ -151,12 +151,7 @@ if (isset($styles)) {
 <script>
 	  		$(document).ready(function(){
 		 $(".error").css("display","block");
-		 $("#inactive_users").click(function(){<?php
-		$this -> session -> set_userdata("link_id", "index");
-		$this -> session -> set_userdata("linkSub", "user_management");
-		$this -> session -> set_userdata("linkTitle", "Users Management");
-		 	?>
-				});
+		 
 				});
 </script>
 <?php 

@@ -22,7 +22,7 @@ class Drugcode_management extends MY_Controller {
 		$drugcodes = Drugcode::getAll($source, $access_level);
 		$tmpl = array('table_open' => '<table id="drugcode_setting" class="setting_table">');
 		$this -> table -> set_template($tmpl);
-		$this -> table -> set_heading('id', 'Drug', 'Pack Size','Dose','Safety Quantity', 'Quantity', 'Duration', 'Options');
+		$this -> table -> set_heading('id', 'Drug','Unit','Pack Size','Dose','Supplier','Safety Qty', 'Qty', 'Duration', 'Options');
 
 		foreach ($drugcodes as $drugcode) {
 			$array_param = array('id' => $drugcode['id'], 'role' => 'button', 'class' => 'edit_user', 'data-toggle' => 'modal');
@@ -53,7 +53,7 @@ class Drugcode_management extends MY_Controller {
 			} else {
 				$checkbox = "<input type='checkbox' name='drugcodes' id='drugcodes' value='$drug'/>";
 			}
-			$this -> table -> add_row($drugcode['id'], $checkbox . "&nbsp;" . $drugcode['Drug'], $drugcode['Pack_Size'],"<b>".$drugcode['Dose']."</b>",$drugcode['Safety_Quantity'], $drugcode['Quantity'], $drugcode['Duration'], $links);
+			$this -> table -> add_row($drugcode['id'], $checkbox . "&nbsp;" . $drugcode['Drug'],"<b>".$drugcode['drug_unit']."</b>" ,$drugcode['Pack_Size'],"<b>".$drugcode['Dose']."</b>","<b>".$drugcode['supplier']."</b>",$drugcode['Safety_Quantity'], $drugcode['Quantity'], $drugcode['Duration'], $links);
 		}
 
 		$data['drugcodes'] = $this -> table -> generate();

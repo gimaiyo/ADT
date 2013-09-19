@@ -1464,7 +1464,10 @@ table#history_table td {
 }
 .regimen-table {
 	width: 28%;
-	float: right;
+}
+.regimen-table,#commodity-table{
+display:inline-block;
+vertical-align:top;
 }
 .regimen-table tbody th {
 	font-size: 14px;

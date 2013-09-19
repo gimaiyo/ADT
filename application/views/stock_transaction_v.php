@@ -515,6 +515,7 @@
 		
 		//Save transaction details
 		$("#btn_submit").click(function(){
+			
 			var trans_type=$("#select_transtype option:selected").text().toLowerCase().replace(/ /g,'');
 			var trans_effect=$("#select_transtype option:selected").attr('label');
 			var selected_source=$("#select_source option:selected").text().toLowerCase().replace(/ /g,'');
@@ -559,6 +560,9 @@
 					
 				}
 			}
+			else{
+				batch_type=1;
+			}
 			var c=0;
 			$.each($(".drug"), function(i, v) {
 				//Check if batch number was entered
@@ -571,7 +575,12 @@
 				}
 				//Check if batch number was selected
 				else if(batch_type==1){
-					if($(this).closest("tr").find(".batch").attr("value")==0){
+					if($(this).closest("tr").find(".batch").is(":visible") && $(this).closest("tr").find(".batch").attr("value")==0){
+						c=1;
+						alert("Please make sure you have selected a batch number and selected an expiry date for all the drugs!");
+						return false;
+					}
+					else if($(this).closest("tr").find(".batch_select").is(":visible") && $(this).closest("tr").find(".batch_select").attr("value")==0){
 						c=1;
 						alert("Please make sure you have selected a batch number and selected an expiry date for all the drugs!");
 						return false;
@@ -669,6 +678,7 @@
 				var get_comment=comments[i];
 				var get_stock_type=stock_type;
 				var get_user=user;
+				$("#btn_submit").attr("disabled","disabled");
 				var request=$.ajax({
 			     url: _url,
 			     type: 'post',

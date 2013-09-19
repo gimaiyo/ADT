@@ -801,7 +801,7 @@ class Order_Management extends MY_Controller {
 		if ($results) {
 			foreach ($results as $result) {
 				$effect = $result['effect'];
-				$trans_name = str_replace(array(" ","(-)","(+)","/"),array("_","_","plus","_"),$result['name']);
+				$trans_name = str_replace(array(" ", "(-)", "(+)", "/"), array("_", "_", "plus", "_"), $result['name']);
 				if ($effect == 1) {
 					if ($result['in_total'] != null) {
 						$total = (int)$result['in_total'];
@@ -818,11 +818,13 @@ class Order_Management extends MY_Controller {
 				$row[$trans_name] = $total;
 			}
 		}
-		echo json_encode($row);	
+		echo json_encode($row);
 	}
 
 	public function getPeriodRegimenPatients($from, $to) {
-		$sql = "SELECT regimen, COUNT( DISTINCT patient_id ) AS patients FROM patient_visit WHERE dispensing_date BETWEEN  '$from' AND  '$to' GROUP BY regimen";
+		$facility_code = $this -> session -> userdata("facility");
+		$sql = "SELECT count(*) as patients, r.regimen_desc,r.regimen_code,p.current_regimen as regimen FROM patient p,regimen r WHERE p.date_enrolled<='$to' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.current_regimen !=0 AND p.current_regimen !='' AND p.current_status !='' AND p.current_status !=0 GROUP BY p.current_regimen ORDER BY r.regimen_code ASC";
+		//$sql = "SELECT regimen, COUNT( DISTINCT patient_id ) AS patients FROM patient_visit WHERE dispensing_date BETWEEN  '$from' AND  '$to' GROUP BY regimen";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		echo json_encode($results);
