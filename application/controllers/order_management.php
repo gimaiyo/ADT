@@ -3,6 +3,7 @@ class Order_Management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
 		$this -> load -> library('pagination');
+		date_default_timezone_set('Africa/Nairobi');
 	}
 
 	public function index() {
@@ -275,7 +276,8 @@ class Order_Management extends MY_Controller {
 		$data = array();
 		$data['content_view'] = "new_order_v";
 		$data['banner_text'] = "New Order";
-		$data['commodities'] = Drugcode::getAllObjects($this -> session -> userdata('facility'));
+		$supplier['supplied_by'] = Facilities::getSupplier($this -> session -> userdata("facility"));
+		$data['commodities'] = Drugcode::getAllObjects($supplier['supplied_by']);
 		$data['regimens'] = Regimen::getAllObjects($this -> session -> userdata('facility'));
 		$this -> base_params($data);
 	}
@@ -338,8 +340,8 @@ class Order_Management extends MY_Controller {
 			} else {
 				$data['banner_text'] = "New Satellite Order";
 			}
-
-			$data['commodities'] = Drugcode::getAllObjects($facility_code);
+			$supplier['supplied_by'] = Facilities::getSupplier($this -> session -> userdata("facility"));
+			$data['commodities'] = Drugcode::getAllObjects($supplier['supplied_by']);
 			//$data['regimens'] = Regimen::getAllObjects($facility_id);
 			$data['regimen_categories'] = Regimen_Category::getAll();
 			$data['facility_object'] = Facilities::getCodeFacility($facility_code);
@@ -374,7 +376,8 @@ class Order_Management extends MY_Controller {
 				$data['content_view'] = "new_order_v";
 				//$data['scripts'] = array("offline_database.js");
 				$data['banner_text'] = "New Satellite Order";
-				$data['commodities'] = Drugcode::getAllObjects($facility_id);
+				$supplier['supplied_by'] = Facilities::getSupplier($this -> session -> userdata("facility"));
+				$data['commodities'] = Drugcode::getAllObjects($supplier['supplied_by']);
 				//$data['regimens'] = Regimen::getAllObjects($facility_id);
 				$data['regimen_categories'] = Regimen_Category::getAll();
 				$data['facility_object'] = Facilities::getCodeFacility($facility_id);
@@ -391,7 +394,8 @@ class Order_Management extends MY_Controller {
 			$data['content_view'] = "new_order_v";
 			//$data['scripts'] = array("offline_database.js");
 			$data['banner_text'] = "New Satellite Order";
-			$data['commodities'] = Drugcode::getAllObjects($facility_id);
+			$supplier['supplied_by'] = Facilities::getSupplier($this -> session -> userdata("facility"));
+			$data['commodities'] = Drugcode::getAllObjects($supplier['supplied_by']);
 			//$data['regimens'] = Regimen::getAllObjects($facility_id);
 			$data['regimen_categories'] = Regimen_Category::getAll();
 			$data['facility_object'] = Facilities::getCodeFacility($facility_id);
@@ -766,7 +770,7 @@ class Order_Management extends MY_Controller {
 		$data['content_view'] = "new_aggregated_order_v";
 		$data['banner_text'] = "Aggregated Order";
 		$data['hide_side_menu'] = 0;
-		$data['commodities'] = Drugcode::getAllObjects($this -> session -> userdata('facility'));
+		$data['commodities'] = Drugcode::getAllObjects($data['facility_object']['supplied_by']);
 		$data['regimen_categories'] = Regimen_Category::getAll();
 		$this -> base_params($data);
 	}

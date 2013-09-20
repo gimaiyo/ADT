@@ -61,7 +61,7 @@ class Drugcode extends Doctrine_Record {
 	}
 
 	public function getAllObjects($source = 0) {
-		$query = Doctrine_Query::create() -> select("UPPER(d.Drug) As Drug,d.Pack_Size,d.Safety_Quantity,d.Quantity,d.Duration") -> from("Drugcode d")->leftJoin('d.Suppliers s') -> where("s.Name like '%kenya pharma%' and Enabled='1'") -> orderBy("id asc");
+		$query = Doctrine_Query::create() -> select("UPPER(d.Drug) As Drug,d.Pack_Size,d.Safety_Quantity,d.Quantity,d.Duration")-> from("Drugcode d") -> where("d.Supported_By='$source' and Enabled='1'") -> orderBy("id asc");
 		$drugsandcodes = $query -> execute(array());
 		return $drugsandcodes;
 	}
