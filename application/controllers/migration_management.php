@@ -99,13 +99,13 @@ class Migration_Management extends MY_Controller {
 		$sql = "";
 		if ($tablename == 'tblARTPatientTransactions') {
 			$appendsql = "WHERE patienttranno >=$offset LIMIT $limit";
-			$mainsql = "SELECT tp.artid,STR_TO_DATE(tp.dateofvisit, '%Y-%m-%d'),d.id,tp.brandname,tp.transactioncode,tp.arvqty,tp.dose,tp.duration,r.id,r1.id,tp.comment,tp.operator,tp.indication,tp.weight,tp.pillcount,tp.adherence,tp.reasonsforchange,tp.batchno,'$facility' FROM tblartpatienttransactions tp LEFT JOIN drugcode d ON tp.drugname=d.drug LEFT JOIN regimen r ON tp.regimen=r.regimen_code LEFT JOIN regimen r1 ON tp.lastregimen=r1.regimen_code $appendsql;";
+			$mainsql = "SELECT tp.artid,STR_TO_DATE(tp.dateofvisit, '%Y-%m-%d'),d.id,tp.brandname,tp.transactioncode,tp.arvqty,tp.dose,tp.duration,r.id,r1.id,tp.comment,tp.operator,tp.indication,tp.weight,tp.pillcount,tp.pillcount,tp.adherence,tp.reasonsforchange,tp.batchno,'$facility' FROM tblartpatienttransactions tp LEFT JOIN drugcode d ON tp.drugname=d.drug LEFT JOIN regimen r ON tp.regimen=r.regimen_code LEFT JOIN regimen r1 ON tp.lastregimen=r1.regimen_code $appendsql;";
 			$minsql = "SELECT temp.patienttranno as max FROM (SELECT patienttranno FROM tblartpatienttransactions $appendsql) as temp ORDER BY temp.patienttranno desc LIMIT 1";
 			$query = $this -> db -> query($minsql);
 			$results = $query -> result_array();
 			$last_index = $results[0]['max'];
 			$thesql = "SELECT patienttranno FROM tblartpatienttransactions WHERE patienttranno <='$last_index';";
-			$sql .= "INSERT INTO patient_visit(patient_id,dispensing_date,drug_id,brand,visit_purpose,quantity,dose,duration,regimen,last_regimen,comment,user,indication,current_weight,pill_count,adherence,regimen_change_reason,batch_number,facility)$mainsql";
+			$sql .= "INSERT INTO patient_visit(patient_id,dispensing_date,drug_id,brand,visit_purpose,quantity,dose,duration,regimen,last_regimen,comment,user,indication,current_weight,pill_count,months_of_stock,adherence,regimen_change_reason,batch_number,facility)$mainsql";
 		} else if ($tablename == 'tblARVDrugStockTransactions') {
 			$appendsql = "WHERE stocktranno >=$offset LIMIT $limit";
 			$mainsql = "SELECT d.id,STR_TO_DATE(trandate, '%Y-%m-%d'),reforderno,batchno,transactiontype,'$facility','$facility',STR_TO_DATE(expirydate, '%Y-%m-%d'),npacks,unitcost,IF(t.effect='0',qty,'0'),IF(t.effect='1',qty,'0'),amount,remarks,operator,'$facility' FROM tblarvdrugstocktransactions td LEFT JOIN drugcode d ON td.arvdrugsid=d.drug LEFT JOIN transaction_type t ON td.transactiontype=t.id $appendsql;";

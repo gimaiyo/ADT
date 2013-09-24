@@ -145,7 +145,7 @@
 		     				$("#add_dose_frequency option").remove();
 		     				for(var y in msg[key]) {
 		     					if (msg[key].hasOwnProperty(y)) {
-		     						$("#add_dose_frequency").append("<option value="+msg[key][y].Name+">"+msg[key][y].Name+"</option>");
+		     						$("#add_dose_frequency").append("<option value=\""+msg[key][y].Name+"\">"+msg[key][y].Name+"</option>");
 		     					}
 		     				}
 		     			}
@@ -194,7 +194,7 @@
 		     			if(key=="doses"){
 		     				for(var y in msg[key]) {
 		     					if (msg[key].hasOwnProperty(y)) {
-		     						$("#dose_frequency").append("<option value="+msg[key][y].Name+">"+msg[key][y].Name+"</option>");
+		     						$("#dose_frequency").append("<option value=\""+msg[key][y].Name+"\">"+msg[key][y].Name+"</option>");
 		     					}
 		     				}
 		     			}

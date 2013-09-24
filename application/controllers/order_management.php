@@ -3,6 +3,7 @@ class Order_Management extends MY_Controller {
 	function __construct() {
 		parent::__construct();
 		$this -> load -> library('pagination');
+		date_default_timezone_set('Africa/Nairobi');
 	}
 
 	public function index() {
@@ -204,11 +205,11 @@ class Order_Management extends MY_Controller {
 		} elseif ($status == 3) {
 			$data['page_title'] = "Dispatched Orders";
 			$data['days_pending'] = "Delivery";
-		}elseif ($status == 4) {
+		} elseif ($status == 4) {
 			$data['page_title'] = "Delivered Orders";
 			$data['days_pending'] = "Since Delivery";
 		}
-		
+
 		$facility = $this -> session -> userdata('facility');
 		$items_per_page = 10;
 		$number_of_orders = Facility_Order::getTotalFacilityNumber($status, $facility);
@@ -275,7 +276,8 @@ class Order_Management extends MY_Controller {
 		$data = array();
 		$data['content_view'] = "new_order_v";
 		$data['banner_text'] = "New Order";
-		$data['commodities'] = Drugcode::getAllObjects($this -> session -> userdata('facility'));
+		$supplier['supplied_by'] = Facilities::getSupplier($this -> session -> userdata("facility"));
+		$data['commodities'] = Drugcode::getAllObjects($supplier['supplied_by']);
 		$data['regimens'] = Regimen::getAllObjects($this -> session -> userdata('facility'));
 		$this -> base_params($data);
 	}
@@ -338,8 +340,8 @@ class Order_Management extends MY_Controller {
 			} else {
 				$data['banner_text'] = "New Satellite Order";
 			}
-
-			$data['commodities'] = Drugcode::getAllObjects($facility_code);
+			$supplier['supplied_by'] = Facilities::getSupplier($this -> session -> userdata("facility"));
+			$data['commodities'] = Drugcode::getAllObjects($supplier['supplied_by']);
 			//$data['regimens'] = Regimen::getAllObjects($facility_id);
 			$data['regimen_categories'] = Regimen_Category::getAll();
 			$data['facility_object'] = Facilities::getCodeFacility($facility_code);
@@ -374,7 +376,8 @@ class Order_Management extends MY_Controller {
 				$data['content_view'] = "new_order_v";
 				//$data['scripts'] = array("offline_database.js");
 				$data['banner_text'] = "New Satellite Order";
-				$data['commodities'] = Drugcode::getAllObjects($facility_id);
+				$supplier['supplied_by'] = Facilities::getSupplier($this -> session -> userdata("facility"));
+				$data['commodities'] = Drugcode::getAllObjects($supplier['supplied_by']);
 				//$data['regimens'] = Regimen::getAllObjects($facility_id);
 				$data['regimen_categories'] = Regimen_Category::getAll();
 				$data['facility_object'] = Facilities::getCodeFacility($facility_id);
@@ -391,7 +394,8 @@ class Order_Management extends MY_Controller {
 			$data['content_view'] = "new_order_v";
 			//$data['scripts'] = array("offline_database.js");
 			$data['banner_text'] = "New Satellite Order";
-			$data['commodities'] = Drugcode::getAllObjects($facility_id);
+			$supplier['supplied_by'] = Facilities::getSupplier($this -> session -> userdata("facility"));
+			$data['commodities'] = Drugcode::getAllObjects($supplier['supplied_by']);
 			//$data['regimens'] = Regimen::getAllObjects($facility_id);
 			$data['regimen_categories'] = Regimen_Category::getAll();
 			$data['facility_object'] = Facilities::getCodeFacility($facility_id);
@@ -571,7 +575,7 @@ class Order_Management extends MY_Controller {
 					$cdrr_item -> Adjustments = $adjustments[$commodity_counter];
 					$cdrr_item -> Count = $physical_count[$commodity_counter];
 					$cdrr_item -> Resupply = $resupply[$commodity_counter];
-					$cdrr_item -> Newresupply =$resupply[$commodity_counter];
+					$cdrr_item -> Newresupply = $resupply[$commodity_counter];
 					//The following not required for fcdrrs
 					/*$cdrr_item->Aggr_Consumed = $opening_balances[$commodity_counter];
 					 $cdrr_item->Aggr_On_Hand = $opening_balances[$commodity_counter];
@@ -605,7 +609,7 @@ class Order_Management extends MY_Controller {
 			foreach ($regimens as $regimen) {
 				//Check if any patient numbers have been reported for this regimen
 				if ($patient_numbers[$regimen_counter] > 0) {
-					echo $regimens[$regimen_counter]."-".$patient_numbers[$regimen_counter]."<br/>";
+					echo $regimens[$regimen_counter] . "-" . $patient_numbers[$regimen_counter] . "<br/>";
 					$maps_item = new Maps_Item();
 					$maps_item -> Total = $patient_numbers[$regimen_counter];
 					$maps_item -> Regimen_Id = $regimens[$regimen_counter];
@@ -766,7 +770,7 @@ class Order_Management extends MY_Controller {
 		$data['content_view'] = "new_aggregated_order_v";
 		$data['banner_text'] = "Aggregated Order";
 		$data['hide_side_menu'] = 0;
-		$data['commodities'] = Drugcode::getAllObjects($this -> session -> userdata('facility'));
+		$data['commodities'] = Drugcode::getAllObjects($data['facility_object']['supplied_by']);
 		$data['regimen_categories'] = Regimen_Category::getAll();
 		$this -> base_params($data);
 	}
@@ -778,8 +782,53 @@ class Order_Management extends MY_Controller {
 		echo json_encode($results);
 	}
 
+	public function getPeriodDrugs($drug_id, $start_date, $end_date) {
+		$prev_start = date("Y-m-d", strtotime("-1 month", strtotime($start_date)));
+		$prev_end = date("Y-m-d", strtotime("-1 month", strtotime($end_date)));
+		$sql = "SELECT $drug_id as drug_id,SUM(dst.balance) AS beginning_balance FROM drug_stock_movement dst, (SELECT drug, batch_number, MAX( transaction_date ) AS trans_date FROM  `drug_stock_movement` WHERE transaction_date BETWEEN  '$prev_start' AND  '$prev_end' AND drug ='$drug_id' AND source=destination GROUP BY batch_number) AS temp WHERE dst.drug = temp.drug AND dst.batch_number = temp.batch_number AND dst.transaction_date = temp.trans_date AND dst.source=dst.destination";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		$row = array();
+		$row["drug"] = (int)$drug_id;
+		if ($results) {
+			if ($results[0]['beginning_balance'] != null) {
+				$row["beginning_balance"] = (int)$results[0]['beginning_balance'];
+			} else {
+				$row["beginning_balance"] = 0;
+			}
+		} else {
+			$row["beginning_balance"] = 0;
+		}
+		$sql = "SELECT trans.name, trans.id, trans.effect, dsm.in_total, dsm.out_total FROM (SELECT id, name, effect FROM transaction_type WHERE name LIKE  '%received%' OR name LIKE  '%adjustment%' OR name LIKE  '%return%' OR name LIKE  '%dispense%' OR name LIKE  '%issue%' OR name LIKE  '%loss%' OR name LIKE  '%ajustment%' OR name LIKE  '%physical%count%' OR name LIKE  '%starting%stock%') AS trans LEFT JOIN (SELECT transaction_type, SUM( quantity ) AS in_total, SUM( quantity_out ) AS out_total FROM drug_stock_movement WHERE transaction_date BETWEEN  '$start_date' AND  '$end_date' AND drug =  '$drug_id' AND source=destination GROUP BY transaction_type) AS dsm ON trans.id = dsm.transaction_type GROUP BY trans.name";
+		$query = $this -> db -> query($sql);
+		$results = $query -> result_array();
+		if ($results) {
+			foreach ($results as $result) {
+				$effect = $result['effect'];
+				$trans_name = str_replace(array(" ", "(-)", "(+)", "/"), array("_", "_", "plus", "_"), $result['name']);
+				if ($effect == 1) {
+					if ($result['in_total'] != null) {
+						$total = (int)$result['in_total'];
+					} else {
+						$total = 0;
+					}
+				} else {
+					if ($result['out_total'] != null) {
+						$total = (int)$result['out_total'];
+					} else {
+						$total = 0;
+					}
+				}
+				$row[$trans_name] = $total;
+			}
+		}
+		echo json_encode($row);
+	}
+
 	public function getPeriodRegimenPatients($from, $to) {
-		$sql = "SELECT regimen, COUNT( DISTINCT patient_id ) AS patients FROM patient_visit WHERE dispensing_date BETWEEN  '$from' AND  '$to' GROUP BY regimen";
+		$facility_code = $this -> session -> userdata("facility");
+		$sql = "SELECT count(*) as patients, r.regimen_desc,r.regimen_code,p.current_regimen as regimen FROM patient p,regimen r WHERE p.date_enrolled<='$to' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.current_regimen !=0 AND p.current_regimen !='' AND p.current_status !='' AND p.current_status !=0 GROUP BY p.current_regimen ORDER BY r.regimen_code ASC";
+		//$sql = "SELECT regimen, COUNT( DISTINCT patient_id ) AS patients FROM patient_visit WHERE dispensing_date BETWEEN  '$from' AND  '$to' GROUP BY regimen";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		echo json_encode($results);

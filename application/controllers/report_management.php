@@ -20,8 +20,8 @@ class report_management extends MY_Controller {
 
 	public function getMoreHelp($stock_type = '2', $start_date = '2013-08-01', $end_date = '2013-08-31') {
 		//Check if user is logged in
-		if($this -> session -> userdata("user_id")){
-			
+		if ($this -> session -> userdata("user_id")) {
+
 			/* Server side start */
 			$data = array();
 			$aColumns = array('drug');
@@ -64,7 +64,7 @@ class report_management extends MY_Controller {
 					}
 				}
 			}
-			
+
 			/*
 			 * Outer Loop through all active drugs
 			 */
@@ -85,7 +85,7 @@ class report_management extends MY_Controller {
 			$this -> db -> join("drug_unit u", "u.id=dc.unit", 'left outer');
 			$this -> db -> where("dc.Enabled", 1);
 			$rResult = $this -> db -> get();
-			
+
 			// Data set length after filtering
 			$this -> db -> select('FOUND_ROWS() AS found_rows');
 			$iFilteredTotal = $this -> db -> get() -> row() -> found_rows;
@@ -97,17 +97,17 @@ class report_management extends MY_Controller {
 			$this -> db -> where("dc.Enabled", 1);
 			$tot_drugs = $this -> db -> get();
 			$iTotal = count($tot_drugs -> result_array());
-			
+
 			$prev_start = date("Y-m-d", strtotime("-1 month", strtotime($start_date)));
 			$prev_end = date("Y-m-d", strtotime("-1 month", strtotime($end_date)));
-			
+
 			// Output
 			$output = array('sEcho' => intval($sEcho), 'iTotalRecords' => $iTotal, 'iTotalDisplayRecords' => $iFilteredTotal, 'aaData' => array());
 			foreach ($rResult->result_array() as $aRow) {
 				$row = array();
-				$drug_id=$aRow['id'];
-				$row[]=$aRow['drug'];
-				
+				$drug_id = $aRow['id'];
+				$row[] = $aRow['drug'];
+
 				//Start of Beginning Balance
 				$sql = "SELECT SUM( dst.balance ) AS total FROM drug_stock_movement dst, (SELECT drug, batch_number, MAX( transaction_date ) AS trans_date FROM  `drug_stock_movement` WHERE transaction_date BETWEEN  '$prev_start' AND  '$prev_end' AND drug ='$drug_id' $first_value GROUP BY batch_number) AS temp WHERE dst.drug = temp.drug AND dst.batch_number = temp.batch_number AND dst.transaction_date = temp.trans_date $second_value";
 				$query = $this -> db -> query($sql);
@@ -121,7 +121,7 @@ class report_management extends MY_Controller {
 				} else {
 					$row[] = 0;
 				}
-				
+
 				//End of Beginning Balance
 				//Start of Other Transactions
 				$sql = "SELECT trans.name, trans.id, trans.effect, dsm.in_total, dsm.out_total FROM (SELECT id, name, effect FROM transaction_type WHERE name LIKE  '%received%' OR name LIKE  '%adjustment%' OR name LIKE  '%return%' OR name LIKE  '%dispense%' OR name LIKE  '%issue%' OR name LIKE  '%loss%' OR name LIKE  '%ajustment%' OR name LIKE  '%physical%count%' OR name LIKE  '%starting%stock%') AS trans LEFT JOIN (SELECT transaction_type, SUM( quantity ) AS in_total, SUM( quantity_out ) AS out_total FROM drug_stock_movement WHERE transaction_date BETWEEN  '$start_date' AND  '$end_date' AND drug =  '$drug_id' $first_value GROUP BY transaction_type) AS dsm ON trans.id = dsm.transaction_type GROUP BY trans.name";
@@ -131,7 +131,7 @@ class report_management extends MY_Controller {
 					foreach ($results as $result) {
 						$effect = $result['effect'];
 						$trans_name = $result['name'];
-						if ($effect == 1){
+						if ($effect == 1) {
 							if ($result['in_total'] != null) {
 								$total = $result['in_total'];
 							} else {
@@ -151,9 +151,9 @@ class report_management extends MY_Controller {
 				$output['aaData'][] = $row;
 			}
 			echo json_encode($output);
-			
+
 		}//Check if user is logged in end
-		
+
 	}
 
 	public function getHelp($stock_type = '2', $start_date = '2013-08-01', $end_date = '2013-08-31') {
@@ -194,14 +194,14 @@ class report_management extends MY_Controller {
 					 */
 					$sql = "SELECT SUM( dst.balance ) AS total FROM drug_stock_movement dst, (SELECT drug, batch_number, MAX( transaction_date ) AS trans_date FROM  `drug_stock_movement` WHERE transaction_date BETWEEN  '$prev_start' AND  '$prev_end' AND drug ='$drug_id' $first_value GROUP BY batch_number) AS temp WHERE dst.drug = temp.drug AND dst.batch_number = temp.batch_number AND dst.transaction_date = temp.trans_date $second_value";
 				} else {
-					 $effect = Transaction_Type::getEffect($sections);
-					 if ($effect['Effect'] == 1) {
-					 $balance_value = "quantity";
-					 } else {
-					 $balance_value = "quantity_out";
-					 }
-					 $sql = "SELECT SUM($balance_value) AS total FROM  `drug_stock_movement` WHERE transaction_date BETWEEN  '$start_date' AND  '$end_date' $first_value AND transaction_type ='$sections' AND drug='$drug_id'";
-					
+					$effect = Transaction_Type::getEffect($sections);
+					if ($effect['Effect'] == 1) {
+						$balance_value = "quantity";
+					} else {
+						$balance_value = "quantity_out";
+					}
+					$sql = "SELECT SUM($balance_value) AS total FROM  `drug_stock_movement` WHERE transaction_date BETWEEN  '$start_date' AND  '$end_date' $first_value AND transaction_type ='$sections' AND drug='$drug_id'";
+
 				}
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
@@ -483,6 +483,9 @@ class report_management extends MY_Controller {
 				$total_child_female_pep_percentage = "-";
 				$total_child_female_pmtct_percentage = "-";
 				$total_child_female_oi_percentage = "-";
+				$overall_child_female = 0;
+				$service_name = "";
+				$overall_child_male = 0;
 				if ($results) {
 					foreach ($results as $result) {
 						$total_child_female = $result['total_child_female'];
@@ -522,8 +525,8 @@ class report_management extends MY_Controller {
 
 			$overall_art_childmale_percent = number_format(($overall_child_male_art / $total) * 100, 1);
 			$overall_pep_childmale_percent = number_format(($overall_child_male_pep / $total) * 100, 1);
-			$overall_oi_childmale_percent = number_format(($overall_child_male_pmtct / $total) * 100, 1);
-			$overall_pmtct_childmale_percent = number_format(($overall_child_male_oi / $total) * 100, 1);
+			$overall_pmtct_childmale_percent = number_format(($overall_child_male_pmtct / $total) * 100, 1);
+			$overall_oi_childmale_percent = number_format(($overall_child_male_oi / $total) * 100, 1);
 
 			$overall_art_childfemale_percent = number_format(($overall_child_female_art / $total) * 100, 1);
 			$overall_pep_childfemale_percent = number_format(($overall_child_female_pep / $total) * 100, 1);
@@ -1124,7 +1127,7 @@ class report_management extends MY_Controller {
 		$from = date('Y-m-d', strtotime($from));
 		$to = date('Y-m-d', strtotime($to));
 
-		$sql = "SELECT pv.patient_id as art_no,pv.dispensing_date, t.name AS service_type, s.name AS supported_by,UPPER(p.first_name) as first_name ,UPPER(p.other_name) as other_name ,UPPER(p.last_name)as last_name,ROUND(DATEDIFF('$today',p.dob)/360) as age, pv.current_weight as weight, IF(p.gender=1,'Male','Female')as gender, r.regimen_desc,r.regimen_code from patient_visit pv,patient p,supporter s,regimen_service_type t,regimen r where pv.dispensing_date between '$from' and '$to' and pv.patient_id=p.patient_number_ccc and s.id = p.supported_by and t.id = p.service and r.id = pv.regimen and pv.visit_purpose =  '2' and p.current_status =  '1' and pv.facility =  '$facility_code' and p.facility_code = pv.facility group by pv.patient_id,pv.dispensing_date";
+		$sql = "SELECT pv.patient_id as art_no,pv.dispensing_date, t.name AS service_type, s.name AS supported_by,UPPER(p.first_name) as first_name ,UPPER(p.other_name) as other_name ,UPPER(p.last_name)as last_name,ROUND(DATEDIFF('$today',p.dob)/360) as age, pv.current_weight as weight, IF(p.gender=1,'Male','Female')as gender, r.regimen_desc,r.regimen_code from patient_visit pv LEFT JOIN  visit_purpose v on v.id=pv.visit_purpose,patient p,supporter s,regimen_service_type t,regimen r where pv.dispensing_date between '$from' and '$to' and pv.patient_id=p.patient_number_ccc and s.id = p.supported_by and t.id = p.service and r.id = pv.regimen and v.name like '%routine%'  and p.current_status =  '1' and pv.facility =  '$facility_code' and p.facility_code = pv.facility group by pv.patient_id,pv.dispensing_date";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$row_string = "<table border='1'   class='dataTables'>
@@ -2653,7 +2656,12 @@ class report_management extends MY_Controller {
 		$facility_code = $this -> session -> userdata('facility');
 		$start_date = date('Y-m-d', strtotime($start_date));
 		$end_date = date('Y-m-d', strtotime($end_date));
-		$patient_sql = $this -> db -> query("SELECT DISTINCT p.patient_number_ccc,UPPER(p.first_name) as first_name,UPPER(p.other_name) as other_name ,UPPER(p.last_name) as last_name, rst.name as service, pv.dispensing_date, r1.regimen_desc AS current_regimen, r2.regimen_desc AS last_regimen, pv.comment, pv.regimen_change_reason FROM patient p LEFT JOIN patient_visit pv ON pv.patient_id = p.patient_number_ccc LEFT JOIN regimen r1 ON r1.id = pv.regimen LEFT JOIN regimen r2 ON r2.id = pv.last_regimen LEFT JOIN regimen_service_type rst ON rst.id=p.service WHERE pv.last_regimen !=  '' AND pv.regimen != pv.last_regimen AND DATE( pv.dispensing_date ) BETWEEN DATE('" . $start_date . "' ) AND DATE( '" . $end_date . "' ) AND p.current_status =  '1' AND pv.facility =  '" . $facility_code . "' AND pv.facility=p.facility_code GROUP BY patient_number_ccc,pv.dispensing_date ORDER BY last_regimen");
+		/*
+		 * Get All active patients
+		 * Get Transactions of patients who visited in the selected period and changed regimens
+		 */
+		$sql = "SELECT CONCAT_WS(  ' | ', r2.regimen_code, r2.regimen_desc ) AS from_regimen, CONCAT_WS(  ' | ', r1.regimen_code, r1.regimen_desc ) AS to_regimen, p.patient_number_ccc AS art_no, CONCAT_WS(  ' ', CONCAT_WS(  ' ', p.first_name, p.other_name ) , p.last_name ) AS full_name, pv.dispensing_date, rst.name AS service_type,IF(rcp.name is not null,rcp.name,pv.regimen_change_reason) as regimen_change_reason FROM patient p LEFT JOIN regimen_service_type rst ON rst.id = p.service LEFT JOIN patient_status ps ON ps.id = p.current_status LEFT JOIN (SELECT * FROM patient_visit WHERE dispensing_date BETWEEN  '$start_date' AND  '$end_date' AND last_regimen != regimen AND last_regimen IS NOT NULL) AS pv ON pv.patient_id = p.patient_number_ccc LEFT JOIN regimen r1 ON r1.id = pv.regimen LEFT JOIN regimen r2 ON r2.id = pv.last_regimen LEFT JOIN regimen_change_purpose rcp ON rcp.id=pv.regimen_change_reason WHERE ps.Name LIKE  '%active%' AND r2.regimen_code IS NOT NULL AND r1.regimen_code IS NOT NULL AND pv.dispensing_date IS NOT NULL GROUP BY pv.patient_id, pv.dispensing_date";
+		$patient_sql = $this -> db -> query($sql);
 		$data['patients'] = $patient_sql -> result_array();
 		$data['total'] = count($data['patients']);
 		$data['title'] = "webADT | Reports";
@@ -2693,13 +2701,17 @@ class report_management extends MY_Controller {
 		$facility_code = $this -> session -> userdata('facility');
 		$start_date = date('Y-m-d', strtotime($start_date));
 		$end_date = date('Y-m-d', strtotime($end_date));
-		$tot_patients_sql = $this -> db -> query("SELECT COUNT( * ) AS Total_Patients FROM patient p WHERE DATE(start_regimen_date) between DATE('" . $start_date . "') and  DATE('" . $end_date . "') and p.facility_code='" . $facility_code . "' AND p.service=1");
+		//Get Total Patients started in selected period
+		$sql = "SELECT COUNT( * ) AS Total_Patients FROM patient p LEFT JOIN regimen_service_type rst ON rst.id=p.service LEFT JOIN regimen r ON r.id=p.start_regimen LEFT JOIN patient_source ps ON ps.id = p.source WHERE DATE(start_regimen_date) between DATE('" . $start_date . "') and  DATE('" . $end_date . "') and p.facility_code='" . $facility_code . "' AND rst.name LIKE  '%art%' AND ps.name NOT LIKE '%transfer%'";
+		$tot_patients_sql = $this -> db -> query($sql);
 		$tot_patients = 0;
 		$patients = $tot_patients_sql -> result_array();
 		foreach ($patients as $value) {
 			$tot_patients = $value['Total_Patients'];
 		}
-		$first_line_sql = $this -> db -> query("SELECT COUNT( * ) AS First_Line FROM patient p LEFT JOIN regimen r ON r.id = p.start_regimen WHERE DATE(p.start_regimen_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "') AND r.line=1 AND p.facility_code='" . $facility_code . "' AND p.service=1");
+		//Get Total Patients started on first line in selected period
+		$sql = "SELECT COUNT( * ) AS First_Line FROM patient p LEFT JOIN regimen_service_type rst ON rst.id=p.service LEFT JOIN regimen r ON r.id = p.start_regimen LEFT JOIN patient_source ps ON ps.id = p.source WHERE DATE(p.start_regimen_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "') AND r.line=1 AND p.facility_code='" . $facility_code . "' AND rst.name LIKE  '%art%' AND ps.name NOT LIKE '%transfer%'";
+		$first_line_sql = $this -> db -> query($sql);
 		$first_line = 0;
 		$first_line_array = $first_line_sql -> result_array();
 		foreach ($first_line_array as $value) {
@@ -2715,20 +2727,21 @@ class report_management extends MY_Controller {
 			$percentage_onotherline = 100 - $percentage_firstline;
 		}
 
-		//Gets patients started 12 months from selected period
-		$to_date = "";
-		$future_date = "";
-		$patient_from_period_sql = $this -> db -> query("SELECT COUNT( * ) AS Total_Patients FROM patient p LEFT JOIN regimen r ON r.id = p.start_regimen WHERE DATE(p.start_regimen_date) BETWEEN DATE('" . $to_date . "') and DATE('" . $future_date . "') and p.facility_code='" . $facility_code . "'");
+		//Gets patients started a year ago within selected period
+		$to_date = date('Y-m-d', strtotime($start_date . " -1 year"));
+		$future_date = date('Y-m-d', strtotime($end_date . " -1 year"));
+		$sql = "SELECT COUNT( * ) AS Total_Patients FROM patient p LEFT JOIN regimen_service_type rst ON rst.id=p.service LEFT JOIN regimen r ON r.id=p.start_regimen LEFT JOIN patient_source ps ON ps.id = p.source WHERE DATE(start_regimen_date) between DATE('" . $to_date . "') and  DATE('" . $future_date . "') and p.facility_code='" . $facility_code . "' AND rst.name LIKE  '%art%' AND ps.name NOT LIKE '%transfer%'";
+		$patient_from_period_sql = $this -> db -> query($sql);
 		$total_from_period_array = $patient_from_period_sql -> result_array();
 		$total_from_period = 0;
 		foreach ($total_from_period_array as $value) {
 			$total_from_period = $value['Total_Patients'];
 		}
 
-		$from_date = $start_date;
-		$future_date = $end_date;
+		//Gets patients started a year ago within selected period still in first line
 		$stil_in_first_line = 0;
-		$first_line_patient_from_period_sql = $this -> db -> query("SELECT COUNT( * ) AS Total_Patients FROM patient p LEFT JOIN regimen r ON r.id=p.current_regimen WHERE DATE(p.start_regimen_date) between DATE('" . $from_date . "') and DATE('" . $future_date . "')and r.line=1 and p.facility_code='" . $facility_code . "'");
+		$sql = "SELECT COUNT( * ) AS Total_Patients FROM patient p LEFT JOIN regimen_service_type rst ON rst.id=p.service LEFT JOIN regimen r ON r.id=p.start_regimen LEFT JOIN regimen r1 ON r1.id = p.current_regimen LEFT JOIN patient_source ps ON ps.id = p.source LEFT JOIN patient_status pt ON pt.id = p.current_status WHERE DATE(start_regimen_date) between DATE('" . $to_date . "') and  DATE('" . $future_date . "') and p.facility_code='" . $facility_code . "' AND rst.name LIKE  '%art%' AND ps.name NOT LIKE '%transfer%' AND r1.line ='1' AND pt.Name like '%active%'";
+		$first_line_patient_from_period_sql = $this -> db -> query($sql);
 		$first_line_patient_from_period_array = $first_line_patient_from_period_sql -> result_array();
 		foreach ($first_line_patient_from_period_array as $row) {
 			$stil_in_first_line = $row['Total_Patients'];
@@ -2740,16 +2753,17 @@ class report_management extends MY_Controller {
 			$percentage_stillfirstline = ($stil_in_first_line / $total_from_period) * 100;
 		}
 
-		$prevFrom = $start_date;
-		$prevTo = $end_date;
-		$patients_before_sql = $this -> db -> query("SELECT COUNT( * ) AS Total_Patients FROM patient p WHERE DATE(p.start_regimen_date) between DATE('" . $prevFrom . "') and DATE('" . $prevTo . "') and p.facility_code='" . $facility_code . "' AND p.service=1");
+		//Gets patients started a year ago within selected period
+		$sql = "SELECT COUNT( * ) AS Total_Patients FROM patient p LEFT JOIN regimen_service_type rst ON rst.id=p.service LEFT JOIN regimen r ON r.id=p.start_regimen LEFT JOIN patient_source ps ON ps.id = p.source WHERE DATE(start_regimen_date) between DATE('" . $to_date . "') and  DATE('" . $future_date . "') and p.facility_code='" . $facility_code . "' AND rst.name LIKE  '%art%' AND ps.name NOT LIKE '%transfer%'";
+		$patients_before_sql = $this -> db -> query($sql);
 		$patients_before_array = $patients_before_sql -> result_array();
 		$total_before_period = 0;
 		foreach ($patients_before_array as $row1) {
 			$total_before_period = $row1['Total_Patients'];
 		}
-
-		$patient_lost_followup_sql = $this -> db -> query("SELECT COUNT( * ) AS Total_Patients FROM patient p LEFT JOIN patient_status ps ON ps.id = p.current_status WHERE DATE(p.status_change_date) between DATE('" . $prevFrom . "') and DATE('" . $prevTo . "') AND p.current_status=5 AND p.facility_code='" . $facility_code . "'");
+		//Gets patients started a year ago within selected period lost to follow-up
+		$sql = "SELECT COUNT( * ) AS Total_Patients FROM patient p LEFT JOIN regimen_service_type rst ON rst.id=p.service LEFT JOIN regimen r ON r.id=p.start_regimen LEFT JOIN regimen r1 ON r1.id = p.current_regimen LEFT JOIN patient_source ps ON ps.id = p.source LEFT JOIN patient_status pt ON pt.id = p.current_status WHERE DATE(start_regimen_date) between DATE('" . $to_date . "') and  DATE('" . $future_date . "') and p.facility_code='" . $facility_code . "' AND rst.name LIKE  '%art%' AND ps.name NOT LIKE '%transfer%' AND r1.line ='1' AND pt.Name like '%lost to follow%'";
+		$patient_lost_followup_sql = $this -> db -> query($sql);
 		$patient_lost_followup_array = $patient_lost_followup_sql -> result_array();
 		$lost_to_follow = 0;
 		foreach ($patient_lost_followup_array as $row2) {
@@ -2761,7 +2775,7 @@ class report_management extends MY_Controller {
 			$percentage_lost_to_follow = ($lost_to_follow / $total_before_period) * 100;
 		}
 		$data['tot_patients'] = $tot_patients;
-		$data['first_line'] = number_format($first_line, 1);
+		$data['first_line'] = $first_line;
 		$data['percentage_firstline'] = $percentage_firstline;
 		$data['percentage_onotherline'] = $percentage_onotherline;
 		$data['total_patients'] = $tot_patients;
@@ -2806,7 +2820,7 @@ class report_management extends MY_Controller {
 		$start_date = date('Y-m-d', strtotime($start_date));
 		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
-		$sql = "SELECT SUM(pill_count) as pill_count,SUM(missed_pills) as missed_pills,adherence,SUM(pv.quantity) as quantity, frequency, p.patient_number_ccc, p.service, p.gender,(YEAR(curdate()) - YEAR(p.dob)) as age FROM patient_visit pv LEFT JOIN patient p ON p.patient_number_ccc = pv.patient_id LEFT JOIN dose ds ON ds.name = pv.dose LEFT JOIN drugcode dc ON dc.id=pv.drug_id LEFT JOIN regimen r ON pv.regimen=r.id WHERE dispensing_date BETWEEN  '$start_date' AND  '$end_date' AND pv.facility ='$facility_code' AND frequency <=2 AND (r.regimen_code NOT LIKE '%OI%' OR dc.drug LIKE '%COTRIMOXAZOLE%' OR dc.drug LIKE '%DAPSONE%' ) GROUP BY p.patient_number_ccc";
+		$sql = "SELECT SUM( pill_count ) - SUM( months_of_stock ) AS pill_count, SUM( pill_count ) AS e_pill_count,SUM( months_of_stock ) AS a_pill_count,SUM(missed_pills) as missed_pills,adherence,SUM(pv.quantity) as quantity, frequency, p.patient_number_ccc, p.service, p.gender,(YEAR(curdate()) - YEAR(p.dob)) as age FROM patient_visit pv LEFT JOIN patient p ON p.patient_number_ccc = pv.patient_id LEFT JOIN dose ds ON ds.name = pv.dose LEFT JOIN drugcode dc ON dc.id=pv.drug_id LEFT JOIN regimen r ON pv.regimen=r.id WHERE dispensing_date BETWEEN  '$start_date' AND  '$end_date' AND pv.facility ='$facility_code' AND frequency <=2 AND (r.regimen_code NOT LIKE '%OI%' OR dc.drug LIKE '%COTRIMOXAZOLE%' OR dc.drug LIKE '%DAPSONE%' ) GROUP BY p.patient_number_ccc";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$data['results'] = $results;

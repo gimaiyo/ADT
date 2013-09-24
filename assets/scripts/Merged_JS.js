@@ -19,18 +19,29 @@ $(document).ready(function() {
 	}
 
 	var base_url = $("#base_url").val();
+	var report_title=$("#report_title").text();
+	var facility=$("#facility_name").text();
 	$('.dataTables').dataTable({
 		"bJQueryUI" : true,
 		"sPaginationType" : "full_numbers",
-		"sDom" : '<"H"Tfr>t<"F"ip>',
+		"sDom" : '<"H"T<"clear">lfr>t<"F"ip>',
 		"oTableTools" : {
-			"sSwfPath" : base_url + "scripts/datatable/copy_csv_xls_pdf.swf",
-			"aButtons" : ["copy", "print", "xls", "pdf"]
+			"sSwfPath" : base_url + "assets/scripts/datatable/copy_csv_xls_pdf.swf",
+			"aButtons" : ["copy", 
+			{
+				"sExtends" : "xls",
+				"sTitle" : report_title+" ("+facility+")",
+			},  
+			{
+				"sExtends" : "pdf",
+				"sPdfOrientation" : "landscape",
+				"sPdfSize" : "A3",
+				"sTitle" : report_title+" ("+facility+")",
+			}]
 		},
 		"bProcessing" : true,
 		"bServerSide" : false,
 	});
-	//syncOrders("13050");
 
 	var base_url = $("#base_url").val();
 	$("#change_password_link").click(function() {
@@ -167,7 +178,7 @@ $(document).ready(function() {
 var timer = 0;
 function set_interval() {
 	// the interval 'timer' is set as soon as the page loads
-	timer = setInterval("auto_logout()", 1200000);
+	timer = setInterval("auto_logout()", 3600000);
 	// the figure '180000' above indicates how many milliseconds the timer be set to.
 	// Eg: to set it to 5 mins, calculate 3min = 3x60 = 180 sec = 180,000 millisec.
 	// So set it to 180000
@@ -202,24 +213,41 @@ function getPeriodDrugBalance(count, drug, start_date, end_date) {
 	var href = window.location.href;
 	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
 	var _href = href.substr(href.lastIndexOf('/') + 1);
-	var link = base_url + '/ADT/order_management/getPeriodDrugBalance/' + drug + '/' + start_date + '/' + end_date;
+	var link = base_url + '/ADT/order_management/getPeriodDrugs/' + drug + '/' + start_date + '/' + end_date;
 	$.ajax({
 		url : link,
 		type : 'POST',
 		dataType : 'json',
 		success : function(data) {
+			var total_beginning_balance = 0;
 			var total_received = 0;
 			var total_dispensed = 0;
+			var total_losses = 0;
+			var total_adjustment = 0;
+			var total_physical = 0;
 			var drug_id = 0;
-			$.each(data, function(i, jsondata) {
-				total_received = jsondata.total_received;
-				total_dispensed = jsondata.total_dispensed;
-				drug_id = jsondata.drug;
-			});
+			total_beginning_balance = data.beginning_balance;
+			total_received = data.Received_From;
+			total_dispensed = data.Dispensed_to_Patients;
+			total_losses = data.Losses__;
+			total_adjustment += parseFloat(data.Adjustment_plus);
+			total_adjustment += parseFloat(data.Adjustment__);
+			total_physical = data.Starting_Stock_Physical_Count;
+			drug_id = data.drug;
+
+			var beginning_balance_div = "#opening_balance_" + drug_id;
 			var total_received_div = "#received_in_period_" + drug_id;
 			var total_dispensed_div = "#dispensed_in_period_" + drug_id;
+			var losses_div = "#losses_in_period_" + drug_id;
+			var adjustments_div = "#adjustments_in_period_" + drug_id;
+			var physical_div = "#physical_in_period_" + drug_id;
+
+			$(beginning_balance_div).attr("value", total_beginning_balance);
 			$(total_received_div).attr("value", total_received);
 			$(total_dispensed_div).attr("value", total_dispensed);
+			$(losses_div).attr("value", total_losses);
+			$(adjustments_div).attr("value", total_adjustment);
+			$(physical_div).attr("value", total_physical);
 			calculateResupply($(total_dispensed_div));
 			//Once the calculations are done for the whole table, put back the pagination
 			if($(".ordered_drugs").length == count) {
@@ -302,9 +330,7 @@ function syncOrders() {
  */
 function synch_drug_balance(stock_type) {
 	var base_url = $("#base_url").val();
-	$(".bar").css("width", "0%");
-	$(".sync_complete").html("");
-	$(".modal-footer").css("display", "none");
+	$(".bar_dsb").css("width", "0%");
 	//Get number total number of drugs
 	var _url = base_url + "drug_stock_balance_sync/getDrugs";
 	var stock_type = stock_type;
@@ -427,9 +453,9 @@ function synch_drug_movement_balance(stock_type) {
 							if(stock_type == 1) {
 								synch_drug_movement_balance(2);
 							} else if(stock_type == 2) {
-								//$(".sync_complete").html("Synchronization successfully completed !<i class='icon-ok'></i>");
-								//$(".modal-footer").css("display","block");
-								drug_cons_synch();
+								$(".sync_complete").html("Synchronization successfully completed !<i class='icon-ok'></i>");
+								$(".modal-footer").css("display", "block");
+								//drug_cons_synch();
 							}
 
 						}
@@ -444,6 +470,9 @@ function synch_drug_movement_balance(stock_type) {
 //Drug consumption balance
 function drug_cons_synch() {
 	var base_url = $("#base_url").val();
+	$(".bar").css("width", "0%");
+	$(".sync_complete").html("");
+	$(".modal-footer").css("display", "none");
 	$(".bar_dcb").css("width", "0%");
 	$(".modal-footer").css("display", "none");
 	//Get number total number of drugs
@@ -486,8 +515,9 @@ function drug_cons_synch() {
 						$(".bar_dcb").css("width", div_width);
 
 						if(remaining_drugs == count_drugs) {
-							$(".sync_complete").html("Synchronization successfully completed !<i class='icon-ok'></i>");
-							$(".modal-footer").css("display", "block");
+							//$(".sync_complete").html("Synchronization successfully completed !<i class='icon-ok'></i>");
+							//$(".modal-footer").css("display", "block");
+							synch_drug_balance(1);
 						}
 
 					}

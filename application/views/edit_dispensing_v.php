@@ -35,7 +35,7 @@ foreach ($expiries as $expiry) {
 				$("#regimen_change_reason").val("<?php echo @$result['regimen_change_reason'];?>"); 
 				$("#brand").val("<?php echo @$result['brand']; ?>");
 				$("#indication").val("<?php echo @$result['indication']; ?>");
-				$("#pill_count").val("<?php echo @$result['pill_count']; ?>");
+				$("#pill_count").val("<?php echo @$result['months_of_stock']; ?>");
 				$("#missed_pills").val("<?php echo @$result['missed_pills']; ?>");
 				$("#comment").val("<?php echo @$result['comment']; ?>");
 				
@@ -312,7 +312,7 @@ foreach ($expiries as $expiry) {
 					</div>
 					<div class="mid-row">
 						<label><span class='astericks'>*</span>Purpose of Visit</label>
-						<select type="text"name="purpose" id="purpose" class="validate[required]"/>
+						<select type="text"name="purpose" id="purpose" class="validate[required]" style="width:250px;"/>
 						<option value="">--Select One--</option>
 									<?php 
 									foreach($purposes as $purpose){
@@ -346,7 +346,7 @@ foreach ($expiries as $expiry) {
 						</div>
 						<div class="mid-row">
 							<label><span class='astericks'>*</span>Current Regimen</label>
-							<select name="current_regimen" id="current_regimen"  class="validate[required]"/>
+							<select name="current_regimen" id="current_regimen"  class="validate[required]" style="width:250px;"/>
 							<option value="">-Select One--</option>
 										<?php 
 									       foreach($regimens as $regimen){
@@ -359,7 +359,7 @@ foreach ($expiries as $expiry) {
 					<div class="max-row">
 						<div style="display:none" id="regimen_change_reason_container">
 							<label>Regimen Change Reason</label>
-							<select type="text"name="regimen_change_reason" id="regimen_change_reason" >
+							<select type="text"name="regimen_change_reason" id="regimen_change_reason" style="width:250px;">
 									<option value="">--Select One--</option>
 										 <?php
 										   foreach($regimen_changes as $changes){
@@ -376,7 +376,7 @@ foreach ($expiries as $expiry) {
 						</div>
 						<div class="mid-row">
 							<label> Poor/Fair Adherence Reasons </label>
-							<select type="text"name="non_adherence_reasons" id="non_adherence_reasons" >
+							<select type="text"name="non_adherence_reasons" id="non_adherence_reasons" style="width:250px;">
 								<option value="">-Select One--</option>
 										<?php 
 									       foreach($non_adherence_reasons as $reasons){
@@ -416,7 +416,7 @@ foreach ($expiries as $expiry) {
 					</td>
 					<td><select id="batch" name="batch" class="batch input-medium"></select></td>
 					<td>
-					<input type="text" id="expiry" name="expiry" class="expiry input-xlarge validate[required]" />
+					<input type="text" id="expiry" name="expiry" class="expiry input-xlarge validate[required]" style="width:100px;" />
 					</td>
 					<td>
 					<select id="dose" name="dose" class="expiry input-small">

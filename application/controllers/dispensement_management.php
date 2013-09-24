@@ -32,13 +32,13 @@ class Dispensement_Management extends MY_Controller {
 			$dispensing_date = $results[0]['dispensing_date'];
 		}
 
-		$sql = "select d.drug,pv.quantity,pv.months_of_stock as mos,pv.drug_id from patient_visit pv,drugcode d where pv.patient_id = '$patient_no' and pv.dispensing_date = '$dispensing_date' and pv.drug_id = d.id order by pv.id desc";
+		$sql = "select d.drug,pv.quantity,pv.months_of_stock as mos,pv.drug_id,pv.dispensing_date,ds.value,ds.frequency from patient_visit pv,drugcode d left join dose ds on ds.Name=d.dose where pv.patient_id = '$patient_no' and pv.dispensing_date = '$dispensing_date' and pv.drug_id = d.id order by pv.id desc";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
-		$data['prev_visit']="";
+		$data['prev_visit'] = "";
 		if ($results) {
 			$data['visits'] = $results;
-			$data['prev_visit']=json_encode($results);
+			$data['prev_visit'] = json_encode($results);
 		}
 
 		$sql = "SELECT appointment FROM patient_appointment pa WHERE pa.patient = '$patient_no' AND pa.facility =  '$facility_code' ORDER BY appointment DESC LIMIT 1";
@@ -61,7 +61,7 @@ class Dispensement_Management extends MY_Controller {
 
 	public function getDrugsRegimens() {
 		$regimen_id = $this -> input -> post('selected_regimen');
-		$sql="SELECT DISTINCT(d.id),d.drug FROM drugcode d LEFT JOIN regimen_drug rd ON d.id=rd.drugcode LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id LEFT JOIN regimen r ON r.id = rd.regimen  WHERE dsb.balance>0 AND dsb.expiry_date>CURDATE() AND (rd.regimen='" . $regimen_id . "' OR r.regimen_code =  'OI') and d.enabled='1'";
+		$sql = "SELECT DISTINCT(d.id),d.drug FROM drugcode d LEFT JOIN regimen_drug rd ON d.id=rd.drugcode LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id LEFT JOIN regimen r ON r.id = rd.regimen  WHERE dsb.balance>0 AND dsb.expiry_date>CURDATE() AND (rd.regimen='" . $regimen_id . "' OR r.regimen_code =  'OI') and d.enabled='1'";
 		$get_drugs_sql = $this -> db -> query($sql);
 		$get_drugs_array = $get_drugs_sql -> result_array();
 		echo json_encode($get_drugs_array);
@@ -124,10 +124,11 @@ class Dispensement_Management extends MY_Controller {
 	}
 
 	public function save() {
-		$period=date("M-Y");
-		$record_no = $this->session->userdata('record_no');
+		$period = date("M-Y");
+		$record_no = $this -> session -> userdata('record_no');
 		$next_appointment_date = $this -> input -> post("next_appointment_date");
 		$last_appointment_date = $this -> input -> post("last_appointment_date");
+		$last_appointment_date = date('Y-m-d', strtotime($last_appointment_date));
 		$dispensing_date = $this -> input -> post("dispensing_date");
 		$dispensing_date_timestamp = date('U', strtotime($dispensing_date));
 		$facility = $this -> session -> userdata("facility");
@@ -141,11 +142,11 @@ class Dispensement_Management extends MY_Controller {
 		$dose = $this -> input -> post("dose");
 		$duration = $this -> input -> post("duration");
 		$quantity = $this -> input -> post("qty_disp");
-		$qty_available=$this -> input -> post("soh");
+		$qty_available = $this -> input -> post("soh");
 		$brand = $this -> input -> post("brand");
 		$soh = $this -> input -> post("soh");
 		$indication = $this -> input -> post("indication");
-		$mos=$this->input->post("next_pill_count");
+		$mos = $this -> input -> post("next_pill_count");
 		$pill_count = $this -> input -> post("pill_count");
 		$comment = $this -> input -> post("comment");
 		$missed_pill = $this -> input -> post("missed_pills");
@@ -154,12 +155,12 @@ class Dispensement_Management extends MY_Controller {
 		$regimen_change_reason = $this -> input -> post("regimen_change_reason");
 		$non_adherence_reasons = $this -> input -> post("non_adherence_reasons");
 		$timestamp = date('U');
-		$period=date("Y-m-01");
+		$period = date("Y-m-01");
 		$user = $this -> session -> userdata("username");
 		$adherence = $this -> input -> post("adherence");
 		//Get transaction type
-		$transaction_type = transaction_type::getTransactionType("dispense","0");
-		$transaction_type=$transaction_type->id;
+		$transaction_type = transaction_type::getTransactionType("dispense", "0");
+		$transaction_type = $transaction_type -> id;
 		/*
 		 * Update Appointment Info
 		 */
@@ -184,13 +185,16 @@ class Dispensement_Management extends MY_Controller {
 		 */
 
 		for ($i = 0; $i < sizeof($drugs); $i++) {
-			$remaining_balance=$soh[$i]-$quantity[$i];
+			$remaining_balance = $soh[$i] - $quantity[$i];
+			if ($pill_count[$i] == '') {
+				$pill_count[$i] = $mos[$i];
+			}
 			$sql .= "insert into patient_visit (patient_id, visit_purpose, current_height, current_weight, regimen, regimen_change_reason, drug_id, batch_number, brand, indication, pill_count, comment, `timestamp`, user, facility, dose, dispensing_date, dispensing_date_timestamp,quantity,duration,adherence,missed_pills,non_adherence_reason,months_of_stock) VALUES ('$patient','$purpose', '$height', '$weight', '$current_regimen', '$regimen_change_reason', '$drugs[$i]', '$batch[$i]', '$brand[$i]', '$indication[$i]', '$pill_count[$i]','$comment[$i]', '$timestamp', '$user','$facility', '$dose[$i]','$dispensing_date', '$dispensing_date_timestamp','$quantity[$i]','$duration[$i]','$adherence','$missed_pill[$i]','$non_adherence_reasons','$mos[$i]');";
 			$sql .= "insert into drug_stock_movement (drug, transaction_date, batch_number, transaction_type,source,destination,expiry_date,quantity, quantity_out,balance, facility,`timestamp`) VALUES ('$drugs[$i]','$dispensing_date','$batch[$i]','$transaction_type','$facility','$facility','$expiry[$i]',0,'$quantity[$i]',$remaining_balance,'$facility','$dispensing_date_timestamp');";
 			$sql .= "update drug_stock_balance SET balance=balance - '$quantity[$i]' WHERE drug_id='$drugs[$i]' AND batch_number='$batch[$i]' AND expiry_date='$expiry[$i]' AND stock_type='2' AND facility_code='$facility';";
-			
-			$sql.="INSERT INTO drug_cons_balance(drug_id,stock_type,period,facility,amount) VALUES('$drugs[$i]','2','$period','$facility','$quantity[$i]') ON DUPLICATE KEY UPDATE amount=amount+'$quantity[$i]';";
-			
+
+			$sql .= "INSERT INTO drug_cons_balance(drug_id,stock_type,period,facility,amount) VALUES('$drugs[$i]','2','$period','$facility','$quantity[$i]') ON DUPLICATE KEY UPDATE amount=amount+'$quantity[$i]';";
+
 		}
 		$queries = explode(";", $sql);
 		$count = count($queries);
@@ -203,7 +207,7 @@ class Dispensement_Management extends MY_Controller {
 
 		}
 		$this -> session -> set_userdata('msg_save_transaction', 'success');
-		$this -> session -> set_userdata('dispense_updated','Drugs dispensed to Patient No:' . $patient);
+		$this -> session -> set_userdata('dispense_updated', 'Drugs dispensed to Patient No:' . $patient);
 		redirect("patient_management/viewDetails/$record_no");
 	}
 
@@ -213,13 +217,13 @@ class Dispensement_Management extends MY_Controller {
 		$facility = "";
 		$user = "";
 		$record_no = "";
-		$soh=$this->input->post("soh");
+		$soh = $this -> input -> post("soh");
 		//Get transaction type
-		$transaction_type = transaction_type::getTransactionType("dispense","0");
-		$transaction_type=$transaction_type->id;
-		$transaction_type1 = transaction_type::getTransactionType("returns","1");
-		$transaction_type1=$transaction_type1->id;
-		$original_qty=@$_POST["qty_hidden"];
+		$transaction_type = transaction_type::getTransactionType("dispense", "0");
+		$transaction_type = $transaction_type -> id;
+		$transaction_type1 = transaction_type::getTransactionType("returns", "1");
+		$transaction_type1 = $transaction_type1 -> id;
+		$original_qty = @$_POST["qty_hidden"];
 		$facility = $this -> session -> userdata("facility");
 		$user = $this -> session -> userdata("full_name");
 		$timestamp = date('Y-m-d H:i:s');
@@ -228,7 +232,7 @@ class Dispensement_Management extends MY_Controller {
 		if (@$_POST['delete_trigger'] == 1) {
 			$sql = "update patient_visit set active='1' WHERE id='" . @$_POST["dispensing_id"] . "';";
 			$this -> db -> query($sql);
-			$bal=$soh +@$_POST["qty_disp"];
+			$bal = $soh + @$_POST["qty_disp"];
 			$sql = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type,source,destination,expiry_date, quantity, balance, facility, machine_code,timestamp) SELECT '" . @$_POST["original_drug"] . "','" . @$_POST["original_dispensing_date"] . "', '" . @$_POST["batch"] . "','$transaction_type1','$facility','$facility',expiry_date,'" . @$_POST["qty_disp"] . "','$facility','0','$timestamp' from drug_stock_movement WHERE batch_number= '" . @$_POST["batch"] . "' AND drug='" . @$_POST["original_drug"] . "' LIMIT 1;";
 			$this -> db -> query($sql);
 			//Update drug_stock_balance
@@ -241,27 +245,27 @@ class Dispensement_Management extends MY_Controller {
 			if (@$_POST["batch"] != @$_POST["batch_hidden"] || @$_POST["qty_disp"] != @$_POST["qty_hidden"]) {
 				//Update drug_stock_balance
 				//Balance=balance+(previous_qty_disp-actual_qty_dispense)
-				$bal=$soh;
+				$bal = $soh;
 				$new_qty_dispensed = $_POST["qty_hidden"] - $_POST["qty_disp"];
 				if ($new_qty_dispensed > 0) {
-					$bal=$soh+$new_qty_dispensed;
+					$bal = $soh + $new_qty_dispensed;
 					$sql = "UPDATE drug_stock_balance SET balance=balance+" . @$new_qty_dispensed . " WHERE drug_id='" . @$_POST["original_drug"] . "' AND batch_number='" . @$_POST["batch"] . "' AND expiry_date='" . @$_POST["original_expiry_date"] . "' AND stock_type='2' AND facility_code='$facility'";
 					$this -> db -> query($sql);
 				} else if ($new_qty_dispensed < 0) {
-					$bal=$soh-$new_qty_dispensed;
+					$bal = $soh - $new_qty_dispensed;
 					$new_qty_dispensed = abs($new_qty_dispensed);
 					$sql = "UPDATE drug_stock_balance SET balance=balance-" . @$new_qty_dispensed . " WHERE drug_id='" . @$_POST["original_drug"] . "' AND batch_number='" . @$_POST["batch"] . "' AND expiry_date='" . @$_POST["original_expiry_date"] . "' AND stock_type='2' AND facility_code='$facility'";
 					$this -> db -> query($sql);
 				}
 				//Balance after returns
-				$bal1=$soh+$original_qty;
+				$bal1 = $soh + $original_qty;
 				//Returns transaction
 				$sql = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type,source,destination,expiry_date, quantity,balance, facility, machine_code,timestamp) SELECT '" . @$_POST["original_drug"] . "','" . @$_POST["original_dispensing_date"] . "', '" . @$_POST["batch_hidden"] . "','$transaction_type1','$facility','$facility',expiry_date,'" . @$_POST["qty_hidden"] . "','$bal1','$facility','0','$timestamp' from drug_stock_movement WHERE batch_number= '" . @$_POST["batch_hidden"] . "' AND drug='" . @$_POST["original_drug"] . "' LIMIT 1;";
 				$this -> db -> query($sql);
 				//Dispense transaction
 				$sql = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type,source,destination,expiry_date, quantity_out,balance, facility, machine_code,timestamp) SELECT '" . @$_POST["drug"] . "','" . @$_POST["original_dispensing_date"] . "', '" . @$_POST["batch"] . "','$transaction_type','$facility','$facility',expiry_date,'" . @$_POST["qty_disp"] . "','$bal','$facility','0','$timestamp' from drug_stock_movement WHERE batch_number= '" . @$_POST["batch"] . "' AND drug='" . @$_POST["drug"] . "' LIMIT 1;";
 				$this -> db -> query($sql);
-				
+
 			}
 			$this -> session -> set_userdata('dispense_updated', 'success');
 		}

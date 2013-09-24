@@ -116,7 +116,7 @@
 			  		//Starts synchronization
 			  		
 			  		$('#drug_stock_balance_synch').modal('show');
-			  		synch_drug_balance("1");
+			  		drug_cons_synch();
 			  		
 			  	}
 			  	//Synchronizes drug stock movment remaining balance
