@@ -2989,14 +2989,11 @@ class report_management extends MY_Controller {
 
 			}
 		}
-		$nameArray = array("Male Disclosure(NO)","Male Disclosure(YES)","Female Disclosure(NO)","Female Disclosure(YES)");
-		$dataArray = array($strXML['Male Disclosure(NO)'], $strXML['Male Disclosure(YES)'], $strXML['Female Disclosure(NO)'], $strXML['Female Disclosure(YES)']);
-		$dataCount = 0;
+		$strXML = implode($strXML, ",");
+		$strXML = array_map('intval', explode(",", $strXML));
 		$resultArray = array();
-		foreach ($nameArray as $val) {
-			$resultArray[] = array('name' =>$val, 'data' =>array($dataArray[$dataCount]));
-			$dataCount++;
-		}
+		$nameArray = array("Male Disclosure(NO)", "Male Disclosure(YES)", "Female Disclosure(NO)", "Female Disclosure(YES)");
+		$resultArray[] = array('name' => "Disclosure Status", 'data' =>$strXML);
 		$categories = json_encode($nameArray);
 		$resultArray = json_encode($resultArray);
 		$data['resultArraySize'] = 6;
