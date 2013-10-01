@@ -30,7 +30,7 @@ class Inventory_Management extends MY_Controller {
 		/* Array of database columns which should be read and sent back to DataTables. Use a space where
          * you want to insert a non-database field (for example a counter or static image)
          */
-		$aColumns = array('drug','unit','pack_size');
+		$aColumns = array('drug','pack_size');
 		
 		$iDisplayStart = $this->input->get_post('iDisplayStart', true);
         $iDisplayLength = $this->input->get_post('iDisplayLength', true);
@@ -83,7 +83,7 @@ class Inventory_Management extends MY_Controller {
 		
 		 // Select Data
         $this->db->select('SQL_CALC_FOUND_ROWS '.str_replace(' , ', ' ', implode(', ', $aColumns)), false);
-		$this->db->select("dc.id,SUM(dsb.balance) as stock_level,g.Name as generic_name,s.Name as supported_by,d.Name as dose");
+		$this->db->select("dc.id,SUM(dsb.balance) as stock_level,g.Name as generic_name,s.Name as supported_by,d.Name as dose,du.Name as drug_unit");
 		$today = date('Y-m-d'); 
         $this->db->from("drugcode dc");
 		$this->db->where('dc.enabled','1');
@@ -92,8 +92,9 @@ class Inventory_Management extends MY_Controller {
 		$this->db->where('dsb.stock_type ','1');
 		$this->db->join("generic_name g","g.id=dc.generic_name","left outer");
 		$this->db->join("drug_stock_balance dsb","dsb.drug_id=dc.id");
-		$this->db->join("supporter s","s.id=dc.supported_by");
+		$this->db->join("suppliers s","s.id=dc.supported_by");
 		$this->db->join("dose d","d.id=dc.dose");
+		$this->db->join("drug_unit du","du.id=dc.unit");
 		$this->db->group_by("dsb.drug_id"); 
 		
 		$rResult = $this->db->get();
@@ -112,8 +113,9 @@ class Inventory_Management extends MY_Controller {
 		$this->db->where('dsb.stock_type ','1');
 		$this->db->join("generic_name g","g.id=dc.generic_name");
 		$this->db->join("drug_stock_balance dsb","dsb.drug_id=dc.id");
-		$this->db->join("supporter s","s.id=dc.supported_by");
+		$this->db->join("suppliers s","s.id=dc.supported_by");
 		$this->db->join("dose d","d.id=dc.dose");
+		$this->db->join("drug_unit du","du.id=dc.unit");
 		$this->db->group_by("dsb.drug_id"); 
 		$tot_drugs=$this->db->get();
 		$iTotal = count($tot_drugs->result_array());
@@ -136,12 +138,14 @@ class Inventory_Management extends MY_Controller {
             	$row[] = strtoupper($aRow[$col]);
             	//Append Generic name
             	if($x==1){
-            		$row[]=strtoupper($aRow['generic_name']);
+            		$row[]=strtoupper($aRow['generic_name']);	
 					$row[]='<b style="color:green">'.number_format($aRow['stock_level']).'</b>';
+					$row[]=$aRow['drug_unit'];
             	}
-				else if($x==3){
+				else if($x==2){
 					$row[]=$aRow['supported_by'];
 					$row[]=$aRow['dose'];
+					
 					$id=$aRow['id'];
 					$row[]="<a href='".base_url()."inventory_management/view_bin_card/".$id."/1'>View Bin Card</a>";
 				}
@@ -159,7 +163,7 @@ class Inventory_Management extends MY_Controller {
 		/* Array of database columns which should be read and sent back to DataTables. Use a space where
          * you want to insert a non-database field (for example a counter or static image)
          */
-		$aColumns = array('drug','unit','pack_size');
+		$aColumns = array('drug','pack_size');
 		
 		$iDisplayStart = $this->input->get_post('iDisplayStart', true);
         $iDisplayLength = $this->input->get_post('iDisplayLength', true);
@@ -212,7 +216,7 @@ class Inventory_Management extends MY_Controller {
 		
 		 // Select Data
         $this->db->select('SQL_CALC_FOUND_ROWS '.str_replace(' , ', ' ', implode(', ', $aColumns)), false);
-		$this->db->select("dc.id,SUM(dsb.balance) as stock_level,g.Name as generic_name,s.Name as supported_by,d.Name as dose");
+		$this->db->select("dc.id,SUM(dsb.balance) as stock_level,g.Name as generic_name,s.Name as supported_by,d.Name as dose,du.Name as drug_unit");
 		$today = date('Y-m-d'); 
         $this->db->from("drugcode dc");
 		$this->db->where('dc.enabled','1');
@@ -221,8 +225,9 @@ class Inventory_Management extends MY_Controller {
 		$this->db->where('dsb.stock_type ','2');
 		$this->db->join("generic_name g","g.id=dc.generic_name","left outer");
 		$this->db->join("drug_stock_balance dsb","dsb.drug_id=dc.id");
-		$this->db->join("supporter s","s.id=dc.supported_by","left outer");
-		$this->db->join("dose d","d.id=dc.dose","left outer");
+		$this->db->join("suppliers s","s.id=dc.supported_by");
+		$this->db->join("dose d","d.id=dc.dose");
+		$this->db->join("drug_unit du","du.id=dc.unit");
 		$this->db->group_by("dsb.drug_id"); 
 		
 		$rResult = $this->db->get();
@@ -241,9 +246,9 @@ class Inventory_Management extends MY_Controller {
 		$this->db->where('dsb.stock_type ','2');
 		$this->db->join("generic_name g","g.id=dc.generic_name");
 		$this->db->join("drug_stock_balance dsb","dsb.drug_id=dc.id");
-		$this->db->join("supporter s","s.id=dc.supported_by");
+		$this->db->join("suppliers s","s.id=dc.supported_by");
 		$this->db->join("dose d","d.id=dc.dose");
-		$this->db->group_by("dsb.drug_id"); 
+		$this->db->join("drug_unit du","du.id=dc.unit");
 		$tot_drugs=$this->db->get();
 		$iTotal = count($tot_drugs->result_array());
 		
@@ -267,8 +272,9 @@ class Inventory_Management extends MY_Controller {
             	if($x==1){
             		$row[]=strtoupper($aRow['generic_name']);
 					$row[]='<b style="color:green">'.number_format($aRow['stock_level']).'</b>';
+					$row[]=$aRow['drug_unit'];
             	}
-				else if($x==3){
+				else if($x==2){
 					$row[]=$aRow['supported_by'];
 					$row[]=$aRow['dose'];
 					$id=$aRow['id'];
@@ -299,7 +305,8 @@ class Inventory_Management extends MY_Controller {
 		$facility_code = $this -> session -> userdata('facility');
 		$results=Drug_Stock_Movement::getDrugTransactions($drug_id,$facility_code,$stock_type);
 		
-		$query=$this->db->query("SELECT d.drug,d.unit,d.pack_size,dsb.batch_number,dsb.expiry_date,dsb.stock_type,dsb.balance FROM drug_stock_balance dsb LEFT JOIN drugcode d ON d.id=dsb.drug_id WHERE dsb.drug_id='$drug_id'  AND dsb.expiry_date > '$today' AND dsb.balance > 0   AND dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' order by dsb.expiry_date asc");
+		$query=$this->db->query("SELECT d.drug,d.unit,d.pack_size,dsb.batch_number,dsb.expiry_date,dsb.stock_type,dsb.balance FROM drug_stock_balance dsb LEFT JOIN drugcode d ON d.id=dsb.drug_id WHERE dsb.drug_id='$drug_id'  AND dsb.expiry_date > '$today' AND dsb.balance >= 0   AND dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' order by dsb.expiry_date asc");
+		
 		$stock_bactchinfo_array=$query->result_array();
 		$stock_level=0;
 		foreach ($stock_bactchinfo_array as $total) {
@@ -381,7 +388,7 @@ class Inventory_Management extends MY_Controller {
 	public function getStockDrugs(){
 		$stock_type=$this->input ->post("stock_type");
 		$facility_code = $this -> session -> userdata('facility');
-		$drugs_sql=$this->db->query("SELECT DISTINCT(d.id),d.drug FROM drugcode d LEFT JOIN drug_stock_balance dsb on dsb.drug_id=d.id WHERE dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE()");
+		$drugs_sql=$this->db->query("SELECT DISTINCT(d.id),d.drug FROM drugcode d LEFT JOIN drug_stock_balance dsb on dsb.drug_id=d.id WHERE dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE() AND d.enabled='1'");
 		$drugs_array=$drugs_sql->result_array();
 		echo json_encode($drugs_array);
 		
@@ -450,7 +457,7 @@ class Inventory_Management extends MY_Controller {
 		$get_source=$this->input->post("source");
 		$get_source_name=$this->input->post("source_name");
 		$get_destination=$this->input->post("destination");
-		$get_transaction_date=$this->input->post("transaction_date");
+		$get_transaction_date=date('Y-m-d',strtotime($this->input->post("transaction_date")));
 		$get_ref_number=$this->input->post("reference_number");
 		$get_transaction_type=$this->input->post("transaction_type");
 		$transaction_type_name=$this->input->post("trans_type");

@@ -84,7 +84,7 @@
 							<tbody>
 								<tr><td>Commodity</td><th id="drug_name"><?php echo $drug_name?></th></tr>
 								<tr>
-									<td>Unit</td><th id="drug_unit"> <?php echo $drug_unit ?></th>
+									<td>Unit</td><th id="drug_unit"> <?php echo @$drug_unit ?></th>
 								</tr>
 								<tr>
 									<td>Total Stock</td><th id="stock_status" style="color:#00B831;font-weight:bold;"><?php echo $stock_level ?></th>
@@ -158,7 +158,7 @@
 							<th>No. of Packs</th>
 							<th>Quantity</th>
 							<th>Balance</th>
-							<th>Unit Cost</th>
+							<th>Pack Cost</th>
 							<th>Total Price</th>
 						</tr>
 					</thead>

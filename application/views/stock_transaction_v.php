@@ -57,8 +57,22 @@
 		var today = new Date();
 		var today_date = ("0" + today.getDate()).slice(-2)
 		var today_year = today.getFullYear();
-		var today_month = ("0" + (today.getMonth() + 1)).slice(-2)
-		var today_full_date =today_year+ "-"+today_month + "-" + today_date ;
+		var today_month = today.getMonth();
+		
+			var month=new Array();
+month[0]="Jan";
+month[1]="Feb";
+month[2]="Mar";
+month[3]="Apr";
+month[4]="May";
+month[5]="Jun";
+month[6]="Jul";
+month[7]="Aug";
+month[8]="Sep";
+month[9]="Oct";
+month[10]="Nov";
+month[11]="Dec"; 
+var today_full_date =today_date+ "-"+month[today_month] + "-" + today_year ;
 		$("#transaction_date").attr("value", today_full_date);
 		
 		$(".t_source").css("display","none");
@@ -80,8 +94,9 @@
 				//Coming in
 				var trans_type=$("#select_transtype option:selected").text().toLowerCase().replace(/ /g,'');
 				var trans_effect=$("#select_transtype option:selected").attr('label');
-				if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('ajustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1 ){
-					if(trans_type.indexOf('receivedfrom')!= -1){
+				if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('adjustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1 ){
+					//Whether to show source or not
+					if(trans_type.indexOf('receivedfrom')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1)){
 						$(".t_destination").css("display","none");
 						$(".t_source").css("display","block");
 					}
@@ -121,7 +136,7 @@
 					var stock_type=<?php echo  $stock_type ?>;
 					var _url="<?php echo base_url().'inventory_management/getStockDrugs'; ?>";
 					//In case of dispensed to patients,adjustments(-),returns,losses,expiries, hide destination
-					if(trans_type.indexOf('dispensed')!= -1 || (trans_type.indexOf('ajustment')!= -1 && trans_effect==0) || (trans_type.indexOf('returns')!= -1 && trans_effect==0) || trans_type.indexOf('loss')!= -1 || trans_type.indexOf('expir') != -1){
+					if(trans_type.indexOf('dispensed')!= -1 || (trans_type.indexOf('adjustment')!= -1 && trans_effect==0) ||  trans_type.indexOf('loss')!= -1 || trans_type.indexOf('expir') != -1){
 						$(".t_destination").css("display","none");
 						$(".t_source").css("display","none");
 					}
@@ -193,7 +208,7 @@
 				});
 			}
 			
-			//If stock type is main store, transaction type is receive from and source i Pipeline, get orders dispatched
+			//If stock type is main store, transaction type is receive from and source is Pipeline, get orders dispatched
 			else if(stock_type==1 && trans_type.indexOf('received') != -1 &&  selected_source.indexOf(pipeline_name) != -1){
 				$(".t_picking_list").css("display","block");
 			}
@@ -415,7 +430,7 @@
 		//Add datepicker for the transaction date
 		$("#transaction_date").datepicker({
 			defaultDate : new Date(),
-			dateFormat : 'dd MM yy',
+			dateFormat : 'dd-M-yy',
 			changeYear : true,
 			changeMonth : true
 		});
@@ -515,6 +530,19 @@
 		
 		//Save transaction details
 		$("#btn_submit").click(function(){
+			//Check if select source is visible
+			if($("#select_source").is(":visible")){
+				if($("#select_source").val()==0){
+					alert("Please select a source !");
+					return;
+				}
+			}
+			else if($("#select_destination").is(":visible")){
+				if($("#select_destination").val()==0){
+					alert("Please select a destination !");
+					return;
+				}
+			}
 			
 			var trans_type=$("#select_transtype option:selected").text().toLowerCase().replace(/ /g,'');
 			var trans_effect=$("#select_transtype option:selected").attr('label');
@@ -541,6 +569,7 @@
 				}
 				
 			}
+			
 			
 			
 			var facility=<?php echo $facility ?>;
@@ -772,7 +801,7 @@
 	
 	function updateTotalCost(unit_cost_object) {
 		var unit_cost = unit_cost_object.attr("value");
-		var quantity_holder = unit_cost_object.closest("tr").find(".quantity").attr("value");
+		var quantity_holder = unit_cost_object.closest("tr").find(".pack").attr("value");
 		var total_cost=unit_cost_object.closest("tr").find(".amount");
 		if(!isNaN(unit_cost) && unit_cost.length > 0 && !isNaN(quantity_holder) && quantity_holder.length > 0) {
 			total_cost.attr("value", unit_cost * quantity_holder);
@@ -839,7 +868,7 @@
 			<span id="msg_server"></span>
 		</div>
 		<div class="full-content" id="stock_div" style="background:#9CF">
-		<form id="stock_form" method="post" action="<?php echo base_url().'inventory_management/save' ?>">
+		<form id="stock_form" method="post" action="<?php echo base_url().'inventory_management/save' ?>" >
 
 			<textarea name="sql" id="sql" style="display: none"></textarea>
 			
@@ -969,7 +998,7 @@
 							<?php
 							foreach($picking_lists as $picking_list){
 							?>
-							<option value="<?php echo $picking_list['id'] ?>" ><?php echo $picking_list['id'] ?></option>
+							<option value="<?php echo $picking_list['id'] ?>" ><?php echo "Order no: ".$picking_list['id']."(".date('M-Y',strtotime($picking_list['Period_Begin'])).")"; ?></option>
 							<?php
 							}
 							?>
@@ -992,7 +1021,7 @@
 							<th>Packs</th>
 							<th>Qty</th>
 							<th>Available Qty</th>
-							<th>Unit Cost</th>
+							<th>Pack Cost</th>
 							<th>Total</th>
 							<th>Comment</th>
 							<th style="width:350px">Action</th>
