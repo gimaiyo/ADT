@@ -461,11 +461,15 @@
 		
 		//Calculate the total cost automatically
 		$("#unit_cost").keyup(function() {
-			updateTotalCost($(this));
+			updateCommodityQuantityUnit($(this));
 		});
 		
 		$(".pack").change(function() {
 			updateCommodityQuantity($(this));
+		});
+		
+		$(".quantity").change(function() {
+			updateCommodityQuantityUnit($(this));
 		});
 		
 		$("#unit_cost").change(function() {
@@ -843,6 +847,47 @@
 		}
 	}
 	
+	function updateCommodityQuantityUnit(pack_object) {
+		var trans_type=$("#select_transtype option:selected").text().toLowerCase().replace(/ /g,'');
+		var trans_effect=$("#select_transtype option:selected").attr('label');
+		var packs = pack_object.attr("value");
+		var pack_size = pack_object.closest("tr").find(".pack_size").attr("value");
+		var quantity_holder = pack_object.closest("tr").find(".pack");
+		var available_quantity=pack_object.closest("tr").find(".quantity_available").val();
+		available_quantity=parseInt(available_quantity);
+		
+		if(!isNaN(pack_size) && pack_size.length > 0 && !isNaN(packs) && packs.length > 0) {
+			var qty=packs/pack_size;
+			qty=qty.toFixed(0);
+			//If stock is going out, check that qty issued to be <= to qty available
+			
+			//Transaction coming in
+			if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('ajustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1 || $("#select_transtype").attr("value") == 0) {
+				quantity_holder.css("background-color","#FFF");
+				quantity_holder.attr("value",qty );
+				
+			} 
+			
+			//Transaction going out
+			else {
+				if(available_quantity>=qty){
+					quantity_holder.css("background-color","#FFF");
+					quantity_holder.attr("value",qty );
+					quantity_holder.removeClass("stock_add_form_input_error");
+				}
+				else{
+					quantity_holder.attr("value",qty );
+					alert("Error !Quantity issued is greater than qty available!");
+					quantity_holder.addClass("stock_add_form_input_error");
+					quantity_holder.css("background-color","rgb(255, 92, 52)");
+				}
+			}
+			
+			
+			
+		}
+	}
+	
 	function updateTotalCost(unit_cost_object) {
 		var unit_cost = unit_cost_object.attr("value");
 		var quantity_holder = unit_cost_object.closest("tr").find(".pack").attr("value");
@@ -1093,7 +1138,7 @@
 							<input type="text" name="pack" class="pack small_text validate[required] input-small" id="packs_1"  />
 							</td>
 							<td>
-							<input type="text" name="quantity" id="quantity_1" class="quantity small_text input-small" readonly="" />
+							<input type="text" name="quantity" id="quantity_1" class="quantity small_text input-small"  />
 							</td>
 							<td>
 							<input type="text" id="available_quantity" name="available_quantity" class="quantity_available medium_text input-small" readonly="" />

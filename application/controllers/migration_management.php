@@ -123,6 +123,18 @@ class Migration_Management extends MY_Controller {
 		$query = $this -> db -> query($thesql);
 		$answer = $query -> num_rows();
 		$this -> updatelog($targetname, $last_index, $answer);
+		//Main Store Received
+		$sql = "UPDATE drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type SET source_destination=(select id from drug_source des where des.name LIKE '%kenya pharma%' OR des.name LIKE '%kemsa%' limit 1) WHERE t.name LIKE '%received%' AND dsm.source!=dsm.destination";
+		$this -> db -> query($sql);
+		//Pharmacy Received
+		$sql = "UPDATE drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type SET source_destination=(select id from drug_source des where des.name LIKE '%store%' limit 1) WHERE t.name LIKE '%received%' AND dsm.source=dsm.destination and dsm.source!=''";
+		$this -> db -> query($sql);
+		//Pharmacy issued
+		$sql = "UPDATE drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type SET source_destination=(select id from drug_destination des where des.name LIKE '%pharmacy%' limit 1) WHERE t.name LIKE '%issued%' AND dsm.source=dsm.destination and dsm.source!=''";
+		$this -> db -> query($sql);
+		//Main Store Issued
+		$sql = "UPDATE drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type SET source_destination=(select id from drug_destination des where des.name LIKE '%pharmacy%' limit 1) WHERE t.name LIKE '%issued%' AND dsm.source!=dsm.destination";
+		$this -> db -> query($sql);
 		echo $answer . "," . $last_index;
 	}
 

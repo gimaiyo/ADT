@@ -18,7 +18,7 @@ class report_management extends MY_Controller {
 		$this -> listing();
 	}
 
-	public function getMoreHelp($stock_type = '2', $start_date = '2013-08-01', $end_date = '2013-08-31') {
+	public function getMoreHelp($stock_type = '2', $start_date = '', $end_date = '') {
 		//Check if user is logged in
 		if ($this -> session -> userdata("user_id")) {
 
@@ -124,6 +124,8 @@ class report_management extends MY_Controller {
 
 				//End of Beginning Balance
 				//Start of Other Transactions
+				$start_date=date('Y-m-d',strtotime($start_date));
+				$end_date=date('Y-m-d',strtotime($end_date));
 				$sql = "SELECT trans.name, trans.id, trans.effect, dsm.in_total, dsm.out_total FROM (SELECT id, name, effect FROM transaction_type WHERE name LIKE  '%received%' OR name LIKE  '%adjustment%' OR name LIKE  '%return%' OR name LIKE  '%dispense%' OR name LIKE  '%issue%' OR name LIKE  '%loss%' OR name LIKE  '%ajustment%' OR name LIKE  '%physical%count%' OR name LIKE  '%starting%stock%') AS trans LEFT JOIN (SELECT transaction_type, SUM( quantity ) AS in_total, SUM( quantity_out ) AS out_total FROM drug_stock_movement WHERE transaction_date BETWEEN  '$start_date' AND  '$end_date' AND drug =  '$drug_id' $first_value GROUP BY transaction_type) AS dsm ON trans.id = dsm.transaction_type GROUP BY trans.name";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
@@ -1925,6 +1927,7 @@ class report_management extends MY_Controller {
 		$today = date('Y-m-d');
 		$this -> db -> from("drugcode dc");
 		$this -> db -> join("drug_unit u", "u.id=dc.unit");
+		$this -> db -> where("dc.enabled", "1");
 		$rResult = $this -> db -> get();
 		// Data set length after filtering
 		$this -> db -> select('FOUND_ROWS() AS found_rows');
@@ -1934,6 +1937,7 @@ class report_management extends MY_Controller {
 		$this -> db -> select("dc.*");
 		$this -> db -> from("drugcode dc");
 		$this -> db -> join("drug_unit u", "u.id=dc.unit");
+		$this -> db -> where("dc.enabled", "1");
 		$tot_drugs = $this -> db -> get();
 		$iTotal = count($tot_drugs -> result_array());
 
@@ -3450,6 +3454,7 @@ class report_management extends MY_Controller {
 		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
 		$facilty_value = "";
+		$param="";
 		if ($stock_type == 1) {
 			//Main Store
 			$facilty_value = "dsm.source!=dsm.destination";
@@ -3459,18 +3464,41 @@ class report_management extends MY_Controller {
 			//Pharmacy
 			$facilty_value = "dsm.source=dsm.destination";
 			$data['transaction_type'] = "Pharmacy";
+			$param="where des.name NOT LIKE '%pharmacy%'";
 		}
-		$sql = "select d.drug,du.Name as unit,d.pack_size,SUM(dsm.quantity_out) as total from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON du.id=d.unit where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' AND t.name LIKE '%Issued To%' GROUP BY d.drug";
+		$sql = "select d.id,d.drug,du.Name as unit,d.pack_size,SUM(dsm.quantity_out) as total from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON du.id=d.unit where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' AND t.name LIKE '%Issued To%' GROUP BY d.drug";
+		$get_destination="select * from drug_destination des ".$param." order by id asc";
+		$dest_query=$this -> db -> query($get_destination);
+		$dest_array=$dest_query -> result_array();
 		$query = $this -> db -> query($sql);
 		$dyn_table = "<table border='1' class='dataTables' cellpadding='5'>";
 		$dyn_table .= "<thead>
-						<tr><th>Drug Name</th><th>Drug Unit</th><th> Drug PackSize</th><th>Quantity(units)</th></tr>
+						<tr><th>Drug Name</th>
+					";
+		foreach ($dest_array as $value) {
+			$dyn_table.="<th>".$value['name']."</th>";
+		}
+		$dyn_table .="</tr>
 						</thead>
 						<tbody>";
+						
+		
 		$results = $query -> result_array();
 		if ($results) {
 			foreach ($results as $result) {
-				$dyn_table .= "<tr><td>" . $result['drug'] . "</td><td>" . $result['unit'] . "</td><td>" . $result['pack_size'] . "</td><td>" . number_format($result['total']) . "</td></tr>";
+				$dyn_table .= "<tr><td>" . $result['drug'] . "</td>";
+				//Get all destinations for that drug
+				$get_drugs="select des.name,temp.total from drug_destination des LEFT JOIN (select source_destination,SUM(dsm.quantity_out) as total from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON du.id=d.unit where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' AND t.name LIKE '%Issued To%' AND dsm.drug='".$result['id']."' GROUP BY source_destination) as temp ON temp.source_destination=des.id order by des.id".$param;
+				$get_dest=$this->db->query($get_drugs);
+				$get_des_array=$get_dest->result_array();
+				foreach ($get_des_array as $value) {
+					$total=$value['total'];
+					if($value['total']==null){
+						$total=0;
+					}
+					$dyn_table .="<td>" . $total . "</td>";
+				}
+				$dyn_table .= "</tr>";
 			}
 		} else {
 			//$dyn_table .= "<tr><td colspan='4'>No Data Available</td></tr>";
@@ -3495,27 +3523,53 @@ class report_management extends MY_Controller {
 		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
 		$facilty_value = "";
+		$param="";
 		if ($stock_type == 1) {
 			//Main Store
 			$facilty_value = "dsm.source!=dsm.destination";
 			$data['transaction_type'] = "Main Store";
+			$param="where des.name NOT LIKE '%Store%'";
 
 		} else if ($stock_type == 2) {
 			//Pharmacy
 			$facilty_value = "dsm.source=dsm.destination";
 			$data['transaction_type'] = "Pharmacy";
 		}
-		$sql = "select d.drug,du.Name as unit,d.pack_size,SUM(dsm.quantity) as total from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON du.id=d.unit where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' AND t.name LIKE '%Received from%' GROUP BY d.drug";
+		$sql = "select d.id,d.drug,du.Name as unit,d.pack_size,SUM(dsm.quantity) as total from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON du.id=d.unit where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' AND t.name LIKE '%Received from%' GROUP BY d.drug";
+		$get_source="select * from drug_source des ".$param."  order by id asc";
+		$source_query=$this -> db -> query($get_source);
+		$source_array=$source_query -> result_array();
+		
 		$query = $this -> db -> query($sql);
 		$dyn_table = "<table border='1' class='dataTables' cellpadding='5'>";
 		$dyn_table .= "<thead>
-						<tr><th>Drug Name</th><th>Drug Unit</th><th> Drug PackSize</th><th>Quantity(units)</th></tr>
+						<tr><th>Drug Name</th>
+					";
+		foreach ($source_array as $value) {
+			$dyn_table.="<th>".$value['name']."</th>";
+		}
+		$dyn_table .="</tr>
 						</thead>
 						<tbody>";
+		
+		$query = $this -> db -> query($sql);
+		
 		$results = $query -> result_array();
 		if ($results) {
 			foreach ($results as $result) {
-				$dyn_table .= "<tr><td>" . $result['drug'] . "</td><td>" . $result['unit'] . "</td><td>" . $result['pack_size'] . "</td><td>" . number_format($result['total']) . "</td></tr>";
+			$dyn_table .= "<tr><td>" . $result['drug'] . "</td>";
+				//Get all destinations for that drug
+				$get_drugs="select des.name,temp.total from drug_source des LEFT JOIN (select source_destination,SUM(dsm.quantity) as total from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON du.id=d.unit where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' AND t.name LIKE '%received%' AND dsm.drug='".$result['id']."' GROUP BY source_destination) as temp ON temp.source_destination=des.id ".$param;
+				$get_dest=$this->db->query($get_drugs);
+				$get_des_array=$get_dest->result_array();
+				foreach ($get_des_array as $value) {
+					$total=$value['total'];
+					if($value['total']==null){
+						$total=0;
+					}
+					$dyn_table .="<td>" . $total . "</td>";
+				}
+				$dyn_table .= "</tr>";
 			}
 		}
 		$dyn_table .= "</tbody></table>";
