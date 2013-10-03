@@ -129,7 +129,7 @@ class Migration_Management extends MY_Controller {
 		//Pharmacy Received
 		$sql = "UPDATE drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type SET source_destination=(select id from drug_source des where des.name LIKE '%store%' limit 1) WHERE t.name LIKE '%received%' AND dsm.source=dsm.destination and dsm.source!=''";
 		$this -> db -> query($sql);
-		//Pharmacy issued
+		//Pharmacy issued(Outpatient)
 		$sql = "UPDATE drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type SET source_destination=(select id from drug_destination des where des.name LIKE '%pharmacy%' limit 1) WHERE t.name LIKE '%issued%' AND dsm.source=dsm.destination and dsm.source!=''";
 		$this -> db -> query($sql);
 		//Main Store Issued
