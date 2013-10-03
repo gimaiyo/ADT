@@ -84,7 +84,7 @@
 							<tbody>
 								<tr><td>Commodity</td><th id="drug_name"><?php echo $drug_name?></th></tr>
 								<tr>
-									<td>Unit</td><th id="drug_unit"> <?php echo $drug_unit ?></th>
+									<td>Unit</td><th id="drug_unit"> <?php echo @$drug_unit ?></th>
 								</tr>
 								<tr>
 									<td>Total Stock</td><th id="stock_status" style="color:#00B831;font-weight:bold;"><?php echo $stock_level ?></th>
@@ -158,7 +158,7 @@
 							<th>No. of Packs</th>
 							<th>Quantity</th>
 							<th>Balance</th>
-							<th>Unit Cost</th>
+							<th>Pack Cost</th>
 							<th>Total Price</th>
 						</tr>
 					</thead>
@@ -183,11 +183,11 @@
 										}
 										//If destination is not a facility,get the destination name
 										else if($drug_transaction->Destination < 10000){
-											//$transaction_type.=" <b>".$drug_transaction->Destination_Object->Name."</b>";
+											$transaction_type.=$drug_transaction->Destination_Object->Name;
 										}
-										//If destination is a facility,get the destination name
+										//If destination is a facility,get the facility name
 										else if($drug_transaction->Destination >= 10000){
-											//$transaction_type.=" <b>".$drug_transaction->Facility_Object->name."</b>";
+											$transaction_type.=$drug_transaction->Facility_Sat->name;
 										}
 									}
 									
@@ -211,23 +211,16 @@
 								//Pharmacy transaction
 								else if($drug_transaction->Source==$drug_transaction->Destination){
 									
-									//Receive from
-									if($drug_transaction->Transaction_Type==1){
-										$qty=$drug_transaction->Quantity;
-										$transaction_type.=" Main Store";
-									}
-									//Dispensed to patients
-									else if($drug_transaction->Transaction_Type==5){
-										$qty=$drug_transaction->Quantity_Out;
-
-									}
-									
-									else if($drug_transaction->Quantity==0 or $drug_transaction->Quantity==""){
+									//Going out
+									if($drug_transaction->Quantity==0 or $drug_transaction->Quantity==""){
 										//$transaction_type.=" Patients";
 										$qty=$drug_transaction->Quantity_Out;
+										$transaction_type.=' '.$drug_transaction->Destination_Trans->Name;
 									}
-									else if($drug_transaction->Quantity_Out==0){
+									//Coming in
+									else if($drug_transaction->Quantity_Out==0 or $drug_transaction->Quantity==""){
 										$qty=$drug_transaction->Quantity;
+										$transaction_type.=' '.$drug_transaction->Source_Trans->Name;
 									}
 									
 								}

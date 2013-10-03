@@ -7,3 +7,8 @@
          <?php echo $dyn_table;?>
 	</div>
 </div>
+<style type="text/css">
+	#patient_listing td+td{
+		text-align:center;
+	}
+</style>

@@ -1131,16 +1131,16 @@ if(isset($results)){
 			</tr>
 		</table>
 		<h4 style="text-align: center">Patient Pill Count History (Last 6 Months)</h4>
-		<table id="patient_pill_count"  class="data-table sortable">
+		<table id="patient_pill_count"  class="data-table sortable" style="zoom:90%;">
 			<thead>
 				<th>Date of Visit</th>
 				<th>Drug Name</th>
 				<th>Qty. Dispensed</th>
 				<th>Pill Count</th>
-				<th>Pills Taken</th>
 				<th>Missed Pills</th>
-				<th>Adherence</th>
-				<th>Self-Reported Adherence</th>
+				<th>Adherence<sub>(Pill Count)</sub></th>
+				<th>Adherence<sub>(Missed Pills)</sub></th>
+				<th>Adherence<sub>(Appointment)</sub></th>
 			</thead>
 		</table>
 		<h4 style="text-align: center">Patient Regimen Change History</h4>

@@ -30,7 +30,7 @@ class Inventory_Management extends MY_Controller {
 		/* Array of database columns which should be read and sent back to DataTables. Use a space where
          * you want to insert a non-database field (for example a counter or static image)
          */
-		$aColumns = array('drug','unit','pack_size');
+		$aColumns = array('drug','pack_size');
 		
 		$iDisplayStart = $this->input->get_post('iDisplayStart', true);
         $iDisplayLength = $this->input->get_post('iDisplayLength', true);
@@ -83,7 +83,7 @@ class Inventory_Management extends MY_Controller {
 		
 		 // Select Data
         $this->db->select('SQL_CALC_FOUND_ROWS '.str_replace(' , ', ' ', implode(', ', $aColumns)), false);
-		$this->db->select("dc.id,SUM(dsb.balance) as stock_level,g.Name as generic_name,s.Name as supported_by,d.Name as dose");
+		$this->db->select("dc.id,SUM(dsb.balance) as stock_level,g.Name as generic_name,s.Name as supported_by,d.Name as dose,du.Name as drug_unit");
 		$today = date('Y-m-d'); 
         $this->db->from("drugcode dc");
 		$this->db->where('dc.enabled','1');
@@ -92,8 +92,9 @@ class Inventory_Management extends MY_Controller {
 		$this->db->where('dsb.stock_type ','1');
 		$this->db->join("generic_name g","g.id=dc.generic_name","left outer");
 		$this->db->join("drug_stock_balance dsb","dsb.drug_id=dc.id");
-		$this->db->join("supporter s","s.id=dc.supported_by");
+		$this->db->join("suppliers s","s.id=dc.supported_by");
 		$this->db->join("dose d","d.id=dc.dose");
+		$this->db->join("drug_unit du","du.id=dc.unit");
 		$this->db->group_by("dsb.drug_id"); 
 		
 		$rResult = $this->db->get();
@@ -112,8 +113,9 @@ class Inventory_Management extends MY_Controller {
 		$this->db->where('dsb.stock_type ','1');
 		$this->db->join("generic_name g","g.id=dc.generic_name");
 		$this->db->join("drug_stock_balance dsb","dsb.drug_id=dc.id");
-		$this->db->join("supporter s","s.id=dc.supported_by");
+		$this->db->join("suppliers s","s.id=dc.supported_by");
 		$this->db->join("dose d","d.id=dc.dose");
+		$this->db->join("drug_unit du","du.id=dc.unit");
 		$this->db->group_by("dsb.drug_id"); 
 		$tot_drugs=$this->db->get();
 		$iTotal = count($tot_drugs->result_array());
@@ -136,12 +138,14 @@ class Inventory_Management extends MY_Controller {
             	$row[] = strtoupper($aRow[$col]);
             	//Append Generic name
             	if($x==1){
-            		$row[]=strtoupper($aRow['generic_name']);
+            		$row[]=strtoupper($aRow['generic_name']);	
 					$row[]='<b style="color:green">'.number_format($aRow['stock_level']).'</b>';
+					$row[]=$aRow['drug_unit'];
             	}
-				else if($x==3){
+				else if($x==2){
 					$row[]=$aRow['supported_by'];
 					$row[]=$aRow['dose'];
+					
 					$id=$aRow['id'];
 					$row[]="<a href='".base_url()."inventory_management/view_bin_card/".$id."/1'>View Bin Card</a>";
 				}
@@ -159,7 +163,7 @@ class Inventory_Management extends MY_Controller {
 		/* Array of database columns which should be read and sent back to DataTables. Use a space where
          * you want to insert a non-database field (for example a counter or static image)
          */
-		$aColumns = array('drug','unit','pack_size');
+		$aColumns = array('drug','pack_size');
 		
 		$iDisplayStart = $this->input->get_post('iDisplayStart', true);
         $iDisplayLength = $this->input->get_post('iDisplayLength', true);
@@ -212,7 +216,7 @@ class Inventory_Management extends MY_Controller {
 		
 		 // Select Data
         $this->db->select('SQL_CALC_FOUND_ROWS '.str_replace(' , ', ' ', implode(', ', $aColumns)), false);
-		$this->db->select("dc.id,SUM(dsb.balance) as stock_level,g.Name as generic_name,s.Name as supported_by,d.Name as dose");
+		$this->db->select("dc.id,SUM(dsb.balance) as stock_level,g.Name as generic_name,s.Name as supported_by,d.Name as dose,du.Name as drug_unit");
 		$today = date('Y-m-d'); 
         $this->db->from("drugcode dc");
 		$this->db->where('dc.enabled','1');
@@ -221,8 +225,9 @@ class Inventory_Management extends MY_Controller {
 		$this->db->where('dsb.stock_type ','2');
 		$this->db->join("generic_name g","g.id=dc.generic_name","left outer");
 		$this->db->join("drug_stock_balance dsb","dsb.drug_id=dc.id");
-		$this->db->join("supporter s","s.id=dc.supported_by","left outer");
-		$this->db->join("dose d","d.id=dc.dose","left outer");
+		$this->db->join("suppliers s","s.id=dc.supported_by");
+		$this->db->join("dose d","d.id=dc.dose");
+		$this->db->join("drug_unit du","du.id=dc.unit");
 		$this->db->group_by("dsb.drug_id"); 
 		
 		$rResult = $this->db->get();
@@ -241,9 +246,9 @@ class Inventory_Management extends MY_Controller {
 		$this->db->where('dsb.stock_type ','2');
 		$this->db->join("generic_name g","g.id=dc.generic_name");
 		$this->db->join("drug_stock_balance dsb","dsb.drug_id=dc.id");
-		$this->db->join("supporter s","s.id=dc.supported_by");
+		$this->db->join("suppliers s","s.id=dc.supported_by");
 		$this->db->join("dose d","d.id=dc.dose");
-		$this->db->group_by("dsb.drug_id"); 
+		$this->db->join("drug_unit du","du.id=dc.unit");
 		$tot_drugs=$this->db->get();
 		$iTotal = count($tot_drugs->result_array());
 		
@@ -267,8 +272,9 @@ class Inventory_Management extends MY_Controller {
             	if($x==1){
             		$row[]=strtoupper($aRow['generic_name']);
 					$row[]='<b style="color:green">'.number_format($aRow['stock_level']).'</b>';
+					$row[]=$aRow['drug_unit'];
             	}
-				else if($x==3){
+				else if($x==2){
 					$row[]=$aRow['supported_by'];
 					$row[]=$aRow['dose'];
 					$id=$aRow['id'];
@@ -299,7 +305,8 @@ class Inventory_Management extends MY_Controller {
 		$facility_code = $this -> session -> userdata('facility');
 		$results=Drug_Stock_Movement::getDrugTransactions($drug_id,$facility_code,$stock_type);
 		
-		$query=$this->db->query("SELECT d.drug,d.unit,d.pack_size,dsb.batch_number,dsb.expiry_date,dsb.stock_type,dsb.balance FROM drug_stock_balance dsb LEFT JOIN drugcode d ON d.id=dsb.drug_id WHERE dsb.drug_id='$drug_id'  AND dsb.expiry_date > '$today' AND dsb.balance > 0   AND dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' order by dsb.expiry_date asc");
+		$query=$this->db->query("SELECT d.drug,d.unit,d.pack_size,dsb.batch_number,dsb.expiry_date,dsb.stock_type,dsb.balance FROM drug_stock_balance dsb LEFT JOIN drugcode d ON d.id=dsb.drug_id WHERE dsb.drug_id='$drug_id'  AND dsb.expiry_date > '$today' AND dsb.balance >= 0   AND dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' order by dsb.expiry_date asc");
+		
 		$stock_bactchinfo_array=$query->result_array();
 		$stock_level=0;
 		foreach ($stock_bactchinfo_array as $total) {
@@ -381,7 +388,7 @@ class Inventory_Management extends MY_Controller {
 	public function getStockDrugs(){
 		$stock_type=$this->input ->post("stock_type");
 		$facility_code = $this -> session -> userdata('facility');
-		$drugs_sql=$this->db->query("SELECT DISTINCT(d.id),d.drug FROM drugcode d LEFT JOIN drug_stock_balance dsb on dsb.drug_id=d.id WHERE dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE()");
+		$drugs_sql=$this->db->query("SELECT DISTINCT(d.id),d.drug FROM drugcode d LEFT JOIN drug_stock_balance dsb on dsb.drug_id=d.id WHERE dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE() AND d.enabled='1'");
 		$drugs_array=$drugs_sql->result_array();
 		echo json_encode($drugs_array);
 		
@@ -450,7 +457,7 @@ class Inventory_Management extends MY_Controller {
 		$get_source=$this->input->post("source");
 		$get_source_name=$this->input->post("source_name");
 		$get_destination=$this->input->post("destination");
-		$get_transaction_date=$this->input->post("transaction_date");
+		$get_transaction_date=date('Y-m-d',strtotime($this->input->post("transaction_date")));
 		$get_ref_number=$this->input->post("reference_number");
 		$get_transaction_type=$this->input->post("transaction_type");
 		$transaction_type_name=$this->input->post("trans_type");
@@ -469,13 +476,22 @@ class Inventory_Management extends MY_Controller {
 		$pharma_balance=0;
 		$store_balance=0;
 		$sql_queries="";
+		$source_destination="";
+		
+		//Check if source if null or not to determine type of transaction
+		if($get_source!=null){
+			$source_destination=$get_source;
+		}
+		else if($get_destination!=null){
+			$source_destination=$get_destination;
+		}
 		
 		/*
 		 * Start processing
 		 */
 		if($get_stock_type=='1'){
 			//Stockin coming in
-			if(strpos($transaction_type_name, "received")===0 || strpos($transaction_type_name, "balance")===0 || (strpos($transaction_type_name, "returns")===0 && $transaction_effect==1) || (strpos($transaction_type_name, "ajustment")===0 && $transaction_effect==1) || strpos($transaction_type_name, "startingstock")===0 || strpos($transaction_type_name, "physicalcount")===0) {
+			if(strpos($transaction_type_name, "received")===0 || strpos($transaction_type_name, "balance")===0 || (strpos($transaction_type_name, "returns")===0 && $transaction_effect==1) || (strpos($transaction_type_name, "adjustment")===0 && $transaction_effect==1) || strpos($transaction_type_name, "startingstock")===0 || strpos($transaction_type_name, "physicalcount")===0) {
 				
 				//Get remaining balance for the drug
 				$get_balance_sql=$this->db->query("SELECT dsb.balance FROM drug_stock_balance dsb  WHERE dsb.facility_code='$facility' AND dsb.stock_type='$get_stock_type' AND dsb.drug_id='$get_drug_id' AND dsb.batch_number='$get_batch' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE() AND dsb.expiry_date='$get_expiry' LIMIT 1");
@@ -524,7 +540,7 @@ class Inventory_Management extends MY_Controller {
 		//If transaction is from pharmacy
 		else if($get_stock_type=='2'){
 			//If transaction is received from
-			if(strpos($transaction_type_name, "received")===0 || strpos($transaction_type_name, "balance")===0 || (strpos($transaction_type_name, "returns")===0 && $transaction_effect==1) || (strpos($transaction_type_name, "ajustment")===0 && $transaction_effect==1) || strpos($transaction_type_name, "startingstock")===0 || strpos($transaction_type_name, "physicalcount")===0) {
+			if(strpos($transaction_type_name, "received")===0 || strpos($transaction_type_name, "balance")===0 || (strpos($transaction_type_name, "returns")===0 && $transaction_effect==1) || (strpos($transaction_type_name, "adjustment")===0 && $transaction_effect==1) || strpos($transaction_type_name, "startingstock")===0 || strpos($transaction_type_name, "physicalcount")===0) {
 				//Get remaining balance for the drug
 				$get_balance_sql=$this->db->query("SELECT dsb.balance FROM drug_stock_balance dsb  WHERE dsb.facility_code='$facility' AND dsb.stock_type='$get_stock_type' AND dsb.drug_id='$get_drug_id' AND dsb.batch_number='$get_batch' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE() AND dsb.expiry_date='$get_expiry' LIMIT 1");
 				$balance_array=$get_balance_sql->result_array();
@@ -565,13 +581,12 @@ class Inventory_Management extends MY_Controller {
 		/*
 		 * Calculate remaining balance end
 		 */
-		echo json_encode($get_destination);
 		if($get_destination==$facility && strpos($transaction_type_name, "issued")===0){
 			$destination="";
 			$source=$facility;
 		}
 		//Any pharmacy transaction, source and destination is facility code
-		else if((strpos($transaction_type_name, "balance")===0 || (strpos($transaction_type_name, "returns")===0 && $transaction_effect==1) || (strpos($transaction_type_name, "ajustment")===0  && $transaction_effect==1)|| strpos($transaction_type_name, "dispensed")===0 || (strpos($transaction_type_name, "ajustment")===0  && $transaction_effect==0)|| (strpos($transaction_type_name, "returns")===0 && $transaction_effect==0) || strpos($transaction_type_name, "losses")===0 || strpos($transaction_type_name, "expired")===0 || (strpos($transaction_type_name, "startingstock")===0 || strpos($transaction_type_name, "physicalcount")===0)) && $get_stock_type=='2'){
+		else if((strpos($transaction_type_name, "balance")===0 || (strpos($transaction_type_name, "returns")===0 && $transaction_effect==1) || (strpos($transaction_type_name, "adjustment")===0  && $transaction_effect==1)|| strpos($transaction_type_name, "dispensed")===0 || (strpos($transaction_type_name, "adjustment")===0  && $transaction_effect==0)|| (strpos($transaction_type_name, "returns")===0 && $transaction_effect==0) || strpos($transaction_type_name, "losses")===0 || strpos($transaction_type_name, "expired")===0 || (strpos($transaction_type_name, "startingstock")===0 || strpos($transaction_type_name, "physicalcount")===0)) && $get_stock_type=='2'){
 			$source=$facility;
 			$destination=$facility;
 		}
@@ -581,8 +596,8 @@ class Inventory_Management extends MY_Controller {
 			$source=$facility;
 			$destination=$get_destination;
 		}
-		//Pharmacy transaction:Received from Main Store
-		else if($get_transaction_type==1 && $get_stock_type=='2' && (strpos($get_source_name, "main")===0 || strpos($get_source_name, "store")===0)){
+		//Pharmacy transaction:Received from Main Store, or any other pharmacy transaction
+		else if((strpos($transaction_type_name, "received")===0 && $get_stock_type=='2' && (strpos($get_source_name, "main")===0 || strpos($get_source_name, "store")===0)) || $get_stock_type=='2'){
 			$source=$facility;
 			$destination=$facility;
 		}
@@ -596,11 +611,11 @@ class Inventory_Management extends MY_Controller {
 			$source=$get_source;
 		}
 		
-		$sql = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type, source, destination, expiry_date, packs,".$get_qty_choice.",".$get_qty_out_choice.",balance, unit_cost, amount, remarks, operator, order_number, facility) VALUES ('".$get_drug_id. "', '".$get_transaction_date."', '".$get_batch."', '".$get_transaction_type ."', '".$source."', '".$destination."', '".$get_expiry."', '".$get_packs."', '".$get_qty."','0','".$balance."','".$get_unit_cost."', '".$get_amount."', '".$get_comment."','".$get_user."','".$get_ref_number."','".$facility."');";
+		$sql = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type, source, destination, expiry_date, packs,".$get_qty_choice.",".$get_qty_out_choice.",balance, unit_cost, amount, remarks, operator, order_number, facility,source_destination) VALUES ('".$get_drug_id. "', '".$get_transaction_date."', '".$get_batch."', '".$get_transaction_type ."', '".$source."', '".$destination."', '".$get_expiry."', '".$get_packs."', '".$get_qty."','0','".$balance."','".$get_unit_cost."', '".$get_amount."', '".$get_comment."','".$get_user."','".$get_ref_number."','".$facility."','".$source_destination."');";
 		$sql1=$this->db->query($sql);
 		
-		//If transaction type is issued to, create query for the receiving store
-		if(strpos($transaction_type_name, "issued")===0) {
+		//If transaction type is issued to pharmacy, create query as received from in pharmacy
+		if(strpos($transaction_type_name, "issued")===0 and $get_destination==$facility) {
 			// Case where destination is Pharmacy
 			if($get_destination==$facility){
 				$source=$facility;
@@ -611,7 +626,7 @@ class Inventory_Management extends MY_Controller {
 			$destination=$get_destination;
 			//If transaction type is issued to, insert another transaction as a received from
 			$transaction_type=1;
-			$sql_queries = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number,transaction_type, source, destination, expiry_date, packs,".$get_qty_out_choice.",".$get_qty_choice.",balance, unit_cost, amount, remarks, operator, order_number, facility) VALUES ('".$get_drug_id. "', '".$get_transaction_date."', '".$get_batch."', '".$transaction_type."', '".$source."', '".$destination."', '".$get_expiry."', '".$get_packs."', '".$get_qty."','0','".$pharma_balance."','".$get_unit_cost."', '".$get_amount."', '".$get_comment."','".$get_user."','".$get_ref_number."','".$facility."');";
+			$sql_queries = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number,transaction_type, source, destination, expiry_date, packs,".$get_qty_out_choice.",".$get_qty_choice.",balance, unit_cost, amount, remarks, operator, order_number, facility,source_destination) VALUES ('".$get_drug_id. "', '".$get_transaction_date."', '".$get_batch."', '".$transaction_type."', '".$source."', '".$destination."', '".$get_expiry."', '".$get_packs."', '".$get_qty."','0','".$pharma_balance."','".$get_unit_cost."', '".$get_amount."', '".$get_comment."','".$get_user."','".$get_ref_number."','".$facility."',source_destination);";
 			$sql2=$this->db->query($sql_queries);
 		}
 		
@@ -624,7 +639,7 @@ class Inventory_Management extends MY_Controller {
 		
 		//Update drug_stock_balance
 		//Add to balance
-		if(strpos($transaction_type_name, "received")===0 || strpos($transaction_type_name, "balance")===0 || (strpos($transaction_type_name, "returns")===0 && $transaction_effect==1) || (strpos($transaction_type_name, "ajustment")===0 && $transaction_effect==1) || strpos($transaction_type_name, "startingstock")===0 || strpos($transaction_type_name, "physicalcount")===0){
+		if(strpos($transaction_type_name, "received")===0 || strpos($transaction_type_name, "balance")===0 || (strpos($transaction_type_name, "returns")===0 && $transaction_effect==1) || (strpos($transaction_type_name, "adjustment")===0 && $transaction_effect==1) || strpos($transaction_type_name, "startingstock")===0 || strpos($transaction_type_name, "physicalcount")===0){
 			
 			//In case of physical count
 			if($get_transaction_type==11){

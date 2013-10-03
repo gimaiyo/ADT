@@ -2949,11 +2949,25 @@ class report_management extends MY_Controller {
 	public function patients_disclosure($start_date = "", $end_date = "") {
 		$data['from'] = $start_date;
 		$data['to'] = $end_date;
+		$data['title'] = "webADT | Reports";
+		$data['hide_side_menu'] = 1;
+		$data['banner_text'] = "Facility Reports";
+		$data['selected_report_type_link'] = "visiting_patient_report_row";
+		$data['selected_report_type'] = "Patient Status &amp; Disclosure";
+		$data['report_title'] = "Summary";
+		$data['facility_name'] = $this -> session -> userdata('facility_name');
+		$data['content_view'] = 'reports/patient_disclosure_v';
+		$this -> load -> view('template', $data);
+	}
+
+	public function disclosure_chart($start_date = "", $end_date = "") {
+		$data['from'] = $start_date;
+		$data['to'] = $end_date;
 		$heading = "Patient Disclosure Between $start_date and $end_date";
 		$start_date = date('Y-m-d', strtotime($start_date));
 		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
-		$sql = "SELECT gender, disclosure, count( * ) AS total FROM `patient` where date_enrolled between '$start_date' and '$end_date' and partner_status = '2' AND gender != '' AND disclosure != '2' AND facility_code='$facility_code' GROUP BY gender, disclosure";
+		$sql = "SELECT gender, disclosure, count( * ) AS total FROM `patient` LEFT JOIN patient_status ps ON ps.id=current_status where date_enrolled between '$start_date' and '$end_date' AND ps.Name like '%active%' and partner_status = '2' AND gender != '' AND disclosure != '2' AND facility_code='$facility_code' GROUP BY gender, disclosure";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$strXML = array();
@@ -2975,23 +2989,20 @@ class report_management extends MY_Controller {
 
 			}
 		}
-		$nameArray = array('Male Disclosure(NO)', 'Male Disclosure(YES)', 'Female Disclosure(NO)', 'Female Disclosure(YES)');
-		$dataArray = array($strXML['Male Disclosure(NO)'], $strXML['Male Disclosure(YES)'], $strXML['Female Disclosure(NO)'], $strXML['Female Disclosure(YES)']);
-		$dataCount = 0;
+		$strXML = implode($strXML, ",");
+		$strXML = array_map('intval', explode(",", $strXML));
 		$resultArray = array();
-		foreach ($nameArray as $val) {
-			$resultArray[] = array('name' => $val, 'data' => array($dataArray[$dataCount]));
-			$dataCount++;
-		}
+		$nameArray = array("Male Disclosure(NO)", "Male Disclosure(YES)", "Female Disclosure(NO)", "Female Disclosure(YES)");
+		$resultArray[] = array('name' => "Disclosure Status", 'data' =>$strXML);
 		$categories = json_encode($nameArray);
 		$resultArray = json_encode($resultArray);
+		$data['resultArraySize'] = 6;
 		$data['container'] = "chart_div";
 		$data['chartType'] = 'bar';
 		$data['chartTitle'] = 'Patients Disclosure';
-		$data['yAxix'] = 'Patients';
+		$data['yAxix'] = 'Status';
 		$data['categories'] = $categories;
 		$data['resultArray'] = $resultArray;
-		$data['container'] = "chart1";
 		$this -> load -> view('chart_v', $data);
 
 	}
@@ -3017,7 +3028,7 @@ class report_management extends MY_Controller {
 
 		$sql = "update patient set tbphase='0' where tbphase='un' or tbphase=''";
 		$query = $this -> db -> query($sql);
-		$sql = "select gender,ROUND(DATEDIFF(curdate(),dob)/360) as age,tbphase from patient where date_enrolled between '$start_date' and '$end_date' and facility_code='$facility_code' and gender !='' and tb='1' and tbphase !='0'";
+		$sql = "select gender,ROUND(DATEDIFF(curdate(),dob)/360) as age,tbphase from patient LEFT JOIN patient_status ps ON ps.id=current_status where date_enrolled between '$start_date' and '$end_date' AND ps.Name like '%active%' and facility_code='$facility_code' and gender !='' and tb='1' and tbphase !='0'";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$strXML = array();
@@ -3095,7 +3106,7 @@ class report_management extends MY_Controller {
 		$facility_code = $this -> session -> userdata('facility');
 		$arr = array();
 		$total = 0;
-		$sql = "select fplan from patient where date_enrolled <= '$start_date' and gender='2' and gender !='' and facility_code='$facility_code' AND fplan != '' AND fplan != 'null' AND ROUND(DATEDIFF(curdate(),dob)/360)>=15 AND ROUND(DATEDIFF(curdate(),dob)/360)<=49";
+		$sql = "select fplan from patient LEFT JOIN patient_status ps ON ps.id=current_status where date_enrolled <= '$start_date' AND ps.Name like '%active%' and gender='2' and gender !='' and facility_code='$facility_code' AND fplan != '' AND fplan != 'null' AND ROUND(DATEDIFF(curdate(),dob)/360)>=15 AND ROUND(DATEDIFF(curdate(),dob)/360)<=49";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 
@@ -3153,7 +3164,7 @@ class report_management extends MY_Controller {
 		$start_date = date('Y-m-d', strtotime($start_date));
 		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
-		$sql = "select * from opportunistic_infection";
+		$sql = "select CONCAT_WS(' | ',oi.indication,oi.name) as indication_name,IF(ROUND(DATEDIFF(curdate(),p.dob)/360)>=15 and p.gender='1',count(*),'0') as adult_male,IF(ROUND(DATEDIFF(curdate(),p.dob)/360)>=15 and p.gender='2',count(*),'0') as adult_female,IF(ROUND(DATEDIFF(curdate(),p.dob)/360)<15 ,count(*),'0') as child from (select patient_id,indication from patient_visit where dispensing_date between '$start_date' and '$end_date' and facility='$facility_code' and indication !='0')as pv left join patient p on p.patient_number_ccc=pv.patient_id,opportunistic_infection oi where (oi.id=pv.indication or oi.indication=pv.indication) group by indication_name";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$total = 0;
@@ -3165,38 +3176,21 @@ class report_management extends MY_Controller {
 		$overall_children = 0;
 		$dyn_table = "";
 		if ($results) {
-			$dyn_table .= "<table border='1' cellpadding='5' class='dataTables'><thead><tr><th>Indication</th><th>Adult Male</th><th>Adult Female</th><th>Children</th></tr></thead><tbody>";
+			$dyn_table .= "<table id='patient_listing' border='1' cellpadding='5' class='dataTables'><thead><tr><th>Indication</th><th>Adult Male</th><th>Adult Female</th><th>Children</th></tr></thead><tbody>";
 			foreach ($results as $result) {
-				$indication = $result['indication'];
-				$indication_name = $result['name'];
-				$sql = "select ROUND(DATEDIFF(curdate(),p.dob)/360) as age,gender from patient_visit pv left join patient p on p.patient_number_ccc=pv.patient_id where pv.dispensing_date between '$start_date' and '$end_date' and pv.indication='$indication' and facility='$facility_code' group by pv.patient_id,pv.indication";
-				$query = $this -> db -> query($sql);
-				$results = $query -> result_array();
-				if ($results) {
-					foreach ($results as $result) {
-						if ($result['age'] >= 15) {
-							if ($result['gender'] == 2) {
-								$adult_male++;
-							} else if ($result['gender'] == 2) {
-								$adult_female++;
-							} else if ($result['age'] < 15) {
-								$children++;
-							}
-						}
-					}
-
-				} else {
-					$adult_male = 0;
-					$adult_female = 0;
-					$children = 0;
-				}
+				$indication = $result['indication_name'];
+				$adult_male = $result['adult_male'];
+				$adult_female = $result['adult_female'];
+				$children = $result['child'];
 				$overall_adult_male += $adult_male;
 				$overall_adult_female += $adult_female;
 				$overall_children += $children;
-				$dyn_table .= "<tr><td><b>$indication | $indication_name <b></td><td>" . number_format($adult_male) . "</td><td>" . number_format($adult_female) . "</td><td>" . number_format($children) . "</td></tr>";
+				$dyn_table .= "<tr><td><b>$indication <b></td><td>" . number_format($adult_male) . "</td><td>" . number_format($adult_female) . "</td><td>" . number_format($children) . "</td></tr>";
 
 			}
-			$dyn_table .= "</tbody><tfoot><tr><td><b>TOTALS</b></td><td><b>" . number_format($overall_adult_male) . "</b></td><td><b>" . number_format($overall_adult_female) . "</b></td><td><b>" . number_format($overall_children) . "</b></td></tr>";
+			$total = $overall_adult_male + $overall_adult_female + $overall_children;
+			$total = number_format($total);
+			$dyn_table .= "</tbody><tfoot><tr><td><b>TOTALS ($total) </b></td><td><b>" . number_format($overall_adult_male) . "</b></td><td><b>" . number_format($overall_adult_female) . "</b></td><td><b>" . number_format($overall_children) . "</b></td></tr>";
 			$dyn_table .= "</tfoot></table>";
 		}
 		$data['dyn_table'] = $dyn_table;
@@ -3222,12 +3216,12 @@ class report_management extends MY_Controller {
 		$adult_male = array();
 		$adult_female = array();
 		$child = array();
-		$sql = "SELECT other_illnesses, ROUND( DATEDIFF( curdate( ) , dob ) /360 ) AS age,gender FROM patient WHERE date_enrolled <= '$start_date'  AND gender != '' AND facility_code = '$facility_code' AND other_illnesses != '' AND other_illnesses != 'null' AND gender !=''";
+		$sql = "SELECT other_illnesses, ROUND( DATEDIFF( curdate( ) , dob ) /360 ) AS age,gender FROM patient LEFT JOIN patient_status ps ON ps.id=current_status WHERE date_enrolled <= '$start_date' AND ps.Name like '%active%' AND gender != '' AND facility_code = '$facility_code' AND other_illnesses != '' AND other_illnesses != ',' AND other_illnesses != 'null' AND gender !=''";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
 			foreach ($results as $result) {
-				if (trim(strtoupper($result['other_illnesses'])) != '' && trim(strtoupper($result['other_illnesses'])) != 'NULL') {
+				if (trim(strtoupper($result['other_illnesses'])) != null && trim(strtoupper($result['other_illnesses'])) != 'NULL') {
 
 					if (strstr($result['other_illnesses'], ',', true)) {
 						$values = explode(",", $result['other_illnesses']);
@@ -3392,7 +3386,7 @@ class report_management extends MY_Controller {
 		$female_noadr = 0;
 
 		//Get Those With ADR
-		$sql = "select gender,count(*)as total from patient WHERE date_enrolled <= '$start_date'  and facility_code='$facility_code' and adr !='' and adr !='null' and adr is not null and gender !='' group by gender";
+		$sql = "select gender,count(*)as total from patient LEFT JOIN patient_status ps ON ps.id=current_status WHERE date_enrolled <= '$start_date' AND ps.Name like '%active%' and facility_code='$facility_code' and adr !='' and adr !='null' and adr is not null and gender !='' group by gender";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
