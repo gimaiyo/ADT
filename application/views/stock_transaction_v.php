@@ -461,7 +461,7 @@
 		
 		//Calculate the total cost automatically
 		$("#unit_cost").keyup(function() {
-			updateCommodityQuantityUnit($(this));
+			updateTotalCost($(this));
 		});
 		
 		$(".pack").change(function() {
