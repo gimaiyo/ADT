@@ -479,10 +479,10 @@ class Inventory_Management extends MY_Controller {
 		$source_destination="";
 		
 		//Check if source if null or not to determine type of transaction
-		if($get_source!=null){
+		if($get_source!=""){
 			$source_destination=$get_source;
 		}
-		else if($get_destination!=null){
+		else{
 			$source_destination=$get_destination;
 		}
 		
@@ -490,7 +490,7 @@ class Inventory_Management extends MY_Controller {
 		 * Start processing
 		 */
 		if($get_stock_type=='1'){
-			//Stockin coming in
+			//Stock coming in
 			if(strpos($transaction_type_name, "received")===0 || strpos($transaction_type_name, "balance")===0 || (strpos($transaction_type_name, "returns")===0 && $transaction_effect==1) || (strpos($transaction_type_name, "adjustment")===0 && $transaction_effect==1) || strpos($transaction_type_name, "startingstock")===0 || strpos($transaction_type_name, "physicalcount")===0) {
 				
 				//Get remaining balance for the drug
@@ -533,7 +533,6 @@ class Inventory_Management extends MY_Controller {
 				}
 				//Substract balance from qty going out
 				$balance=$get_available_qty-$get_qty;
-				
 			}
 		
 		}
@@ -616,24 +615,34 @@ class Inventory_Management extends MY_Controller {
 		
 		//If transaction type is issued to pharmacy, create query as received from in pharmacy
 		if(strpos($transaction_type_name, "issued")===0 and $get_destination==$facility) {
-			// Case where destination is Pharmacy
-			if($get_destination==$facility){
-				$source=$facility;
-				
-			}else{
-				$source=$facility;
-			}
+			//Get id for received from transaction
+			$get_trans_id=$this->db->query("SELECT id FROM transaction_type WHERE name LIKE '%received%' LIMIT 1");
+			$get_trans_id=$get_trans_id->result_array();
+			$transaction_type=$get_trans_id[0]['id'];
+			
+			//Get id for Main Store transaction source
+			$get_source_id=$this->db->query("SELECT id FROM drug_source WHERE name LIKE '%store%' LIMIT 1");
+			$get_source_id=$get_source_id->result_array();
+			$source_destination=$get_source_id[0]['id'];
 			$destination=$get_destination;
 			//If transaction type is issued to, insert another transaction as a received from
-			$transaction_type=1;
-			$sql_queries = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number,transaction_type, source, destination, expiry_date, packs,".$get_qty_out_choice.",".$get_qty_choice.",balance, unit_cost, amount, remarks, operator, order_number, facility,source_destination) VALUES ('".$get_drug_id. "', '".$get_transaction_date."', '".$get_batch."', '".$transaction_type."', '".$source."', '".$destination."', '".$get_expiry."', '".$get_packs."', '".$get_qty."','0','".$pharma_balance."','".$get_unit_cost."', '".$get_amount."', '".$get_comment."','".$get_user."','".$get_ref_number."','".$facility."',source_destination);";
+			$sql_queries = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number,transaction_type, source, destination, expiry_date, packs,".$get_qty_out_choice.",".$get_qty_choice.",balance, unit_cost, amount, remarks, operator, order_number, facility,source_destination) VALUES ('".$get_drug_id. "', '".$get_transaction_date."', '".$get_batch."', '".$transaction_type."', '".$source."', '".$destination."', '".$get_expiry."', '".$get_packs."', '".$get_qty."','0','".$pharma_balance."','".$get_unit_cost."', '".$get_amount."', '".$get_comment."','".$get_user."','".$get_ref_number."','".$facility."','".$source_destination."');";
 			$sql2=$this->db->query($sql_queries);
 		}
 		
 		//If received from main store to pharmacy, insert an issued to in main store
 		else if(strpos($transaction_type_name, "received")===0 && $get_stock_type=='2' && (strpos($get_source_name, "main")===0 || strpos($get_source_name, "store")===0) ){
-			$transaction_type=6;
-			$sql_queries = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type, source, destination, expiry_date, packs,".$get_qty_out_choice.",".$get_qty_choice.",balance, unit_cost, amount, remarks, operator, order_number, facility) VALUES ('".$get_drug_id. "', '".$get_transaction_date."', '".$get_batch."', '".$transaction_type."', '".$get_source."', '".$destination."', '".$get_expiry."', '".$get_packs."', '".$get_qty."','0','".$store_balance."','".$get_unit_cost."', '".$get_amount."', '".$get_comment."','".$get_user."','".$get_ref_number."','".$facility."');";
+			//Get id for issued to transaction type
+			$get_trans_id=$this->db->query("SELECT id FROM transaction_type WHERE name LIKE '%issued%' LIMIT 1");
+			$get_trans_id=$get_trans_id->result_array();
+			$transaction_type=$get_trans_id[0]['id'];
+			
+			//Get id for Main Store transaction source
+			$get_destination_id=$this->db->query("SELECT id FROM drug_destination WHERE name LIKE '%outpatient%' LIMIT 1");
+			$get_destination_id=$get_destination_id->result_array();
+			$source_destination=$get_destination_id[0]['id'];
+				
+			$sql_queries = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type, source, destination, expiry_date, packs,".$get_qty_out_choice.",".$get_qty_choice.",balance, unit_cost, amount, remarks, operator, order_number, facility,source_destination) VALUES ('".$get_drug_id. "', '".$get_transaction_date."', '".$get_batch."', '".$transaction_type."', '".$get_source."', '".$destination."', '".$get_expiry."', '".$get_packs."', '".$get_qty."','0','".$store_balance."','".$get_unit_cost."', '".$get_amount."', '".$get_comment."','".$get_user."','".$get_ref_number."','".$facility."','".$source_destination."');";
 			$sql2=$this->db->query($sql_queries);
 		}
 		
