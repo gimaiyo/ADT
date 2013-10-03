@@ -183,11 +183,11 @@
 										}
 										//If destination is not a facility,get the destination name
 										else if($drug_transaction->Destination < 10000){
-											//$transaction_type.=" <b>".$drug_transaction->Destination_Object->Name."</b>";
+											$transaction_type.=$drug_transaction->Destination_Object->Name;
 										}
-										//If destination is a facility,get the destination name
+										//If destination is a facility,get the facility name
 										else if($drug_transaction->Destination >= 10000){
-											//$transaction_type.=" <b>".$drug_transaction->Facility_Object->name."</b>";
+											$transaction_type.=$drug_transaction->Facility_Sat->name;
 										}
 									}
 									
@@ -211,23 +211,16 @@
 								//Pharmacy transaction
 								else if($drug_transaction->Source==$drug_transaction->Destination){
 									
-									//Receive from
-									if($drug_transaction->Transaction_Type==1){
-										$qty=$drug_transaction->Quantity;
-										$transaction_type.=" Main Store";
-									}
-									//Dispensed to patients
-									else if($drug_transaction->Transaction_Type==5){
-										$qty=$drug_transaction->Quantity_Out;
-
-									}
-									
-									else if($drug_transaction->Quantity==0 or $drug_transaction->Quantity==""){
+									//Going out
+									if($drug_transaction->Quantity==0 or $drug_transaction->Quantity==""){
 										//$transaction_type.=" Patients";
 										$qty=$drug_transaction->Quantity_Out;
+										$transaction_type.=' '.$drug_transaction->Destination_Trans->Name;
 									}
-									else if($drug_transaction->Quantity_Out==0){
+									//Coming in
+									else if($drug_transaction->Quantity_Out==0 or $drug_transaction->Quantity==""){
 										$qty=$drug_transaction->Quantity;
+										$transaction_type.=' '.$drug_transaction->Source_Trans->Name;
 									}
 									
 								}

@@ -9,6 +9,7 @@ class Drug_Stock_Movement extends Doctrine_Record {
 		$this -> hasColumn('Transaction_Type', 'varchar', 10);
 		$this -> hasColumn('Source', 'varchar', 10);
 		$this -> hasColumn('Destination', 'varchar', 10);
+		$this -> hasColumn('Source_Destination', 'int', 11);
 		$this -> hasColumn('Expiry_date', 'varchar', 10);
 		$this -> hasColumn('Packs', 'varchar', 10);
 		$this -> hasColumn('Quantity', 'int', 15);
@@ -29,8 +30,11 @@ class Drug_Stock_Movement extends Doctrine_Record {
 		$this -> setTableName('drug_stock_movement');
 		$this -> hasOne('drugcode as Drug_Object', array('local' => 'Drug', 'foreign' => 'id'));
 		$this -> hasOne('drug_destination as Destination_Object', array('local' => 'Destination', 'foreign' => 'id'));
+		$this -> hasOne('drug_destination as Destination_Trans', array('local' => 'source_destination', 'foreign' => 'id'));
 		$this -> hasOne('drug_source as Source_Object', array('local' => 'Source', 'foreign' => 'id'));
+		$this -> hasOne('drug_source as Source_Trans', array('local' => 'source_destination', 'foreign' => 'id'));
 		$this -> hasOne('facilities as Facility_Object', array('local' => 'Facility', 'foreign' => 'facilitycode'));
+		$this -> hasOne('facilities as Facility_Sat', array('local' => 'destination', 'foreign' => 'facilitycode'));
 		$this -> hasOne('transaction_type as Transaction_Object', array('local' => 'Transaction_Type', 'foreign' => 'id'));
 		
 	}

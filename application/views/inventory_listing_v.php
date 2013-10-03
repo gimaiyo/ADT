@@ -149,7 +149,7 @@ if ($access_level == "facility_administrator") {
 					
 					<script type="text/javascript">
 						setTimeout(function(){
-							$(".info").fadeOut("2000");
+							$(".message").fadeOut("2000");
 						},6000)
 					</script>
 					<?php

@@ -54,25 +54,26 @@
 
 <script type="text/javascript">
 	$(document).ready(function(){
+		$("#btn_submit").attr("disabled","disabled");
 		var today = new Date();
 		var today_date = ("0" + today.getDate()).slice(-2)
 		var today_year = today.getFullYear();
 		var today_month = today.getMonth();
 		
-			var month=new Array();
-month[0]="Jan";
-month[1]="Feb";
-month[2]="Mar";
-month[3]="Apr";
-month[4]="May";
-month[5]="Jun";
-month[6]="Jul";
-month[7]="Aug";
-month[8]="Sep";
-month[9]="Oct";
-month[10]="Nov";
-month[11]="Dec"; 
-var today_full_date =today_date+ "-"+month[today_month] + "-" + today_year ;
+		var month=new Array();
+		month[0]="Jan";
+		month[1]="Feb";
+		month[2]="Mar";
+		month[3]="Apr";
+		month[4]="May";
+		month[5]="Jun";
+		month[6]="Jul";
+		month[7]="Aug";
+		month[8]="Sep";
+		month[9]="Oct";
+		month[10]="Nov";
+		month[11]="Dec"; 
+		var today_full_date =today_date+ "-"+month[today_month] + "-" + today_year ;
 		$("#transaction_date").attr("value", today_full_date);
 		
 		$(".t_source").css("display","none");
@@ -82,14 +83,19 @@ var today_full_date =today_date+ "-"+month[today_month] + "-" + today_year ;
 		
 		//Transaction type change
 		$("#select_transtype").change(function(){
+			
+			
 			//If transaction type not selected
 			if($("#select_transtype").attr("value")==0){
 				$("#drug_details").css("pointer-events","none");
 				$(".t_source").css("display","none");
 				$(".t_destination").css("display","none");
+				$("#btn_submit").attr("disabled","disabled");
 			}
 			
+			
 			else{
+				$("#btn_submit").removeAttr('disabled');
 				$("#drug_details").css("pointer-events","auto");
 				//Coming in
 				var trans_type=$("#select_transtype option:selected").text().toLowerCase().replace(/ /g,'');
@@ -104,6 +110,9 @@ var today_full_date =today_date+ "-"+month[today_month] + "-" + today_year ;
 						$(".t_destination").css("display","none");
 						$(".t_source").css("display","none");
 					}
+					
+					//Renitialize drugs table 
+					reinitializeDrugs(stock_type,trans_type);
 					
 					
 					$("#select_drug ").html("<option value='0'>Loading drugs ...</option> ");
@@ -144,6 +153,9 @@ var today_full_date =today_date+ "-"+month[today_month] + "-" + today_year ;
 						$(".t_destination").css("display","block");
 						$(".t_source").css("display","none");
 					}
+					
+					//Renitialize drugs table 
+					reinitializeDrugs(stock_type,trans_type);
 					
 					//Get drugs that have a balance
 					var request=$.ajax({
@@ -444,6 +456,7 @@ var today_full_date =today_date+ "-"+month[today_month] + "-" + today_year ;
 		//Check if number of packs has changed and automatically calculate the total
 		$(".pack").keyup(function() {
 			updateCommodityQuantity($(this));
+			
 		});
 		
 		//Calculate the total cost automatically
@@ -717,7 +730,6 @@ var today_full_date =today_date+ "-"+month[today_month] + "-" + today_year ;
 			    request.always(function(data){
 					remaining_drugs-=1;
 					if(remaining_drugs==0){
-					
 						//Update status for order, from dispatched to delivered
 						var order_id=$("#picking_list_name").val();
 						var _url="<?php echo base_url().'inventory_management/set_order_status'; ?>";
@@ -741,7 +753,6 @@ var today_full_date =today_date+ "-"+month[today_month] + "-" + today_year ;
 							});
 						});
 						
-						
 					}
 			    });
 			  
@@ -752,7 +763,39 @@ var today_full_date =today_date+ "-"+month[today_month] + "-" + today_year ;
 		
 	});
 	
+	//Reinitialize drugs table
+	function  reinitializeDrugs(stock_type,trans_type){
+		//------------Whether show select order from picking list or not
+		if(stock_type==1 && trans_type.indexOf('received') != -1 &&  selected_source.indexOf(pipeline_name) != -1){
+			$(".t_picking_list").css("display","block");
+		}
+		else{
+			//Before reinitialize table, check if picking list combo box is visible
+			if($(".t_picking_list").is(":visible") && $("#picking_list_name").val()!=0){
+				//Clone drug table row
+				var cloned_object = $('#drugs_table tr:last').clone(true);
+				$('#drugs_table tbody tr').remove();
+				$('#drugs_table tbody ').append(cloned_object);
+				//Reset the list of drugs
+				
+				//Reset all the fields
+				var row=$('#drugs_table tbody tr:first');
+				resetFields(row);
+			}
+			if($(".remove").is(":visible")){
+				row.closest("tr").find(".remove").remove();
+			}
+			
+			$(".t_picking_list").css("display","none");
+			$("#select_source").val("0");
+			$("#picking_list_name").val("0");
+			
+		}
+		//------------Whether show select order from picking list or not end
+	}
+	
 	function resetFields(row){
+		//row.closest("tr").find(".pack_size").val("");
 		row.closest("tr").find(".pack").val("");
 		row.closest("tr").find(".quantity").val("");
 		row.closest("tr").find(".expiry").val("");
@@ -779,6 +822,7 @@ var today_full_date =today_date+ "-"+month[today_month] + "-" + today_year ;
 				quantity_holder.attr("value",qty );
 				
 			} 
+			
 			//Transaction going out
 			else {
 				if(available_quantity>=qty){
