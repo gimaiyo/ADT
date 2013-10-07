@@ -137,7 +137,7 @@ if(isset($results)){
 			
 				
 			//Select Other Illnesses Methods Selected
-			var other_illnesses='<?php if($result['other_illnesses'] !=''){echo $result['other_illnesses'];}?>';
+			var other_illnesses='<?php if(trim($result['other_illnesses']) !=''){echo $result['other_illnesses'];}?>';
 			
 			if (other_illnesses.indexOf(',') == -1) {
               other_illnesses=other_illnesses+",";

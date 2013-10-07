@@ -1,19 +1,18 @@
 <script type="text/javascript">
 	
 	$(document).ready( function () {
-		$('.listing_table').dataTable({
+		var oTable =$('.listing_table').dataTable({
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "patient_management/listing",
 	        "bJQueryUI": true,
-	        "sPaginationType": "full_numbers"
-		} );
+	        "sPaginationType": "full_numbers",
+            "aoColumnDefs": [ { "bSearchable": true, "aTargets": [ 0 ,1] }, { "bSearchable": false, "aTargets": [ "_all" ] } ]});
 		 setTimeout(function(){
 			$(".message").fadeOut("2000");
 		},6000);
-		 var oTable = $('.listing_table').dataTable();
          oTable.fnSort([[3,'desc']]);
-	} );
+	});
 
 </script>
 <?php
@@ -99,7 +98,7 @@ if ($access_level == "facility_administrator") {
 		<table class="listing_table" id="patient_listing" border="1" style="font-size:0.8em">
 			<thead>
 				<tr>
-					<th style="width: 45px">CCC No</th><th>Patient Name</th><th>Contact</th><th style="width: 100px">Date Enrolled</th><th style="width: 100px">Next Appointment</th><th>Current Regimen</th><th style="width:150px">Status</th><th style="width: 140px">Action</th>
+					<th style="width:60px">CCC No</th><th>Patient Name</th><th>Contact</th><th style="width: 100px">Date Enrolled</th><th style="width: 100px">Next Appointment</th><th>Current Regimen</th><th style="width:150px">Status</th><th style="width: 140px">Action</th>
 				</tr>
 			</thead>
 			<tbody>
