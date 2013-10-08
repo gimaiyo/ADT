@@ -76,7 +76,7 @@ class Drug_Stock_Movement extends Doctrine_Record {
 		$drug_transactions = $query -> execute();
 		return $drug_transactions;
 	}
-	
+
 	public function getDrugMonthlyConsumption($drug_id,$facility,$stock_type=1){
 		$where="";
 		$today = date('Y-m-d');

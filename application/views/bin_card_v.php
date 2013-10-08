@@ -126,27 +126,9 @@
 			</div>
 			
 			<div id="transactions" style="width:100%;">
-				<script>
-					$(document).ready(function(){
-						 $('#transaction_table').dataTable( {
-					        "sDom": "<'row row_top'<'span7'l><'span5'f>r>t<'row row_bottom'<'span6'i><'span5'p>>",
-					        "sPaginationType": "bootstrap",
-					        "sScrollY": "200px",
-					        "sScrollX": "100%",
-					       
-					    });
-						$.extend( $.fn.dataTableExt.oStdClasses, {
-						    "sWrapper": "dataTables_wrapper form-inline"
-						} );
-						$(".pagination").css("margin","1px 0px");
-						$(".dataTables_length").css("width","70%");
-						$(".dataTables_filter").css("width","70%");
-						$("div.row .span5").css("float","right");
-					});
-						
-				</script>
+				
 				<div><span class="title">Transactions Information</span></div>
-				<table border="1" class="table table-bordered table-hover sortable" id="transaction_table">
+				<table border="1" id="transaction_tbl">
 					<thead>
 						<tr>
 							<th>Ref./Order No</th>
@@ -163,83 +145,8 @@
 						</tr>
 					</thead>
 					<tbody>
-						<?php foreach ($drug_transactions as $drug_transaction) {
-							$facility_code=	$drug_transaction->Facility_Object->facilitycode;
-						?>
-							<tr>
-								<td><?php echo  $drug_transaction->Order_Number ?></td>
-								<td><?php echo date('d-M-Y',strtotime($drug_transaction->Transaction_Date))  ?></td>
-								<?php
-								$transaction_type=$drug_transaction->Transaction_Object->Name;
-								
-								//Main store transaction
-								if($drug_transaction->Source!=$drug_transaction->Destination){
-									//Stock going out
-									if($drug_transaction->Quantity==0){
-										$qty=$drug_transaction->Quantity_Out;
-										//From Main Store to pharmacy
-										if($drug_transaction->Destination=="" || ($drug_transaction->Destination==$facility_code && $drug_transaction->Transaction_Object->id==6)){
-											$transaction_type.=" Pharmacy";
-										}
-										//If destination is not a facility,get the destination name
-										else if($drug_transaction->Destination < 10000){
-											$transaction_type.=$drug_transaction->Destination_Object->Name;
-										}
-										//If destination is a facility,get the facility name
-										else if($drug_transaction->Destination >= 10000){
-											$transaction_type.=$drug_transaction->Facility_Sat->name;
-										}
-									}
-									
-									//Stock coming in, received
-									else if($drug_transaction->Quantity>0){
-										$qty=$drug_transaction->Quantity;
-										
-										if($drug_transaction->Source=="" and $drug_transaction->Source!=""){
-											//$transaction_type.=" <b>".$drug_transaction->Facility_Object->name."</b>";
-										}
-										//Source is not a facility
-										else if($drug_transaction->Source < 10000){
-											$transaction_type.=" ".$drug_transaction->Source_Object->Name;
-										}
-										//Source is a facility
-										else if($drug_transaction->Source >= 10000){
-											//$transaction_type.=" <b>".$drug_transaction->Facility_Object->name."</b>";
-										}
-									}
-								}	
-								//Pharmacy transaction
-								else if($drug_transaction->Source==$drug_transaction->Destination){
-									
-									//Going out
-									if($drug_transaction->Quantity==0 or $drug_transaction->Quantity==""){
-										//$transaction_type.=" Patients";
-										$qty=$drug_transaction->Quantity_Out;
-										$transaction_type.=' '.$drug_transaction->Destination_Trans->Name;
-									}
-									//Coming in
-									else if($drug_transaction->Quantity_Out==0 or $drug_transaction->Quantity==""){
-										$qty=$drug_transaction->Quantity;
-										$transaction_type.=' '.$drug_transaction->Source_Trans->Name;
-									}
-									
-								}
-								?>
-								<td><?php echo $transaction_type;  ?></td>
-								<td><?php echo  $drug_transaction->Batch_Number ?></td>
-								<td><?php echo date('d-M-Y',strtotime($drug_transaction->Expiry_date))  ?></td>
-								<td><?php echo  $drug_transaction->Drug_Object->Pack_Size ?></td>
-								<td><?php echo  $drug_transaction->Packs ?></td>
-								<td><?php echo  $qty ?></td>
-								<td><?php echo  $drug_transaction->Balance ?></td>
-								<td><?php echo  $drug_transaction->Unit_Cost ?></td>
-								<td><?php echo  $drug_transaction->Amount ?></td>
-							</tr>
-						<?php	
-						}
-						?>
-						
-						
+						<tr>	
+						</tr>
 					</tbody>
 				</table>
 			</div>
@@ -247,7 +154,29 @@
 			<hr/>
 			
 		</div>
-		
 	</div>
-	
-</div>
+	</div>
+	<script type="text/javascript">
+					$(document).ready(function(){
+						var _url='<?php echo base_url()."inventory_management/ServerDrugTransactions/".$drug_id."/".$stock_val; ?>';
+						 $('#transaction_tbl').dataTable({						 
+					        "sDom": "<'row row_top'<'span7'l><'span5'f>r>t<'row row_bottom'<'span6'i><'span5'p>>",
+					        "sPaginationType": "bootstrap",
+                            "bJQueryUI": true,
+					        "sScrollY": "200px",
+					        "sScrollX": "100%",
+					        "bProcessing": true,
+			                "bServerSide": true,
+			                "bDeferRender":true,
+			                "sAjaxSource": _url,					     
+					    });
+						$.extend( $.fn.dataTableExt.oStdClasses, {
+						    "sWrapper": "dataTables_wrapper form-inline"
+						});
+						$(".pagination").css("margin","1px 0px");
+						$(".dataTables_length").css("width","70%");
+						$(".dataTables_filter").css("width","70%");
+						$("div.row .span5").css("float","right");
+					});
+						
+				</script>
