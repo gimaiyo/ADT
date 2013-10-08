@@ -123,19 +123,6 @@ if ($access_level == "facility_administrator") {
 }
 ?>
 
-
-
-
-
-<style>
-	.dataTables_wrapper{
-		width:100%;
-		
-	}
-
-</style>
-
-
 <?php 
 //COunt number of patients
 ?>
@@ -172,19 +159,19 @@ if ($access_level == "facility_administrator") {
 			<li id="store_btn" class="active"><a  href="#">Store Inventory</a> </li>   
 			<li id="pharmacy_btn"><a  href="#">Pharmacy Inventory</a></li>   
 		</ul> 
-		<table id="store_table" class="listing_table" border="1" style="font-size:0.8em">
+		<table id="store_table" class="listing_table" border="1" >
 			<thead>
 				<tr>
-					<th style="min-width: 280px">Commodity</th><th>Generic Name</th><th>QTY/SOH</th><th>Unit</th><th>Pack Size</th><th>Supplier</th><th>Dose</th><th style="width: 250px">Action</th>
+					<th style="width:30%">Commodity</th><th>Generic Name</th><th>QTY/SOH</th><th>Unit</th><th>Pack Size</th><th>Supplier</th><th>Dose</th><th style="width:10%">Action</th>
 				</tr>
 			</thead>
 			<tbody>
 			</tbody>
 		</table>
-		<table id="pharmacy_table" class="listing_table" border="1" style="font-size:0.8em">
+		<table id="pharmacy_table" class="listing_table" border="1" >
 			<thead>
 				<tr>
-					<th style="min-width: 280px">Commodity</th><th>Generic Name</th><th>QTY/SOH</th><th>Unit</th><th>Pack Size</th><th>Supplier</th><th>Dose</th><th style="width: 250px">Action</th>
+					<th style="width:30%">Commodity</th><th>Generic Name</th><th>QTY/SOH</th><th>Unit</th><th>Pack Size</th><th>Supplier</th><th>Dose</th><th style="width:10%">Action</th>
 				</tr>
 			</thead>
 			<tbody>

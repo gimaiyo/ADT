@@ -714,7 +714,7 @@ foreach($results as $result){
 							</div>
 							<div class="mid-row">
 								<label>Patient Name</label>
-								<input readonly="" id="patient_details"  class="validate[required]" style='width:300px;'/>
+								<input readonly="" id="patient_details"  class="validate[required]" />
 							</div>
 						</div>
 
@@ -727,7 +727,7 @@ foreach($results as $result){
 							<div class="mid-row">
 								<label><span class='astericks'>*</span>Purpose of Visit</label>
 
-								<select  type="text"name="purpose" id="purpose" class="validate[required]" style='width:300px;'>
+								<select  type="text"name="purpose" id="purpose" class="validate[required]" style='width:100%;'>
 									<option value="">--Select One--</option>
 									<?php 
 									foreach($purposes as $purpose){
@@ -747,7 +747,7 @@ foreach($results as $result){
 							<div class="mid-row">
 								<label><span class='astericks'>*</span>Current Weight(kg)</label>
 
-								<input  type="text"name="weight" id="weight" class="validate[required]" style='width:300px;'>
+								<input  type="text"name="weight" id="weight" class="validate[required]" >
 							</div>
 						</div>
 						<div class="max-row">
@@ -758,7 +758,7 @@ foreach($results as $result){
 							<div class="mid-row">
 								<label><span class='astericks'>*</span>Date of Next Appointment</label>
 
-								<input  type="text" name="next_appointment_date" id="next_appointment_date" class="validate[required]" style='width:300px;'>
+								<input  type="text" name="next_appointment_date" id="next_appointment_date" class="validate[required]" >
 							</div>
 						</div>
                             
@@ -779,7 +779,7 @@ foreach($results as $result){
 
 							<div class="mid-row">
 								<label><span class='astericks'>*</span>Current Regimen</label>
-								<select type="text"name="current_regimen" id="current_regimen"  class="validate[required]" style='width:300px;'>
+								<select type="text"name="current_regimen" id="current_regimen"  class="validate[required]" style='width:100%;' >
 									<option value="">-Select One--</option>
 										<?php 
 									       foreach($regimens as $regimen){
@@ -793,7 +793,7 @@ foreach($results as $result){
 							<div class="mid-row">
 								<div style="display:none" id="regimen_change_reason_container">
 									<label>Regimen Change Reason</label>
-									<select type="text"name="regimen_change_reason" id="regimen_change_reason" style='width:300px;'>
+									<select type="text"name="regimen_change_reason" id="regimen_change_reason" >
 										<option value="">--Select One--</option>
 										 <?php
 										   foreach($regimen_changes as $changes){
@@ -811,7 +811,7 @@ foreach($results as $result){
 							</div>
 							<div class="mid-row">
 								<label> Poor/Fair Adherence Reasons </label>
-								<select type="text"name="non_adherence_reasons" id="non_adherence_reasons"  style='width:300px;'>
+								<select type="text"name="non_adherence_reasons" id="non_adherence_reasons"  style='width:100%;'>
 									<option value="">-Select One--</option>
 										<?php 
 									       foreach($non_adherence_reasons as $reasons){

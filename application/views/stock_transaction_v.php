@@ -32,11 +32,13 @@
 		text-align:left;
 	}
 	#drug_details{
+		padding:1%;
 		width:82%;
 		display:table-cell;
 	}
 	#drugs_table{
 		width: 100%;
+		
 	}
 	#drugs_table th{
 		

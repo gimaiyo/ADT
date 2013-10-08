@@ -36,6 +36,9 @@
 		padding-left:15px;
 		padding-right:15px;
 	}
+	.dataTables_wrapper{
+		width:95%;
+	}
 </style>
 
 <?php
@@ -613,7 +616,7 @@ if(isset($results)){
 			        "sDom": "<'row row_top'<'span7'l><'span5'f>r>t<'row row_bottom'<'span6'i><'span5'p>>",
 			        "sPaginationType": "bootstrap",
 			        "sScrollY": "200px",
-			        "sScrollX": "100%",
+			        "sScrollX": "110%",
 			       
 			    });
 			    
@@ -1070,7 +1073,7 @@ if(isset($results)){
 						Dispensing History
 					</legend>
 					
-					<table class="sortable table table-bordered table-hover " id="history_table" >
+					<table class="sortable table table-bordered table-hover " id="history_table" width="90%" >
 						<thead style="font-size:0.8em;">
 							<tr >
 								<th id="header_date">Date</th>

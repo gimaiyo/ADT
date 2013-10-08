@@ -260,7 +260,7 @@ input[type = email][disabled = disabled]:hover, input[type = password][disabled 
 input[type =
 "email"], input[type = "password"], input[type = "text"], input[type = "url"], select {
 	display: inline-block;
-	height: 29px;
+	height: 25px;
 	margin: 0;
 	padding-left: 8px;
 	background: white;
@@ -463,9 +463,7 @@ legend {
 	user-select: none;
 	color: #036;
 }
-fieldset {
-	margin-top: 20px;
-}
+
 /*NOTIFICATION MESSAGES*/
 .message, .msg {
 	display: block;
@@ -655,8 +653,7 @@ tr th {
 .full-content {
 	width: 90%;
 	margin: auto;
-	padding: 10% 1% 5% 1%;
-	zoom:85%;
+	padding: 10% 1% 5% 1%;	
 }
 .full-content form {
 	width: 100%;
@@ -1162,11 +1159,9 @@ html > body #main_manualcontent li a {
 	margin: auto;
 }
 .column fieldset, .column-2 fieldset, .column-3 fieldset {
-	padding: 2%;
 	width: 96%
 }
 .column input, .column-2 input, .column-3 input {
-	padding:2%;
 	width: 61%;
 }
 .column input[type=checkbox] {
@@ -1176,13 +1171,12 @@ html > body #main_manualcontent li a {
 	width: 61%;
 }
 .max-row {
-	margin-top: 0.5em;
 	clear: both;
 	width: 100%;
 	display: block;
 }
 .mid-row {
-	width: 30%;
+	width: 35%;
 	display: inline-block;
 }
 .mid-row input, .mid-row textarea {
@@ -1268,10 +1262,10 @@ a {
 	font-style: italic;
 }
 input[type='text'], input[type='email'], input[type='tel'], input[type='password'] {
-	height: 30px;
+	height:1.8em;
 }
 legend {
-	font-size: 18px;
+	font-size: 14px;
 }
 .button-bar {
 	display: table-row;
