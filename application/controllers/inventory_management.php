@@ -318,7 +318,7 @@ class Inventory_Management extends MY_Controller {
 
 	public function ServerDrugTransactions($drug_id, $stock_type) {
 		$data = array();
-		$aColumns = array('Order Number', 'Transaction Date', 'Transaction Type', 'Batch Number', 'Expiry Date', 'Pack Size', 'Packs', 'Quantity', 'Balance', 'Unit Cost', 'Amount');
+		$aColumns = array('Order_Number', 'Transaction_Date', 't.name as Transaction_Type','Batch_Number','ds.Source','ds.Destination', 'Expiry_Date', 'Pack_Size', 'Packs', 'ds.Quantity', 'ds.Quantity_Out', 'Balance', 'Unit_Cost', 'Amount');
 
 		$iDisplayStart = $this -> input -> get_post('iDisplayStart', true);
 		$iDisplayLength = $this -> input -> get_post('iDisplayLength', true);
@@ -363,21 +363,68 @@ class Inventory_Management extends MY_Controller {
 			}
 		}
 
+		$where="";
+		$today = date('Y-m-d');
 		$facility_code = $this -> session -> userdata('facility');
-		$drug_transactions = Drug_Stock_Movement::getDrugTransactions($drug_id, $facility_code, $stock_type);
-		$iFilteredTotal = count($drug_transactions);
-		$iTotal = count($drug_transactions);
+		
+		// Select Data
+		$this -> db -> select('SQL_CALC_FOUND_ROWS ' . str_replace(' , ', ' ', implode(', ', $aColumns)), false);
+		$this -> db -> select('s.Name as S_Name,d.Name as D_Name,ss.Name as source_name,dd.Name as destination_name,f.Name as facility_name');
+		$this -> db -> from("Drug_Stock_Movement ds");
+		$this -> db -> where("ds.Facility", $facility_code);
+		$this -> db -> where("ds.drug", $drug_id);
+		$this -> db -> join("drugcode dc", "dc.id=ds.drug", 'left outer');
+		$this -> db -> join("transaction_type t", "t.id=ds.Transaction_Type", 'left outer');
+		$this -> db -> join("drug_source s", "s.id=ds.source", 'left outer');
+		$this -> db -> join("drug_destination d", "d.id=ds.destination", 'left outer');
+		$this -> db -> join("drug_source ss", "ss.id=ds.source_destination", 'left outer');
+		$this -> db -> join("drug_destination dd", "dd.id=ds.source_destination", 'left outer');
+		$this -> db -> join("facilities f", "f.facilitycode=ds.destination", 'left outer');
+		$this -> db -> order_by('ds.id','desc');
+		//Stock transaction
+		if($stock_type==1){
+			$where="(ds.source='$facility_code'  or ds.destination='$facility_code') and ds.source!=ds.destination";
+		}
+		//Pharmacy transaction
+		else if($stock_type==2){
+			$where="`ds`.`source`=`ds`.`destination` and `ds`.`source`='$facility_code'";
+			
+		}
+		$this -> db -> where($where);
+		$rResult = $this -> db -> get();
+
+		// Data set length after filtering
+		$this -> db -> select('FOUND_ROWS() AS found_rows');
+		$iFilteredTotal = $this -> db -> get() -> row() -> found_rows;
+		
+		
+		// Total data set length
+		$this -> db -> select("dc.*");
+		$this -> db -> from("Drug_Stock_Movement ds");
+		$this -> db -> where("ds.Facility", $facility_code);
+		$this -> db -> where("ds.drug", $drug_id);
+		$this -> db -> join("drugcode dc", "dc.id=ds.drug", 'left outer');
+		$this -> db -> join("transaction_type t", "t.id=ds.Transaction_Type", 'left outer');
+		$this -> db -> join("drug_source s", "s.id=ds.source", 'left outer');
+		$this -> db -> join("drug_destination d", "d.id=ds.destination", 'left outer');
+		$this -> db -> join("drug_source ss", "ss.id=ds.source_destination", 'left outer');
+		$this -> db -> join("drug_destination dd", "dd.id=ds.source_destination", 'left outer');
+		$this -> db -> join("facilities f", "f.facilitycode=ds.destination", 'left outer');
+		$this -> db -> where($where);
+		$tot_drugs = $this -> db -> get();
+		$iTotal = count($tot_drugs -> result_array());
+		
 
 		// Output
 		$output = array('sEcho' => intval($sEcho), 'iTotalRecords' => $iTotal, 'iTotalDisplayRecords' => $iFilteredTotal, 'aaData' => array());
-
-		foreach ($drug_transactions as $index => $drug_transaction) {
+		foreach ($rResult->result() as $drug_transaction) {
+		
 			$row = array();
 			$row[] = $drug_transaction -> Order_Number;
 			$row[] = date('d-M-Y', strtotime($drug_transaction -> Transaction_Date));
 			//Script to get Transaction Type Details
-			$transaction_type = $drug_transaction -> Transaction_Object -> Name;
-
+			$transaction_type = $drug_transaction -> Transaction_Type;
+			
 			//Main store transaction
 			if ($drug_transaction -> Source != $drug_transaction -> Destination) {
 				//Stock going out
@@ -389,11 +436,11 @@ class Inventory_Management extends MY_Controller {
 					}
 					//If destination is not a facility,get the destination name
 					else if ($drug_transaction -> Destination < 10000) {
-						$transaction_type .= $drug_transaction -> Destination_Object -> Name;
+						$transaction_type .= $drug_transaction -> D_Name;
 					}
 					//If destination is a facility,get the facility name
 					else if ($drug_transaction -> Destination >= 10000) {
-						$transaction_type .= $drug_transaction -> Facility_Sat -> name;
+						$transaction_type .= $drug_transaction ->facility_name;
 					}
 				}
 
@@ -406,7 +453,7 @@ class Inventory_Management extends MY_Controller {
 					}
 					//Source is not a facility
 					else if ($drug_transaction -> Source < 10000) {
-						$transaction_type .= " " . $drug_transaction -> Source_Object -> Name;
+						$transaction_type .= " " . $drug_transaction -> S_Name;
 					}
 					//Source is a facility
 					else if ($drug_transaction -> Source >= 10000) {
@@ -421,21 +468,22 @@ class Inventory_Management extends MY_Controller {
 				if ($drug_transaction -> Quantity == 0 or $drug_transaction -> Quantity == "") {
 					//$transaction_type.=" Patients";
 					$qty = $drug_transaction -> Quantity_Out;
-					$transaction_type .= ' ' . $drug_transaction -> Destination_Trans -> Name;
+					$transaction_type .= ' ' . $drug_transaction -> D_Name;
 				}
 				//Coming in
 				else if ($drug_transaction -> Quantity_Out == 0 or $drug_transaction -> Quantity == "") {
 					$qty = $drug_transaction -> Quantity;
-					$transaction_type .= ' ' . $drug_transaction -> Source_Trans -> Name;
+					$transaction_type .= ' ' . $drug_transaction -> source_name;
 				}
 
 			}
+			
 			$row[] = $transaction_type;
 			$row[] = $drug_transaction -> Batch_Number;
-			$row[] = date('d-M-Y', strtotime($drug_transaction -> Expiry_date));
-			$row[] = $drug_transaction -> Drug_Object -> Pack_Size;
+			$row[] = date('d-M-Y', strtotime($drug_transaction -> Expiry_Date));
+			$row[] = $drug_transaction -> Pack_Size;
 			$row[] = $drug_transaction -> Packs;
-			$row[] = $qty;
+			$row[] =$qty;
 			$row[] = number_format($drug_transaction -> Balance);
 			$row[] = $drug_transaction -> Unit_Cost;
 			$row[] = $drug_transaction -> Amount;

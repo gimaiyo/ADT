@@ -7,6 +7,7 @@ class auto_management extends MY_Controller {
 		$this -> load -> library('PHPExcel');
 		$this -> load -> helper('url');
 		$this -> load -> database();
+		date_default_timezone_set('Africa/Nairobi');
 	}
 
 	public function index() {
@@ -156,7 +157,9 @@ ORDER BY p.patient_number_ccc ASC";
 		//if (ob_get_contents())
 		//ob_end_clean();
 		ob_start();
-		$filename = "Patient Master For " . $facility_code . ".csv";
+		$facility_name=Facilities::getFacilityName($facility_code);
+		$facility_name.="(".date('d-M-Y h:i:s a').")";
+		$filename = "Patient List From " . $facility_name . ".csv";
 		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 		header("Cache-Control: no-store, no-cache, must-revalidate");
 		header("Cache-Control: post-check=0, pre-check=0", false);
@@ -196,7 +199,7 @@ ORDER BY p.patient_number_ccc ASC";
 			 $phone_list = substr($phone_list, 1);
 		}
 		$message = urlencode($message);
-		file("http://41.57.109.242:13000/cgi-bin/sendsms?username=clinton&password=ch41sms&to=$phone_list=$message");
+		file("http://41.57.109.242:13000/cgi-bin/sendsms?username=clinton&password=ch41sms&to=$phone_list&text=$message");
 	}
 
 }
