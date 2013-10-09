@@ -240,6 +240,8 @@ class report_management extends MY_Controller {
 		$source_totals = array();
 		$overall_adult_male = 0;
 		$overall_adult_female = 0;
+		$overall_child_male=0;
+		$overall_child_female=0;
 
 		$total = 0;
 		$overall_adult_male_art = 0;
@@ -260,6 +262,7 @@ class report_management extends MY_Controller {
 		$overall_child_female_pep = 0;
 		$overall_child_female_pmtct = 0;
 		$overall_child_female_oi = 0;
+		
 
 		if ($supported_by == 0) {
 			$supported_query = "AND(supported_by=1 OR supported_by=2)";
@@ -1667,7 +1670,7 @@ class report_management extends MY_Controller {
 
 		//Get Total Count of all patients
 		//$sql = "select count(*) as total from patient,patient_status ps where(date_enrolled <= '$from' or date_enrolled='') and ps.id=current_status and current_status!='' and service!='' and gender !='' and facility_code='$facility_code'";
-		$sql = "select count(*) as total from patient p,patient_status ps,regimen_service_type rst,gender g where(p.date_enrolled <= '$from' or p.date_enrolled='') and ps.id=p.current_status and p.service=rst.id and p.gender=g.id and facility_code='$facility_code'";
+		$sql = "select count(*) as total from patient p,patient_status ps,regimen_service_type rst,gender g where(p.date_enrolled <= '$from' or p.date_enrolled='') and ps.id=p.current_status and p.service=rst.id and p.gender=g.id and facility_code='$facility_code' and p.active='1'";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$patient_total = $results[0]['total'];
@@ -1707,7 +1710,7 @@ class report_management extends MY_Controller {
 
 		//Get Totals for each Status
 		//$sql = "select count(p.id) as total,current_status,ps.name from patient p,patient_status ps where(date_enrolled <= '$from' or date_enrolled='') and facility_code='$facility_code' and ps.id = current_status and current_status!='' and service!='' and gender !='' group by p.current_status";
-		$sql = "select count(p.id) as total,p.current_status,ps.name from patient p,patient_status ps,regimen_service_type rst,gender g where(p.date_enrolled <= '$from' or p.date_enrolled='') and ps.id=p.current_status and p.service=rst.id and p.gender=g.id and facility_code='$facility_code' group by p.current_status";
+		$sql = "select count(p.id) as total,p.current_status,ps.name from patient p,patient_status ps,regimen_service_type rst,gender g where(p.date_enrolled <= '$from' or p.date_enrolled='') and ps.id=p.current_status and p.service=rst.id and p.gender=g.id and facility_code='$facility_code' and p.active='1' group by p.current_status";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
@@ -1720,7 +1723,7 @@ class report_management extends MY_Controller {
 				$row_string .= "<tr><td>$status_name</td><td>$status_totals[$current_status]</td><td>$patient_percentage</td>";
 				//SQL for Adult Male Status
 				$service_list = array('ART', 'PEP', 'OI Only');
-				$sql = "SELECT count(*) as total_adult_male, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=1 AND p.service !=3 AND round(datediff('$from',p.dob)/360)>=15 GROUP BY service";
+				$sql = "SELECT count(*) as total_adult_male, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=1 AND p.service !=3 AND round(datediff('$from',p.dob)/360)>=15 and p.active='1' GROUP BY service";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				$i = 0;
@@ -1751,7 +1754,7 @@ class report_management extends MY_Controller {
 				}
 				//SQL for Adult Female Status
 				$service_list = array('ART', 'PEP', 'PMTCT', 'OI Only');
-				$sql = "SELECT count(*) as total_adult_female, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=2  AND round(datediff('$from',p.dob)/360)>=15 GROUP BY service";
+				$sql = "SELECT count(*) as total_adult_female, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=2  AND round(datediff('$from',p.dob)/360)>=15 and p.active='1' GROUP BY service";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				$i = 0;
@@ -1783,7 +1786,7 @@ class report_management extends MY_Controller {
 				}
 				//SQL for Child Male Status
 				$service_list = array('ART', 'PEP', 'PMTCT', 'OI Only');
-				$sql = "SELECT count(*) as total_child_male, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=1  AND round(datediff('$from',p.dob)/360)<15 GROUP BY service";
+				$sql = "SELECT count(*) as total_child_male, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=1  AND round(datediff('$from',p.dob)/360)<15 and p.active='1' GROUP BY service";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				$i = 0;
@@ -1815,7 +1818,7 @@ class report_management extends MY_Controller {
 				}
 				//SQL for Child Female Status
 				$service_list = array('ART', 'PEP', 'PMTCT', 'OI Only');
-				$sql = "SELECT count(*) as total_child_female, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=2  AND round(datediff('$from',p.dob)/360)<15 GROUP BY service";
+				$sql = "SELECT count(*) as total_child_female, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=2  AND round(datediff('$from',p.dob)/360)<15 and p.active='1' GROUP BY service";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				$i = 0;

@@ -260,7 +260,7 @@ input[type = email][disabled = disabled]:hover, input[type = password][disabled 
 input[type =
 "email"], input[type = "password"], input[type = "text"], input[type = "url"], select {
 	display: inline-block;
-	height: 25px;
+
 	margin: 0;
 	padding-left: 8px;
 	background: white;
@@ -654,6 +654,8 @@ tr th {
 	width: 90%;
 	margin: auto;
 	padding: 10% 1% 5% 1%;	
+	zoom:0.85;
+	-moz-transform:scale(0.9);
 }
 .full-content form {
 	width: 100%;
