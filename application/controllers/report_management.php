@@ -1521,13 +1521,13 @@ class report_management extends MY_Controller {
 		$overall_child_female = 0;
 
 		//Get Total of all patients
-		$sql = "SELECT count(*) as total, r.regimen_desc,p.current_regimen FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.current_regimen !=0 AND p.current_regimen !='' AND p.current_status !='' AND p.current_status !=0";
+		$sql = "SELECT count(*) as total, r.regimen_desc,p.current_regimen FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.current_regimen !=0 AND p.current_regimen !='' AND p.current_status !='' AND p.current_status !=0 and p.active='1'";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$patient_total = $results[0]['total'];
 
 		//Get Totals for each regimen
-		$sql = "SELECT count(*) as total, r.regimen_desc,r.regimen_code,p.current_regimen FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.current_regimen !=0 AND p.current_regimen !='' AND p.current_status !='' AND p.current_status !=0 GROUP BY p.current_regimen ORDER BY r.regimen_code ASC";
+		$sql = "SELECT count(*) as total, r.regimen_desc,r.regimen_code,p.current_regimen FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.current_regimen !=0 AND p.current_regimen !='' AND p.current_status !='' AND p.current_status !=0 and p.active='1' GROUP BY p.current_regimen ORDER BY r.regimen_code ASC";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
@@ -1564,7 +1564,7 @@ class report_management extends MY_Controller {
 				$regimen_total_percentage = number_format(($regimen_total / $patient_total) * 100, 1);
 				$row_string .= "<tr><td><b>$regimen_code</b> | $regimen_name</td><td>$regimen_total</td><td>$regimen_total_percentage</td>";
 				//SQL for Adult Male Regimens
-				$sql = "SELECT count(*) as total_adult_male, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=1 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)>=15 GROUP BY p.current_regimen";
+				$sql = "SELECT count(*) as total_adult_male, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=1 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)>=15  and p.active='1' GROUP BY p.current_regimen";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				if ($results) {
@@ -1580,7 +1580,7 @@ class report_management extends MY_Controller {
 					$row_string .= "<td>-</td><td>-</td>";
 				}
 				//SQL for Adult Female Regimens
-				$sql = "SELECT count(*) as total_adult_female, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=2 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)>=15 GROUP BY p.current_regimen";
+				$sql = "SELECT count(*) as total_adult_female, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=2 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)>=15 and p.active='1' GROUP BY p.current_regimen";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				if ($results) {
@@ -1596,7 +1596,7 @@ class report_management extends MY_Controller {
 					$row_string .= "<td>-</td><td>-</td>";
 				}
 				//SQL for Child Male Regimens
-				$sql = "SELECT count(*) as total_child_male, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=1 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)<15 GROUP BY p.current_regimen";
+				$sql = "SELECT count(*) as total_child_male, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=1 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)<15 and p.active='1' GROUP BY p.current_regimen";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				if ($results) {
@@ -1612,7 +1612,7 @@ class report_management extends MY_Controller {
 					$row_string .= "<td>-</td><td>-</td>";
 				}
 				//SQL for Child Female Regimens
-				$sql = "SELECT count(*) as total_child_female, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=2 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)<15 GROUP BY p.current_regimen";
+				$sql = "SELECT count(*) as total_child_female, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=2 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)<15 and p.active='1' GROUP BY p.current_regimen";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				if ($results) {

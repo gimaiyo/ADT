@@ -933,7 +933,7 @@ foreach($results as $result){
 				</div>
 				<div id="submit_section">
 					<input type="reset" class="btn confirm" id="reset" value="Reset Fields" />
-					<input form="dispense_form" id="btn_submit" class="btn confirm" id="submit" type="button" value="Dispense Drugs"/>
+					<input form="dispense_form" id="btn_submit" class="btn confirm actual" id="submit" type="button" value="Dispense Drugs"/>
 				</div>
 			</form>
 

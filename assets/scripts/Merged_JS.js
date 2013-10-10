@@ -8,7 +8,14 @@
  *Change password validation
  */
 $(document).ready(function() {
-
+    $(".actual").click(function(){
+    	var test=confirm("Are You Sure?");
+    	if(test){
+    		return true;
+    	}else{
+    		return false;
+    	}
+    });
 	//Progress Bar
 	function progress(percent, $element) {
 		var progressBarWidth = percent * $element.width() / 100;

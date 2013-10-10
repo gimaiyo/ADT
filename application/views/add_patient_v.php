@@ -613,8 +613,8 @@
 				</div>
 				<div class="button-bar">
 					<div class="btn-group">
-						<input form="add_patient_form" type="submit" class="btn" value="Save" name="save"/>
-						<input form="add_patient_form" type="submit" class="btn" value="Dispense" name="save"/>
+						<input form="add_patient_form" type="submit" class="btn actual" value="Save" name="save"/>
+						<input form="add_patient_form" type="submit" class="btn actual" value="Dispense" name="save"/>
 						<input type="reset"  class="btn btn-danger" value="Reset"/>
 					</div>
 					

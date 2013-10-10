@@ -166,7 +166,7 @@ class Dispensement_Management extends MY_Controller {
 		 */
 		if ($last_appointment_date) {
 			if ($last_appointment_date > $dispensing_date) {
-				$sql = "update patient_appointment set appointment='$next_appointment_date' where patient='$patient' and appointment='$last_appointment_date';";
+				$sql = "update patient_appointment set appointment='$next_appointment_date',machine_code='1' where patient='$patient' and appointment='$last_appointment_date';";
 			} else {
 				$sql = "insert into patient_appointment (patient,appointment,facility) values ('$patient','$next_appointment_date','$facility');";
 			}
