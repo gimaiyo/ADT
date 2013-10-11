@@ -235,6 +235,11 @@
 						$("textarea[name='support_group_listing']").not(this).attr("disabled", "true");
 					}
 			});
+			
+			$("input[name='save']").click(function(){
+				var direction=$(this).attr("direction");
+				$("#direction").val(direction);
+			});
 
 	   });
 	   //Function to calculate BSA
@@ -613,8 +618,9 @@
 				</div>
 				<div class="button-bar">
 					<div class="btn-group">
-						<input form="add_patient_form" type="submit" class="btn actual" value="Save" name="save"/>
-						<input form="add_patient_form" type="submit" class="btn actual" value="Dispense" name="save"/>
+						<input type="hidden" name="direction" id="direction" />
+						<input form="add_patient_form" type="submit" class="btn actual" direction="0" value="Save" name="save"/>
+						<input form="add_patient_form" type="submit" class="btn actual" direction="1" value="Dispense" name="save"/>
 						<input type="reset"  class="btn btn-danger" value="Reset"/>
 					</div>
 					

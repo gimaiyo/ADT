@@ -109,7 +109,7 @@ class Facilitydashboard_Management extends MY_Controller {
 		echo $drug_display;
 	}
 
-	public function stock_info ($stock_type = "2") {
+	public function stock_info($stock_type = "2") {
 		$drugs_array = array();
 		$counter = 0;
 
@@ -349,6 +349,8 @@ class Facilitydashboard_Management extends MY_Controller {
 	public function getPatientEnrolled($startdate = "", $enddate = "") {
 		$startdate = date('Y-m-d', strtotime($startdate));
 		$enddate = date('Y-m-d', strtotime($enddate));
+		$first_date = $startdate;
+		$last_date = $enddate;
 		$maleAdult = array();
 		$femaleAdult = array();
 		$maleChild = array();
@@ -357,9 +359,12 @@ class Facilitydashboard_Management extends MY_Controller {
 		$timestamp = time();
 		$edate = date('Y-m-d', $timestamp);
 		$dates = array();
-		$x = 7;
+		$x = 6;
 		$y = 0;
 		$resultArraySize = 0;
+		$days_in_year = date("z", mktime(0, 0, 0, 12, 31, date('Y'))) + 1;
+		$adult_age = 15;
+		$patients_array = array();
 
 		//If no parameters are passed, get enrolled patients for the past 7 days
 		if ($startdate == "" || $enddate == "") {
@@ -373,111 +378,81 @@ class Facilitydashboard_Management extends MY_Controller {
 				//If sunday is included, add one more day
 				else {$x = 8;
 				}
-				$timestamp -= 24 * 3600;
+				$timestamp += 24 * 3600;
 			}
 			$start_date = $sdate;
 			$end_date = $edate;
 		} else {
+			$startdate = strtotime($startdate);
+			for ($i = 0; $i < $x; $i++) {
+				if (date("D", $startdate) != "Sun") {
+					$sdate = date('Y-m-d', $startdate);
+					//Store the days in an array
+
+					$dates[$y] = $sdate;
+					$y++;
+				}
+				//If sunday is included, add one more day
+				else {$x = 8;
+				}
+				$startdate += 24 * 3600;
+			}
 			$start_date = $startdate;
 			$end_date = $enddate;
 		}
-		$get_patient_sql = "SELECT p.gender, dob , date_enrolled FROM patient p WHERE p.date_enrolled BETWEEN  '" . $start_date . "' AND  '" . $end_date . "' AND p.facility_code='" . $facility_code . "' ORDER BY p.date_enrolled  ";
-		$res = $this -> db -> query($get_patient_sql);
-		$x = 0;
-		$y = 0;
-		$count_patient_date = 0;
-		$date_enrolled = "";
-		$counter = 0;
-		$total_male_adult = 0;
-		$total_female_adult = 0;
-		$total_male_child = 0;
-		$total_female_child = 0;
-		$patients_array = array();
 
-		$results = $res -> result_array();
+		/*Loop through all dates in range and get summary of patients enrollment i those days */
+		foreach ($dates as $date) {
 
-		//Loop through the array to get totals for each category
-		foreach ($results as $key => $value) {
-			$count_patient_date++;
-			if ($x == 0) {
-				$x = 1;
-				$date_enrolled = $value['date_enrolled'];
-			}
-			//If enrollement date changes
-			if ($value['date_enrolled'] != $date_enrolled) {
-				$count_patient_date = 1;
-				$y = 0;
-				$total_male_adult = 0;
-				$total_female_adult = 0;
-				$total_male_child = 0;
-				$total_female_child = 0;
-				$counter++;
-				$patients_array[$counter]['date_enrolled'] = $value['date_enrolled'];
-				$patients_array[$counter]['total_day'] = $count_patient_date;
-				$date_enrolled = $value['date_enrolled'];
+			$stmt = "SELECT p.date_enrolled, g.name AS gender, ROUND(DATEDIFF(CURDATE(),p.dob)/$days_in_year) AS age,COUNT(*) AS total
+					FROM patient p
+					LEFT JOIN gender g ON p.gender = g.id
+					WHERE p.date_enrolled ='$date'
+					GROUP BY g.name, ROUND(DATEDIFF(CURDATE(),p.dob)/$days_in_year)>$adult_age";
+			$q = $this -> db -> query($stmt);
+			$rs = $q -> result_array();
 
-			} else if ($value['date_enrolled'] == $date_enrolled) {
-
-				if ($y != 1) {
-					//Initialise totals
-					$patients_array[$counter]['date_enrolled'] = $value['date_enrolled'];
-					$patients_array[$counter]['total_male_adult'] = 0;
-					$patients_array[$counter]['total_female_adult'] = 0;
-					$patients_array[$counter]['total_male_child'] = 0;
-					$patients_array[$counter]['total_female_child'] = 0;
-				}
-				$patients_array[$counter]['total_day'] = $count_patient_date;
-				$y = 1;
-
-			}
-
-			$birthDate = $value['dob'];
-			//get age from date or birthdate
-			$age = $this -> age_from_dob($birthDate);
-			//If patient is male, check if he is an adult or child
-			if ($value['gender'] == 1) {
-				//Check if adult
-				if ($age >= 15) {
-					$total_male_adult++;
-					$patients_array[$counter]['total_male_adult'] = $total_male_adult;
-					$patients_array[$counter]['total_male_child'] = $total_male_child;
-					$patients_array[$counter]['total_female_adult'] = $total_female_adult;
-					$patients_array[$counter]['total_female_child'] = $total_female_child;
-
-				} else {
-					$total_male_child++;
-					$patients_array[$counter]['total_male_adult'] = $total_male_adult;
-					$patients_array[$counter]['total_male_child'] = $total_male_child;
-					$patients_array[$counter]['total_female_adult'] = $total_female_adult;
-					$patients_array[$counter]['total_female_child'] = $total_female_child;
+			/*Loop through selected days result set*/
+			$total_male_adult = 0;
+			$total_female_adult = 0;
+			$total_male_child = 0;
+			$total_female_child = 0;
+			
+			if ($rs) {
+				foreach ($rs as $r) {
+					/*Check if Adult Male*/
+					if (strtolower($r['gender']) == "male" && $r['age'] >= $adult_age) {
+						$total_male_adult = $r['total'];
+					}
+					/*Check if Adult Female*/
+					if (strtolower($r['gender']) == "female" && $r['age'] >= $adult_age) {
+						$total_female_adult = $r['total'];
+					}
+					/*Check if Child Male*/
+					if (strtolower($r['gender']) == "male" && $r['age'] < $adult_age) {
+						$total_male_child = $r['total'];
+					}
+					/*Check if Child Female*/
+					if (strtolower($r['gender']) == "female" && $r['age'] < $adult_age) {
+						$total_female_child = $r['total'];
+					}
 				}
 			}
-			//If patient is female, check if he is an adult or child
-			else if ($value['gender'] == 2) {
-				//Check if adult
-				if ($age >= 15) {
-					$total_female_adult++;
-					$patients_array[$counter]['total_male_adult'] = $total_male_adult;
-					$patients_array[$counter]['total_male_child'] = $total_male_child;
-					$patients_array[$counter]['total_female_adult'] = $total_female_adult;
-					$patients_array[$counter]['total_female_child'] = $total_female_child;
-				} else {
-					$total_female_child++;
-					$patients_array[$counter]['total_male_adult'] = $total_male_adult;
-					$patients_array[$counter]['total_male_child'] = $total_male_child;
-					$patients_array[$counter]['total_female_adult'] = $total_female_adult;
-					$patients_array[$counter]['total_female_child'] = $total_female_child;
-				}
-			}
+			
+			/*Place Values into an Array*/
+			
+			$patients_array[$date]=array("Adult Male"=>$total_male_adult,"Adult Female"=>$total_female_adult,"Child Male"=>$total_male_child,"Child Female"=>$total_female_child);
+			 
 
 		}
+
 		$resultArraySize = 6;
 		$categories = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
 		foreach ($patients_array as $key => $value) {
-			$maleAdult[] = (int)$value['total_male_adult'];
-			$femaleAdult[] = (int)$value['total_female_adult'];
-			$maleChild[] = (int)$value['total_male_child'];
-			$femaleChild[] = (int)$value['total_female_child'];
+			$maleAdult[] = (int)$value['Adult Male'];
+			$femaleAdult[] = (int)$value['Adult Female'];
+			$maleChild[] = (int)$value['Child Male'];
+			$femaleChild[] = (int)$value['Child Female'];
 		}
 		$resultArray = array( array('name' => 'Male Adult', 'data' => $maleAdult), array('name' => 'Female Adult', 'data' => $femaleAdult), array('name' => 'Male Child', 'data' => $maleChild), array('name' => 'Female Child', 'data' => $femaleChild));
 		$resultArray = json_encode($resultArray);

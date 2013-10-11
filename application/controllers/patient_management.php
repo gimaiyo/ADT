@@ -263,7 +263,6 @@ class Patient_Management extends MY_Controller {
 	}
 
 	public function save() {
-
 		$family_planning = "";
 		$other_illness_listing = "";
 		$patient = "";
@@ -337,11 +336,12 @@ class Patient_Management extends MY_Controller {
 		$new_patient -> save();
 
 		$patient = $this -> input -> post('patient_number', TRUE);
+		$direction=$this -> input -> post('direction', TRUE);
 
-		if ($_POST['save'] == "Save") {
+		if ($direction==0) {
 			$this -> session -> set_userdata('msg_success', 'Patient: ' . $this -> input -> post('first_name', TRUE) . " " . $this -> input -> post('last_name', TRUE) . ' was Saved');
 			redirect("patient_management");
-		} else if ($_POST['save'] == "Dispense") {
+		} else if ($direction==1) {
 			redirect("dispensement_management/dispense/$patient");
 		}
 	}
