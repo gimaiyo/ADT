@@ -425,60 +425,63 @@ class Inventory_Management extends MY_Controller {
 			$row = array();
 			$row[] = $drug_transaction -> Order_Number;
 			$row[] = date('d-M-Y', strtotime($drug_transaction -> Transaction_Date));
+			$transaction_type = "";
+			$qty = "";
 			//Script to get Transaction Type Details
 			$transaction_type = $drug_transaction -> Transaction_Type;
+			if ($transaction_type) {
+				//Main store transaction
+				if ($drug_transaction -> Source != $drug_transaction -> Destination) {
+					//Stock going out
+					if ($drug_transaction -> Quantity == 0) {
+						$qty = $drug_transaction -> Quantity_Out;
+						//From Main Store to pharmacy
+						if ($drug_transaction -> Destination == "" || ($drug_transaction -> Destination == $facility_code && $drug_transaction -> Transaction_Object -> id == 6)) {
+							$transaction_type .= " Pharmacy";
+						}
+						//If destination is not a facility,get the destination name
+						else if ($drug_transaction -> Destination < 10000) {
+							$transaction_type .= $drug_transaction -> D_Name;
+						}
+						//If destination is a facility,get the facility name
+						else if ($drug_transaction -> Destination >= 10000) {
+							$transaction_type .= $drug_transaction -> facility_name;
+						}
+					}
 
-			//Main store transaction
-			if ($drug_transaction -> Source != $drug_transaction -> Destination) {
-				//Stock going out
-				if ($drug_transaction -> Quantity == 0) {
-					$qty = $drug_transaction -> Quantity_Out;
-					//From Main Store to pharmacy
-					if ($drug_transaction -> Destination == "" || ($drug_transaction -> Destination == $facility_code && $drug_transaction -> Transaction_Object -> id == 6)) {
-						$transaction_type .= " Pharmacy";
-					}
-					//If destination is not a facility,get the destination name
-					else if ($drug_transaction -> Destination < 10000) {
-						$transaction_type .= $drug_transaction -> D_Name;
-					}
-					//If destination is a facility,get the facility name
-					else if ($drug_transaction -> Destination >= 10000) {
-						$transaction_type .= $drug_transaction -> facility_name;
+					//Stock coming in, received
+					else if ($drug_transaction -> Quantity > 0) {
+						$qty = $drug_transaction -> Quantity;
+
+						if ($drug_transaction -> Source == "" and $drug_transaction -> Source != "") {
+							//$transaction_type.=" <b>".$drug_transaction->Facility_Object->name."</b>";
+						}
+						//Source is not a facility
+						else if ($drug_transaction -> Source < 10000) {
+							$transaction_type .= " " . $drug_transaction -> S_Name;
+						}
+						//Source is a facility
+						else if ($drug_transaction -> Source >= 10000) {
+							//$transaction_type.=" <b>".$drug_transaction->Facility_Object->name."</b>";
+						}
 					}
 				}
+				//Pharmacy transaction
+				else if ($drug_transaction -> Source == $drug_transaction -> Destination) {
 
-				//Stock coming in, received
-				else if ($drug_transaction -> Quantity > 0) {
-					$qty = $drug_transaction -> Quantity;
-
-					if ($drug_transaction -> Source == "" and $drug_transaction -> Source != "") {
-						//$transaction_type.=" <b>".$drug_transaction->Facility_Object->name."</b>";
+					//Going out
+					if ($drug_transaction -> Quantity == 0 or $drug_transaction -> Quantity == "") {
+						//$transaction_type.=" Patients";
+						$qty = $drug_transaction -> Quantity_Out;
+						$transaction_type .= ' ' . $drug_transaction -> D_Name;
 					}
-					//Source is not a facility
-					else if ($drug_transaction -> Source < 10000) {
-						$transaction_type .= " " . $drug_transaction -> S_Name;
+					//Coming in
+					else if ($drug_transaction -> Quantity_Out == 0 or $drug_transaction -> Quantity == "") {
+						$qty = $drug_transaction -> Quantity;
+						$transaction_type .= ' ' . $drug_transaction -> source_name;
 					}
-					//Source is a facility
-					else if ($drug_transaction -> Source >= 10000) {
-						//$transaction_type.=" <b>".$drug_transaction->Facility_Object->name."</b>";
-					}
-				}
-			}
-			//Pharmacy transaction
-			else if ($drug_transaction -> Source == $drug_transaction -> Destination) {
 
-				//Going out
-				if ($drug_transaction -> Quantity == 0 or $drug_transaction -> Quantity == "") {
-					//$transaction_type.=" Patients";
-					$qty = $drug_transaction -> Quantity_Out;
-					$transaction_type .= ' ' . $drug_transaction -> D_Name;
 				}
-				//Coming in
-				else if ($drug_transaction -> Quantity_Out == 0 or $drug_transaction -> Quantity == "") {
-					$qty = $drug_transaction -> Quantity;
-					$transaction_type .= ' ' . $drug_transaction -> source_name;
-				}
-
 			}
 
 			$row[] = $transaction_type;
