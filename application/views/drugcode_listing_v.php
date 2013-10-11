@@ -375,9 +375,12 @@
 				<tr><td><strong class="label">Supplied By</strong></td>
 					<td>
 						<select class="input-large" id="add_supplied_by" name="supplied_by">
-							<option value="1">KEMSA</option>
-							<option value="2">KENYA PHARMA</option>
-							<option value="3">Other</option>
+							<option value='0'>-Select One--</option>
+							<?php
+							  foreach($suppliers as $supplier){
+							  	echo "<option value='".$supplier['id']."'>".$supplier['Name']."</option>";
+							  }
+							?>
 						</select>
 					</td>
 				</tr><td><strong class="label">Classification</strong></td>
@@ -484,9 +487,12 @@
 				<tr><td><strong class="label">Supplied By</strong></td>
 					<td>
 						<select class="input-large" id="supplied_by" name="supplied_by">
-							<option value="1">KEMSA</option>
-							<option value="2">KENYA PHARMA</option>
-							<option value="3">Other</option>
+							<option value='0'>-Select One--</option>
+							<?php
+							  foreach($suppliers as $supplier){
+							  	echo "<option value='".$supplier['id']."'>".$supplier['Name']."</option>";
+							  }
+							?>
 						</select>
 					</td>
 				</tr>

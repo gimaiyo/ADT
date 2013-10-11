@@ -2,6 +2,11 @@
 	.nav{
 		margin-top:1.5%;
 	}
+	table.dataTable{
+		/*font-size: 11px;*/
+		zoom:0.85;
+	}
+	
 </Style>
 <script type="text/javascript">
 	

@@ -57,7 +57,7 @@ class Drugcode_management extends MY_Controller {
 		}
 
 		$data['drugcodes'] = $this -> table -> generate();
-
+        $data['suppliers']=Drug_Source::getAllHydrated();
 		$this -> base_params($data);
 
 	}

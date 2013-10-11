@@ -29,7 +29,7 @@ class Drugcode extends Doctrine_Record {
 		$this -> hasOne('Generic_Name as Generic', array('local' => 'Generic_Name', 'foreign' => 'id'));
 		$this -> hasOne('Drug_Unit as Drug_Unit', array('local' => 'Unit', 'foreign' => 'id'));
 		$this -> hasOne('Supporter as Supporter', array('local' => 'Supported_By', 'foreign' => 'id'));
-		$this -> hasOne('Suppliers as Suppliers', array('local' => 'Supported_By', 'foreign' => 'id'));
+		$this -> hasOne('Drug_Source as Suppliers', array('local' => 'Supported_By', 'foreign' => 'id'));
 		$this -> hasMany('Brand as Brands', array('local' => 'id', 'foreign' => 'Drug_Id'));
 		$this -> hasOne('Dose as Drug_Dose', array('local' => 'Dose', 'foreign' => 'id'));
 

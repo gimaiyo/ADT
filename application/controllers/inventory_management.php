@@ -85,10 +85,11 @@ class Inventory_Management extends MY_Controller {
 		$this -> db -> where('dsb.stock_type ', '1');
 		$this -> db -> join("generic_name g", "g.id=dc.generic_name", "left outer");
 		$this -> db -> join("drug_stock_balance dsb", "dsb.drug_id=dc.id");
-		$this -> db -> join("suppliers s", "s.id=dc.supported_by");
-		$this -> db -> join("dose d", "d.id=dc.dose");
+		$this -> db -> join("drug_source s", "s.id=dc.supported_by", "left outer");
+		$this -> db -> join("dose d", "d.Name=dc.dose", "left outer");
 		$this -> db -> join("drug_unit du", "du.id=dc.unit");
 		$this -> db -> group_by("dsb.drug_id");
+		$this -> db -> having("SUM(dsb.balance)>0");
 
 		$rResult = $this -> db -> get();
 
@@ -104,12 +105,13 @@ class Inventory_Management extends MY_Controller {
 		$this -> db -> where('dsb.facility_code', $facility_code);
 		$this -> db -> where('dsb.expiry_date > ', $today);
 		$this -> db -> where('dsb.stock_type ', '1');
-		$this -> db -> join("generic_name g", "g.id=dc.generic_name");
+		$this -> db -> join("generic_name g", "g.id=dc.generic_name", "left outer");
 		$this -> db -> join("drug_stock_balance dsb", "dsb.drug_id=dc.id");
-		$this -> db -> join("suppliers s", "s.id=dc.supported_by");
-		$this -> db -> join("dose d", "d.id=dc.dose");
+		$this -> db -> join("drug_source s", "s.id=dc.supported_by", "left outer");
+		$this -> db -> join("dose d", "d.Name=dc.dose", "left outer");
 		$this -> db -> join("drug_unit du", "du.id=dc.unit");
 		$this -> db -> group_by("dsb.drug_id");
+		$this -> db -> having("SUM(dsb.balance)>0");
 		$tot_drugs = $this -> db -> get();
 		$iTotal = count($tot_drugs -> result_array());
 
@@ -203,10 +205,11 @@ class Inventory_Management extends MY_Controller {
 		$this -> db -> where('dsb.stock_type ', '2');
 		$this -> db -> join("generic_name g", "g.id=dc.generic_name", "left outer");
 		$this -> db -> join("drug_stock_balance dsb", "dsb.drug_id=dc.id");
-		$this -> db -> join("suppliers s", "s.id=dc.supported_by");
-		$this -> db -> join("dose d", "d.id=dc.dose");
+		$this -> db -> join("drug_source s", "s.id=dc.supported_by", "left outer");
+		$this -> db -> join("dose d", "d.Name=dc.dose", "left outer");
 		$this -> db -> join("drug_unit du", "du.id=dc.unit");
 		$this -> db -> group_by("dsb.drug_id");
+		$this -> db -> having("SUM(dsb.balance)>0");
 
 		$rResult = $this -> db -> get();
 
@@ -216,17 +219,19 @@ class Inventory_Management extends MY_Controller {
 
 		// Total data set length
 		$this -> db -> select("dsb.*");
-		$where = "dc.enabled='1' AND dsb.facility='$facility_code' AND dsb.expiry_date > CURDATE() AND dsb.stock_type='1'";
+		$where = "dc.enabled='1' AND dsb.facility='$facility_code' AND dsb.expiry_date > CURDATE() AND dsb.stock_type='2'";
 		$this -> db -> from("drugcode dc");
 		$this -> db -> where('dc.enabled', '1');
 		$this -> db -> where('dsb.facility_code', $facility_code);
 		$this -> db -> where('dsb.expiry_date > ', $today);
 		$this -> db -> where('dsb.stock_type ', '2');
-		$this -> db -> join("generic_name g", "g.id=dc.generic_name");
+		$this -> db -> join("generic_name g", "g.id=dc.generic_name", "left outer");
 		$this -> db -> join("drug_stock_balance dsb", "dsb.drug_id=dc.id");
-		$this -> db -> join("suppliers s", "s.id=dc.supported_by");
-		$this -> db -> join("dose d", "d.id=dc.dose");
+		$this -> db -> join("drug_source s", "s.id=dc.supported_by", "left outer");
+		$this -> db -> join("dose d", "d.Name=dc.dose", "left outer");
 		$this -> db -> join("drug_unit du", "du.id=dc.unit");
+		$this -> db -> group_by("dsb.drug_id");
+		$this -> db -> having("SUM(dsb.balance)>0");
 		$tot_drugs = $this -> db -> get();
 		$iTotal = count($tot_drugs -> result_array());
 
@@ -318,7 +323,7 @@ class Inventory_Management extends MY_Controller {
 
 	public function ServerDrugTransactions($drug_id, $stock_type) {
 		$data = array();
-		$aColumns = array('Order_Number', 'Transaction_Date', 't.name as Transaction_Type','Batch_Number','ds.Source','ds.Destination', 'Expiry_Date', 'Pack_Size', 'Packs', 'ds.Quantity', 'ds.Quantity_Out', 'Balance', 'Unit_Cost', 'Amount');
+		$aColumns = array('Order_Number', 'Transaction_Date', 't.name as Transaction_Type', 'Batch_Number', 'ds.Source', 'ds.Destination', 'Expiry_Date', 'Pack_Size', 'Packs', 'ds.Quantity', 'ds.Quantity_Out', 'Balance', 'Unit_Cost', 'Amount');
 
 		$iDisplayStart = $this -> input -> get_post('iDisplayStart', true);
 		$iDisplayLength = $this -> input -> get_post('iDisplayLength', true);
@@ -363,10 +368,10 @@ class Inventory_Management extends MY_Controller {
 			}
 		}
 
-		$where="";
+		$where = "";
 		$today = date('Y-m-d');
 		$facility_code = $this -> session -> userdata('facility');
-		
+
 		// Select Data
 		$this -> db -> select('SQL_CALC_FOUND_ROWS ' . str_replace(' , ', ' ', implode(', ', $aColumns)), false);
 		$this -> db -> select('s.Name as S_Name,d.Name as D_Name,ss.Name as source_name,dd.Name as destination_name,f.Name as facility_name');
@@ -380,15 +385,15 @@ class Inventory_Management extends MY_Controller {
 		$this -> db -> join("drug_source ss", "ss.id=ds.source_destination", 'left outer');
 		$this -> db -> join("drug_destination dd", "dd.id=ds.source_destination", 'left outer');
 		$this -> db -> join("facilities f", "f.facilitycode=ds.destination", 'left outer');
-		$this -> db -> order_by('ds.id','desc');
+		$this -> db -> order_by('ds.id', 'desc');
 		//Stock transaction
-		if($stock_type==1){
-			$where="(ds.source='$facility_code'  or ds.destination='$facility_code') and ds.source!=ds.destination";
+		if ($stock_type == 1) {
+			$where = "(ds.source='$facility_code'  or ds.destination='$facility_code') and ds.source!=ds.destination";
 		}
 		//Pharmacy transaction
-		else if($stock_type==2){
-			$where="`ds`.`source`=`ds`.`destination` and `ds`.`source`='$facility_code'";
-			
+		else if ($stock_type == 2) {
+			$where = "`ds`.`source`=`ds`.`destination` and `ds`.`source`='$facility_code'";
+
 		}
 		$this -> db -> where($where);
 		$rResult = $this -> db -> get();
@@ -396,8 +401,7 @@ class Inventory_Management extends MY_Controller {
 		// Data set length after filtering
 		$this -> db -> select('FOUND_ROWS() AS found_rows');
 		$iFilteredTotal = $this -> db -> get() -> row() -> found_rows;
-		
-		
+
 		// Total data set length
 		$this -> db -> select("dc.*");
 		$this -> db -> from("Drug_Stock_Movement ds");
@@ -413,18 +417,17 @@ class Inventory_Management extends MY_Controller {
 		$this -> db -> where($where);
 		$tot_drugs = $this -> db -> get();
 		$iTotal = count($tot_drugs -> result_array());
-		
 
 		// Output
 		$output = array('sEcho' => intval($sEcho), 'iTotalRecords' => $iTotal, 'iTotalDisplayRecords' => $iFilteredTotal, 'aaData' => array());
 		foreach ($rResult->result() as $drug_transaction) {
-		
+
 			$row = array();
 			$row[] = $drug_transaction -> Order_Number;
 			$row[] = date('d-M-Y', strtotime($drug_transaction -> Transaction_Date));
 			//Script to get Transaction Type Details
 			$transaction_type = $drug_transaction -> Transaction_Type;
-			
+
 			//Main store transaction
 			if ($drug_transaction -> Source != $drug_transaction -> Destination) {
 				//Stock going out
@@ -440,7 +443,7 @@ class Inventory_Management extends MY_Controller {
 					}
 					//If destination is a facility,get the facility name
 					else if ($drug_transaction -> Destination >= 10000) {
-						$transaction_type .= $drug_transaction ->facility_name;
+						$transaction_type .= $drug_transaction -> facility_name;
 					}
 				}
 
@@ -477,13 +480,13 @@ class Inventory_Management extends MY_Controller {
 				}
 
 			}
-			
+
 			$row[] = $transaction_type;
 			$row[] = $drug_transaction -> Batch_Number;
 			$row[] = date('d-M-Y', strtotime($drug_transaction -> Expiry_Date));
 			$row[] = $drug_transaction -> Pack_Size;
 			$row[] = $drug_transaction -> Packs;
-			$row[] =$qty;
+			$row[] = $qty;
 			$row[] = number_format($drug_transaction -> Balance);
 			$row[] = $drug_transaction -> Unit_Cost;
 			$row[] = $drug_transaction -> Amount;
