@@ -34,14 +34,15 @@ foreach($results as $result){
 				$("#last_regimen_disp").val("<?php echo $last_regimens['regimen_code']." | ".$last_regimens['regimen_desc'];?>");
 				$("#last_regimen").val("<?php echo $last_regimens['id'];?>");
 				<?php
-				}if($last_regimens['dispensing_date']){
-				?>
-				var last_visit_date ="<?php echo $last_regimens['dispensing_date']; ?>";
-				var last_visit_date ="<?php echo date('d-M-Y',strtotime($last_regimens['dispensing_date'])); ?>";
-				$("#last_visit_date").attr("value", last_visit_date);
-				<?php
 				}
 				?>
+				var last_visit_date ="<?php echo @$last_regimens['dispensing_date']; ?>";
+				if(last_visit_date){
+					var last_visit_date ="<?php echo date('d-M-Y',strtotime(@$last_regimens['dispensing_date'])); ?>";
+				    $("#last_visit_date").attr("value", last_visit_date);
+				}
+				
+				
 				
 				//Get Prev Appointment
 				<?php
