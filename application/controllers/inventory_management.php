@@ -304,7 +304,7 @@ class Inventory_Management extends MY_Controller {
 		$today = date('Y-m-d');
 		$facility_code = $this -> session -> userdata('facility');
 		$results=Drug_Stock_Movement::getDrugTransactions($drug_id,$facility_code,$stock_type);
-		
+		//Get batch info for drugs
 		$query=$this->db->query("SELECT d.drug,d.unit,d.pack_size,dsb.batch_number,dsb.expiry_date,dsb.stock_type,dsb.balance FROM drug_stock_balance dsb LEFT JOIN drugcode d ON d.id=dsb.drug_id WHERE dsb.drug_id='$drug_id'  AND dsb.expiry_date > '$today' AND dsb.balance >= 0   AND dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' order by dsb.expiry_date asc");
 		
 		$stock_bactchinfo_array=$query->result_array();
@@ -500,6 +500,9 @@ class Inventory_Management extends MY_Controller {
 				//If transaction is physical count, set actual quantity as physical count
 				if(strpos($transaction_type_name, "startingstock")===0 || strpos($transaction_type_name, "physicalcount")===0){
 					$bal=0;
+					//Set all the balances for the drug to be zero in drug_stock_balance when physical count
+					$sql="UPDATE drug_stock_balance SET balance =0 WHERE drug_id='$get_drug_id' AND stock_type='$get_stock_type' AND facility_code='$facility'";
+					$set_bal_zero=$this->db->query($sql);
 				}
 				
 				//Check if drug exists in the drug_stock_balance table
@@ -546,6 +549,9 @@ class Inventory_Management extends MY_Controller {
 				//If transaction is physical count, set actual quantity as physical count
 				if(strpos($transaction_type_name, "startingstock")===0 || strpos($transaction_type_name, "physicalcount")===0){
 					$bal=0;
+					//Set all the balances for the drug to be zero in drug_stock_balance when physical count
+					$sql="UPDATE drug_stock_balance SET balance =0 WHERE drug_id='$get_drug_id' AND stock_type='$get_stock_type' AND facility_code='$facility'";
+					$set_bal_zero=$this->db->query($sql);
 				}
 				//Check if drug exists in the drug_stock_balance table
 				else if(count($balance_array>0)){
