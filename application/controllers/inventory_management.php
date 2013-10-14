@@ -72,7 +72,6 @@ class Inventory_Management extends MY_Controller {
             for($i=0; $i<count($aColumns); $i++)
             {
                 $bSearchable = $this->input->get_post('bSearchable_'.$i, true);
-                
                 // Individual column filtering
                 if(isset($bSearchable) && $bSearchable == 'true')
                 {
@@ -111,7 +110,7 @@ class Inventory_Management extends MY_Controller {
 		$this->db->where('dsb.facility_code',$facility_code);
 		$this->db->where('dsb.expiry_date > ',$today);
 		$this->db->where('dsb.stock_type ','1');
-		$this->db->join("generic_name g","g.id=dc.generic_name");
+		$this->db->join("generic_name g","g.id=dc.generic_name","left outer");
 		$this->db->join("drug_stock_balance dsb","dsb.drug_id=dc.id");
 		$this->db->join("suppliers s","s.id=dc.supported_by");
 		$this->db->join("dose d","d.id=dc.dose");
@@ -244,7 +243,7 @@ class Inventory_Management extends MY_Controller {
 		$this->db->where('dsb.facility_code',$facility_code);
 		$this->db->where('dsb.expiry_date > ',$today);
 		$this->db->where('dsb.stock_type ','2');
-		$this->db->join("generic_name g","g.id=dc.generic_name");
+		$this->db->join("generic_name g","g.id=dc.generic_name","left outer");
 		$this->db->join("drug_stock_balance dsb","dsb.drug_id=dc.id");
 		$this->db->join("suppliers s","s.id=dc.supported_by");
 		$this->db->join("dose d","d.id=dc.dose");
