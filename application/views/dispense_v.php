@@ -22,6 +22,7 @@ foreach($results as $result){
 		</style>
 		<script type="text/javascript">
 			$(document).ready(function() {
+				<?php $this -> session -> set_userdata('record_no', $result['id']);?>
 				$("#patient").val("<?php echo $result['patient_number_ccc'];?>");
 				var first_name="<?php echo strtoupper($result['first_name']); ?>";
 				var other_name="<?php echo strtoupper($result['other_name']); ?>";
@@ -478,11 +479,11 @@ foreach($results as $result){
 					   var days_of_week = ["Sunday", "Monday", "Tuseday", "Wednesday", "Thursday", "Friday", "Saturday"];
 					      if(formatted_date_day == 6 || formatted_date_day == 0) {
 						     alert("It will be on " + days_of_week[formatted_date_day] + " During the Weekend");
-						   if(data[0].total_appointments  > data[0].weekend_max ) {
+						   if(parseInt(data[0].total_appointments)  > parseInt(data[0].weekend_max)) {
 							 alert("Maximum Appointments for Weekend Reached");
 						   }
 					      } else {
-						if(data[0].total_appointments  > data[0].weekday_max ) {
+						if(parseInt(data[0].total_appointments) > parseInt(data[0].weekday_max)) {
 							alert("Maximum Appointments for Weekday Reached");
 						}
 

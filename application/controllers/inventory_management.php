@@ -10,7 +10,49 @@ class Inventory_Management extends MY_Controller {
 	}
 
 	public function listing($stock_type = 1) {
+		$facility_code = $this -> session -> userdata('facility');
+		$stock_array = array("store_table" => 1, "pharmacy_table" => 2);
+		foreach ($stock_array as $index => $stock) {
+			$sql = "SELECT dc.id,UPPER( dc.drug ) AS drug, du.Name AS drug_unit,d.Name as dose, s.name AS supported_by, dc.pack_size, UPPER( g.Name ) AS generic_name, IF( SUM( balance ) >0, SUM( balance ) ,  '0' ) AS stock_level
+				FROM drugcode dc
+				LEFT OUTER JOIN generic_name g ON g.id = dc.generic_name
+				LEFT OUTER JOIN drug_source s ON s.id = dc.supported_by
+				LEFT OUTER JOIN dose d ON d.Name = dc.dose
+				LEFT OUTER JOIN drug_unit du ON du.id = dc.unit
+				LEFT OUTER JOIN (
+				SELECT * 
+				FROM drug_stock_balance
+				WHERE facility_code =  '$facility_code'
+				AND expiry_date > CURDATE()
+				AND stock_type =  '$stock'
+				) AS dsb ON dsb.drug_id = dc.id
+				WHERE dc.enabled =  '1'
+				GROUP BY dc.id
+				ORDER BY dc.id asc";
 
+			$q = $this -> db -> query($sql);
+			$rResult = $q -> result_array();
+			$dyn_line = '<table id="' . $index . '" class="dataTables" border="1" >
+			<thead>
+				<tr>
+					<th style="width:30%">Commodity</th><th>Generic Name</th><th>QTY/SOH</th><th>Unit</th><th>Pack Size</th><th>Supplier</th><th>Dose</th><th style="width:10%">Action</th>
+				</tr>
+			</thead><tbody>';
+			foreach ($rResult as $result) {
+				$dyn_line .= "<tr>";
+				$dyn_line .= "<td>" . $result['drug'] . "</td>";
+				$dyn_line .= "<td>" . $result['generic_name'] . "</td>";
+				$dyn_line .= "<td><b style='color:green'>" . number_format($result['stock_level']) . "</b></td>";
+				$dyn_line .= "<td>" . $result['drug_unit'] . "</td>";
+				$dyn_line .= "<td>" . $result['pack_size'] . "</td>";
+				$dyn_line .= "<td>" . $result['supported_by'] . "</td>";
+				$dyn_line .= "<td>" . $result['dose'] . "</td>";
+				$dyn_line .= "<td><a href='" . base_url() . "inventory_management/view_bin_card/" . $result['id'] . "/$stock'>View Bin Card</a></td>";
+				$dyn_line .= "</tr>";
+			}
+			$dyn_line .= "</tbody></table>";
+			$data[$index] = $dyn_line;
+		}
 		$data['active'] = "";
 		//Make pharmacy inventory active
 		if ($stock_type == 2) {
@@ -21,6 +63,7 @@ class Inventory_Management extends MY_Controller {
 			$data['active'] = 'store_btn';
 		}
 		$data['content_view'] = "inventory_listing_v";
+
 		$this -> base_params($data);
 	}
 
@@ -74,47 +117,68 @@ class Inventory_Management extends MY_Controller {
 			}
 		}
 
-		// Select Data
-		$this -> db -> select('SQL_CALC_FOUND_ROWS ' . str_replace(' , ', ' ', implode(', ', $aColumns)), false);
-		$this -> db -> select("dc.id,SUM(dsb.balance) as stock_level,g.Name as generic_name,s.Name as supported_by,d.Name as dose,du.Name as drug_unit");
-		$today = date('Y-m-d');
-		$this -> db -> from("drugcode dc");
-		$this -> db -> where('dc.enabled', '1');
-		$this -> db -> where('dsb.facility_code', $facility_code);
-		$this -> db -> where('dsb.expiry_date > ', $today);
-		$this -> db -> where('dsb.stock_type ', '1');
-		$this -> db -> join("generic_name g", "g.id=dc.generic_name", "left outer");
-		$this -> db -> join("drug_stock_balance dsb", "dsb.drug_id=dc.id");
-		$this -> db -> join("drug_source s", "s.id=dc.supported_by", "left outer");
-		$this -> db -> join("dose d", "d.Name=dc.dose", "left outer");
-		$this -> db -> join("drug_unit du", "du.id=dc.unit");
-		$this -> db -> group_by("dsb.drug_id");
-		$this -> db -> having("SUM(dsb.balance)>0");
+		$sql = "SELECT 'SQL_CALC_FOUND_ROWS ',dc.id,UPPER( dc.drug ) AS drug, du.Name AS drug_unit,d.Name as dose, s.name AS supported_by, dc.pack_size, UPPER( g.Name ) AS generic_name, IF( SUM( balance ) >0, SUM( balance ) ,  '0' ) AS stock_level
+FROM drugcode dc
+LEFT OUTER JOIN generic_name g ON g.id = dc.generic_name
+LEFT OUTER JOIN drug_source s ON s.id = dc.supported_by
+LEFT OUTER JOIN dose d ON d.Name = dc.dose
+LEFT OUTER JOIN drug_unit du ON du.id = dc.unit
+LEFT OUTER JOIN (
+SELECT * 
+FROM drug_stock_balance
+WHERE facility_code =  '$facility_code'
+AND expiry_date > CURDATE()
+AND stock_type =  '1'
+) AS dsb ON dsb.drug_id = dc.id
+WHERE dc.enabled =  '1'
+GROUP BY dc.id";
 
-		$rResult = $this -> db -> get();
+		$q = $this -> db -> query($sql);
+		$rResult = $q;
+		$iFilteredTotal = 10;
+		$iTotal = sizeof($q -> result_array());
+		/*
+		 // Select Data
+		 $this -> db -> select('SQL_CALC_FOUND_ROWS ' . str_replace(' , ', ' ', implode(', ', $aColumns)), false);
+		 $this -> db -> select("dc.id,SUM(dsb.balance) as stock_level,g.Name as generic_name,s.Name as supported_by,d.Name as dose,du.Name as drug_unit");
+		 $today = date('Y-m-d');
+		 $this -> db -> from("drugcode dc");
+		 $this -> db -> where('dc.enabled', '1');
+		 $this -> db -> where('dsb.facility_code', $facility_code);
+		 $this -> db -> where('dsb.expiry_date > ', $today);
+		 $this -> db -> where('dsb.stock_type ', '1');
+		 $this -> db -> join("generic_name g", "g.id=dc.generic_name", "left outer");
+		 $this -> db -> join("drug_stock_balance dsb", "dsb.drug_id=dc.id");
+		 $this -> db -> join("drug_source s", "s.id=dc.supported_by", "left outer");
+		 $this -> db -> join("dose d", "d.Name=dc.dose", "left outer");
+		 $this -> db -> join("drug_unit du", "du.id=dc.unit");
+		 $this -> db -> group_by("dsb.drug_id");
+		 $this -> db -> having("SUM(dsb.balance)>0");
 
+		 $rResult = $this -> db -> get();
+		 */
 		// Data set length after filtering
-		$this -> db -> select('FOUND_ROWS() AS found_rows');
-		$iFilteredTotal = $this -> db -> get() -> row() -> found_rows;
-
-		// Total data set length
-		$this -> db -> select("dsb.*");
-		$where = "dc.enabled='1' AND dsb.facility='$facility_code' AND dsb.expiry_date > CURDATE() AND dsb.stock_type='1'";
-		$this -> db -> from("drugcode dc");
-		$this -> db -> where('dc.enabled', '1');
-		$this -> db -> where('dsb.facility_code', $facility_code);
-		$this -> db -> where('dsb.expiry_date > ', $today);
-		$this -> db -> where('dsb.stock_type ', '1');
-		$this -> db -> join("generic_name g", "g.id=dc.generic_name", "left outer");
-		$this -> db -> join("drug_stock_balance dsb", "dsb.drug_id=dc.id");
-		$this -> db -> join("drug_source s", "s.id=dc.supported_by", "left outer");
-		$this -> db -> join("dose d", "d.Name=dc.dose", "left outer");
-		$this -> db -> join("drug_unit du", "du.id=dc.unit");
-		$this -> db -> group_by("dsb.drug_id");
-		$this -> db -> having("SUM(dsb.balance)>0");
-		$tot_drugs = $this -> db -> get();
-		$iTotal = count($tot_drugs -> result_array());
-
+		//$this -> db -> select('FOUND_ROWS() AS found_rows');
+		//$iFilteredTotal = $this -> db -> get() -> row() -> found_rows;
+		/*
+		 // Total data set length
+		 $this -> db -> select("dsb.*");
+		 $where = "dc.enabled='1' AND dsb.facility='$facility_code' AND dsb.expiry_date > CURDATE() AND dsb.stock_type='1'";
+		 $this -> db -> from("drugcode dc");
+		 $this -> db -> where('dc.enabled', '1');
+		 $this -> db -> where('dsb.facility_code', $facility_code);
+		 $this -> db -> where('dsb.expiry_date > ', $today);
+		 $this -> db -> where('dsb.stock_type ', '1');
+		 $this -> db -> join("generic_name g", "g.id=dc.generic_name", "left outer");
+		 $this -> db -> join("drug_stock_balance dsb", "dsb.drug_id=dc.id");
+		 $this -> db -> join("drug_source s", "s.id=dc.supported_by", "left outer");
+		 $this -> db -> join("dose d", "d.Name=dc.dose", "left outer");
+		 $this -> db -> join("drug_unit du", "du.id=dc.unit");
+		 $this -> db -> group_by("dsb.drug_id");
+		 $this -> db -> having("SUM(dsb.balance)>0");
+		 $tot_drugs = $this -> db -> get();
+		 $iTotal = count($tot_drugs -> result_array());
+		 */
 		// Output
 		$output = array('sEcho' => intval($sEcho), 'iTotalRecords' => $iTotal, 'iTotalDisplayRecords' => $iFilteredTotal, 'aaData' => array());
 
@@ -278,18 +342,19 @@ class Inventory_Management extends MY_Controller {
 
 		$today = date('Y-m-d');
 		$facility_code = $this -> session -> userdata('facility');
+		$drugresult = Drugcode::getDrugCode($drug_id);
+
+		$data['drug_id'] = $drugresult->id;
+		$data['drug_name'] = $drugresult->Drug;
+		$data['drug_unit'] = $drugresult->Drug_Unit->Name;
 		//$results=Drug_Stock_Movement::getDrugTransactions($drug_id,$facility_code,$stock_type);
 		$sql = "SELECT d.id,d.drug,du.Name AS unit,d.pack_size,dsb.batch_number,dsb.expiry_date,dsb.stock_type,dsb.balance FROM drug_stock_balance dsb LEFT JOIN drugcode d ON d.id=dsb.drug_id LEFT JOIN drug_unit du ON du.id = d.unit WHERE dsb.drug_id='$drug_id'  AND dsb.expiry_date > '$today' AND dsb.balance > 0   AND dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' order by dsb.expiry_date asc";
 		$query = $this -> db -> query($sql);
 
 		$stock_bactchinfo_array = $query -> result_array();
 		$stock_level = 0;
-		$data['drug_name'] = "";
 		foreach ($stock_bactchinfo_array as $total) {
 			$stock_level += $total['balance'];
-			$data['drug_id'] = $total['id'];
-			$data['drug_name'] = $total['drug'];
-			$data['drug_unit'] = $total['unit'];
 		}
 		$data['stock_type'] = $stock_type;
 		$data['stock_level'] = number_format($stock_level);

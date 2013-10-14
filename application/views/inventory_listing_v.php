@@ -11,6 +11,7 @@
 <script type="text/javascript">
 	
 	$(document).ready( function () {
+		/*
 		$('#store_table').dataTable( {
 			"bProcessing": true,
 			"bServerSide": true,
@@ -25,6 +26,7 @@
 	        "bJQueryUI": true,
 	        "sPaginationType": "full_numbers"
 		} );
+		*/
 		$("#store_btn").click(function(){
 			$("#pharmacy_btn").removeClass();
 			$(this).addClass("active");
@@ -164,6 +166,12 @@ if ($access_level == "facility_administrator") {
 			<li id="store_btn" class="active"><a  href="#">Store Inventory</a> </li>   
 			<li id="pharmacy_btn"><a  href="#">Pharmacy Inventory</a></li>   
 		</ul> 
+		
+		<?php
+		  echo $store_table;
+		  echo $pharmacy_table;
+		?>
+		<!--
 		<table id="store_table" class="listing_table" border="1" >
 			<thead>
 				<tr>
@@ -171,8 +179,10 @@ if ($access_level == "facility_administrator") {
 				</tr>
 			</thead>
 			<tbody>
+				
 			</tbody>
 		</table>
+		
 		<table id="pharmacy_table" class="listing_table" border="1" >
 			<thead>
 				<tr>
@@ -182,6 +192,7 @@ if ($access_level == "facility_administrator") {
 			<tbody>
 			</tbody>
 		</table>
+		-->
 	</div>
 	
 </div>

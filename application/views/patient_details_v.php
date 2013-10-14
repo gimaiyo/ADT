@@ -1097,7 +1097,7 @@ if(isset($results)){
 							<?php 
 							if($history_logs){
 							foreach($history_logs as $history){
-								echo "<tr><td>".date('d-M-Y',strtotime($history['dispensing_date']))."</td><td>".$history['visit']."</td><td>".$history['dose']."</td><td>".$history['duration']."</td><td align='center'><input id='".$history['record']."' type='button' class='btn btn-small edit_dispensing ' value='Edit'/></td><td>".$history['drug']."</td><td>".$history['quantity']."</td><td>".$history['current_weight']."</td><td>".$history['last_regimen']."</td><td>".$history['regimen_desc']."</td><td>".$history['batch_number']."</td><td>".$history['pill_count']."</td><td>".$history['adherence']."</td><td>".$history['user']."</td><td>".$history['regimen_change_reason']."</td></tr>";
+								echo "<tr><td>".date('d-M-Y',strtotime($history['dispensing_date']))."</td><td>".$history['visit']."</td><td>".$history['dose']."</td><td>".$history['duration']."</td><td align='center'><input id='".$history['record']."' type='button' class='btn btn-xsmall edit_dispensing ' value='Edit'/></td><td>".$history['drug']."</td><td>".$history['quantity']."</td><td>".$history['current_weight']."</td><td>".$history['last_regimen']."</td><td>".$history['regimen_desc']."</td><td>".$history['batch_number']."</td><td>".$history['pill_count']."</td><td>".$history['adherence']."</td><td>".$history['user']."</td><td>".$history['regimen_change_reason']."</td></tr>";
 							}
 							}else{
 								//echo "<tr><td colspan='20'>No History Available</td></tr>";

@@ -112,11 +112,14 @@
 							</thead>
 							<tbody>
 								<?php
+								if($batch_info){
 								foreach ($batch_info as $batch) {
 									$drug_name=$batch['drug'];
 								?>
 								<tr><td><?php echo $batch['drug'] ?></td><td><?php echo $batch['pack_size'] ?></td><td><?php echo $batch['batch_number'] ?></td><td><?php echo $batch['balance'] ?></td><td><?php echo date('d-M-Y',strtotime($batch['expiry_date'])) ?></td></tr>	
 								<?php
+								}}else{
+									echo "<tr><td colspan='5'>No Batches Available</td></tr>";
 								}
 								?>
 							</tbody>
