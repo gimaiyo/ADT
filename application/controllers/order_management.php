@@ -4,10 +4,135 @@ class Order_Management extends MY_Controller {
 		parent::__construct();
 		$this -> load -> library('pagination');
 		date_default_timezone_set('Africa/Nairobi');
+		$this -> load -> library('PHPExcel');
 	}
 
 	public function index() {
 		$this -> submitted_orders();
+	}
+
+	public function export($order) {
+		$inputFileType = 'Excel2007';
+		$inputFileName = $_SERVER['DOCUMENT_ROOT'] . '/ADT/assets/template.xlsx';
+		$objReader = PHPExcel_IOFactory::createReader($inputFileType);
+		$objPHPExcel = $objReader -> load($inputFileName);
+		$order_types = array(0 => "Central Order", 1 => "Aggregated Order", 2 => "Satellite Order");
+		$original_order = $order;
+		$dir = "Export";
+		$i = 9;
+		$j = $i - 1;
+		$last_counter = 0;
+		$overall_total = 0;
+		$made_by = "";
+		$access_level="";
+
+		/*Delete all files in export folder*/
+		if (is_dir($dir)) {
+			$files = scandir($dir);
+			foreach ($files as $object) {
+				if ($object != "." && $object != "..") {
+					unlink($dir . "/" . $object);
+				}
+			}
+		} else {
+			mkdir($dir);
+		}
+
+		/*Resources needed*/
+		$order_details = Facility_Order::getOrder($order);
+		$order = $order_details -> Unique_Id;
+		$cdrrs = Cdrr_Item::getOrderItems($order);
+		$maps = Maps_Item::getOrderItems($order);
+		$comments = Order_Comment::getOrderComments($order);
+
+		/*Set Order Details*/
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('G2', $original_order . "(" . @$order_types[$order_details -> Code] . ")");
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('G3', $order_details -> Facility_Object -> name);
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('G4', $order_details -> Facility_Object -> Parent_District -> Name . "/" . $order_details -> Facility_Object -> County -> county);
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('I2', $order_details -> Facility_Object -> facilitycode);
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('I3', $order_details -> Facility_Object -> Type -> Name);
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('I4', date("M-Y", strtotime($order_details -> Period_Begin)));
+
+		/*Set Cddr Commodities*/
+		$type = $order_details -> Code;
+		$unit = "In Units";
+		if ($type == "1") {
+			$unit = "In Packs";
+		}
+
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('C' . $j, $unit);
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('D' . $j, $unit);
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('E' . $j, $unit);
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('F' . $j, $unit);
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('G' . $j, $unit);
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('H' . $j, $unit);
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('I' . $j, $unit);
+
+		foreach ($cdrrs as $cdrr) {
+			$i++;
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('A' . $i, $cdrr -> Drugcode_Object -> Drug);
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('B' . $i, $cdrr -> Drugcode_Object -> Pack_Size);
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('C' . $i, number_format((double)$cdrr -> Balance));
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('D' . $i, number_format((double)$cdrr -> Received));
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('E' . $i, number_format((double)$cdrr -> Dispensed_Units));
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('F' . $i, number_format((double)$cdrr -> Losses));
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('G' . $i, number_format((double)$cdrr -> Adjustments));
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('H' . $i, number_format((double)$cdrr -> Count));
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('I' . $i, number_format((double)$cdrr -> Resupply));
+
+		}
+		$last_counter = $i;
+		$i = 9;
+		/*Set Maps Patients*/
+		foreach ($maps as $map) {
+			$i++;
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('K' . $i, $map -> Regimen_Id);
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('L' . $i, number_format((double)$map -> Total));
+			$overall_total += $map -> Total;
+		}
+		$i++;
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('K' . $i, "Overall Total");
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('L' . $i, number_format((double)$overall_total));
+
+		$i = $last_counter+3;
+		/*Set Comments*/
+		foreach ($comments as $comment) {
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('A' . $i, "Comments");
+			$i++;
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('A' . $i, $comment -> Comment);
+			$i=$i+3;
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('A' . $i, "Last Update");
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('B' . $i, "Made By");
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('C' . $i, "Access Level");
+			$i++;
+			if ($comment -> User_Object -> Name) {
+				$made_by = $comment -> User_Object -> Name;
+			} else {
+				$made_by = $comment -> User;
+			}
+			if ($comment -> User_Object -> Access -> Level_Name) {
+				$access_level = $comment -> User_Object -> Access -> Level_Name;
+			} else {
+				$access_level = "Facility Administrator";
+			}
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('A' . $i, date('l d-M-Y h:i:s a', $comment -> Timestamp));
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('B' . $i, $made_by);
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('C' . $i, $access_level);
+			$i=$i+3;
+		}
+
+		/*Generate CSV File*/
+		ob_start();
+		$facility_name = Facilities::getFacilityName($order_details -> Facility_Object -> facilitycode);
+		$facility_name .= "(" . date('d-M-Y h:i:s a') . ")";
+		$filename = $dir . "/F-Maps Order_no " . $original_order . ".xlsx";
+		$objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+		$objWriter -> save($filename);
+		$objPHPExcel -> disconnectWorksheets();
+		unset($objPHPExcel);
+		if (file_exists($filename)) {
+			redirect($filename);
+		}
 	}
 
 	public function view_order($order) {
@@ -799,8 +924,8 @@ class Order_Management extends MY_Controller {
 		} else {
 			$row["beginning_balance"] = 0;
 		}
-		$start_date=date('Y-m-d',strtotime($start_date));
-		$end_date=date('Y-m-d',strtotime($end_date));
+		$start_date = date('Y-m-d', strtotime($start_date));
+		$end_date = date('Y-m-d', strtotime($end_date));
 		$sql = "SELECT trans.name, trans.id, trans.effect, dsm.in_total, dsm.out_total FROM (SELECT id, name, effect FROM transaction_type WHERE name LIKE  '%received%' OR name LIKE  '%adjustment%' OR name LIKE  '%return%' OR name LIKE  '%dispense%' OR name LIKE  '%issue%' OR name LIKE  '%loss%' OR name LIKE  '%ajustment%' OR name LIKE  '%physical%count%' OR name LIKE  '%starting%stock%') AS trans LEFT JOIN (SELECT transaction_type, SUM( quantity ) AS in_total, SUM( quantity_out ) AS out_total FROM drug_stock_movement WHERE transaction_date BETWEEN  '$start_date' AND  '$end_date' AND drug =  '$drug_id'  GROUP BY transaction_type) AS dsm ON trans.id = dsm.transaction_type GROUP BY trans.name";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();

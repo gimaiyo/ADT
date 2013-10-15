@@ -183,7 +183,9 @@
 				
 				<td align="center"><?php echo $numberDays; ?> Day(s)</td>
 				<td style="text-align: center">
-					 <a  href="<?php echo base_url()."order_management/view_order/".$order->id;?>" ></i>View</a>
+					 <a  href="<?php echo base_url()."order_management/export/".$order->id;?>" ><i class="icon-download"></i>Export</a>
+					 | 
+					 <a  href="<?php echo base_url()."order_management/view_order/".$order->id;?>" >View</a>
 					<?php if(($quick_link != 1 && $quick_link != 3) ||$quick_link == 2 ){?>
 					 | <a href="<?php echo base_url()."order_management/edit_order/".$order->id;?>"> Edit</a> 
 					<?php }?>

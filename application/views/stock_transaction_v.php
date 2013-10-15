@@ -569,7 +569,7 @@
 			var stock_type=<?php echo  $stock_type ?>;
 			var last_row=$('#drugs_table tr:last');
 			if(last_row.find(".quantity").hasClass("stock_add_form_input_error")){
-				alert("There is a commodity that has a quantity greater that the quantity available!");
+				alert("There is a commodity that has a quantity greater than the quantity available!");
 				return;
 			}
 			
@@ -677,7 +677,7 @@
 			var stock_type=<?php echo $stock_type; ?>;
 			if(stock_type=='1'){
 				//Stockin coming in
-				if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('ajustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1) {
+				if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('adjustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1) {
 					var quantity_choice = "quantity";
 					var quantity_out_choice = "quantity_out";
 				} else {
@@ -688,7 +688,7 @@
 			//If transaction is from pharmacy
 			else if(stock_type=='2'){
 				//If transaction is received from
-				if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('ajustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1) {
+				if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('adjustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1) {
 					var quantity_choice = "quantity";
 					var quantity_out_choice = "quantity_out";
 				} else {
@@ -823,7 +823,7 @@
 			//If stock is going out, check that qty issued to be <= to qty available
 			
 			//Transaction coming in
-			if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('ajustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1 || $("#select_transtype").attr("value") == 0) {
+			if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('adjustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1 || $("#select_transtype").attr("value") == 0) {
 				quantity_holder.css("background-color","#FFF");
 				quantity_holder.attr("value",qty );
 				
@@ -864,7 +864,7 @@
 			//If stock is going out, check that qty issued to be <= to qty available
 			
 			//Transaction coming in
-			if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('ajustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1 || $("#select_transtype").attr("value") == 0) {
+			if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('adjustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1 || $("#select_transtype").attr("value") == 0) {
 				quantity_holder.css("background-color","#FFF");
 				quantity_holder.attr("value",qty );
 				

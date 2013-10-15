@@ -152,7 +152,7 @@ $counter = 0;
 			<table class="table table-bordered">
 				<thead>
 					<tr>
-						<th>Date</th><th>Made By</th><th>Access Level</th>
+						<th>Last Update</th><th>Made By</th><th>Access Level</th>
 					</tr>
 				</thead>
 				<tbody>

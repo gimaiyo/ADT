@@ -344,9 +344,9 @@ GROUP BY dc.id";
 		$facility_code = $this -> session -> userdata('facility');
 		$drugresult = Drugcode::getDrugCode($drug_id);
 
-		$data['drug_id'] = $drugresult->id;
-		$data['drug_name'] = $drugresult->Drug;
-		$data['drug_unit'] = $drugresult->Drug_Unit->Name;
+		$data['drug_id'] = $drugresult -> id;
+		$data['drug_name'] = $drugresult -> Drug;
+		$data['drug_unit'] = $drugresult -> Drug_Unit -> Name;
 		//$results=Drug_Stock_Movement::getDrugTransactions($drug_id,$facility_code,$stock_type);
 		$sql = "SELECT d.id,d.drug,du.Name AS unit,d.pack_size,dsb.batch_number,dsb.expiry_date,dsb.stock_type,dsb.balance FROM drug_stock_balance dsb LEFT JOIN drugcode d ON d.id=dsb.drug_id LEFT JOIN drug_unit du ON du.id = d.unit WHERE dsb.drug_id='$drug_id'  AND dsb.expiry_date > '$today' AND dsb.balance > 0   AND dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' order by dsb.expiry_date asc";
 		$query = $this -> db -> query($sql);
@@ -803,6 +803,10 @@ GROUP BY dc.id";
 		}
 		//Physical count store
 		else if ((strpos($transaction_type_name, "startingstock") === 0 || strpos($transaction_type_name, "physicalcount") === 0) && $get_stock_type == '1') {
+			$source = $facility;
+			$destination = "";
+		}//Adjustment(-)  at Main Store
+		else if (strpos($transaction_type_name, "adjustment") === 0 && $transaction_effect == 0 && $get_stock_type == '1') {
 			$source = $facility;
 			$destination = "";
 		} else {
