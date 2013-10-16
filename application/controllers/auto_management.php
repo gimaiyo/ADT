@@ -10,7 +10,7 @@ class auto_management extends MY_Controller {
 	}
 
 	public function index() {
-		$message=0;
+		$message = 0;
 		$today = (int)date('Ymd');
 		$stmt1 = "select last_index from migration_log where source='auto_update'";
 		$stmt2 = "update migration_log set last_index='$today' where source='auto_update'";
@@ -18,8 +18,8 @@ class auto_management extends MY_Controller {
 		$rs = $q -> result_array();
 		$last_index = (int)$rs[0]['last_index'];
 		if ($today != $last_index) {
-			$message=$this -> auto_update();
-			$message.=$this -> auto_sms($this -> session -> userdata('facility_name'));
+			$message = $this -> auto_update();
+			$message .= $this -> auto_sms($this -> session -> userdata('facility_name'));
 			$this -> db -> query($stmt2);
 		}
 		echo $message;
@@ -112,9 +112,9 @@ class auto_management extends MY_Controller {
 			}
 			$phone_list = substr($phone_list, 1);
 		}
-        $phone_list=explode("+",$phone_list);
+		$phone_list = explode("+", $phone_list);
 		$message = urlencode($message);
-		foreach($phone_list as $phone){
+		foreach ($phone_list as $phone) {
 			file("http://41.57.109.242:13000/cgi-bin/sendsms?username=clinton&password=ch41sms&to=$phone&text=$message");
 		}
 		return $alert;
@@ -132,7 +132,7 @@ class auto_management extends MY_Controller {
 		$pmtct = 'pmtct';
 		$two_year_days = $days_in_year * 2;
 		$adult_days = $days_in_year * $adult_age;
-		$message="";
+		$message = "";
 
 		//Get Patient Status id's
 		$status_array = array($active, $lost, $pep, $pmtct);
@@ -219,14 +219,85 @@ class auto_management extends MY_Controller {
 			$stmt1 .= $q;
 			$stmt1 .= $stmt2;
 			$q = $this -> db -> query($stmt1);
-			if($this -> db -> affected_rows()>0){
-			$message.=$i . "(<b>" . $this -> db -> affected_rows() . "</b>) rows affected<br/>";
+			if ($this -> db -> affected_rows() > 0) {
+				$message .= $i . "(<b>" . $this -> db -> affected_rows() . "</b>) rows affected<br/>";
 			}
 		}
-         return $message;
+		return $message;
+	}
+
+	public function base_params($data) {
+		$data['title'] = "webADT | Errors";
+		$data['banner_text'] = "System Errors";
+		$data['link'] = "patients";
+		$this -> load -> view('template', $data);
+	}
+
+	public function error_generator() {
+		$array_text = '';
+		$array_text = $this -> input -> post("array_text", true);
+		$error_list = $this -> error_correction();
+		$id_list = "";
+		$access_level = $this -> session -> userdata('user_indicator');
+
+		foreach ($error_list[$array_text] as $error_array) {
+			$id_list .= "'" . $error_array['id'] . "',";
+
+		}
+		$id_list = substr($id_list, 0, -1);
+
+		$stmt = "SELECT p.id,p.patient_number_ccc,p.first_name,p.other_name,p.last_name,p.phone,p.date_enrolled,p.nextappointment,r.regimen_desc,ps.Name,ps.Active
+		         FROM patient p 
+		         LEFT JOIN regimen r ON r.id=p.current_regimen
+		         LEFT JOIN patient_status ps ON ps.id=p.current_status
+		         WHERE p.id IN($id_list)
+		         AND p.active='1'
+		         GROUP BY p.patient_number_ccc";
+		$q = $this -> db -> query($stmt);
+		$rs = $q -> result_array();
+
+		$dyn_table = '<table class="listing_table" id="patient_listing" border="1" >';
+		$dyn_table .= '<thead><tr><th style="width:60px">CCC No</th><th>Patient Name</th><th>Contact</th><th style="width: 100px">Date Enrolled</th><th style="width: 100px">Next Appointment</th><th>Current Regimen</th><th style="width:150px">Status</th><th style="width:20%">Action</th></tr></thead><tbody>';
+		foreach ($rs as $r) {
+			$patient_name = strtoupper(trim($r['first_name'] . " " . $r['other_name'] . " " . $r['last_name']));
+			$id = $r['id'];
+			$link = "";
+			$link = '<a href="' . base_url() . 'patient_management/viewDetails/' . $id . '">Detail</a> | <a href="' . base_url() . 'patient_management/edit/' . $id . '">Edit</a> ' . $link;
+			if ($access_level == "facility_administrator") {
+				if ($r['Active'] == 1) {
+					$link .= '| <a href="' . base_url() . 'patient_management/disable/' . $id . '" class="red">Disable</a>';
+
+				} else {
+					$link .= '| <a href="' . base_url() . 'patient_management/enable/' . $id . '" class="green">Enable</a>';
+				}
+			}
+			$appointment = "";
+			$date_enrolled = "";
+			$appointment = $r['nextappointment'];
+			if ($appointment) {
+				$appointment = date('d-M-Y', strtotime($r['nextappointment']));
+			}
+			$date_enrolled = $r['date_enrolled'];
+			if ($date_enrolled) {
+				$date_enrolled = date('d-M-Y', strtotime($r['date_enrolled']));
+			}
+
+			$dyn_table .= "<tr><td>" . strtoupper($r['patient_number_ccc']) . "</td><td>" . $patient_name . "</td><td>" . $r['phone'] . "</td><td>" . $date_enrolled . "</td><td>" . $appointment . "</td><td>" . strtoupper($r['regimen_desc']) . "</td><td>" . $r['Name'] . "</td><td>" . $link . "</td></tr>";
+		}
+		$dyn_table .= "</tbody></table>";
+		echo $dyn_table;
+	}
+
+	public function error_fix() {
+		$data['errors'] = $this -> error_correction();
+		$data['content_view'] = "error_listing_v";
+		$this -> base_params($data);
 	}
 
 	public function error_correction() {
+		$overall_total = 0;
+		$error_array = array();
+
 		/*Patients without Gender*/
 		$sql['Patients without Gender'] = "SELECT p.patient_number_ccc,p.gender,p.id
 										   FROM patient p 
@@ -342,11 +413,12 @@ class auto_management extends MY_Controller {
 		foreach ($sql as $i => $q) {
 			$q = $this -> db -> query($q);
 			if ($this -> db -> affected_rows() > 0) {
+				$overall_total += $this -> db -> affected_rows();
 				$rs = $q -> result_array();
-				echo $i . "(<b>" . $this -> db -> affected_rows() . "</b>)<br/>";
+				$error_array[$i . "(" . $this -> db -> affected_rows() . ")"] = $rs;
 			}
 		}
-
+		return $error_array;
 	}
 
 	public function export() {
@@ -361,6 +433,7 @@ left join regimen_service_type rst on rst.id=p.service
 left join patient_status pst on pst.id=p.current_status
 left join facilities f on f.facilitycode=p.transfer_from
 WHERE facility_code='$facility_code' 
+AND p.active='1'
 ORDER BY p.patient_number_ccc ASC";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
