@@ -111,48 +111,39 @@ if (isset($styles)) {
    	$(document).ready(function(){
    		<?php 
    		$message = $this->session->flashdata('message');
+		$user_id=$this->session->userdata("user_id");
 		echo $message;
 		if($message==0){
-		
 		?>
-   						/*$.gritter.add({
-				// (string | mandatory) the heading of the notification
-				title: 'Welcome.',
-				// (string | mandatory) the text inside the notification
-				text: '<?php //echo $this -> session -> userdata('facility_name');?>
-					',
-					// (string | optional) the image to display on the left
-					// (bool | optional) if you want it to fade out on its own or just sit there
-					/*	sticky: false,
-					// (int | optional) the time you want it to be alive for before fading out
-					time: ''
-					});
-					*/
-   	<?php
-			$message = 1;
-
-			}
-			if($user_is_pharmacist){
-	 ?>
+	   	<?php
+		$message = 1;
+		}
+		if($user_is_pharmacist){
+		?>
 	    $('#notification1').load('<?php echo base_url() . 'facilitydashboard_management/order_notification';?>');<?php
-	}
-	if($user_is_facility_administrator){
-	 ?>
-		$('#notification1').load('<?php echo base_url() . 'facilitydashboard_management/order_notification';?>');<?php
-	}
-	if($user_is_administrator){
-	 ?>
+	    }
+	    if($user_is_facility_administrator){
+	    ?>
+		$('#notification1').load('<?php echo base_url() . 'facilitydashboard_management/order_notification';?>');
+		<?php
+	    }
+	    if($user_is_administrator){
+	    ?>
 	    $('#span1').load('<?php echo base_url() . 'admin_management/inactive_users';?>');
-		$('#span2').load('<?php echo base_url() . 'admin_management/online_users';?>');
-	<?php
-	}
-	?>});
+		$('#span2').load('<?php echo base_url() . 'admin_management/online_users';?>');	
+		$('#span3').load('<?php echo base_url() . 'auto_management/password_notification/'.$user_id;?>');	
+	    <?php
+	    }
+	   ?>
+	   /*Perform auto update*/
+	   autoUpdate();
+	   
+	});
 	</script>
 <script>
-	  		$(document).ready(function(){
+	  $(document).ready(function(){
 		 $(".error").css("display","block");
-		 
-				});
+	  });
 </script>
 <?php 
 //Load tableTools for datatables printing and exporting
@@ -352,6 +343,7 @@ if(isset($reports)|| isset($report_title)){
 		<ul id="notification1" class="nav nav-list well">
 			<li><a id='online' class='admin_link'><i class='icon-signal'></i>Online Users <div id="span2" class='badge badge-important'></div></a></li>
 			<li><a id='inactive' class='admin_link'><i class='icon-th'></i>Deactivated Users <div id="span1" class='badge badge-important'></div></a></li>
+			<li id="span3"></li>
 		</ul>	
 	</div>
 	<?php

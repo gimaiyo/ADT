@@ -13,6 +13,27 @@ class Facilitydashboard_Management extends MY_Controller {
 		$this -> load -> database();
 	}
 
+	public function password_notification($user_id) {
+
+		$days_before_pwdchange = 30;
+		$notification_start = 10;
+		$temp = "";
+
+		$stmt = "SELECT $days_before_pwdchange-DATEDIFF(CURDATE(),u.Time_Created) as days_to_go
+		         FROM users u
+		         WHERE id='$user_id'";
+		$q = $this -> db -> query($stmt);
+		$rs = $q -> result_array();
+		$days_before_pwdchange = $rs[0]['days_to_go'];
+		if ($days_before_pwdchange > $notification_start) {
+			$days_before_pwdchange = "";
+			$temp = $days_before_pwdchange;
+		} else {
+			$temp = "<li><a><i class='icon-th'></i>Days to Password expiry <div class='badge badge-important'>" . $days_before_pwdchange . "</div></a><li>";
+		}
+		return $temp;
+	}
+
 	public function order_notification() {
 		$facility_code = $this -> session -> userdata("facility");
 		$sql = "SELECT status ,COUNT(*) AS total FROM `facility_order` WHERE facility_id ='$facility_code' AND code='1' GROUP BY STATUS";
@@ -51,7 +72,7 @@ class Facilitydashboard_Management extends MY_Controller {
 		if ($access_level == "facility_administrator") {
 			$dyn_table .= $this -> inactive_users();
 		}
-
+		$dyn_table .= $this -> password_notification($this -> session -> userdata("user_id"));
 		echo $dyn_table;
 	}
 
@@ -417,7 +438,7 @@ class Facilitydashboard_Management extends MY_Controller {
 			$total_female_adult = 0;
 			$total_male_child = 0;
 			$total_female_child = 0;
-			
+
 			if ($rs) {
 				foreach ($rs as $r) {
 					/*Check if Adult Male*/
@@ -438,11 +459,10 @@ class Facilitydashboard_Management extends MY_Controller {
 					}
 				}
 			}
-			
+
 			/*Place Values into an Array*/
-			
-			$patients_array[$date]=array("Adult Male"=>$total_male_adult,"Adult Female"=>$total_female_adult,"Child Male"=>$total_male_child,"Child Female"=>$total_female_child);
-			 
+
+			$patients_array[$date] = array("Adult Male" => $total_male_adult, "Adult Female" => $total_female_adult, "Child Male" => $total_male_child, "Child Female" => $total_female_child);
 
 		}
 

@@ -332,6 +332,34 @@ function syncOrders() {
 
 }
 
+function autoUpdate() {
+	var href = window.location.href;
+	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
+	var _href = href.substr(href.lastIndexOf('/') + 1);
+	var link = base_url + "/ADT/auto_management"
+	$.ajax({
+		url : link,
+		type : 'POST',
+		success : function(data) {
+          if(data!=0){
+			$.gritter.add({
+				// (string | mandatory) the heading of the notification
+				title : 'Auto Update.',
+				// (string | mandatory) the text inside the notification
+				text : data,
+				// (string | optional) the image to display on the left
+				// (bool | optional) if you want it to fade out on its own or just sit there
+				sticky : false,
+				// (int | optional) the time you want it to be alive for before fading out
+				time : ''
+			});
+           }
+			//alert(data)
+		}
+	});
+
+}
+
 /*
  *Synchronizes drug stock balance
  */

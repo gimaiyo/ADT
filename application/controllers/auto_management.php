@@ -6,8 +6,23 @@ class auto_management extends MY_Controller {
 		ini_set("max_execution_time", "100000");
 		$this -> load -> library('PHPExcel');
 		$this -> load -> helper('url');
-		$this -> load -> database();
 		date_default_timezone_set('Africa/Nairobi');
+	}
+
+	public function index() {
+		$message=0;
+		$today = (int)date('Ymd');
+		$stmt1 = "select last_index from migration_log where source='auto_update'";
+		$stmt2 = "update migration_log set last_index='$today' where source='auto_update'";
+		$q = $this -> db -> query($stmt1);
+		$rs = $q -> result_array();
+		$last_index = (int)$rs[0]['last_index'];
+		if ($today != $last_index) {
+			$message=$this -> auto_update();
+			$message.=$this -> auto_sms($this -> session -> userdata('facility_name'));
+			$this -> db -> query($stmt2);
+		}
+		echo $message;
 	}
 
 	public function auto_sms($facility_name = "Liverpool VCT") {
@@ -97,11 +112,12 @@ class auto_management extends MY_Controller {
 			}
 			$phone_list = substr($phone_list, 1);
 		}
-
+        $phone_list=explode("+",$phone_list);
 		$message = urlencode($message);
-		echo $alert;
-		file("http://41.57.109.242:13000/cgi-bin/sendsms?username=clinton&password=ch41sms&to=$phone_list&text=$message");
-
+		foreach($phone_list as $phone){
+			file("http://41.57.109.242:13000/cgi-bin/sendsms?username=clinton&password=ch41sms&to=$phone&text=$message");
+		}
+		return $alert;
 	}
 
 	public function auto_update() {
@@ -116,6 +132,7 @@ class auto_management extends MY_Controller {
 		$pmtct = 'pmtct';
 		$two_year_days = $days_in_year * 2;
 		$adult_days = $days_in_year * $adult_age;
+		$message="";
 
 		//Get Patient Status id's
 		$status_array = array($active, $lost, $pep, $pmtct);
@@ -202,9 +219,11 @@ class auto_management extends MY_Controller {
 			$stmt1 .= $q;
 			$stmt1 .= $stmt2;
 			$q = $this -> db -> query($stmt1);
-			echo $i . "(<b>" . $this -> db -> affected_rows() . "</b>) rows affected<br/>";
+			if($this -> db -> affected_rows()>0){
+			$message.=$i . "(<b>" . $this -> db -> affected_rows() . "</b>) rows affected<br/>";
+			}
 		}
-
+         return $message;
 	}
 
 	public function error_correction() {
@@ -488,8 +507,10 @@ ORDER BY p.patient_number_ccc ASC";
 		$days_before_pwdchange = $rs[0]['days_to_go'];
 		if ($days_before_pwdchange > $notification_start) {
 			$days_before_pwdchange = "";
+		} else {
+			echo "<a><i class='icon-th'></i>Days to Password expiry <div class='badge badge-important'>" . $days_before_pwdchange . "</div></a>";
 		}
-		echo $days_before_pwdchange;
+
 	}
 
 }
