@@ -12,12 +12,12 @@ class Facilitydashboard_Management extends MY_Controller {
 		parent::__construct();
 		$this -> load -> database();
 	}
-	
+
 	public function error_correction() {
-		$overall_total=0;
-		$error_array=array();
-		$temp="";
-		
+		$overall_total = 0;
+		$error_array = array();
+		$temp = "";
+
 		/*Patients without Gender*/
 		$sql['Patients without Gender'] = "SELECT p.patient_number_ccc,p.gender,p.id
 										   FROM patient p 
@@ -133,11 +133,14 @@ class Facilitydashboard_Management extends MY_Controller {
 		foreach ($sql as $i => $q) {
 			$q = $this -> db -> query($q);
 			if ($this -> db -> affected_rows() > 0) {
-				$overall_total+=$this -> db -> affected_rows();
+				$overall_total += $this -> db -> affected_rows();
 			}
 		}
-		$temp_link=$order_link = site_url('auto_management/error_fix');
-		$temp="<li><a href='".$temp_link."'><i class='icon-th'></i>Errors <div class='badge badge-important'>".$overall_total."</div></a><li>";
+		if ($overall_total > 0) {
+			$temp_link = $order_link = site_url('auto_management/error_fix');
+			$temp = "<li><a href='" . $temp_link . "'><i class='icon-th'></i>Errors <div class='badge badge-important'>" . $overall_total . "</div></a><li>";
+		}
+
 		return $temp;
 	}
 

@@ -256,7 +256,7 @@ class auto_management extends MY_Controller {
 		$q = $this -> db -> query($stmt);
 		$rs = $q -> result_array();
 
-		$dyn_table = '<table class="listing_table" id="patient_listing" border="1" >';
+		$dyn_table = '<table class="dataTables" id="patient_listing" border="1" >';
 		$dyn_table .= '<thead><tr><th style="width:60px">CCC No</th><th>Patient Name</th><th>Contact</th><th style="width: 100px">Date Enrolled</th><th style="width: 100px">Next Appointment</th><th>Current Regimen</th><th style="width:150px">Status</th><th style="width:20%">Action</th></tr></thead><tbody>';
 		foreach ($rs as $r) {
 			$patient_name = strtoupper(trim($r['first_name'] . " " . $r['other_name'] . " " . $r['last_name']));
@@ -282,7 +282,7 @@ class auto_management extends MY_Controller {
 				$date_enrolled = date('d-M-Y', strtotime($r['date_enrolled']));
 			}
 
-			$dyn_table .= "<tr><td>" . strtoupper($r['patient_number_ccc']) . "</td><td>" . $patient_name . "</td><td>" . $r['phone'] . "</td><td>" . $date_enrolled . "</td><td>" . $appointment . "</td><td>" . strtoupper($r['regimen_desc']) . "</td><td>" . $r['Name'] . "</td><td>" . $link . "</td></tr>";
+			$dyn_table .= "<tr><td>" . strtoupper($r['patient_number_ccc']) . "</td><td>" . $patient_name . "</td><td>" . $r['phone'] . "</td><td>" . $date_enrolled . "</td><td>" . $appointment . "</td><td><b>" . strtoupper($r['regimen_desc']) . "</b></td><td><b>" . $r['Name'] . "</b></td><td>" . $link . "</td></tr>";
 		}
 		$dyn_table .= "</tbody></table>";
 		echo $dyn_table;
@@ -290,6 +290,11 @@ class auto_management extends MY_Controller {
 
 	public function error_fix() {
 		$data['errors'] = $this -> error_correction();
+
+		foreach ($data['errors'] as $error => $error_array) {
+              $data['first_error']=$error;
+			  break;
+		}
 		$data['content_view'] = "error_listing_v";
 		$this -> base_params($data);
 	}

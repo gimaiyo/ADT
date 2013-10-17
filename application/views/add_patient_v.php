@@ -3,7 +3,7 @@
 	<head>
 		<script type="text/javascript">
 		$(document).ready(function(){
-			
+
 			//Function to Check Patient Numner exists
 			var base_url="<?php echo base_url();?>";
 
@@ -379,7 +379,7 @@
 						<div class="max-row">
 							<div class="mid-row">
 								<label> Patient's Phone Contact(s)</label>
-								<input  type="text"  name="phone" id="phone" value="" placeholder="e.g +254722123456">
+								<input  type="text"  name="phone" id="phone" value="" class="phone" placeholder="e.g 0722123456">
 							</div>
 							<div class="mid-row">
 								<label > Receive SMS Reminders</label>
@@ -396,7 +396,7 @@
 						</div>
 						<div class="max-row">
 							<label> Patient's Alternate Contact(s)</label>
-							<input type="text" name="alternate" id="alternate" value="">
+							<input type="text" name="alternate" id="alternate" class="phone" value="" placeholder="e.g 0722123456">
 						</div>
 						
 					   <div class="max-row">
