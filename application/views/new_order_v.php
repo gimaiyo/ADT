@@ -86,72 +86,34 @@
 		}
 		
 		$("#generate").click(function() {
+			if($("#reporting_period").val()==""){
+				alert("Please select a reporting period !")
+				return;
+			}
 			//When get dispensing button is clicked, remove pagination
-			var oTable=$('#generate_order').dataTable({
-				"sDom": "<'row'r>t<'row'<'span5'i><'span7'p>>",
-				"iDisplayStart": 4000,
-				"iDisplayLength": 4000,
-				"sPaginationType": "bootstrap",
-				"bSort": false,
-				'bDestroy':true
+			//$("#comment_section").css("display","none");
+			var oTable = $('#generate_order').dataTable({
+				"sDom" : "<'row'r>t<'row'<'span5'i><'span7'p>>",
+				"iDisplayStart" : 4000,
+				"iDisplayLength" : 4000,
+				"sPaginationType" : "bootstrap",
+				"bSort" : false,
+				'bDestroy' : true
 			});
-			//Put the comment section after the order details table
-			
-			
-			var reporting_period=$("#reporting_period").attr("value");
-			reporting_period=convertDate(reporting_period);
-			var start_date =reporting_period+"-"+ $("#period_start_date").attr("value");
-			var end_date =reporting_period+"-"+ $("#period_end_date").attr("value");
-			var count=0;
-			
+			var reporting_period = $("#reporting_period").attr("value");
+			reporting_period = convertDate(reporting_period);
+			var start_date = reporting_period + "-" + $("#period_start_date").attr("value");
+			var end_date = reporting_period + "-" + $("#period_end_date").attr("value");
+			var p = 0;
+			var count = 0;
 			//Do the calculation to get dispensing data
 			$.each($(".ordered_drugs"), function(i, v) {
-				getPeriodDrugBalance($(this).attr("drug_id"), start_date, end_date, function(transaction, results) {
-					count++;
-					var row = results.rows.item(0);
-					var total_received = row['total_received'];
-					var total_dispensed = row['total_dispensed'];
-					var total_received_div = "#received_in_period_" + row['drug'];
-					var total_dispensed_div = "#dispensed_in_period_" + row['drug'];
-					$(total_received_div).attr("value", total_received);
-					$(total_dispensed_div).attr("value", total_dispensed);
-					calculateResupply($(total_dispensed_div));
-					//Once the calculations are done for the whole table, put back the pagination
-					if($(".ordered_drugs").length==count){
-						$('#generate_order').dataTable({
-								"sDom": "<'row'r>t<'row'<'span5'i><'span7'p>>",
-								"sPaginationType": "bootstrap",
-								"bSort": false,
-								'bDestroy':true
-						});
-					}
-				});
+				count++;
+				getPeriodDrugBalance(count,$(this).attr("drug_id"), start_date, end_date);
 				
 			});
-			
-			
-			
-			
-			getPeriodRegimenPatients(start_date, end_date, function(transaction, results) {
-				//Loop through all the regimen information returned and populate the appropriate fields
-				for(var i = 0; i < results.rows.length; i++) {
-					var row = results.rows.item(i);
-					var total_patients = row['patients'];
-					var total_patients_div = "#patient_numbers_" + row['regimen'];
-					$(total_patients_div).attr("value", total_patients);
-				}
+			getPeriodRegimenPatients(start_date, end_date);
 
-			});
-			getPeriodRegimenMos(start_date, end_date, function(transaction, results) {
-				//Loop through all the regimen information returned and populate the appropriate fields
-				for(var i = 0; i < results.rows.length; i++) {
-					var row = results.rows.item(i);
-					var total_mos = row['total_mos'];
-					var total_mos_div = "#mos_" + row['regimen'];
-					$(total_mos_div).attr("value", total_mos);
-				}
-
-			});
 		});
 		
 		//Validate order before submitting
@@ -328,7 +290,7 @@
 						$ordering_facility = $facility_object->id;
 						if($logged_in_facility == $ordering_facility){
 						?>
-						<input style="width: auto" name="generate" id="generate" class="btn" value="Get Dispensing Data" >
+						<input type="button" style="width: auto" name="generate" id="generate" class="btn" value="Get Dispensing Data" >
 						<?php }?>
 					</td>
 				</tr>

@@ -132,6 +132,8 @@
 	</div>
 	<?php
 	if($parent->parent!=$central_facility){
+		$facilities=array();
+		$facilities[]=array("facilitycode"=>$this->session->userdata("facility"),"name"=>$this->session->userdata("facility_name"));
 	$this->load->view('satellite_orders_sub_menu');	
 	}else{
 	$this->load->view('orders_sub_menu');

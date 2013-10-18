@@ -524,6 +524,7 @@ class Order_Management extends MY_Controller {
 			//$data['regimens'] = Regimen::getAllObjects($facility_id);
 			$data['regimen_categories'] = Regimen_Category::getAll();
 			$data['facility_object'] = Facilities::getCodeFacility($facility_id);
+			$data['hide_side_menu'] = 0;
 			$this -> base_params($data);
 			return;
 
