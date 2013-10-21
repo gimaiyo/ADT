@@ -5,7 +5,7 @@ class Drug_Stock_Movement extends Doctrine_Record {
 		$this -> hasColumn('Machine_Code', 'varchar', 10);
 		$this -> hasColumn('Drug', 'varchar', 10);
 		$this -> hasColumn('Transaction_Date', 'varchar', 10);
-		$this -> hasColumn('Batch_Number', 'varchar', 10);
+		$this -> hasColumn('Batch_Number', 'varchar', 100);
 		$this -> hasColumn('Transaction_Type', 'varchar', 10);
 		$this -> hasColumn('Source', 'varchar', 10);
 		$this -> hasColumn('Destination', 'varchar', 10);
@@ -76,7 +76,7 @@ class Drug_Stock_Movement extends Doctrine_Record {
 		$drug_transactions = $query -> execute();
 		return $drug_transactions;
 	}
-	
+
 	public function getDrugMonthlyConsumption($drug_id,$facility,$stock_type=1){
 		$where="";
 		$today = date('Y-m-d');

@@ -98,7 +98,7 @@ foreach($results as $result){
 			
 				
 			//Select Other Illnesses Methods Selected
-			var other_illnesses='<?php echo $result['other_illnesses'];?>';
+			var other_illnesses='<?php echo trim($result['other_illnesses']);?>';
 			
 			if (other_illnesses.indexOf(',') == -1) {
               other_illnesses=other_illnesses+",";
@@ -485,6 +485,7 @@ foreach($results as $result){
 	            if(!validated) {
                    return false;
 	            }else{
+	            	$(".btn").attr("disabled","disabled");
 	            	return true;
 	            }
 	       }
@@ -876,7 +877,7 @@ foreach($results as $result){
 		</fieldset>
 	</div>
 	<div class="button-bar">
-			<input form="edit_patient_form" type="submit" class="btn" value="Edit" name="save"/>
+			<input form="edit_patient_form" type="submit" class="btn actual" value="Edit" name="save"/>
 	</div>
 
 </form>

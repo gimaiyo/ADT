@@ -112,11 +112,14 @@
 							</thead>
 							<tbody>
 								<?php
+								if($batch_info){
 								foreach ($batch_info as $batch) {
 									$drug_name=$batch['drug'];
 								?>
 								<tr><td><?php echo $batch['drug'] ?></td><td><?php echo $batch['pack_size'] ?></td><td><?php echo $batch['batch_number'] ?></td><td><?php echo $batch['balance'] ?></td><td><?php echo date('d-M-Y',strtotime($batch['expiry_date'])) ?></td></tr>	
 								<?php
+								}}else{
+									echo "<tr><td colspan='5'>No Batches Available</td></tr>";
 								}
 								?>
 							</tbody>
@@ -126,27 +129,9 @@
 			</div>
 			
 			<div id="transactions" style="width:100%;">
-				<script>
-					$(document).ready(function(){
-						 $('#transaction_table').dataTable( {
-					        "sDom": "<'row row_top'<'span7'l><'span5'f>r>t<'row row_bottom'<'span6'i><'span5'p>>",
-					        "sPaginationType": "bootstrap",
-					        "sScrollY": "200px",
-					        "sScrollX": "100%",
-					       
-					    });
-						$.extend( $.fn.dataTableExt.oStdClasses, {
-						    "sWrapper": "dataTables_wrapper form-inline"
-						} );
-						$(".pagination").css("margin","1px 0px");
-						$(".dataTables_length").css("width","70%");
-						$(".dataTables_filter").css("width","70%");
-						$("div.row .span5").css("float","right");
-					});
-						
-				</script>
+				
 				<div><span class="title">Transactions Information</span></div>
-				<table border="1" class="table table-bordered table-hover sortable" id="transaction_table">
+				<table border="1" id="transaction_tbl">
 					<thead>
 						<tr>
 							<th>Ref./Order No</th>
@@ -238,8 +223,6 @@
 						<?php	
 						}
 						?>
-						
-						
 					</tbody>
 				</table>
 			</div>
@@ -247,7 +230,29 @@
 			<hr/>
 			
 		</div>
-		
 	</div>
-	
-</div>
+	</div>
+	<script type="text/javascript">
+					$(document).ready(function(){
+						var _url='<?php echo base_url()."inventory_management/ServerDrugTransactions/".$drug_id."/".$stock_val; ?>';
+						 $('#transaction_tbl').dataTable({						 
+					        "sDom": "<'row row_top'<'span7'l><'span5'f>r>t<'row row_bottom'<'span6'i><'span5'p>>",
+					        "sPaginationType": "bootstrap",
+                            "bJQueryUI": true,
+					        "sScrollY": "200px",
+					        "sScrollX": "100%",
+					        "bProcessing": true,
+			                "bServerSide": true,
+			                "bDeferRender":true,
+			                "sAjaxSource": _url,					     
+					    });
+						$.extend( $.fn.dataTableExt.oStdClasses, {
+						    "sWrapper": "dataTables_wrapper form-inline"
+						});
+						$(".pagination").css("margin","1px 0px");
+						$(".dataTables_length").css("width","70%");
+						$(".dataTables_filter").css("width","70%");
+						$("div.row .span5").css("float","right");
+					});
+						
+				</script>

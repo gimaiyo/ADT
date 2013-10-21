@@ -22,6 +22,7 @@ foreach($results as $result){
 		</style>
 		<script type="text/javascript">
 			$(document).ready(function() {
+				<?php $this -> session -> set_userdata('record_no', $result['id']);?>
 				$("#patient").val("<?php echo $result['patient_number_ccc'];?>");
 				var first_name="<?php echo strtoupper($result['first_name']); ?>";
 				var other_name="<?php echo strtoupper($result['other_name']); ?>";
@@ -36,10 +37,13 @@ foreach($results as $result){
 				<?php
 				}
 				?>
-				
 				var last_visit_date ="<?php echo @$last_regimens['dispensing_date']; ?>";
-				var last_visit_date ="<?php echo date('d-M-Y',strtotime(@$last_regimens['dispensing_date'])); ?>";
-				$("#last_visit_date").attr("value", last_visit_date);
+				if(last_visit_date){
+					var last_visit_date ="<?php echo date('d-M-Y',strtotime(@$last_regimens['dispensing_date'])); ?>";
+				    $("#last_visit_date").attr("value", last_visit_date);
+				}
+				
+				
 				
 				//Get Prev Appointment
 				<?php
@@ -475,11 +479,11 @@ foreach($results as $result){
 					   var days_of_week = ["Sunday", "Monday", "Tuseday", "Wednesday", "Thursday", "Friday", "Saturday"];
 					      if(formatted_date_day == 6 || formatted_date_day == 0) {
 						     alert("It will be on " + days_of_week[formatted_date_day] + " During the Weekend");
-						   if(data[0].total_appointments  > data[0].weekend_max ) {
+						   if(parseInt(data[0].total_appointments)  > parseInt(data[0].weekend_max)) {
 							 alert("Maximum Appointments for Weekend Reached");
 						   }
 					      } else {
-						if(data[0].total_appointments  > data[0].weekday_max ) {
+						if(parseInt(data[0].total_appointments) > parseInt(data[0].weekday_max)) {
 							alert("Maximum Appointments for Weekday Reached");
 						}
 
@@ -714,7 +718,7 @@ foreach($results as $result){
 							</div>
 							<div class="mid-row">
 								<label>Patient Name</label>
-								<input readonly="" id="patient_details"  class="validate[required]" style='width:300px;'/>
+								<input readonly="" id="patient_details"  class="validate[required]" />
 							</div>
 						</div>
 
@@ -727,7 +731,7 @@ foreach($results as $result){
 							<div class="mid-row">
 								<label><span class='astericks'>*</span>Purpose of Visit</label>
 
-								<select  type="text"name="purpose" id="purpose" class="validate[required]" style='width:300px;'>
+								<select  type="text"name="purpose" id="purpose" class="validate[required]" style='width:100%;'>
 									<option value="">--Select One--</option>
 									<?php 
 									foreach($purposes as $purpose){
@@ -747,7 +751,7 @@ foreach($results as $result){
 							<div class="mid-row">
 								<label><span class='astericks'>*</span>Current Weight(kg)</label>
 
-								<input  type="text"name="weight" id="weight" class="validate[required]" style='width:300px;'>
+								<input  type="text"name="weight" id="weight" class="validate[required]" >
 							</div>
 						</div>
 						<div class="max-row">
@@ -758,7 +762,7 @@ foreach($results as $result){
 							<div class="mid-row">
 								<label><span class='astericks'>*</span>Date of Next Appointment</label>
 
-								<input  type="text" name="next_appointment_date" id="next_appointment_date" class="validate[required]" style='width:300px;'>
+								<input  type="text" name="next_appointment_date" id="next_appointment_date" class="validate[required]" >
 							</div>
 						</div>
                             
@@ -779,7 +783,7 @@ foreach($results as $result){
 
 							<div class="mid-row">
 								<label><span class='astericks'>*</span>Current Regimen</label>
-								<select type="text"name="current_regimen" id="current_regimen"  class="validate[required]" style='width:300px;'>
+								<select type="text"name="current_regimen" id="current_regimen"  class="validate[required]" style='width:100%;' >
 									<option value="">-Select One--</option>
 										<?php 
 									       foreach($regimens as $regimen){
@@ -793,7 +797,7 @@ foreach($results as $result){
 							<div class="mid-row">
 								<div style="display:none" id="regimen_change_reason_container">
 									<label>Regimen Change Reason</label>
-									<select type="text"name="regimen_change_reason" id="regimen_change_reason" style='width:300px;'>
+									<select type="text"name="regimen_change_reason" id="regimen_change_reason" >
 										<option value="">--Select One--</option>
 										 <?php
 										   foreach($regimen_changes as $changes){
@@ -811,7 +815,7 @@ foreach($results as $result){
 							</div>
 							<div class="mid-row">
 								<label> Poor/Fair Adherence Reasons </label>
-								<select type="text"name="non_adherence_reasons" id="non_adherence_reasons"  style='width:300px;'>
+								<select type="text"name="non_adherence_reasons" id="non_adherence_reasons"  style='width:100%;'>
 									<option value="">-Select One--</option>
 										<?php 
 									       foreach($non_adherence_reasons as $reasons){
@@ -933,7 +937,7 @@ foreach($results as $result){
 				</div>
 				<div id="submit_section">
 					<input type="reset" class="btn confirm" id="reset" value="Reset Fields" />
-					<input form="dispense_form" id="btn_submit" class="btn confirm" id="submit" type="button" value="Dispense Drugs"/>
+					<input form="dispense_form" id="btn_submit" class="btn confirm actual" id="submit" type="button" value="Dispense Drugs"/>
 				</div>
 			</form>
 

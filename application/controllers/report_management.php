@@ -18,7 +18,7 @@ class report_management extends MY_Controller {
 		$this -> listing();
 	}
 
-	public function getMoreHelp($stock_type = '2', $start_date = '2013-08-01', $end_date = '2013-08-31') {
+	public function getMoreHelp($stock_type = '2', $start_date = '', $end_date = '') {
 		//Check if user is logged in
 		if ($this -> session -> userdata("user_id")) {
 
@@ -124,6 +124,8 @@ class report_management extends MY_Controller {
 
 				//End of Beginning Balance
 				//Start of Other Transactions
+				$start_date = date('Y-m-d', strtotime($start_date));
+				$end_date = date('Y-m-d', strtotime($end_date));
 				$sql = "SELECT trans.name, trans.id, trans.effect, dsm.in_total, dsm.out_total FROM (SELECT id, name, effect FROM transaction_type WHERE name LIKE  '%received%' OR name LIKE  '%adjustment%' OR name LIKE  '%return%' OR name LIKE  '%dispense%' OR name LIKE  '%issue%' OR name LIKE  '%loss%' OR name LIKE  '%ajustment%' OR name LIKE  '%physical%count%' OR name LIKE  '%starting%stock%') AS trans LEFT JOIN (SELECT transaction_type, SUM( quantity ) AS in_total, SUM( quantity_out ) AS out_total FROM drug_stock_movement WHERE transaction_date BETWEEN  '$start_date' AND  '$end_date' AND drug =  '$drug_id' $first_value GROUP BY transaction_type) AS dsm ON trans.id = dsm.transaction_type GROUP BY trans.name";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
@@ -238,6 +240,8 @@ class report_management extends MY_Controller {
 		$source_totals = array();
 		$overall_adult_male = 0;
 		$overall_adult_female = 0;
+		$overall_child_male = 0;
+		$overall_child_female = 0;
 
 		$total = 0;
 		$overall_adult_male_art = 0;
@@ -1516,13 +1520,13 @@ class report_management extends MY_Controller {
 		$overall_child_female = 0;
 
 		//Get Total of all patients
-		$sql = "SELECT count(*) as total, r.regimen_desc,p.current_regimen FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.current_regimen !=0 AND p.current_regimen !='' AND p.current_status !='' AND p.current_status !=0";
+		$sql = "SELECT count(*) as total, r.regimen_desc,p.current_regimen FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.current_regimen !=0 AND p.current_regimen !='' AND p.current_status !='' AND p.current_status !=0 and p.active='1'";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$patient_total = $results[0]['total'];
 
 		//Get Totals for each regimen
-		$sql = "SELECT count(*) as total, r.regimen_desc,r.regimen_code,p.current_regimen FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.current_regimen !=0 AND p.current_regimen !='' AND p.current_status !='' AND p.current_status !=0 GROUP BY p.current_regimen ORDER BY r.regimen_code ASC";
+		$sql = "SELECT count(*) as total, r.regimen_desc,r.regimen_code,p.current_regimen FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.current_regimen !=0 AND p.current_regimen !='' AND p.current_status !='' AND p.current_status !=0 and p.active='1' GROUP BY p.current_regimen ORDER BY r.regimen_code ASC";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
@@ -1559,7 +1563,7 @@ class report_management extends MY_Controller {
 				$regimen_total_percentage = number_format(($regimen_total / $patient_total) * 100, 1);
 				$row_string .= "<tr><td><b>$regimen_code</b> | $regimen_name</td><td>$regimen_total</td><td>$regimen_total_percentage</td>";
 				//SQL for Adult Male Regimens
-				$sql = "SELECT count(*) as total_adult_male, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=1 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)>=15 GROUP BY p.current_regimen";
+				$sql = "SELECT count(*) as total_adult_male, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=1 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)>=15  and p.active='1' GROUP BY p.current_regimen";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				if ($results) {
@@ -1575,7 +1579,7 @@ class report_management extends MY_Controller {
 					$row_string .= "<td>-</td><td>-</td>";
 				}
 				//SQL for Adult Female Regimens
-				$sql = "SELECT count(*) as total_adult_female, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=2 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)>=15 GROUP BY p.current_regimen";
+				$sql = "SELECT count(*) as total_adult_female, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=2 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)>=15 and p.active='1' GROUP BY p.current_regimen";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				if ($results) {
@@ -1591,7 +1595,7 @@ class report_management extends MY_Controller {
 					$row_string .= "<td>-</td><td>-</td>";
 				}
 				//SQL for Child Male Regimens
-				$sql = "SELECT count(*) as total_child_male, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=1 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)<15 GROUP BY p.current_regimen";
+				$sql = "SELECT count(*) as total_child_male, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=1 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)<15 and p.active='1' GROUP BY p.current_regimen";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				if ($results) {
@@ -1607,7 +1611,7 @@ class report_management extends MY_Controller {
 					$row_string .= "<td>-</td><td>-</td>";
 				}
 				//SQL for Child Female Regimens
-				$sql = "SELECT count(*) as total_child_female, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=2 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)<15 GROUP BY p.current_regimen";
+				$sql = "SELECT count(*) as total_child_female, r.regimen_desc,p.current_regimen as regimen_id FROM patient p,regimen r WHERE p.date_enrolled<='$from' AND p.current_status=1 AND r.id=p.current_regimen AND p.facility_code='$facility_code' AND p.gender=2 AND p.current_regimen='$current_regimen' AND round(datediff('$from',p.dob)/360)<15 and p.active='1' GROUP BY p.current_regimen";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				if ($results) {
@@ -1665,7 +1669,7 @@ class report_management extends MY_Controller {
 
 		//Get Total Count of all patients
 		//$sql = "select count(*) as total from patient,patient_status ps where(date_enrolled <= '$from' or date_enrolled='') and ps.id=current_status and current_status!='' and service!='' and gender !='' and facility_code='$facility_code'";
-		$sql = "select count(*) as total from patient p,patient_status ps,regimen_service_type rst,gender g where(p.date_enrolled <= '$from' or p.date_enrolled='') and ps.id=p.current_status and p.service=rst.id and p.gender=g.id and facility_code='$facility_code'";
+		$sql = "select count(*) as total from patient p,patient_status ps,regimen_service_type rst,gender g where(p.date_enrolled <= '$from' or p.date_enrolled='') and ps.id=p.current_status and p.service=rst.id and p.gender=g.id and facility_code='$facility_code' and p.active='1'";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$patient_total = $results[0]['total'];
@@ -1705,7 +1709,7 @@ class report_management extends MY_Controller {
 
 		//Get Totals for each Status
 		//$sql = "select count(p.id) as total,current_status,ps.name from patient p,patient_status ps where(date_enrolled <= '$from' or date_enrolled='') and facility_code='$facility_code' and ps.id = current_status and current_status!='' and service!='' and gender !='' group by p.current_status";
-		$sql = "select count(p.id) as total,p.current_status,ps.name from patient p,patient_status ps,regimen_service_type rst,gender g where(p.date_enrolled <= '$from' or p.date_enrolled='') and ps.id=p.current_status and p.service=rst.id and p.gender=g.id and facility_code='$facility_code' group by p.current_status";
+		$sql = "select count(p.id) as total,p.current_status,ps.name from patient p,patient_status ps,regimen_service_type rst,gender g where(p.date_enrolled <= '$from' or p.date_enrolled='') and ps.id=p.current_status and p.service=rst.id and p.gender=g.id and facility_code='$facility_code' and p.active='1' group by p.current_status";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
@@ -1718,7 +1722,7 @@ class report_management extends MY_Controller {
 				$row_string .= "<tr><td>$status_name</td><td>$status_totals[$current_status]</td><td>$patient_percentage</td>";
 				//SQL for Adult Male Status
 				$service_list = array('ART', 'PEP', 'OI Only');
-				$sql = "SELECT count(*) as total_adult_male, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=1 AND p.service !=3 AND round(datediff('$from',p.dob)/360)>=15 GROUP BY service";
+				$sql = "SELECT count(*) as total_adult_male, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=1 AND p.service !=3 AND round(datediff('$from',p.dob)/360)>=15 and p.active='1' GROUP BY service";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				$i = 0;
@@ -1749,7 +1753,7 @@ class report_management extends MY_Controller {
 				}
 				//SQL for Adult Female Status
 				$service_list = array('ART', 'PEP', 'PMTCT', 'OI Only');
-				$sql = "SELECT count(*) as total_adult_female, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=2  AND round(datediff('$from',p.dob)/360)>=15 GROUP BY service";
+				$sql = "SELECT count(*) as total_adult_female, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=2  AND round(datediff('$from',p.dob)/360)>=15 and p.active='1' GROUP BY service";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				$i = 0;
@@ -1781,7 +1785,7 @@ class report_management extends MY_Controller {
 				}
 				//SQL for Child Male Status
 				$service_list = array('ART', 'PEP', 'PMTCT', 'OI Only');
-				$sql = "SELECT count(*) as total_child_male, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=1  AND round(datediff('$from',p.dob)/360)<15 GROUP BY service";
+				$sql = "SELECT count(*) as total_child_male, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=1  AND round(datediff('$from',p.dob)/360)<15 and p.active='1' GROUP BY service";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				$i = 0;
@@ -1813,7 +1817,7 @@ class report_management extends MY_Controller {
 				}
 				//SQL for Child Female Status
 				$service_list = array('ART', 'PEP', 'PMTCT', 'OI Only');
-				$sql = "SELECT count(*) as total_child_female, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=2  AND round(datediff('$from',p.dob)/360)<15 GROUP BY service";
+				$sql = "SELECT count(*) as total_child_female, ps.Name,ps.id as current_status,r.name AS Service FROM patient p,patient_status ps,regimen_service_type r WHERE  p.current_status=ps.id AND p.service=r.id AND p.current_status='$current_status' AND p.facility_code='$facility_code' AND p.gender=2  AND round(datediff('$from',p.dob)/360)<15 and p.active='1' GROUP BY service";
 				$query = $this -> db -> query($sql);
 				$results = $query -> result_array();
 				$i = 0;
@@ -1925,6 +1929,7 @@ class report_management extends MY_Controller {
 		$today = date('Y-m-d');
 		$this -> db -> from("drugcode dc");
 		$this -> db -> join("drug_unit u", "u.id=dc.unit");
+		$this -> db -> where("dc.enabled", "1");
 		$rResult = $this -> db -> get();
 		// Data set length after filtering
 		$this -> db -> select('FOUND_ROWS() AS found_rows');
@@ -1934,6 +1939,7 @@ class report_management extends MY_Controller {
 		$this -> db -> select("dc.*");
 		$this -> db -> from("drugcode dc");
 		$this -> db -> join("drug_unit u", "u.id=dc.unit");
+		$this -> db -> where("dc.enabled", "1");
 		$tot_drugs = $this -> db -> get();
 		$iTotal = count($tot_drugs -> result_array());
 
@@ -2993,7 +2999,7 @@ class report_management extends MY_Controller {
 		$strXML = array_map('intval', explode(",", $strXML));
 		$resultArray = array();
 		$nameArray = array("Male Disclosure(NO)", "Male Disclosure(YES)", "Female Disclosure(NO)", "Female Disclosure(YES)");
-		$resultArray[] = array('name' => "Disclosure Status", 'data' =>$strXML);
+		$resultArray[] = array('name' => "Disclosure Status", 'data' => $strXML);
 		$categories = json_encode($nameArray);
 		$resultArray = json_encode($resultArray);
 		$data['resultArraySize'] = 6;
@@ -3175,8 +3181,9 @@ class report_management extends MY_Controller {
 		$overall_adult_female = 0;
 		$overall_children = 0;
 		$dyn_table = "";
+		$dyn_table .= "<table id='patient_listing' border='1' cellpadding='5' class='dataTables'><thead><tr><th>Indication</th><th>Adult Male</th><th>Adult Female</th><th>Children</th></tr></thead>";
 		if ($results) {
-			$dyn_table .= "<table id='patient_listing' border='1' cellpadding='5' class='dataTables'><thead><tr><th>Indication</th><th>Adult Male</th><th>Adult Female</th><th>Children</th></tr></thead><tbody>";
+			$dyn_table.="<tbody>";
 			foreach ($results as $result) {
 				$indication = $result['indication_name'];
 				$adult_male = $result['adult_male'];
@@ -3191,8 +3198,9 @@ class report_management extends MY_Controller {
 			$total = $overall_adult_male + $overall_adult_female + $overall_children;
 			$total = number_format($total);
 			$dyn_table .= "</tbody><tfoot><tr><td><b>TOTALS ($total) </b></td><td><b>" . number_format($overall_adult_male) . "</b></td><td><b>" . number_format($overall_adult_female) . "</b></td><td><b>" . number_format($overall_children) . "</b></td></tr>";
-			$dyn_table .= "</tfoot></table>";
-		}
+			$dyn_table .= "</tfoot>";
+		} 
+		$dyn_table.="</table>";
 		$data['dyn_table'] = $dyn_table;
 		$data['title'] = "webADT | Reports";
 		$data['hide_side_menu'] = 1;
@@ -3450,6 +3458,7 @@ class report_management extends MY_Controller {
 		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
 		$facilty_value = "";
+		$param = "";
 		if ($stock_type == 1) {
 			//Main Store
 			$facilty_value = "dsm.source!=dsm.destination";
@@ -3459,18 +3468,40 @@ class report_management extends MY_Controller {
 			//Pharmacy
 			$facilty_value = "dsm.source=dsm.destination";
 			$data['transaction_type'] = "Pharmacy";
+			$param = "where des.name NOT LIKE '%pharmacy%'";
 		}
-		$sql = "select d.drug,du.Name as unit,d.pack_size,SUM(dsm.quantity_out) as total from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON du.id=d.unit where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' AND t.name LIKE '%Issued To%' GROUP BY d.drug";
+		$sql = "select d.id,d.drug,du.Name as unit,d.pack_size,SUM(dsm.quantity_out) as total from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON du.id=d.unit where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' AND t.name LIKE '%Issued To%' GROUP BY d.drug";
+		$get_destination = "select * from drug_destination des " . $param . " order by id asc";
+		$dest_query = $this -> db -> query($get_destination);
+		$dest_array = $dest_query -> result_array();
 		$query = $this -> db -> query($sql);
 		$dyn_table = "<table border='1' class='dataTables' cellpadding='5'>";
 		$dyn_table .= "<thead>
-						<tr><th>Drug Name</th><th>Drug Unit</th><th> Drug PackSize</th><th>Quantity(units)</th></tr>
+						<tr><th>Drug Name</th>
+					";
+		foreach ($dest_array as $value) {
+			$dyn_table .= "<th>" . $value['name'] . "</th>";
+		}
+		$dyn_table .= "</tr>
 						</thead>
 						<tbody>";
+
 		$results = $query -> result_array();
 		if ($results) {
 			foreach ($results as $result) {
-				$dyn_table .= "<tr><td>" . $result['drug'] . "</td><td>" . $result['unit'] . "</td><td>" . $result['pack_size'] . "</td><td>" . number_format($result['total']) . "</td></tr>";
+				$dyn_table .= "<tr><td>" . $result['drug'] . "</td>";
+				//Get all destinations for that drug
+				$get_drugs = "select des.name,temp.total from drug_destination des LEFT JOIN (select source_destination,SUM(dsm.quantity_out) as total from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON du.id=d.unit where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' AND t.name LIKE '%Issued To%' AND dsm.drug='" . $result['id'] . "' GROUP BY source_destination) as temp ON temp.source_destination=des.id order by des.id" . $param;
+				$get_dest = $this -> db -> query($get_drugs);
+				$get_des_array = $get_dest -> result_array();
+				foreach ($get_des_array as $value) {
+					$total = $value['total'];
+					if ($value['total'] == null) {
+						$total = 0;
+					}
+					$dyn_table .= "<td>" . $total . "</td>";
+				}
+				$dyn_table .= "</tr>";
 			}
 		} else {
 			//$dyn_table .= "<tr><td colspan='4'>No Data Available</td></tr>";
@@ -3495,27 +3526,53 @@ class report_management extends MY_Controller {
 		$end_date = date('Y-m-d', strtotime($end_date));
 		$facility_code = $this -> session -> userdata('facility');
 		$facilty_value = "";
+		$param = "";
 		if ($stock_type == 1) {
 			//Main Store
 			$facilty_value = "dsm.source!=dsm.destination";
 			$data['transaction_type'] = "Main Store";
+			$param = "where des.name NOT LIKE '%Store%'";
 
 		} else if ($stock_type == 2) {
 			//Pharmacy
 			$facilty_value = "dsm.source=dsm.destination";
 			$data['transaction_type'] = "Pharmacy";
 		}
-		$sql = "select d.drug,du.Name as unit,d.pack_size,SUM(dsm.quantity) as total from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON du.id=d.unit where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' AND t.name LIKE '%Received from%' GROUP BY d.drug";
+		$sql = "select d.id,d.drug,du.Name as unit,d.pack_size,SUM(dsm.quantity) as total from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON du.id=d.unit where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' AND t.name LIKE '%Received from%' GROUP BY d.drug";
+		$get_source = "select * from drug_source des " . $param . "  order by id asc";
+		$source_query = $this -> db -> query($get_source);
+		$source_array = $source_query -> result_array();
+
 		$query = $this -> db -> query($sql);
 		$dyn_table = "<table border='1' class='dataTables' cellpadding='5'>";
 		$dyn_table .= "<thead>
-						<tr><th>Drug Name</th><th>Drug Unit</th><th> Drug PackSize</th><th>Quantity(units)</th></tr>
+						<tr><th>Drug Name</th>
+					";
+		foreach ($source_array as $value) {
+			$dyn_table .= "<th>" . $value['name'] . "</th>";
+		}
+		$dyn_table .= "</tr>
 						</thead>
 						<tbody>";
+
+		$query = $this -> db -> query($sql);
+
 		$results = $query -> result_array();
 		if ($results) {
 			foreach ($results as $result) {
-				$dyn_table .= "<tr><td>" . $result['drug'] . "</td><td>" . $result['unit'] . "</td><td>" . $result['pack_size'] . "</td><td>" . number_format($result['total']) . "</td></tr>";
+				$dyn_table .= "<tr><td>" . $result['drug'] . "</td>";
+				//Get all destinations for that drug
+				$get_drugs = "select des.name,temp.total from drug_source des LEFT JOIN (select source_destination,SUM(dsm.quantity) as total from drug_stock_movement dsm LEFT JOIN transaction_type t ON t.id=dsm.transaction_type LEFT JOIN drugcode d ON d.id=dsm.drug LEFT JOIN drug_unit du ON du.id=d.unit where dsm.transaction_date between '$start_date' and '$end_date' and $facilty_value and dsm.facility='$facility_code' AND t.name LIKE '%received%' AND dsm.drug='" . $result['id'] . "' GROUP BY source_destination) as temp ON temp.source_destination=des.id " . $param;
+				$get_dest = $this -> db -> query($get_drugs);
+				$get_des_array = $get_dest -> result_array();
+				foreach ($get_des_array as $value) {
+					$total = $value['total'];
+					if ($value['total'] == null) {
+						$total = 0;
+					}
+					$dyn_table .= "<td>" . $total . "</td>";
+				}
+				$dyn_table .= "</tr>";
 			}
 		}
 		$dyn_table .= "</tbody></table>";

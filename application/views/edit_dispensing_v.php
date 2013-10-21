@@ -463,7 +463,7 @@ foreach ($expiries as $expiry) {
 		</div>
 		<div id="submit_section">
 			<div class="btn-group">
-				<input type="submit" form="edit_dispense_form" class="btn" id="submit" name="submit" value="Save & go Back" />
+				<input type="submit" form="edit_dispense_form" class="btn actual" id="submit" name="submit" value="Save & go Back" />
 				<input type="submit" class="btn btn-danger" id="delete_btn" name="delete" value="Delete Record"/>
 			</div>
 		</div>

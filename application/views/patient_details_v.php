@@ -36,6 +36,9 @@
 		padding-left:15px;
 		padding-right:15px;
 	}
+	.dataTables_wrapper{
+		width:95%;
+	}
 </style>
 
 <?php
@@ -137,8 +140,7 @@ if(isset($results)){
 			
 				
 			//Select Other Illnesses Methods Selected
-			var other_illnesses='<?php if($result['other_illnesses'] !=''){echo $result['other_illnesses'];}?>';
-			
+			var other_illnesses='<?php echo trim($result['other_illnesses']);?>';
 			if (other_illnesses.indexOf(',') == -1) {
               other_illnesses=other_illnesses+",";
             }else{
@@ -614,7 +616,7 @@ if(isset($results)){
 			        "sDom": "<'row row_top'<'span7'l><'span5'f>r>t<'row row_bottom'<'span6'i><'span5'p>>",
 			        "sPaginationType": "bootstrap",
 			        "sScrollY": "200px",
-			        "sScrollX": "100%",
+			        "sScrollX": "110%",
 			       
 			    });
 			    
@@ -1071,7 +1073,7 @@ if(isset($results)){
 						Dispensing History
 					</legend>
 					
-					<table class="sortable table table-bordered table-hover " id="history_table" >
+					<table class="sortable table table-bordered table-hover " id="history_table" width="90%" >
 						<thead style="font-size:0.8em;">
 							<tr >
 								<th id="header_date">Date</th>
@@ -1095,7 +1097,7 @@ if(isset($results)){
 							<?php 
 							if($history_logs){
 							foreach($history_logs as $history){
-								echo "<tr><td>".date('d-M-Y',strtotime($history['dispensing_date']))."</td><td>".$history['visit']."</td><td>".$history['dose']."</td><td>".$history['duration']."</td><td align='center'><input id='".$history['record']."' type='button' class='btn btn-small edit_dispensing ' value='Edit'/></td><td>".$history['drug']."</td><td>".$history['quantity']."</td><td>".$history['current_weight']."</td><td>".$history['last_regimen']."</td><td>".$history['regimen_desc']."</td><td>".$history['batch_number']."</td><td>".$history['pill_count']."</td><td>".$history['adherence']."</td><td>".$history['user']."</td><td>".$history['regimen_change_reason']."</td></tr>";
+								echo "<tr><td>".date('d-M-Y',strtotime($history['dispensing_date']))."</td><td>".$history['visit']."</td><td>".$history['dose']."</td><td>".$history['duration']."</td><td align='center'><input id='".$history['record']."' type='button' class='btn btn-xsmall edit_dispensing ' value='Edit'/></td><td>".$history['drug']."</td><td>".$history['quantity']."</td><td>".$history['current_weight']."</td><td>".$history['last_regimen']."</td><td>".$history['regimen_desc']."</td><td>".$history['batch_number']."</td><td>".$history['pill_count']."</td><td>".$history['adherence']."</td><td>".$history['user']."</td><td>".$history['regimen_change_reason']."</td></tr>";
 							}
 							}else{
 								//echo "<tr><td colspan='20'>No History Available</td></tr>";

@@ -61,7 +61,7 @@ class Dispensement_Management extends MY_Controller {
 
 	public function getDrugsRegimens() {
 		$regimen_id = $this -> input -> post('selected_regimen');
-		$sql = "SELECT DISTINCT(d.id),d.drug FROM drugcode d LEFT JOIN regimen_drug rd ON d.id=rd.drugcode LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id LEFT JOIN regimen r ON r.id = rd.regimen  WHERE dsb.balance>0 AND dsb.expiry_date>CURDATE() AND (rd.regimen='" . $regimen_id . "' OR r.regimen_code =  'OI') and d.enabled='1'";
+		$sql = "SELECT DISTINCT(d.id),d.drug FROM drugcode d LEFT JOIN regimen_drug rd ON d.id=rd.drugcode LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id LEFT JOIN regimen r ON r.id = rd.regimen  WHERE dsb.balance>0 AND dsb.expiry_date>CURDATE() AND (rd.regimen='" . $regimen_id . "' OR r.regimen_code =  'OI') and d.enabled='1' ORDER BY d.drug asc";
 		$get_drugs_sql = $this -> db -> query($sql);
 		$get_drugs_array = $get_drugs_sql -> result_array();
 		echo json_encode($get_drugs_array);
@@ -166,7 +166,7 @@ class Dispensement_Management extends MY_Controller {
 		 */
 		if ($last_appointment_date) {
 			if ($last_appointment_date > $dispensing_date) {
-				$sql = "update patient_appointment set appointment='$next_appointment_date' where patient='$patient' and appointment='$last_appointment_date';";
+				$sql = "update patient_appointment set appointment='$next_appointment_date',machine_code='1' where patient='$patient' and appointment='$last_appointment_date';";
 			} else {
 				$sql = "insert into patient_appointment (patient,appointment,facility) values ('$patient','$next_appointment_date','$facility');";
 			}

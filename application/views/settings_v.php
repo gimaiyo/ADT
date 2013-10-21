@@ -1,4 +1,8 @@
 <style>
+    .setting_table{
+    	font-size:12px;
+    	letter-spacing:0px;
+    }
 	.dataTables_length{
 		width:50%;
 	}
@@ -90,7 +94,7 @@
 				}
 				else{
 					oTable = $('.setting_table').dataTable({
-						"sScrollY" : "200px",
+						"sScrollY" : "250px",
 						"bJQueryUI" : true,
 						"sPaginationType" : "full_numbers",
 						"bDestroy":true
@@ -150,55 +154,13 @@
 						$("input[type='text']").attr("required","required");
 						$("#loadingDiv").css("display","none");
 						$(".settings").css("display","block");
-						/*
-							if(linkSub=="regimen_drug_management"){
-									$('#brand_name_table').dataTable({
-					    			"sScrollY": "240px",
-					    			"bLengthChange": false,
-					                "bPaginate": false,
-					                "bJQueryUI": true,
-					            	"bDestroy":true})
-					    	.rowGrouping({
-					                    bExpandableGrouping: true,
-					                    bExpandSingleGroup: false,
-					                    iExpandGroupOffset: -1,
-					                    asExpandedGroups: [""],
-					                    
-					                });
-					        GridRowCount();
-							function GridRowCount() {
-						        $('span.rowCount-grid').remove();
-						        $('input.expandedOrCollapsedGroup').remove();
-						
-						        $('.dataTables_wrapper').find('[id|=group-id]').each(function () {
-						            var rowCount = $(this).nextUntil('[id|=group-id]').length;
-						            $(this).find('td').append($('<span />', { 'class': 'rowCount-grid' }).append($('<b />', { 'text': '('+rowCount+')' })));
-						        });
-						
-						        $('.dataTables_wrapper').find('.dataTables_filter').append($('<input />', { 'type': 'button', 'class': 'expandedOrCollapsedGroup collapsed', 'value': 'Expanded All Group' }));
-						
-						        $('.expandedOrCollapsedGroup').live('click', function () {
-						            if ($(this).hasClass('collapsed')) {
-						                $(this).addClass('expanded').removeClass('collapsed').val('Collapse All Group').parents('.dataTables_wrapper').find('.collapsed-group').trigger('click');
-						            }
-						            else {
-						                $(this).addClass('collapsed').removeClass('expanded').val('Expanded All Group').parents('.dataTables_wrapper').find('.expanded-group').trigger('click');
-						            }
-					        	});
-					        };
-							}
-							else{
-						*/
 								oTable = $('.setting_table').dataTable({
-									"sScrollY" : "240px",
+									"sScrollY" : "250px",
 									"bJQueryUI" : true,
 									"sPaginationType" : "full_numbers",
 									"bDestroy":true
 								});
-						/*		
-							}
-							*/
-							
+					
 					});
 			  	}
 
