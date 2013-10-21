@@ -138,6 +138,48 @@ GROUP BY dc.id";
 		$iFilteredTotal = 10;
 		$iTotal = sizeof($q -> result_array());
 		/*
+
+        if(isset($iDisplayStart) && $iDisplayLength != '-1')
+        {
+            $this->db->limit($this->db->escape_str($iDisplayLength), $this->db->escape_str($iDisplayStart));
+        }
+		
+		 // Ordering
+        if(isset($iSortCol_0))
+        {
+            for($i=0; $i<intval($iSortingCols); $i++)
+            {
+                $iSortCol = $this->input->get_post('iSortCol_'.$i, true);
+                $bSortable = $this->input->get_post('bSortable_'.intval($iSortCol), true);
+                $sSortDir = $this->input->get_post('sSortDir_'.$i, true);
+    
+                if($bSortable == 'true')
+                {
+                    $this->db->order_by($aColumns[intval($this->db->escape_str($iSortCol))], $this->db->escape_str($sSortDir));
+                }
+            }
+        }
+		
+		/* 
+         * Filtering
+         * NOTE this does not match the built-in DataTables filtering which does it
+         * word by word on any field. It's possible to do here, but concerned about efficiency
+         * on very large tables, and MySQL's regex functionality is very limited
+         */
+        if(isset($sSearch) && !empty($sSearch))
+        {
+            for($i=0; $i<count($aColumns); $i++)
+            {
+                $bSearchable = $this->input->get_post('bSearchable_'.$i, true);
+                // Individual column filtering
+                if(isset($bSearchable) && $bSearchable == 'true')
+                {
+                    $this->db->or_like($aColumns[$i], $this->db->escape_like_str($sSearch));
+                }
+            }
+        }
+		
+
 		 // Select Data
 		 $this -> db -> select('SQL_CALC_FOUND_ROWS ' . str_replace(' , ', ' ', implode(', ', $aColumns)), false);
 		 $this -> db -> select("dc.id,SUM(dsb.balance) as stock_level,g.Name as generic_name,s.Name as supported_by,d.Name as dose,du.Name as drug_unit");
@@ -156,29 +198,29 @@ GROUP BY dc.id";
 		 $this -> db -> having("SUM(dsb.balance)>0");
 
 		 $rResult = $this -> db -> get();
-		 */
 		// Data set length after filtering
-		//$this -> db -> select('FOUND_ROWS() AS found_rows');
-		//$iFilteredTotal = $this -> db -> get() -> row() -> found_rows;
-		/*
-		 // Total data set length
-		 $this -> db -> select("dsb.*");
-		 $where = "dc.enabled='1' AND dsb.facility='$facility_code' AND dsb.expiry_date > CURDATE() AND dsb.stock_type='1'";
-		 $this -> db -> from("drugcode dc");
-		 $this -> db -> where('dc.enabled', '1');
-		 $this -> db -> where('dsb.facility_code', $facility_code);
-		 $this -> db -> where('dsb.expiry_date > ', $today);
-		 $this -> db -> where('dsb.stock_type ', '1');
-		 $this -> db -> join("generic_name g", "g.id=dc.generic_name", "left outer");
-		 $this -> db -> join("drug_stock_balance dsb", "dsb.drug_id=dc.id");
-		 $this -> db -> join("drug_source s", "s.id=dc.supported_by", "left outer");
-		 $this -> db -> join("dose d", "d.Name=dc.dose", "left outer");
-		 $this -> db -> join("drug_unit du", "du.id=dc.unit");
-		 $this -> db -> group_by("dsb.drug_id");
-		 $this -> db -> having("SUM(dsb.balance)>0");
-		 $tot_drugs = $this -> db -> get();
-		 $iTotal = count($tot_drugs -> result_array());
-		 */
+
+        $this->db->select('FOUND_ROWS() AS found_rows');
+        $iFilteredTotal = $this->db->get()->row()->found_rows;
+		
+		// Total data set length
+        $this->db->select("dsb.*");
+		$where ="dc.enabled='1' AND dsb.facility='$facility_code' AND dsb.expiry_date > CURDATE() AND dsb.stock_type='1'";
+		$this->db->from("drugcode dc");
+		$this->db->where('dc.enabled','1');
+		$this->db->where('dsb.facility_code',$facility_code);
+		$this->db->where('dsb.expiry_date > ',$today);
+		$this->db->where('dsb.stock_type ','1');
+		$this->db->join("generic_name g","g.id=dc.generic_name","left outer");
+		$this->db->join("drug_stock_balance dsb","dsb.drug_id=dc.id");
+		$this->db->join("suppliers s","s.id=dc.supported_by");
+		$this->db->join("dose d","d.id=dc.dose");
+		$this->db->join("drug_unit du","du.id=dc.unit");
+		$this->db->group_by("dsb.drug_id"); 
+		$tot_drugs=$this->db->get();
+		$iTotal = count($tot_drugs->result_array());
+		
+
 		// Output
 		$output = array('sEcho' => intval($sEcho), 'iTotalRecords' => $iTotal, 'iTotalDisplayRecords' => $iFilteredTotal, 'aaData' => array());
 
@@ -282,23 +324,22 @@ GROUP BY dc.id";
 		$iFilteredTotal = $this -> db -> get() -> row() -> found_rows;
 
 		// Total data set length
-		$this -> db -> select("dsb.*");
-		$where = "dc.enabled='1' AND dsb.facility='$facility_code' AND dsb.expiry_date > CURDATE() AND dsb.stock_type='2'";
-		$this -> db -> from("drugcode dc");
-		$this -> db -> where('dc.enabled', '1');
-		$this -> db -> where('dsb.facility_code', $facility_code);
-		$this -> db -> where('dsb.expiry_date > ', $today);
-		$this -> db -> where('dsb.stock_type ', '2');
-		$this -> db -> join("generic_name g", "g.id=dc.generic_name", "left outer");
-		$this -> db -> join("drug_stock_balance dsb", "dsb.drug_id=dc.id");
-		$this -> db -> join("drug_source s", "s.id=dc.supported_by", "left outer");
-		$this -> db -> join("dose d", "d.Name=dc.dose", "left outer");
-		$this -> db -> join("drug_unit du", "du.id=dc.unit");
-		$this -> db -> group_by("dsb.drug_id");
-		$this -> db -> having("SUM(dsb.balance)>0");
-		$tot_drugs = $this -> db -> get();
-		$iTotal = count($tot_drugs -> result_array());
 
+        $this->db->select("dsb.*");
+		$where ="dc.enabled='1' AND dsb.facility='$facility_code' AND dsb.expiry_date > CURDATE() AND dsb.stock_type='1'";
+		$this->db->from("drugcode dc");
+		$this->db->where('dc.enabled','1');
+		$this->db->where('dsb.facility_code',$facility_code);
+		$this->db->where('dsb.expiry_date > ',$today);
+		$this->db->where('dsb.stock_type ','2');
+		$this->db->join("generic_name g","g.id=dc.generic_name","left outer");
+		$this->db->join("drug_stock_balance dsb","dsb.drug_id=dc.id");
+		$this->db->join("suppliers s","s.id=dc.supported_by");
+		$this->db->join("dose d","d.id=dc.dose");
+		$this->db->join("drug_unit du","du.id=dc.unit");
+		$tot_drugs=$this->db->get();
+		$iTotal = count($tot_drugs->result_array());
+		
 		// Output
 		$output = array('sEcho' => intval($sEcho), 'iTotalRecords' => $iTotal, 'iTotalDisplayRecords' => $iFilteredTotal, 'aaData' => array());
 
@@ -353,6 +394,7 @@ GROUP BY dc.id";
 
 		$stock_bactchinfo_array = $query -> result_array();
 		$stock_level = 0;
+
 		foreach ($stock_bactchinfo_array as $total) {
 			$stock_level += $total['balance'];
 		}
@@ -698,13 +740,17 @@ GROUP BY dc.id";
 			//Stock coming in
 			if (strpos($transaction_type_name, "received") === 0 || strpos($transaction_type_name, "balance") === 0 || (strpos($transaction_type_name, "returns") === 0 && $transaction_effect == 1) || (strpos($transaction_type_name, "adjustment") === 0 && $transaction_effect == 1) || strpos($transaction_type_name, "startingstock") === 0 || strpos($transaction_type_name, "physicalcount") === 0) {
 
+
 				//Get remaining balance for the drug
 				$get_balance_sql = $this -> db -> query("SELECT dsb.balance FROM drug_stock_balance dsb  WHERE dsb.facility_code='$facility' AND dsb.stock_type='$get_stock_type' AND dsb.drug_id='$get_drug_id' AND dsb.batch_number='$get_batch' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE() AND dsb.expiry_date='$get_expiry' LIMIT 1");
 				$balance_array = $get_balance_sql -> result_array();
 
 				//If transaction is physical count, set actual quantity as physical count
-				if (strpos($transaction_type_name, "startingstock") === 0 || strpos($transaction_type_name, "physicalcount") === 0) {
-					$bal = 0;
+				if(strpos($transaction_type_name, "startingstock")===0 || strpos($transaction_type_name, "physicalcount")===0){
+					$bal=0;
+					//Set all the balances for the drug to be zero in drug_stock_balance when physical count
+					$sql="UPDATE drug_stock_balance SET balance =0 WHERE drug_id='$get_drug_id' AND stock_type='$get_stock_type' AND facility_code='$facility'";
+					$set_bal_zero=$this->db->query($sql);
 				}
 
 				//Check if drug exists in the drug_stock_balance table
@@ -735,7 +781,7 @@ GROUP BY dc.id";
 					$pharma_balance = $bal_pharma + $get_qty;
 				}
 				//Substract balance from qty going out
-				$balance = $get_available_qty - $get_qty;
+				$balance=$get_available_qty-$get_qty;
 			}
 
 		}
@@ -743,12 +789,16 @@ GROUP BY dc.id";
 		else if ($get_stock_type == '2') {
 			//If transaction is received from
 			if (strpos($transaction_type_name, "received") === 0 || strpos($transaction_type_name, "balance") === 0 || (strpos($transaction_type_name, "returns") === 0 && $transaction_effect == 1) || (strpos($transaction_type_name, "adjustment") === 0 && $transaction_effect == 1) || strpos($transaction_type_name, "startingstock") === 0 || strpos($transaction_type_name, "physicalcount") === 0) {
+
 				//Get remaining balance for the drug
 				$get_balance_sql = $this -> db -> query("SELECT dsb.balance FROM drug_stock_balance dsb  WHERE dsb.facility_code='$facility' AND dsb.stock_type='$get_stock_type' AND dsb.drug_id='$get_drug_id' AND dsb.batch_number='$get_batch' AND dsb.balance>0 AND dsb.expiry_date>=CURDATE() AND dsb.expiry_date='$get_expiry' LIMIT 1");
 				$balance_array = $get_balance_sql -> result_array();
 				//If transaction is physical count, set actual quantity as physical count
-				if (strpos($transaction_type_name, "startingstock") === 0 || strpos($transaction_type_name, "physicalcount") === 0) {
-					$bal = 0;
+				if(strpos($transaction_type_name, "startingstock")===0 || strpos($transaction_type_name, "physicalcount")===0){
+					$bal=0;
+					//Set all the balances for the drug to be zero in drug_stock_balance when physical count
+					$sql="UPDATE drug_stock_balance SET balance =0 WHERE drug_id='$get_drug_id' AND stock_type='$get_stock_type' AND facility_code='$facility'";
+					$set_bal_zero=$this->db->query($sql);
 				}
 				//Check if drug exists in the drug_stock_balance table
 				else if (count($balance_array > 0)) {
@@ -781,14 +831,14 @@ GROUP BY dc.id";
 		/*
 		 * Calculate remaining balance end
 		 */
-		if ($get_destination == $facility && strpos($transaction_type_name, "issued") === 0) {
-			$destination = "";
-			$source = $facility;
+		if($get_destination==$facility && strpos($transaction_type_name, "issued")===0){
+			$destination="";
+			$source=$facility;
 		}
 		//Any pharmacy transaction, source and destination is facility code
-		else if ((strpos($transaction_type_name, "balance") === 0 || (strpos($transaction_type_name, "returns") === 0 && $transaction_effect == 1) || (strpos($transaction_type_name, "adjustment") === 0 && $transaction_effect == 1) || strpos($transaction_type_name, "dispensed") === 0 || (strpos($transaction_type_name, "adjustment") === 0 && $transaction_effect == 0) || (strpos($transaction_type_name, "returns") === 0 && $transaction_effect == 0) || strpos($transaction_type_name, "losses") === 0 || strpos($transaction_type_name, "expired") === 0 || (strpos($transaction_type_name, "startingstock") === 0 || strpos($transaction_type_name, "physicalcount") === 0)) && $get_stock_type == '2') {
-			$source = $facility;
-			$destination = $facility;
+		else if((strpos($transaction_type_name, "balance")===0 || (strpos($transaction_type_name, "returns")===0 && $transaction_effect==1) || (strpos($transaction_type_name, "adjustment")===0  && $transaction_effect==1)|| strpos($transaction_type_name, "dispensed")===0 || (strpos($transaction_type_name, "adjustment")===0  && $transaction_effect==0)|| (strpos($transaction_type_name, "returns")===0 && $transaction_effect==0) || strpos($transaction_type_name, "losses")===0 || strpos($transaction_type_name, "expired")===0 || (strpos($transaction_type_name, "startingstock")===0 || strpos($transaction_type_name, "physicalcount")===0)) && $get_stock_type=='2'){
+			$source=$facility;
+			$destination=$facility;
 		}
 
 		//When issuing, source is facility (for store transaction)
@@ -835,25 +885,24 @@ GROUP BY dc.id";
 		}
 
 		//If received from main store to pharmacy, insert an issued to in main store
-		else if (strpos($transaction_type_name, "received") === 0 && $get_stock_type == '2' && (strpos($get_source_name, "main") === 0 || strpos($get_source_name, "store") === 0)) {
+		else if(strpos($transaction_type_name, "received")===0 && $get_stock_type=='2' && (strpos($get_source_name, "main")===0 || strpos($get_source_name, "store")===0) ){
 			//Get id for issued to transaction type
-			$get_trans_id = $this -> db -> query("SELECT id FROM transaction_type WHERE name LIKE '%issued%' LIMIT 1");
-			$get_trans_id = $get_trans_id -> result_array();
-			$transaction_type = $get_trans_id[0]['id'];
-
+			$get_trans_id=$this->db->query("SELECT id FROM transaction_type WHERE name LIKE '%issued%' LIMIT 1");
+			$get_trans_id=$get_trans_id->result_array();
+			$transaction_type=$get_trans_id[0]['id'];
+			
 			//Get id for Main Store transaction source
-			$get_destination_id = $this -> db -> query("SELECT id FROM drug_destination WHERE name LIKE '%outpatient%' LIMIT 1");
-			$get_destination_id = $get_destination_id -> result_array();
-			$source_destination = $get_destination_id[0]['id'];
-
-			$sql_queries = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type, source, destination, expiry_date, packs," . $get_qty_out_choice . "," . $get_qty_choice . ",balance, unit_cost, amount, remarks, operator, order_number, facility,source_destination) VALUES ('" . $get_drug_id . "', '" . $get_transaction_date . "', '" . $get_batch . "', '" . $transaction_type . "', '" . $get_source . "', '" . $destination . "', '" . $get_expiry . "', '" . $get_packs . "', '" . $get_qty . "','0','" . $store_balance . "','" . $get_unit_cost . "', '" . $get_amount . "', '" . $get_comment . "','" . $get_user . "','" . $get_ref_number . "','" . $facility . "','" . $source_destination . "');";
-			$sql2 = $this -> db -> query($sql_queries);
+			$get_destination_id=$this->db->query("SELECT id FROM drug_destination WHERE name LIKE '%outpatient%' LIMIT 1");
+			$get_destination_id=$get_destination_id->result_array();
+			$source_destination=$get_destination_id[0]['id'];
+				
+			$sql_queries = "INSERT INTO drug_stock_movement (drug, transaction_date, batch_number, transaction_type, source, destination, expiry_date, packs,".$get_qty_out_choice.",".$get_qty_choice.",balance, unit_cost, amount, remarks, operator, order_number, facility,source_destination) VALUES ('".$get_drug_id. "', '".$get_transaction_date."', '".$get_batch."', '".$transaction_type."', '".$get_source."', '".$destination."', '".$get_expiry."', '".$get_packs."', '".$get_qty."','0','".$store_balance."','".$get_unit_cost."', '".$get_amount."', '".$get_comment."','".$get_user."','".$get_ref_number."','".$facility."','".$source_destination."');";
+			$sql2=$this->db->query($sql_queries);
 		}
 
 		//Update drug_stock_balance
 		//Add to balance
-		if (strpos($transaction_type_name, "received") === 0 || strpos($transaction_type_name, "balance") === 0 || (strpos($transaction_type_name, "returns") === 0 && $transaction_effect == 1) || (strpos($transaction_type_name, "adjustment") === 0 && $transaction_effect == 1) || strpos($transaction_type_name, "startingstock") === 0 || strpos($transaction_type_name, "physicalcount") === 0) {
-
+		if(strpos($transaction_type_name, "received")===0 || strpos($transaction_type_name, "balance")===0 || (strpos($transaction_type_name, "returns")===0 && $transaction_effect==1) || (strpos($transaction_type_name, "adjustment")===0 && $transaction_effect==1) || strpos($transaction_type_name, "startingstock")===0 || strpos($transaction_type_name, "physicalcount")===0){
 			//In case of physical count
 			if ($get_transaction_type == 11) {
 				$balance_sql = "INSERT INTO drug_stock_balance(drug_id,batch_number,expiry_date,stock_type,facility_code,balance) VALUES('" . $get_drug_id . "','" . $get_batch . "','" . $get_expiry . "','" . $get_stock_type . "','" . $facility . "','" . $get_qty . "') ON DUPLICATE KEY UPDATE balance=" . $get_qty . ";";

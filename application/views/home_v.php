@@ -45,7 +45,7 @@ $(document).ready(function() {
       //Get Today's Date and Upto Saturday
       var someDate = new Date();
       var dd = ("0" + someDate.getDate()).slice(-2);
-      var mm = ("0" + (someDate.getMonth() + 1)).slice(-2);
+      var m = ("0" + (someDate.getMonth() + 1)).slice(-2);
       var y = someDate.getFullYear();
       var fromDate="<?php echo $monday = date('d-M-Y',strtotime('monday this week'));?>";  
       var endDate="<?php echo $saturday = date('d-M-Y',strtotime('saturday this week')); ?>";
@@ -208,7 +208,7 @@ var chartLink;
 			</h3>
 			
 			<div id="chart_area">
-				<div class="loadingDiv" style="margin:20% 0 20% 0;" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images//loading_spin.gif' ?>"></div>
+				<div class="loadingDiv" style="margin:20% 0 20% 0;" ><img style="width: 30px;margin-left:50%" src="<?php echo asset_url().'images/loading_spin.gif' ?>"></div>
 			</div>
 			
 		</div>

@@ -828,7 +828,6 @@
 				quantity_holder.attr("value",qty );
 				
 			} 
-			
 			//Transaction going out
 			else {
 				if(available_quantity>=qty){
@@ -869,7 +868,6 @@
 				quantity_holder.attr("value",qty );
 				
 			} 
-			
 			//Transaction going out
 			else {
 				if(available_quantity>=qty){

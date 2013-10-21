@@ -152,8 +152,7 @@ if(isset($report_title)){
 	<style type="text/css" title="currentStyle">
 		@import "<?php echo base_url().'assets/styles/datatable/demo_page.css'; ?>";
 		@import "<?php echo base_url().'assets/styles/datatable/demo_table.css'; ?>";
-		@import "<?php echo base_url().'assets/styles/datatable/TableTools.css' ?>
-			";
+		@import "<?php echo base_url().'assets/styles/datatable/TableTools.css' ?>";
 	</style>
 	<script type="text/javascript" charset="utf-8" src="<?php echo base_url().'assets/Scripts/datatable/ZeroClipboard.js' ?>"></script>
 	<script type="text/javascript" charset="utf-8"  src="<?php echo base_url().'assets/Scripts/datatable/TableTools.js' ?>"></script>

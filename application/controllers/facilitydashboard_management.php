@@ -322,12 +322,6 @@ class Facilitydashboard_Management extends MY_Controller {
 		$drugs_sql = "SELECT d.drug as drug_name,d.pack_size,u.name as drug_unit,dsb.batch_number as batch,dsb.balance as stocks_display,dsb.expiry_date,DATEDIFF(dsb.expiry_date,CURDATE()) as expired_days_display FROM drugcode d LEFT JOIN drug_unit u ON d.unit=u.id LEFT JOIN drug_stock_balance dsb ON d.id=dsb.drug_id WHERE DATEDIFF(dsb.expiry_date,CURDATE()) <='$period' AND DATEDIFF(dsb.expiry_date,CURDATE())>=0 AND d.enabled=1 AND dsb.facility_code ='" . $facility_code . "' AND dsb.stock_type='" . $stock_type . "' AND dsb.balance>0 ORDER BY expired_days_display asc";
 		$drugs = $this -> db -> query($drugs_sql);
 		$results = $drugs -> result_array();
-		//Get all expiring drugs
-		//foreach ($results as $result => $value) {
-		//$count = 1;
-		//$this -> getBatchInfo($value['Drug_Id'], $value['Batch'], $value['Unit'], $value['Drug_Name'], $value['Date_Expired'], $value['Days_Since_Expiry'], $value['id'], $value['pack_size'], $stock_type, $facility_code);
-		//}
-
 		$d = 0;
 		$drugs_array = $results;
 
@@ -340,6 +334,7 @@ class Facilitydashboard_Management extends MY_Controller {
 			$resultArraySize++;
 		}
 		$resultArray = array( array('name' => 'Expiry', 'data' => $expiryArray), array('name' => 'Stock', 'data' => $stockArray));
+		
 		$resultArray = json_encode($resultArray);
 		$categories = $nameArray;
 		$categories = json_encode($categories);
@@ -348,7 +343,7 @@ class Facilitydashboard_Management extends MY_Controller {
 		$data['container'] = 'chart_expiry';
 		$data['chartType'] = 'bar';
 		$data['title'] = 'Chart';
-		$data['chartTitle'] = 'Expired Drugs';
+		$data['chartTitle'] = 'Expiring Drugs';
 		$data['categories'] = $categories;
 		$data['yAxix'] = 'Drugs';
 		$data['resultArray'] = $resultArray;
