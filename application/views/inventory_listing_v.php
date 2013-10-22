@@ -1,23 +1,16 @@
-<Style>
-	.nav{
-		margin-top:1.5%;
-	}
-	table.dataTable{
-		/*font-size: 11px;*/
-		zoom:0.85;
-	}
-	
-</Style>
+
 <script type="text/javascript">
 	
 	$(document).ready( function () {
-		/*
 		$('#store_table').dataTable( {
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "inventory_management/main_store_stock",
 	        "bJQueryUI": true,
-	        "sPaginationType": "full_numbers"
+	        "sPaginationType": "full_numbers",
+	       "aoColumnDefs": [
+      		{ "bSearchable": false, "aTargets": [ 2,3,4 ] }
+    		]  
 		} );
 		$('#pharmacy_table').dataTable( {
 			"bProcessing": true,
@@ -26,7 +19,6 @@
 	        "bJQueryUI": true,
 	        "sPaginationType": "full_numbers"
 		} );
-		*/
 		$("#store_btn").click(function(){
 			$("#pharmacy_btn").removeClass();
 			$(this).addClass("active");
@@ -55,8 +47,6 @@ if($this->session->userdata("inventory_go_back")){
 		?>
 		<script type="text/javascript">
 			$(document).ready(function(){
-				
-				
 				$("#pharmacy_btn").removeClass();
 				$(this).addClass("active");
 				$("#pharmacy_table").hide();
@@ -73,8 +63,6 @@ if($this->session->userdata("inventory_go_back")){
 		?>
 		<script type="text/javascript">
 				$(document).ready(function(){
-					
-				
 				$("#store_btn").removeClass();
 				$("#pharmacy_btn").addClass("active");
 				$("#store_table").hide();
@@ -168,10 +156,9 @@ if ($access_level == "facility_administrator") {
 		</ul> 
 		
 		<?php
-		  echo $store_table;
-		  echo $pharmacy_table;
+		 // echo $store_table;
+		 // echo $pharmacy_table;
 		?>
-		<!--
 		<table id="store_table" class="listing_table" border="1" >
 			<thead>
 				<tr>
@@ -192,7 +179,6 @@ if ($access_level == "facility_administrator") {
 			<tbody>
 			</tbody>
 		</table>
-		-->
 	</div>
 	
 </div>

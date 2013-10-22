@@ -1375,7 +1375,8 @@ table#history_table td {
 	font-size: 16px;
 }
 #sub_title a {
-	color: white;
+	color:#000000;
+	font-weight:bold;
 }
 #sub_title a:hover {
 	color: #2B597E;
@@ -1567,3 +1568,8 @@ td {
 	width:80%;
 	
 }
+
+table.dataTable{
+		/*font-size: 11px;*/
+		zoom:0.85;
+	}
