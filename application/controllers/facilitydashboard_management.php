@@ -615,8 +615,8 @@ class Facilitydashboard_Management extends MY_Controller {
 		foreach ($dates as $date) {
 			$index = array_search($date, $keys);
 			if ($index >= 0) {
-				$visited[] = (int)$outer_array[$keys[$index]]['visited'];
-				$missed[] = (int)$outer_array[$keys[$index]]['expected'];
+				$visited[] =@(int)$outer_array[$keys[$index]]['visited'];
+				$missed[] = @(int)$outer_array[$keys[$index]]['expected'];
 			} else {
 				$visited[] = 0;
 				$missed[] = 0;
