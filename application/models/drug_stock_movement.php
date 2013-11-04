@@ -72,7 +72,7 @@ class Drug_Stock_Movement extends Doctrine_Record {
 			$where="and ds.source='$facility'  and ds.source=ds.destination";
 		}
 		
-		$query = Doctrine_Query::create() -> select("*") -> from("Drug_Stock_Movement ds")-> where("ds.Facility='$facility' and ds.expiry_date>'$today' and ds.drug='$drug_id' $where")->orderBy("ds.id desc");
+		$query = Doctrine_Query::create() -> select("*") -> from("Drug_Stock_Movement ds")-> where("ds.Facility='$facility' and ds.drug='$drug_id' $where")->orderBy("ds.id desc");
 		$drug_transactions = $query -> execute();
 		return $drug_transactions;
 	}

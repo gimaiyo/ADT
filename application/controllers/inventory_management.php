@@ -159,7 +159,7 @@ class Inventory_Management extends MY_Controller {
 
 			}
 			$id = $aRow['id'];
-			$row[] = "<a href='" . base_url() . "inventory_management/view_bin_card/" . $id . "/1'>View Bin Card</a>";
+			$row[] = "<a href='" . base_url() . "inventory_management/view_bin_card/" . $id . "/".$stock_type."'>View Bin Card</a>";
 				
 			$output['aaData'][] = $row;
 		}
@@ -189,7 +189,7 @@ class Inventory_Management extends MY_Controller {
 		$data['drug_id'] = $drugresult->id;
 		$data['drug_name'] = $drugresult->Drug;
 		$data['drug_unit'] = $drugresult->Drug_Unit->Name;
-		//$results=Drug_Stock_Movement::getDrugTransactions($drug_id,$facility_code,$stock_type);
+		$results=Drug_Stock_Movement::getDrugTransactions($drug_id,$facility_code,$stock_type);
 		$sql = "SELECT d.id,d.drug,du.Name AS unit,d.pack_size,dsb.batch_number,dsb.expiry_date,dsb.stock_type,dsb.balance FROM drug_stock_balance dsb LEFT JOIN drugcode d ON d.id=dsb.drug_id LEFT JOIN drug_unit du ON du.id = d.unit WHERE dsb.drug_id='$drug_id'  AND dsb.expiry_date > '$today' AND dsb.balance > 0   AND dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' order by dsb.expiry_date asc";
 		$query = $this -> db -> query($sql);
 
@@ -201,7 +201,7 @@ class Inventory_Management extends MY_Controller {
 		$data['stock_type'] = $stock_type;
 		$data['stock_level'] = number_format($stock_level);
 		$data['batch_info'] = $stock_bactchinfo_array;
-		//$data['drug_transactions'] = $results;
+		$data['drug_transactions'] = $results;
 
 		$consumption = Drug_Stock_Movement::getDrugMonthlyConsumption($drug_id, $facility_code, $stock_type);
 

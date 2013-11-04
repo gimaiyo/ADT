@@ -145,6 +145,7 @@ foreach ($expiries as $expiry) {
 		   	  $("#expiry").val("");
 			  $("#soh").val("");
 		   	  var drug = $(this).val();
+		   	  
               getDrugBatches(drug);
               getBrands(drug);
 		   });
@@ -182,6 +183,7 @@ foreach ($expiries as $expiry) {
 
 				    	getBatchInfo();
 				    }
+				    
 				});
 		   }
 		   
