@@ -24,7 +24,7 @@ class Order_Management extends MY_Controller {
 		$last_counter = 0;
 		$overall_total = 0;
 		$made_by = "";
-		$access_level="";
+		$access_level = "";
 
 		/*Delete all files in export folder*/
 		if (is_dir($dir)) {
@@ -49,9 +49,9 @@ class Order_Management extends MY_Controller {
 		$objPHPExcel -> getActiveSheet() -> SetCellValue('G2', $original_order . "(" . @$order_types[$order_details -> Code] . ")");
 		$objPHPExcel -> getActiveSheet() -> SetCellValue('G3', $order_details -> Facility_Object -> name);
 		$objPHPExcel -> getActiveSheet() -> SetCellValue('G4', $order_details -> Facility_Object -> Parent_District -> Name . "/" . $order_details -> Facility_Object -> County -> county);
-		$objPHPExcel -> getActiveSheet() -> SetCellValue('I2', $order_details -> Facility_Object -> facilitycode);
-		$objPHPExcel -> getActiveSheet() -> SetCellValue('I3', $order_details -> Facility_Object -> Type -> Name);
-		$objPHPExcel -> getActiveSheet() -> SetCellValue('I4', date("M-Y", strtotime($order_details -> Period_Begin)));
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('K2', $order_details -> Facility_Object -> facilitycode);
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('K3', $order_details -> Facility_Object -> Type -> Name);
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('K4', date("M-Y", strtotime($order_details -> Period_Begin)));
 
 		/*Set Cddr Commodities*/
 		$type = $order_details -> Code;
@@ -67,6 +67,7 @@ class Order_Management extends MY_Controller {
 		$objPHPExcel -> getActiveSheet() -> SetCellValue('G' . $j, $unit);
 		$objPHPExcel -> getActiveSheet() -> SetCellValue('H' . $j, $unit);
 		$objPHPExcel -> getActiveSheet() -> SetCellValue('I' . $j, $unit);
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('K' . $j, $unit);
 
 		foreach ($cdrrs as $cdrr) {
 			$i++;
@@ -78,7 +79,9 @@ class Order_Management extends MY_Controller {
 			$objPHPExcel -> getActiveSheet() -> SetCellValue('F' . $i, number_format((double)$cdrr -> Losses));
 			$objPHPExcel -> getActiveSheet() -> SetCellValue('G' . $i, number_format((double)$cdrr -> Adjustments));
 			$objPHPExcel -> getActiveSheet() -> SetCellValue('H' . $i, number_format((double)$cdrr -> Count));
-			$objPHPExcel -> getActiveSheet() -> SetCellValue('I' . $i, number_format((double)$cdrr -> Resupply));
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('I' . $i, number_format((double)$cdrr -> Aggr_Consumed));
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('J' . $i, $cdrr -> Aggr_On_Hand);
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('K' . $i, number_format((double)$cdrr -> Resupply));
 
 		}
 		$last_counter = $i;
@@ -86,21 +89,21 @@ class Order_Management extends MY_Controller {
 		/*Set Maps Patients*/
 		foreach ($maps as $map) {
 			$i++;
-			$objPHPExcel -> getActiveSheet() -> SetCellValue('K' . $i, $map -> Regimen_Id);
-			$objPHPExcel -> getActiveSheet() -> SetCellValue('L' . $i, number_format((double)$map -> Total));
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('M' . $i, $map -> Regimen_Id);
+			$objPHPExcel -> getActiveSheet() -> SetCellValue('N' . $i, number_format((double)$map -> Total));
 			$overall_total += $map -> Total;
 		}
 		$i++;
-		$objPHPExcel -> getActiveSheet() -> SetCellValue('K' . $i, "Overall Total");
-		$objPHPExcel -> getActiveSheet() -> SetCellValue('L' . $i, number_format((double)$overall_total));
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('M' . $i, "Overall Total");
+		$objPHPExcel -> getActiveSheet() -> SetCellValue('N' . $i, number_format((double)$overall_total));
 
-		$i = $last_counter+3;
+		$i = $last_counter + 3;
 		/*Set Comments*/
 		foreach ($comments as $comment) {
 			$objPHPExcel -> getActiveSheet() -> SetCellValue('A' . $i, "Comments");
 			$i++;
 			$objPHPExcel -> getActiveSheet() -> SetCellValue('A' . $i, $comment -> Comment);
-			$i=$i+3;
+			$i = $i + 3;
 			$objPHPExcel -> getActiveSheet() -> SetCellValue('A' . $i, "Last Update");
 			$objPHPExcel -> getActiveSheet() -> SetCellValue('B' . $i, "Made By");
 			$objPHPExcel -> getActiveSheet() -> SetCellValue('C' . $i, "Access Level");
@@ -118,7 +121,7 @@ class Order_Management extends MY_Controller {
 			$objPHPExcel -> getActiveSheet() -> SetCellValue('A' . $i, date('l d-M-Y h:i:s a', $comment -> Timestamp));
 			$objPHPExcel -> getActiveSheet() -> SetCellValue('B' . $i, $made_by);
 			$objPHPExcel -> getActiveSheet() -> SetCellValue('C' . $i, $access_level);
-			$i=$i+3;
+			$i = $i + 3;
 		}
 
 		/*Generate CSV File*/
@@ -562,8 +565,8 @@ class Order_Management extends MY_Controller {
 		$losses = $this -> input -> post('losses');
 		$adjustments = $this -> input -> post('adjustments');
 		$physical_count = $this -> input -> post('physical_count');
-		$expiry_quantity = $this -> input -> post('expiry_quantity');
-		$expiry_date = $this -> input -> post('expiry_date');
+		$expiry_quantity = $this -> input -> post('expire_qty');
+		$expiry_date = $this -> input -> post('expire_period');
 		$out_of_stock = $this -> input -> post('out_of_stock');
 		$resupply = $this -> input -> post('resupply');
 		$commodities = $this -> input -> post('commodity');
@@ -703,9 +706,9 @@ class Order_Management extends MY_Controller {
 					$cdrr_item -> Resupply = $resupply[$commodity_counter];
 					$cdrr_item -> Newresupply = $resupply[$commodity_counter];
 					//The following not required for fcdrrs
-					/*$cdrr_item->Aggr_Consumed = $opening_balances[$commodity_counter];
-					 $cdrr_item->Aggr_On_Hand = $opening_balances[$commodity_counter];
-					 $cdrr_item->Publish = $opening_balances[$commodity_counter];*/
+					$cdrr_item->Aggr_Consumed = $expiry_quantity[$commodity_counter];
+					$cdrr_item->Aggr_On_Hand = $expiry_date[$commodity_counter];
+					// $cdrr_item->Publish = $opening_balances[$commodity_counter];*/
 					$cdrr_item -> Cdrr_Id = $unique_id;
 					$cdrr_item -> Drug_Id = $commodities[$commodity_counter];
 					$sql = "select max(id)as last from cdrr_item";
@@ -870,7 +873,7 @@ class Order_Management extends MY_Controller {
 		}
 
 		//generate the queries to retrieve the aggregated values
-		$sql_cdrr = "select drug_id,sum(balance) as balance,sum(received) as received,sum(dispensed_units) as dispensed_units,sum(dispensed_packs) as dispensed_packs,sum(losses) as losses,sum(adjustments) as adjustments,sum(count) as count, sum(resupply) as resupply from cdrr_item c where ($cdrr_portion) group by drug_id";
+		$sql_cdrr = "select drug_id,sum(balance) as balance,sum(received) as received,sum(dispensed_units) as dispensed_units,sum(dispensed_packs) as dispensed_packs,sum(losses) as losses,sum(adjustments) as adjustments,sum(count) as count, sum(resupply) as resupply,sum(aggr_consumed) as aggr_consumed,aggr_on_hand from cdrr_item c where ($cdrr_portion) group by drug_id";
 		$sql_maps = "select regimen_id,sum(total) as total from maps_item where $maps_portion group by regimen_id";
 		$cdrr_results = $this -> db -> query($sql_cdrr) -> result_array();
 		$maps_results = $this -> db -> query($sql_maps) -> result_array();
@@ -911,7 +914,40 @@ class Order_Management extends MY_Controller {
 	public function getPeriodDrugs($drug_id, $start_date, $end_date) {
 		$prev_start = date("Y-m-d", strtotime("-1 month", strtotime($start_date)));
 		$prev_end = date("Y-m-d", strtotime("-1 month", strtotime($end_date)));
-		$sql = "SELECT $drug_id as drug_id,SUM(dst.balance) AS beginning_balance FROM drug_stock_movement dst, (SELECT drug, batch_number, MAX( transaction_date ) AS trans_date FROM  `drug_stock_movement` WHERE transaction_date BETWEEN  '$prev_start' AND  '$prev_end' AND drug ='$drug_id'  GROUP BY batch_number) AS temp WHERE dst.drug = temp.drug AND dst.batch_number = temp.batch_number AND dst.transaction_date = temp.trans_date";
+		$period = 180;
+		$sql = "SELECT main_temp.drug_id, main_temp.beginning_balance, sec_temp.stocks_qty, sec_temp.early_expiry 
+		        FROM(SELECT $drug_id as drug_id,SUM(dst.balance) AS beginning_balance,temp_expire.stocks_qty,temp_expire.early_expiry 
+		             FROM drug_stock_movement dst,(SELECT drug, batch_number, MAX( transaction_date ) AS trans_date 
+		                                           FROM  `drug_stock_movement` 
+		                                           WHERE transaction_date 
+		                                           BETWEEN  '$prev_start' AND  '$prev_end' 
+		                                           AND drug ='$drug_id'  
+		                                           GROUP BY batch_number) AS temp,(SELECT d.id, SUM( dsb.balance ) AS stocks_qty, dsb.expiry_date AS early_expiry 
+		                                                                           FROM drugcode d 
+		                                                                           LEFT JOIN drug_unit u ON d.unit = u.id 
+		                                                                           LEFT JOIN drug_stock_balance dsb ON d.id = dsb.drug_id 
+		                                                                           WHERE DATEDIFF( dsb.expiry_date, CURDATE( ) ) <=  '$period' 
+		                                                                           AND DATEDIFF( dsb.expiry_date, CURDATE( ) ) >=0 
+		                                                                           AND d.enabled =1 
+		                                                                           AND dsb.balance >0 
+		                                                                           AND d.id =  '$drug_id' 
+		                                                                           GROUP BY d.drug ORDER BY dsb.expiry_date ASC) as temp_expire 
+		                                                                           WHERE dst.drug = temp.drug 
+		                                                                           AND dst.drug = temp_expire.id 
+		                                                                           AND dst.batch_number = temp.batch_number 
+		                                                                           AND dst.transaction_date = temp.trans_date) AS main_temp 
+		         LEFT JOIN (SELECT d.id, SUM( dsb.balance ) AS stocks_qty, dsb.expiry_date AS early_expiry 
+		                    FROM drugcode d 
+		                    LEFT JOIN drug_unit u ON d.unit = u.id 
+		                    LEFT JOIN drug_stock_balance dsb ON d.id = dsb.drug_id 
+		                    WHERE DATEDIFF( dsb.expiry_date, CURDATE( ) ) <=  '$period' 
+		                    AND DATEDIFF( dsb.expiry_date, CURDATE( ) ) >=0 
+		                    AND d.enabled =1 
+		                    AND dsb.balance >0 
+		                    AND d.id =  '$drug_id' 
+		                    GROUP BY d.drug 
+		                    ORDER BY dsb.expiry_date ASC) AS sec_temp ON sec_temp.id = main_temp.drug_id";
+
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		$row = array();
@@ -919,11 +955,22 @@ class Order_Management extends MY_Controller {
 		if ($results) {
 			if ($results[0]['beginning_balance'] != null) {
 				$row["beginning_balance"] = (int)$results[0]['beginning_balance'];
+				$row["stock_to_expire"] = (int)$results[0]['stocks_qty'];
+				$row["early_expiry"] =  (int)$results[0]['early_expiry'];
 			} else {
 				$row["beginning_balance"] = 0;
+				if((int)$results[0]['stocks_qty']>0){
+					$row["early_expiry"] = date('M-Y',strtotime($results[0]['early_expiry']));
+				}else{
+					$row["early_expiry"] = "-";
+				}
+				$row["stock_to_expire"] = (int)$results[0]['stocks_qty'];
+				
 			}
 		} else {
 			$row["beginning_balance"] = 0;
+			$row["stock_to_expire"] = 0;
+			$row["early_expiry"] = "-";
 		}
 		$start_date = date('Y-m-d', strtotime($start_date));
 		$end_date = date('Y-m-d', strtotime($end_date));

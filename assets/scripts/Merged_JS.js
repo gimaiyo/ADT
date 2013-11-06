@@ -251,7 +251,10 @@ function getPeriodDrugBalance(count, drug, start_date, end_date) {
 			var total_losses = 0;
 			var total_adjustment = 0;
 			var total_physical = 0;
+			var total_expire_qty = 0;
+			var total_expiry_date ="-";
 			var drug_id = 0;
+			
 			total_beginning_balance = data.beginning_balance;
 			total_received = data.Received_From;
 			total_dispensed = data.Dispensed_to_Patients;
@@ -259,6 +262,8 @@ function getPeriodDrugBalance(count, drug, start_date, end_date) {
 			total_adjustment += parseFloat(data.Adjustment_plus);
 			total_adjustment += parseFloat(data.Adjustment__);
 			total_physical = data.Starting_Stock_Physical_Count;
+			total_expire_qty = data.stock_to_expire;
+			total_expiry_date = data.early_expiry;
 			drug_id = data.drug;
 
 			var beginning_balance_div = "#opening_balance_" + drug_id;
@@ -267,6 +272,8 @@ function getPeriodDrugBalance(count, drug, start_date, end_date) {
 			var losses_div = "#losses_in_period_" + drug_id;
 			var adjustments_div = "#adjustments_in_period_" + drug_id;
 			var physical_div = "#physical_in_period_" + drug_id;
+			var expiry_qty_div = "#expire_qty_" + drug_id;
+			var expiry_date_div = "#expire_period_" + drug_id;
 
 			$(beginning_balance_div).attr("value", total_beginning_balance);
 			$(total_received_div).attr("value", total_received);
@@ -274,6 +281,9 @@ function getPeriodDrugBalance(count, drug, start_date, end_date) {
 			$(losses_div).attr("value", total_losses);
 			$(adjustments_div).attr("value", total_adjustment);
 			$(physical_div).attr("value", total_physical);
+			$(expiry_qty_div).attr("value", total_expire_qty);
+			$(expiry_date_div).attr("value", total_expiry_date);
+			
 			calculateResupply($(total_dispensed_div));
 			//Once the calculations are done for the whole table, put back the pagination
 			if($(".ordered_drugs").length == count) {
