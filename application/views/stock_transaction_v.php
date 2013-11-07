@@ -243,52 +243,52 @@
 			//Get list of orders
 			var order_id=$("#picking_list_name").val();
 			$.ajax({
-			url : link,
-			type : 'POST',
-			dataType : 'json',
-			data: {"order_id":order_id},
-			success : function(data) {
-				var data_count=data.length;
-				var x=1;
-				var last_row=$('#drugs_table tr:last');
-				$.each(data, function(i, jsondata) {
-					var drug_id=data[i]['id'];
-					var resupply=data[i]['resupply'];
-					var pack_size=data[i]['pack_size'];
-					var drug_selected=last_row.find(".drug").val();
-					var cloned_object = $('#drugs_table tr:last').clone(true);
-					var drug_row = cloned_object.attr("drug_row");
-					var next_drug_row = parseInt(drug_row) + 1;
-					cloned_object.attr("drug_row", next_drug_row);
-					cloned_object.find(".remove").show();
-					var packs = cloned_object.find(".pack");
-					var expiry_id = "expiry_date_" + next_drug_row;
-					cloned_object.find(".drug").attr('value',drug_id);
-					cloned_object.find(".pack").attr('value',resupply);
-					cloned_object.find(".pack_size").attr('value',pack_size);
-					var expiry_selector = "#" + expiry_id;
-					$(expiry_selector).datepicker({
-						defaultDate : new Date(),
-						changeYear : true,
-						changeMonth : true
+				url : link,
+				type : 'POST',
+				dataType : 'json',
+				data: {"order_id":order_id},
+				success : function(data) {
+					var data_count=data.length;
+					var x=1;
+					var last_row=$('#drugs_table tr:last');
+					$.each(data, function(i, jsondata) {
+						var drug_id=data[i]['id'];
+						var resupply=data[i]['resupply'];
+						var pack_size=data[i]['pack_size'];
+						var drug_selected=last_row.find(".drug").val();
+						var cloned_object = $('#drugs_table tr:last').clone(true);
+						var drug_row = cloned_object.attr("drug_row");
+						var next_drug_row = parseInt(drug_row) + 1;
+						cloned_object.attr("drug_row", next_drug_row);
+						cloned_object.find(".remove").show();
+						var packs = cloned_object.find(".pack");
+						var expiry_id = "expiry_date_" + next_drug_row;
+						cloned_object.find(".drug").attr('value',drug_id);
+						cloned_object.find(".pack").attr('value',resupply);
+						cloned_object.find(".pack_size").attr('value',pack_size);
+						var expiry_selector = "#" + expiry_id;
+						$(expiry_selector).datepicker({
+							defaultDate : new Date(),
+							changeYear : true,
+							changeMonth : true
+						});
+						
+						//Validity check
+						if(!isNaN(pack_size) && pack_size.length > 0 && !isNaN(resupply) && resupply.length > 0) {
+							var qty=resupply * pack_size;
+							cloned_object.find(".quantity ").attr('value',qty);
+						}
+						cloned_object.insertAfter('#drugs_table tr:last');
+						refreshDatePickers();
+						if(x==data_count){
+							$('#drugs_table tbody tr:first').remove();
+						}
+						x++;
+						
 					});
-					
-					//Validity check
-					if(!isNaN(pack_size) && pack_size.length > 0 && !isNaN(resupply) && resupply.length > 0) {
-						var qty=resupply * pack_size;
-						cloned_object.find(".quantity ").attr('value',qty);
-					}
-					cloned_object.insertAfter('#drugs_table tr:last');
-					refreshDatePickers();
-					if(x==data_count){
-						$('#drugs_table tbody tr:first').remove();
-					}
-					x++;
-					
-				});
-
-			}
-		});
+	
+				}
+			});
 			
 			
 		});
@@ -569,7 +569,7 @@
 			var stock_type=<?php echo  $stock_type ?>;
 			var last_row=$('#drugs_table tr:last');
 			if(last_row.find(".quantity").hasClass("stock_add_form_input_error")){
-				alert("There is a commodity that has a quantity greater that the quantity available!");
+				alert("There is a commodity that has a quantity greater than the quantity available!");
 				return;
 			}
 			
@@ -677,7 +677,7 @@
 			var stock_type=<?php echo $stock_type; ?>;
 			if(stock_type=='1'){
 				//Stockin coming in
-				if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('ajustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1) {
+				if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('adjustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1) {
 					var quantity_choice = "quantity";
 					var quantity_out_choice = "quantity_out";
 				} else {
@@ -688,7 +688,7 @@
 			//If transaction is from pharmacy
 			else if(stock_type=='2'){
 				//If transaction is received from
-				if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('ajustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1) {
+				if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('adjustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1) {
 					var quantity_choice = "quantity";
 					var quantity_out_choice = "quantity_out";
 				} else {
@@ -823,12 +823,11 @@
 			//If stock is going out, check that qty issued to be <= to qty available
 			
 			//Transaction coming in
-			if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('ajustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1 || $("#select_transtype").attr("value") == 0) {
+			if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('adjustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1 || $("#select_transtype").attr("value") == 0) {
 				quantity_holder.css("background-color","#FFF");
 				quantity_holder.attr("value",qty );
 				
 			} 
-
 			//Transaction going out
 			else {
 				if(available_quantity>=qty){
@@ -864,12 +863,11 @@
 			//If stock is going out, check that qty issued to be <= to qty available
 			
 			//Transaction coming in
-			if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('ajustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1 || $("#select_transtype").attr("value") == 0) {
+			if(trans_type.indexOf('received') != -1 || trans_type.indexOf('balanceforward')!= -1 || (trans_type.indexOf('returns')!= -1 && trans_effect==1) || (trans_type.indexOf('adjustment')!= -1 && trans_effect==1) || trans_type.indexOf('startingstock')!= -1 || trans_type.indexOf('physicalcount')!= -1 || $("#select_transtype").attr("value") == 0) {
 				quantity_holder.css("background-color","#FFF");
 				quantity_holder.attr("value",qty );
 				
 			} 
-			
 			//Transaction going out
 			else {
 				if(available_quantity>=qty){

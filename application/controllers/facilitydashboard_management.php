@@ -13,6 +13,158 @@ class Facilitydashboard_Management extends MY_Controller {
 		$this -> load -> database();
 	}
 
+	public function error_correction() {
+		$overall_total = 0;
+		$error_array = array();
+		$temp = "";
+
+		/*Patients without Gender*/
+		$sql['Patients without Gender'] = "SELECT p.patient_number_ccc,p.gender,p.id
+										   FROM patient p 
+										   LEFT JOIN gender g on g.id=p.gender
+										   WHERE (p.gender=' ' 
+										   OR p.gender='' 
+										   OR p.gender='null' 
+										   OR p.gender is null)
+										   AND p.active='1'
+										   GROUP BY p.patient_number_ccc;";
+
+		/*Patients without DOB*/
+		$sql['Patients without DOB'] = "SELECT p.patient_number_ccc,p.dob,p.id
+										FROM patient p 
+										WHERE (p.dob=' ' 
+										OR p.dob='' 
+										OR p.dob='null' 
+										OR p.dob is null)
+										AND p.active='1'
+										GROUP BY p.patient_number_ccc;";
+
+		/*Patients without Appointment*/
+		$sql['Patients without Appointment'] = "SELECT p.patient_number_ccc, p.nextappointment, ps.Name AS current_status,p.id
+											   FROM patient p
+											   LEFT JOIN patient_status ps ON ps.id = p.current_status
+											   WHERE(p.nextappointment = ' '
+											   OR p.nextappointment =  ''
+											   OR p.nextappointment =  'null'
+											   OR p.nextappointment IS NULL)
+											   AND p.active = '1'
+											   AND ps.Name LIKE '%active%'
+											   AND p.active='1'
+											   GROUP BY p.patient_number_ccc;";
+		/*Patients without Current Regimen*/
+		$sql['Patients without Current Regimen'] = "SELECT p.patient_number_ccc,p.current_regimen,CONCAT_WS(' | ',r.regimen_code,r.regimen_desc) as regimen,p.id
+												FROM patient p 
+												LEFT JOIN regimen r ON r.id=p.current_regimen
+												WHERE (p.current_regimen=' '
+												OR p.current_regimen=''
+												OR p.current_regimen is null
+												OR p.current_regimen='null')
+												AND p.active='1'
+												GROUP BY p.patient_number_ccc;";
+		/*Patients without Start Regimen*/
+		$sql['Patients without Start Regimen'] = "SELECT p.patient_number_ccc, p.start_regimen, CONCAT_WS(  ' | ', r.regimen_code, r.regimen_desc ) AS regimen,p.id
+												FROM patient p
+												LEFT JOIN regimen r ON r.id = p.start_regimen
+												WHERE (p.start_regimen =  ' '
+												OR p.start_regimen =  ''
+												OR p.start_regimen IS NULL 
+												OR p.start_regimen =  'null')
+												AND p.active='1'
+												GROUP BY p.patient_number_ccc;";
+		/*Patients without Current Status*/
+		$sql['Patients without Current Status'] = "SELECT p.patient_number_ccc,p.current_status,ps.Name as status,p.id
+												FROM patient p
+												LEFT JOIN patient_status ps ON ps.id=p.current_status
+												WHERE(p.current_status=' '
+												OR p.current_status=''
+												OR p.current_status is null
+												OR p.current_status='null')
+												AND p.active='1'
+												GROUP BY p.patient_number_ccc;";
+
+		/*Patients without Service Line*/
+		$sql['Patients without Current Status'] = "SELECT p.patient_number_ccc,p.service,rst.name as status,p.id
+												FROM patient p
+												LEFT JOIN regimen_service_type rst ON rst.id=p.service
+												WHERE(p.service=' '
+												OR p.service=''
+												OR p.service is null
+												OR p.service='null')
+												AND p.active='1'
+												GROUP BY p.patient_number_ccc;";
+
+		/*Duplicate Patient Numbers*/
+		$sql['Duplicate Patient Numbers'] = "SELECT p.patient_number_ccc,count(p.patient_number_ccc) as total,p.id
+											FROM patient p
+											WHERE p.active='1'
+											GROUP by p.patient_number_ccc
+											HAVING(total >1);";
+
+		/*Patients without Enrollment date*/
+		$sql['Patients without Enrollment date'] = "SELECT p.patient_number_ccc,p.id,p.date_enrolled
+												FROM patient p
+												WHERE char_length(p.date_enrolled)<10
+												AND p.active='1'
+												GROUP BY p.patient_number_ccc;";
+
+		/*Patients without Status Change date*/
+		$sql['Patients without Status Change date'] = "SELECT p.patient_number_ccc,p.id,p.status_change_date
+												FROM patient p
+												WHERE char_length(p.status_change_date)<10
+												AND p.active='1'
+												GROUP BY p.patient_number_ccc;";
+
+		/*Patients without Start Regimen date*/
+		$sql['Patients without Start Regimen date'] = "SELECT p.patient_number_ccc,p.id,p.start_regimen_date
+												FROM patient p
+												WHERE char_length(p.start_regimen_date)<10
+												AND p.active='1'
+												GROUP BY p.patient_number_ccc;";
+
+		/*Patients With Incorrect Current Regimens*/
+		$sql['Patients with Incorrect Current Regimens'] = "SELECT p.id,p.patient_number_ccc, p.first_name, p.last_name, p.service, p.current_regimen, r.regimen_desc, rst1.Name AS FIRST,rst2.Name AS SECOND 
+														FROM patient p
+														LEFT JOIN regimen r ON r.id = p.current_regimen
+														LEFT JOIN regimen_service_type rst1 ON rst1.id = p.service
+														LEFT JOIN regimen_service_type rst2 ON rst2.id = r.type_of_service
+														WHERE rst1.id != rst2.id
+														GROUP BY p.patient_number_ccc;";
+
+		foreach ($sql as $i => $q) {
+			$q = $this -> db -> query($q);
+			if ($this -> db -> affected_rows() > 0) {
+				$overall_total += $this -> db -> affected_rows();
+			}
+		}
+		if ($overall_total > 0) {
+			$temp_link = $order_link = site_url('auto_management/error_fix');
+			$temp = "<li><a href='" . $temp_link . "'><i class='icon-th'></i>Errors <div class='badge badge-important'>" . $overall_total . "</div></a><li>";
+		}
+
+		return $temp;
+	}
+
+	public function password_notification($user_id) {
+
+		$days_before_pwdchange = 30;
+		$notification_start = 10;
+		$temp = "";
+
+		$stmt = "SELECT $days_before_pwdchange-DATEDIFF(CURDATE(),u.Time_Created) as days_to_go
+		         FROM users u
+		         WHERE id='$user_id'";
+		$q = $this -> db -> query($stmt);
+		$rs = $q -> result_array();
+		$days_before_pwdchange = $rs[0]['days_to_go'];
+		if ($days_before_pwdchange > $notification_start) {
+			$days_before_pwdchange = "";
+			$temp = $days_before_pwdchange;
+		} else {
+			$temp = "<li><a><i class='icon-th'></i>Days to Password expiry <div class='badge badge-important'>" . $days_before_pwdchange . "</div></a><li>";
+		}
+		return $temp;
+	}
+
 	public function order_notification() {
 		$facility_code = $this -> session -> userdata("facility");
 		$sql = "SELECT status ,COUNT(*) AS total FROM `facility_order` WHERE facility_id ='$facility_code' AND code='1' GROUP BY STATUS";
@@ -51,7 +203,8 @@ class Facilitydashboard_Management extends MY_Controller {
 		if ($access_level == "facility_administrator") {
 			$dyn_table .= $this -> inactive_users();
 		}
-
+		$dyn_table .= $this -> error_correction();
+		$dyn_table .= $this -> password_notification($this -> session -> userdata("user_id"));
 		echo $dyn_table;
 	}
 
@@ -127,73 +280,6 @@ class Facilitydashboard_Management extends MY_Controller {
 		else if ($stock_type == '2') {
 			$stock_param = " AND (source=destination) AND(source='" . $facility_code . "') ";
 		}
-		/*
-		 //Get all drugs that are active
-		 $drugs_query = "select d.id as id,drug, pack_size, u.name from drugcode d left join drug_unit u on d.unit = u.id  where d.Enabled=1  ";
-		 $drugs = $this -> db -> query($drugs_query);
-		 $drugs_results = $drugs -> result_array();
-		 foreach ($drugs_results as $drugs_result) {
-		 //Get Drug
-		 $drug = $drugs_result['id'];
-		 $drug_name = $drugs_result['drug'];
-		 $drug_unit = $drugs_result['name'];
-		 $drug_packsize = $drugs_result['pack_size'];
-		 $stock_level = 0;
-		 $today = date("Y-m-d");
-
-		 //Get all batches not expired
-		 $allbatches_query = "SELECT SUM(balance) as total FROM drug_stock_balance d WHERE d.drug_id =  '$drug' AND d.expiry_date > '$today' AND facility_code='$facility_code' AND stock_type='$stock_type'";
-		 $batches = $this -> db -> query($allbatches_query);
-		 $batches_results = $batches -> result_array();
-		 //Get stock balance for a drug
-
-		 foreach ($batches_results as $stock_balance) {
-		 $stock_level = $stock_balance['total'];
-		 }
-
-		 //Get consumption for the past three months
-		 $safetystock_query = "SELECT SUM(d.quantity_out) AS TOTAL FROM drug_stock_movement d WHERE d.drug ='$drug' AND DATEDIFF(CURDATE(),d.transaction_date)<= 90 and facility='$facility_code' $stock_param";
-
-		 $safetystocks = $this -> db -> query($safetystock_query);
-		 $safetystocks_results = $safetystocks -> result_array();
-		 $three_monthly_consumption = 0;
-		 foreach ($safetystocks_results as $safetystocks_result) {
-		 $three_monthly_consumption = $safetystocks_result['TOTAL'];
-		 //Calculating Monthly Consumption hence Max-Min Inventory
-		 $monthly_consumption = ($three_monthly_consumption) / 3;
-		 $monthly_consumption = number_format($monthly_consumption, 2);
-
-		 //Therefore Maximum Consumption
-		 $maximum_consumption = $monthly_consumption * 3;
-		 $maximum_consumption = number_format($maximum_consumption, 2);
-
-		 //Therefore Minimum Consumption
-		 $minimum_consumption = $monthly_consumption * 1.5;
-		 //$minimum_consumption = number_format($monthly_consumption, 2);
-
-		 //If current stock balance is less than minimum consumption
-		 if ($stock_level < $minimum_consumption) {
-
-		 if ($minimum_consumption < 0) {
-		 $minimum_consumption = 0;
-		 }
-		 if ($stock_level < 0 or $stock_level == "NULL") {
-		 $stock_level = 0;
-		 }
-		 $drugs_array[$counter]['drug_name'] = $drug_name;
-		 $drugs_array[$counter]['drug_unit'] = $drug_unit;
-		 $drugs_array[$counter]['stock_level'] = number_format($stock_level);
-		 $drugs_array[$counter]['minimum_consumption'] = ceil($minimum_consumption);
-
-		 $strDATA .= "<set label='$drug_name' value='$stock_level' />";
-		 $strLEVEL .= "<set label='$drug_name' value='$minimum_consumption' />";
-		 $strcat .= "<category label='$drug_name'/>";
-		 }
-		 }
-		 $counter++;
-
-		 }
-		 */
 		//Create table to store data
 		$tmpl = array('table_open' => '<table id="stock_level" class="table table-striped table-condensed">');
 		$this -> table -> set_template($tmpl);
@@ -412,7 +498,7 @@ class Facilitydashboard_Management extends MY_Controller {
 			$total_female_adult = 0;
 			$total_male_child = 0;
 			$total_female_child = 0;
-			
+
 			if ($rs) {
 				foreach ($rs as $r) {
 					/*Check if Adult Male*/
@@ -433,11 +519,10 @@ class Facilitydashboard_Management extends MY_Controller {
 					}
 				}
 			}
-			
+
 			/*Place Values into an Array*/
-			
-			$patients_array[$date]=array("Adult Male"=>$total_male_adult,"Adult Female"=>$total_female_adult,"Child Male"=>$total_male_child,"Child Female"=>$total_female_child);
-			 
+
+			$patients_array[$date] = array("Adult Male" => $total_male_adult, "Adult Female" => $total_female_adult, "Child Male" => $total_male_child, "Child Female" => $total_female_child);
 
 		}
 
@@ -530,8 +615,8 @@ class Facilitydashboard_Management extends MY_Controller {
 		foreach ($dates as $date) {
 			$index = array_search($date, $keys);
 			if ($index >= 0) {
-				$visited[] = (int)$outer_array[$keys[$index]]['visited'];
-				$missed[] = (int)$outer_array[$keys[$index]]['expected'];
+				$visited[] =@(int)$outer_array[$keys[$index]]['visited'];
+				$missed[] = @(int)$outer_array[$keys[$index]]['expected'];
 			} else {
 				$visited[] = 0;
 				$missed[] = 0;

@@ -8,14 +8,35 @@
  *Change password validation
  */
 $(document).ready(function() {
-    $(".actual").click(function(){
-    	var test=confirm("Are You Sure?");
-    	if(test){
-    		return true;
-    	}else{
-    		return false;
-    	}
-    });
+	$(".actual").click(function() {
+		var test = confirm("Are You Sure?");
+		if(test) {
+			return true;
+		} else {
+			return false;
+		}
+	});
+	/*Ensure Correct Phone format is used*/
+	$(".phone").change(function() {
+		var phone = $(this).val();
+		var phone_length = phone.length;
+		var number_length = 10;
+		/*
+		 * 1.Check Number Length
+		 * 2.If yes,check if first characters are 07{
+		 * 3.if matches 07 alert successful
+		 * 4.if no match alert your phone number should start with 07}
+		 * 5.if no,alert incorrect phone format used
+		 */
+		if(phone_length == number_length) {
+			var first_char = phone.substr(0, 2);
+			if(first_char != 07) {
+				alert("your phone number should start with 07")
+			}
+		} else {
+			alert("incorrect phone format used");
+		}
+	});
 	//Progress Bar
 	function progress(percent, $element) {
 		var progressBarWidth = percent * $element.width() / 100;
@@ -26,24 +47,22 @@ $(document).ready(function() {
 	}
 
 	var base_url = $("#base_url").val();
-	var report_title=$("#report_title").text();
-	var facility=$("#facility_name").text();
+	var report_title = $("#report_title").text();
+	var facility = $("#facility_name").text();
 	$('.dataTables').dataTable({
 		"bJQueryUI" : true,
 		"sPaginationType" : "full_numbers",
 		"sDom" : '<"H"T<"clear">lfr>t<"F"ip>',
 		"oTableTools" : {
 			"sSwfPath" : base_url + "assets/scripts/datatable/copy_csv_xls_pdf.swf",
-			"aButtons" : ["copy", 
-			{
+			"aButtons" : ["copy", {
 				"sExtends" : "xls",
-				"sTitle" : report_title+" ("+facility+")",
-			},  
-			{
+				"sTitle" : report_title + " (" + facility + ")",
+			}, {
 				"sExtends" : "pdf",
 				"sPdfOrientation" : "landscape",
 				"sPdfSize" : "A3",
-				"sTitle" : report_title+" ("+facility+")",
+				"sTitle" : report_title + " (" + facility + ")",
 			}]
 		},
 		"bProcessing" : true,
@@ -332,8 +351,36 @@ function syncOrders() {
 
 }
 
+function autoUpdate() {
+	var href = window.location.href;
+	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
+	var _href = href.substr(href.lastIndexOf('/') + 1);
+	var link = base_url + "/ADT/auto_management"
+	$.ajax({
+		url : link,
+		type : 'POST',
+		success : function(data) {
+			if(data != 0) {
+				$.gritter.add({
+					// (string | mandatory) the heading of the notification
+					title : 'Auto Update.',
+					// (string | mandatory) the text inside the notification
+					text : data,
+					// (string | optional) the image to display on the left
+					// (bool | optional) if you want it to fade out on its own or just sit there
+					sticky : false,
+					// (int | optional) the time you want it to be alive for before fading out
+					time : ''
+				});
+			}
+			//alert(data)
+		}
+	});
+
+}
+
 /*
- *Synchronizes drug stock balance
+ *Synchronizes drug stock balance table
  */
 function synch_drug_balance(stock_type) {
 	var base_url = $("#base_url").val();
@@ -520,7 +567,7 @@ function drug_cons_synch() {
 						div_width1 = (remaining_drugs / count_drugs) * 100;
 						div_width = div_width1 + "%";
 						$(".bar_dcb").css("width", div_width);
-
+						//Done synchronizing
 						if(remaining_drugs == count_drugs) {
 							//$(".sync_complete").html("Synchronization successfully completed !<i class='icon-ok'></i>");
 							//$(".modal-footer").css("display", "block");
