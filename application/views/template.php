@@ -5,7 +5,6 @@
 if (!$this -> session -> userdata('user_id') && $content_view !='resend_password_v') {
 	redirect("User_Management/login");
 }
-
 if (!isset($link)) {
 	$link = null;
 }
