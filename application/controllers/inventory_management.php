@@ -223,7 +223,7 @@ class Inventory_Management extends MY_Controller {
 		//3 Months consumption using facility orders
 		$three_months_consumption=$result[0]['total_cons'];
 		$pack_size=$result[0]['pack_size'];
-		$pack_size=number_format($pack_size);
+		$pack_size=$pack_size;
 		$three_months_consumption=number_format($three_months_consumption);
 		$three_months_consumption=$three_months_consumption * $pack_size;
 		$maximum_consumption = number_format($three_months_consumption);
