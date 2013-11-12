@@ -236,10 +236,8 @@ function auto_logout() {
 
 //Function to get data for ordering(Cdrr)
 function getPeriodDrugBalance(count, drug, start_date, end_date) {
-	var href = window.location.href;
-	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
-	var _href = href.substr(href.lastIndexOf('/') + 1);
-	var link = base_url + '/ADT/order_management/getPeriodDrugs/' + drug + '/' + start_date + '/' + end_date;
+	var base_url = getbaseurl();
+	var link = base_url + 'order_management/getPeriodDrugs/' + drug + '/' + start_date + '/' + end_date;
 	$.ajax({
 		url : link,
 		type : 'POST',
@@ -252,9 +250,8 @@ function getPeriodDrugBalance(count, drug, start_date, end_date) {
 			var total_adjustment = 0;
 			var total_physical = 0;
 			var total_expire_qty = 0;
-			var total_expiry_date ="-";
+			var total_expiry_date = "-";
 			var drug_id = 0;
-			
 			total_beginning_balance = data.beginning_balance;
 			total_received = data.Received_From;
 			total_dispensed = data.Dispensed_to_Patients;
@@ -283,7 +280,7 @@ function getPeriodDrugBalance(count, drug, start_date, end_date) {
 			$(physical_div).attr("value", total_physical);
 			$(expiry_qty_div).attr("value", total_expire_qty);
 			$(expiry_date_div).attr("value", total_expiry_date);
-			
+
 			calculateResupply($(total_dispensed_div));
 			//Once the calculations are done for the whole table, put back the pagination
 			if($(".ordered_drugs").length == count) {
@@ -301,10 +298,8 @@ function getPeriodDrugBalance(count, drug, start_date, end_date) {
 
 //Function to get data for ordering(Maps)
 function getPeriodRegimenPatients(start_date, end_date) {
-	var href = window.location.href;
-	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
-	var _href = href.substr(href.lastIndexOf('/') + 1);
-	var link = base_url + '/ADT/order_management/getPeriodRegimenPatients/' + start_date + '/' + end_date;
+	var base_url = getbaseurl();
+	var link = base_url + 'order_management/getPeriodRegimenPatients/' + start_date + '/' + end_date;
 	$.ajax({
 		url : link,
 		type : 'POST',
@@ -334,10 +329,8 @@ function testAlert() {
  * Sysnchronization of Orders
  */
 function syncOrders() {
-	var href = window.location.href;
-	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
-	var _href = href.substr(href.lastIndexOf('/') + 1);
-	var link = base_url + "/ADT/synchronization_management/startSync"
+	var base_url = getbaseurl();
+	var link = base_url + "synchronization_management/startSync"
 	$.ajax({
 		url : link,
 		type : 'POST',
@@ -362,10 +355,8 @@ function syncOrders() {
 }
 
 function autoUpdate() {
-	var href = window.location.href;
-	var base_url = href.substr(href.lastIndexOf('http://'), href.lastIndexOf('/ADT'));
-	var _href = href.substr(href.lastIndexOf('/') + 1);
-	var link = base_url + "/ADT/auto_management"
+	var base_url = getbaseurl();
+	var link = base_url + "auto_management"
 	$.ajax({
 		url : link,
 		type : 'POST',
@@ -387,6 +378,14 @@ function autoUpdate() {
 		}
 	});
 
+}
+
+function getbaseurl() {
+	var href = window.location.href;
+	var base_url = href.substr(href.lastIndexOf('https://'), href.lastIndexOf('/ADT'));
+	var _href = href.substr(href.lastIndexOf('/') + 1);
+	var base_url = base_url + "/ADT/"
+	return base_url;
 }
 
 /*

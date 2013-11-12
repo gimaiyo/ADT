@@ -22,7 +22,9 @@ $config['asset_path'] = 'assets/';
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://'.$_SERVER['SERVER_NAME'].'/ADT/';
+//$config['base_url']	= 'http://'.$_SERVER['SERVER_NAME'].'/ADT/';
+$proto = "http" . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") ? "s" : "") . "://";
+$config['base_url'] = $proto . $_SERVER['SERVER_NAME'] . '/ADT/';
 
 /*
 |--------------------------------------------------------------------------
@@ -99,7 +101,7 @@ $config['charset'] = 'UTF-8';
 | setting this variable to TRUE (boolean).  See the user guide for details.
 |
 */
-$config['enable_hooks'] = FALSE;
+$config['enable_hooks'] = TRUE;
 
 
 /*
