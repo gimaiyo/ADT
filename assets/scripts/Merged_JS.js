@@ -389,7 +389,7 @@ function getbaseurl() {
 }
 
 /*
- *Synchronizes drug stock balance
+ *Synchronizes drug stock balance table
  */
 function synch_drug_balance(stock_type) {
 	var base_url = $("#base_url").val();
@@ -576,7 +576,7 @@ function drug_cons_synch() {
 						div_width1 = (remaining_drugs / count_drugs) * 100;
 						div_width = div_width1 + "%";
 						$(".bar_dcb").css("width", div_width);
-
+						//Done synchronizing
 						if(remaining_drugs == count_drugs) {
 							//$(".sync_complete").html("Synchronization successfully completed !<i class='icon-ok'></i>");
 							//$(".modal-footer").css("display", "block");

@@ -157,7 +157,8 @@
 					}else{
 					?>
 					Days pending <p style="<?php if($days_pending=="Approval"){ ?> color:rgb(255, 167, 11);  <?php } elseif ($days_pending=="Dispatched") { ?> color:green; <?php } elseif ($days_pending=="Resubmission") { ?> color:red; <?php } elseif ($days_pending=="Delivery") { ?> color:rgb(1, 167, 146); <?php } ?>">(<?php echo $days_pending ?>)</p></th>	
-					<?php } 
+					<?php 
+					} 
 				} ?>
 				
 			<th>Action</th>

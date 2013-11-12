@@ -5,7 +5,6 @@
 if (!$this -> session -> userdata('user_id') && $content_view !='resend_password_v') {
 	redirect("User_Management/login");
 }
-
 if (!isset($link)) {
 	$link = null;
 }
@@ -354,8 +353,12 @@ if(isset($reports)|| isset($report_title)){
 	$this -> load -> view('sections/modals_v');
 	//Load modals view end
 ?>
-     
-
+	<!-- This sets css for display length in reports -->
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("div.dataTables_length select").css("width","13%");
+		})
+	</script>   
  <div id="bottom_ribbon">
  	<div id="footer">
  		<?php $this -> load -> view('footer_v');?>
