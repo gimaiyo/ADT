@@ -93,6 +93,7 @@ if(isset($results)){
 			if($("#gender").val()==2){
 				$("#pregnant_view").show();
 			}
+			$("#pregnant").val("<?php echo $result['pregnant'];?>");
 			
 			
 			$('#start_age').val(getStartAge("<?php echo $result['dob'];?>","<?php echo $result['date_enrolled'];?>"));
@@ -138,9 +139,14 @@ if(isset($results)){
 			$("textarea[name='other_allergies_listing']").not(this).attr("disabled", "true");
 			$("textarea[name='support_group_listing']").not(this).attr("disabled", "true");
 			
-				
 			//Select Other Illnesses Methods Selected
-			var other_illnesses='<?php echo trim($result['other_illnesses']);?>';
+			var my_illnesses=<?php echo $result['other_illnesses'];?>;
+			var other_illnesses='';
+			
+			$.each(my_illnesses, function(i, v){
+				other_illnesses +=v+","
+			});
+			
 			if (other_illnesses.indexOf(',') == -1) {
               other_illnesses=other_illnesses+",";
             }else{
@@ -157,7 +163,7 @@ if(isset($results)){
 					}
 					$("#other_chronic").val(other_sickness.substring(1));
 				}
-
+		
 			if($("#other_chronic").val()){
 				$("input[name='other_other']").not(this).attr("checked", "true");
 			    $("textarea[name='other_chronic']").not(this).removeAttr("disabled");		
@@ -612,28 +618,11 @@ if(isset($results)){
 		</script>
 		<script>
 			$(document).ready(function(){
-				 $('#history_table').dataTable( {
-			        "sDom": "<'row row_top'<'span7'l><'span5'f>r>t<'row row_bottom'<'span6'i><'span5'p>>",
-			        "sPaginationType": "bootstrap",
-			        "sScrollY": "200px",
-			        "sScrollX": "110%",
-			       
-			    });
-			    
-			    var oTable = $('#history_table').dataTable();
+			    var oTable = $('#history_table').dataTable({
+			    	                              "bJQueryUI" : true,
+			    	                              "sPaginationType" : "full_numbers"
+			    	                               });
                 oTable.fnSort([[0,'desc']]);
-                
-				$.extend( $.fn.dataTableExt.oStdClasses, {
-				    "sWrapper": "dataTables_wrapper form-inline"
-				} );
-				$(".pagination").css("margin","1px 0px");
-				$("#history_table_filter input").removeAttr("disabled", "disabled");
-				$(".dataTables_length").css("width","70%");
-				$(".dataTables_filter").css("width","70%");
-				$("div.row .span5").css("float","right");
-				$("div.row .span5").css("margin-right","15px");
-				$("div.row  .span5").css("margin-right","15px");
-				
 			});
 			
 		</script>
@@ -1067,14 +1056,14 @@ if(isset($results)){
 			<input type="button" class="btn" id="edit_patient" value="Edit Patient Record" />
 			<input type="button" class="btn" id="dispense" value="Dispense to Patient" />
 </div>
-			<div id="dispensing_histor">
+			<div id="dispensing_history">
 				<fieldset>
 					<legend>
 						Dispensing History
 					</legend>
-					
-					<table class="sortable table table-bordered table-hover " id="history_table" width="90%" >
-						<thead style="font-size:0.8em;">
+				</fieldset>
+				<table class="sortable table table-bordered table-hover" id="history_table">
+					<thead>
 							<tr >
 								<th id="header_date">Date</th>
 								<th>Purpose of Visit</th>
@@ -1093,20 +1082,14 @@ if(isset($results)){
 								<th>Reasons For Change</th>
 							</tr>
 						</thead>
-						<tbody>
-							<?php 
+						<tbody><?php 
 							if($history_logs){
 							foreach($history_logs as $history){
 								echo "<tr><td>".date('d-M-Y',strtotime($history['dispensing_date']))."</td><td>".$history['visit']."</td><td>".$history['dose']."</td><td>".$history['duration']."</td><td align='center'><input id='".$history['record']."' type='button' class='btn btn-xsmall edit_dispensing ' value='Edit'/></td><td>".$history['drug']."</td><td>".$history['quantity']."</td><td>".$history['current_weight']."</td><td>".$history['last_regimen']."</td><td>".$history['regimen_desc']."</td><td>".$history['batch_number']."</td><td>".$history['pill_count']."</td><td>".$history['adherence']."</td><td>".$history['user']."</td><td>".$history['regimen_change_reason']."</td></tr>";
 							}
-							}else{
-								//echo "<tr><td colspan='20'>No History Available</td></tr>";
 							}
-							?>
-							
-						</tbody>
-					</table>
-				</fieldset>
+							?></tbody>
+				</table>				
 			</div>
 			</div>
 			<div id="patient_details" title="Patient Summary">

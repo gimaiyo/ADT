@@ -3,7 +3,7 @@ function check_ssl() {
 	$CI = &get_instance();
 	$class = $CI -> router -> fetch_class();
 
-	$ssl = array('user_management','system_management','facilitydashboard_management','home_controller','auto_management','inventory_management','patient_management','order_management','synchronization_management','settings_management','report_management');
+	$ssl = array('user_management','system_management','facilitydashboard_management','home_controller','auto_management','inventory_management','patient_management','order_management','synchronization_management','settings_management','report_management','dispensement_management','regimen_management');
 	$partial = array();
 
 	if (in_array($class, $ssl)) {

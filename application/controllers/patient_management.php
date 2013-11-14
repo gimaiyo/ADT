@@ -198,6 +198,20 @@ class Patient_Management extends MY_Controller {
 		echo json_encode($output);
 	}
 
+	public function extract_illness($illness_list = "") {
+		$illness_array = explode(",", $illness_list);
+		$new_array=array();
+		foreach ($illness_array as $index => $illness) {
+			if ($illness == null) {
+				unset($illness_array[$index]);
+			}else{
+				$illness=str_replace("\n", "", $illness);
+				$new_array[]=trim($illness);
+			}
+		}
+		return json_encode($new_array);
+	}
+
 	public function viewDetails($record_no) {
 		$this -> session -> set_userdata('record_no', $record_no);
 		$patient = "";
@@ -206,6 +220,7 @@ class Patient_Management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
+			$results[0]['other_illnesses'] = $this -> extract_illness($results[0]['other_illnesses']);
 			$data['results'] = $results;
 			$patient = $results[0]['patient_number_ccc'];
 			$facility = $this -> session -> userdata("facility");
@@ -242,6 +257,7 @@ class Patient_Management extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
 		if ($results) {
+			$results[0]['other_illnesses'] = $this -> extract_illness($results[0]['other_illnesses']);
 			$data['results'] = $results;
 		}
 		$data['record_no'] = $record_no;
@@ -336,12 +352,12 @@ class Patient_Management extends MY_Controller {
 		$new_patient -> save();
 
 		$patient = $this -> input -> post('patient_number', TRUE);
-		$direction=$this -> input -> post('direction', TRUE);
+		$direction = $this -> input -> post('direction', TRUE);
 
-		if ($direction==0) {
+		if ($direction == 0) {
 			$this -> session -> set_userdata('msg_success', 'Patient: ' . $this -> input -> post('first_name', TRUE) . " " . $this -> input -> post('last_name', TRUE) . ' was Saved');
 			redirect("patient_management");
-		} else if ($direction==1) {
+		} else if ($direction == 1) {
 			redirect("dispensement_management/dispense/$patient");
 		}
 	}
@@ -486,7 +502,7 @@ left join supporter s on s.id=p.supported_by
 left join regimen_service_type rst on rst.id=p.service
 left join patient_status pst on pst.id=p.current_status
 left join facilities f on f.facilitycode=p.transfer_from
-WHERE facility_code='$facility_code' 
+WHERE facility_code='$facility_code'
 ORDER BY p.patient_number_ccc ASC";
 		$query = $this -> db -> query($sql);
 		$results = $query -> result_array();
@@ -696,9 +712,9 @@ ORDER BY p.patient_number_ccc ASC";
 				} else {
 					$self_reporting = "-";
 				}
-				
+
 				//Calculate Adherence for Pill Count
-				$pill_count=($result['pill_count']-$result['months_of_stock']);
+				$pill_count = ($result['pill_count'] - $result['months_of_stock']);
 				if ($result['frequency'] == 1) {
 					if ($pill_count <= 0) {
 						$pill_count_reporting = "100%";
@@ -710,7 +726,7 @@ ORDER BY p.patient_number_ccc ASC";
 						$pill_count_reporting = "<85%";
 					}
 				} else if ($result['frequency'] == 2) {
-					if ($pill_count<= 0) {
+					if ($pill_count <= 0) {
 						$pill_count_reporting = "100%";
 					} else if ($pill_count <= 3 && $pill_count > 0) {
 						$pill_count_reporting = "≥95%";
@@ -722,12 +738,12 @@ ORDER BY p.patient_number_ccc ASC";
 				} else {
 					$pill_count_reporting = "-";
 				}
-				
+
 				if ($result['adherence'] == " ") {
 					$result['adherence'] = "-";
 				}
 
-				$dyn_table .= "<tbody><tr><td>" . date('d-M-Y', strtotime($result['dispensing_date'])) . "</td><td>" . $result['drug'] . "</td><td align='center'>" . $result['quantity'] . "</td><td align='center'>" . ($result['pill_count'] - $result['months_of_stock']) . "</td><td align='center'>" . $result['missed_pills'] . "</td><td align='center'>" .$pill_count_reporting . "</td><td align='center'>" . $self_reporting . "</td><td align='center'>" . $result['adherence'] . "</td></tr></tbody>";
+				$dyn_table .= "<tbody><tr><td>" . date('d-M-Y', strtotime($result['dispensing_date'])) . "</td><td>" . $result['drug'] . "</td><td align='center'>" . $result['quantity'] . "</td><td align='center'>" . ($result['pill_count'] - $result['months_of_stock']) . "</td><td align='center'>" . $result['missed_pills'] . "</td><td align='center'>" . $pill_count_reporting . "</td><td align='center'>" . $self_reporting . "</td><td align='center'>" . $result['adherence'] . "</td></tr></tbody>";
 			}
 		}
 		echo $dyn_table;
