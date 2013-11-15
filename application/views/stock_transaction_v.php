@@ -243,52 +243,52 @@
 			//Get list of orders
 			var order_id=$("#picking_list_name").val();
 			$.ajax({
-			url : link,
-			type : 'POST',
-			dataType : 'json',
-			data: {"order_id":order_id},
-			success : function(data) {
-				var data_count=data.length;
-				var x=1;
-				var last_row=$('#drugs_table tr:last');
-				$.each(data, function(i, jsondata) {
-					var drug_id=data[i]['id'];
-					var resupply=data[i]['resupply'];
-					var pack_size=data[i]['pack_size'];
-					var drug_selected=last_row.find(".drug").val();
-					var cloned_object = $('#drugs_table tr:last').clone(true);
-					var drug_row = cloned_object.attr("drug_row");
-					var next_drug_row = parseInt(drug_row) + 1;
-					cloned_object.attr("drug_row", next_drug_row);
-					cloned_object.find(".remove").show();
-					var packs = cloned_object.find(".pack");
-					var expiry_id = "expiry_date_" + next_drug_row;
-					cloned_object.find(".drug").attr('value',drug_id);
-					cloned_object.find(".pack").attr('value',resupply);
-					cloned_object.find(".pack_size").attr('value',pack_size);
-					var expiry_selector = "#" + expiry_id;
-					$(expiry_selector).datepicker({
-						defaultDate : new Date(),
-						changeYear : true,
-						changeMonth : true
+				url : link,
+				type : 'POST',
+				dataType : 'json',
+				data: {"order_id":order_id},
+				success : function(data) {
+					var data_count=data.length;
+					var x=1;
+					var last_row=$('#drugs_table tr:last');
+					$.each(data, function(i, jsondata) {
+						var drug_id=data[i]['id'];
+						var resupply=data[i]['resupply'];
+						var pack_size=data[i]['pack_size'];
+						var drug_selected=last_row.find(".drug").val();
+						var cloned_object = $('#drugs_table tr:last').clone(true);
+						var drug_row = cloned_object.attr("drug_row");
+						var next_drug_row = parseInt(drug_row) + 1;
+						cloned_object.attr("drug_row", next_drug_row);
+						cloned_object.find(".remove").show();
+						var packs = cloned_object.find(".pack");
+						var expiry_id = "expiry_date_" + next_drug_row;
+						cloned_object.find(".drug").attr('value',drug_id);
+						cloned_object.find(".pack").attr('value',resupply);
+						cloned_object.find(".pack_size").attr('value',pack_size);
+						var expiry_selector = "#" + expiry_id;
+						$(expiry_selector).datepicker({
+							defaultDate : new Date(),
+							changeYear : true,
+							changeMonth : true
+						});
+						
+						//Validity check
+						if(!isNaN(pack_size) && pack_size.length > 0 && !isNaN(resupply) && resupply.length > 0) {
+							var qty=resupply * pack_size;
+							cloned_object.find(".quantity ").attr('value',qty);
+						}
+						cloned_object.insertAfter('#drugs_table tr:last');
+						refreshDatePickers();
+						if(x==data_count){
+							$('#drugs_table tbody tr:first').remove();
+						}
+						x++;
+						
 					});
-					
-					//Validity check
-					if(!isNaN(pack_size) && pack_size.length > 0 && !isNaN(resupply) && resupply.length > 0) {
-						var qty=resupply * pack_size;
-						cloned_object.find(".quantity ").attr('value',qty);
-					}
-					cloned_object.insertAfter('#drugs_table tr:last');
-					refreshDatePickers();
-					if(x==data_count){
-						$('#drugs_table tbody tr:first').remove();
-					}
-					x++;
-					
-				});
-
-			}
-		});
+	
+				}
+			});
 			
 			
 		});

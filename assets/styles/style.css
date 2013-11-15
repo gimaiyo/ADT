@@ -1328,11 +1328,6 @@ legend {
 #submit_section {
 	text-align: right;
 }
-#dispensing_history {
-	height: 300px;
-	overflow: scroll;
-	font-size: 0.8em;
-}
 table#history_table {
 	font-size: 1.3em;
 	border: 1px solid #000000;

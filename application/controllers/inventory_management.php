@@ -155,7 +155,7 @@ class Inventory_Management extends MY_Controller {
 
 			}
 			$id = $aRow['id'];
-			$row[] = "<a href='" . base_url() . "inventory_management/view_bin_card/" . $id . "/1'>View Bin Card</a>";
+			$row[] = "<a href='" . base_url() . "inventory_management/view_bin_card/" . $id . "/".$stock_type."'>View Bin Card</a>";
 				
 			$output['aaData'][] = $row;
 		}
@@ -180,11 +180,10 @@ class Inventory_Management extends MY_Controller {
 		$today = date('Y-m-d');
 		$facility_code = $this -> session -> userdata('facility');
 		$drugresult = Drugcode::getDrugCode($drug_id);
-
-		$data['drug_id'] = $drugresult -> id;
-		$data['drug_name'] = $drugresult -> Drug;
-		$data['drug_unit'] = $drugresult -> Drug_Unit -> Name;
-		//$results=Drug_Stock_Movement::getDrugTransactions($drug_id,$facility_code,$stock_type);
+		$data['drug_id'] = $drugresult->id;
+		$data['drug_name'] = $drugresult->Drug;
+		$data['drug_unit'] = $drugresult->Drug_Unit->Name;
+		$results=Drug_Stock_Movement::getDrugTransactions($drug_id,$facility_code,$stock_type);
 		$sql = "SELECT d.id,d.drug,du.Name AS unit,d.pack_size,dsb.batch_number,dsb.expiry_date,dsb.stock_type,dsb.balance FROM drug_stock_balance dsb LEFT JOIN drugcode d ON d.id=dsb.drug_id LEFT JOIN drug_unit du ON du.id = d.unit WHERE dsb.drug_id='$drug_id'  AND dsb.expiry_date > '$today' AND dsb.balance > 0   AND dsb.facility_code='$facility_code' AND dsb.stock_type='$stock_type' order by dsb.expiry_date asc";
 		$query = $this -> db -> query($sql);
 
@@ -196,17 +195,37 @@ class Inventory_Management extends MY_Controller {
 		$data['stock_type'] = $stock_type;
 		$data['stock_level'] = number_format($stock_level);
 		$data['batch_info'] = $stock_bactchinfo_array;
-		//$data['drug_transactions'] = $results;
+		$data['drug_transactions'] = $results;
 
 		$consumption = Drug_Stock_Movement::getDrugMonthlyConsumption($drug_id, $facility_code, $stock_type);
 
 		$three_months_consumption = 0;
 		$drug_name = "";
-
+		
+		//Get drug_consumption for the last three month
+		$three_month=date('Y-m-d', strtotime("-3 months", strtotime($today)));
+		
+		$sql="SELECT SUM(ci.dispensed_packs) as total_cons,dc.pack_size
+				FROM cdrr_item ci
+				LEFT JOIN facility_order fo ON ci.unique_id=fo.unique_id
+				LEFT OUTER JOIN drugcode dc ON ci.drug_id=dc.drug
+				WHERE dc.id='$drug_id'
+				AND fo.period_end BETWEEN '$three_month' AND CURDATE()
+				AND fo.code='1'";
+		$q = $this -> db -> query($sql);
+		$result=$q->result_array();
+		
 		foreach ($consumption as $value) {
 			$three_months_consumption += $value['total_out'];
 
 		}
+		
+		//3 Months consumption using facility orders
+		$three_months_consumption=$result[0]['total_cons'];
+		$pack_size=$result[0]['pack_size'];
+		$pack_size=$pack_size;
+		$three_months_consumption=number_format($three_months_consumption);
+		$three_months_consumption=$three_months_consumption * $pack_size;
 		$maximum_consumption = number_format($three_months_consumption);
 		$monthly_consumption = ($three_months_consumption) / 3;
 		$minimum_consumption = number_format(($monthly_consumption) * 1.5);

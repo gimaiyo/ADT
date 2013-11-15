@@ -42,10 +42,10 @@ class Drug_stock_balance_sync extends MY_Controller {
 			$stock_param=" AND (source=destination) AND(source='".$facility_code."') ";
 		}
 		
-		$count_it=0;
+			$count_it=0;
 			$stock_status=0;
 			//Get all the batches
-			$get_batches_sql="SELECT DISTINCT d.batch_number AS batch,expiry_date FROM drug_stock_movement d WHERE d.drug =  '" .$drug_id. "' AND facility='" .$facility_code. "' ".$stock_param." GROUP BY d.batch_number";
+			$get_batches_sql="SELECT d.batch_number AS batch,expiry_date FROM drug_stock_movement d WHERE d.drug =  '" .$drug_id. "' AND facility='" .$facility_code. "' ".$stock_param." GROUP BY d.batch_number";
 			$bacthes=$this -> db -> query($get_batches_sql);
 			$batch_results=$bacthes -> result_array();
 			foreach ($batch_results as $key => $batch_row) {
@@ -53,7 +53,10 @@ class Drug_stock_balance_sync extends MY_Controller {
 				//Query to check if batch has had a physical count
 				$batch_no = $batch_row['batch'];
 				$expiry_date=$batch_row['expiry_date'];
-				$initial_stock_sql = "SELECT SUM( d.quantity ) AS Initial_stock, d.transaction_date AS transaction_date, '" .$batch_no. "' AS batch,t.name as trans_name FROM drug_stock_movement d LEFT JOIN transaction_type t ON t.id=d.transaction_type WHERE d.drug =  '" .$drug_id. "' AND (t.name LIKE '%physical count%' OR t.name LIKE '%stock count%') AND facility='" .$facility_code. "' ".$stock_param." AND d.batch_number =  '" .$batch_no. "'";
+				//Get the latest physical count
+				$initial_stock_sql = "SELECT d.quantity AS Initial_stock, d.transaction_date AS transaction_date, '" .$batch_no. "' AS batch,t.name as trans_name FROM drug_stock_movement d LEFT JOIN transaction_type t ON t.id=d.transaction_type WHERE d.drug =  '" .$drug_id. "' AND (t.name LIKE '%physical count%' OR t.name LIKE '%stock count%') AND facility='" .$facility_code. "' ".$stock_param." AND d.batch_number =  '" .$batch_no. "' ORDER BY d.id DESC LIMIT 1";
+				//Old query
+				//$initial_stock_sql = "SELECT SUM( d.quantity ) AS Initial_stock, d.transaction_date AS transaction_date, '" .$batch_no. "' AS batch,t.name as trans_name FROM drug_stock_movement d LEFT JOIN transaction_type t ON t.id=d.transaction_type WHERE d.drug =  '" .$drug_id. "' AND (t.name LIKE '%physical count%' OR t.name LIKE '%stock count%') AND facility='" .$facility_code. "' ".$stock_param." AND d.batch_number =  '" .$batch_no. "'";
 				$bacthes_initial_stock=$this -> db -> query($initial_stock_sql);
 				$batch_initial_stock=$bacthes_initial_stock -> result_array();
 				$x=count($batch_initial_stock);
@@ -61,7 +64,9 @@ class Drug_stock_balance_sync extends MY_Controller {
 					//If initial stock is not null
 					if($value2['Initial_stock']!=null){
 						//Get the balance for that batch
-						$batch_stock_balance_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out )) AS stock_levels, ds.batch_number FROM drug_stock_movement ds WHERE ds.transaction_date BETWEEN  '" .$value2['transaction_date']. "' AND curdate() AND facility='" .$facility_code. "' ".$stock_param." AND ds.drug ='" .$drug_id. "'  AND ds.batch_number ='" .$value2['batch']. "'";
+						//Old query
+						//$batch_stock_balance_sql = "SELECT (SUM( ds.quantity ) - SUM( ds.quantity_out )) AS stock_levels, ds.batch_number FROM drug_stock_movement ds WHERE ds.transaction_date BETWEEN  '" .$value2['transaction_date']. "' AND curdate() AND facility='" .$facility_code. "' ".$stock_param." AND ds.drug ='" .$drug_id. "'  AND ds.batch_number ='" .$value2['batch']. "'";
+						$batch_stock_balance_sql = "SELECT ds.quantity AS stock_levels, ds.batch_number FROM drug_stock_movement ds WHERE ds.transaction_date BETWEEN  '" .$value2['transaction_date']. "' AND curdate() AND facility='" .$facility_code. "' ".$stock_param." AND ds.drug ='" .$drug_id. "'  AND ds.batch_number ='" .$value2['batch']. "' ORDER BY ds.id DESC LIMIT 1";
 						$bacthes_balance=$this -> db -> query($batch_stock_balance_sql);
 						$batch_balance_array=$bacthes_balance -> result_array();
 						foreach ($batch_balance_array as $key => $value3) {
@@ -139,8 +144,12 @@ class Drug_stock_balance_sync extends MY_Controller {
 			$balance_results=$balances -> result_array();
 			//Loop through the array to get the actual values
 			foreach ($balance_results as $key => $balance) {
+				$bal=$balance['balance'];
+				if($bal<0){
+					$bal=0;
+				}
 				//Update the balance column 
-				$update_balance_sql="UPDATE drug_stock_movement SET balance='".$balance['balance']."' WHERE id=".$balance['ID'];
+				$update_balance_sql="UPDATE drug_stock_movement SET balance='".$bal."' WHERE id=".$balance['ID'];
 				$balances=$this -> db -> query($update_balance_sql);
 				//$balance_results=$balances -> result_array();
 				

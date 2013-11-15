@@ -115,10 +115,9 @@
 		
 		//so which link was clicked?
 			  $('.setting_menus li').on('click',function(){
-			  	//Synchronizes drug stock balance
+			  	//Synchronizes stock balance
 			  	if($(this).find('a').attr('class')=="stock_balance_synch"){
 			  		//Starts synchronization
-			  		
 			  		$('#drug_stock_balance_synch').modal('show');
 			  		drug_cons_synch();
 			  		
